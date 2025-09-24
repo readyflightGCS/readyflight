@@ -1,5 +1,4 @@
 import { useState } from 'react'
-const isElectron = import.meta.env.VITE_APP_PLATFOR === "electron";
 
 function Versions(): React.JSX.Element {
   const [versions] = useState(window.electron.process.versions)

@@ -1,7 +1,36 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import icon from '../resources/icon.png?asset'
+import { spawn, ChildProcess } from 'node:child_process'
+
+let backendProcess: ChildProcess | null = null
+
+function startBackend(): void {
+  if (backendProcess) return
+  if (is.dev) {
+    // Run the TypeScript backend directly with Bun in development
+    backendProcess = spawn('bun', ['client-backend/src/index.ts'], {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: ['ignore', 'pipe', 'pipe']
+    })
+
+    backendProcess.stdout?.on('data', (data) => {
+      console.log(`[backend] ${String(data).trim()}`)
+    })
+    backendProcess.stderr?.on('data', (data) => {
+      console.error(`[backend] ${String(data).trim()}`)
+    })
+    backendProcess.on('exit', (code, signal) => {
+      console.log(`[backend] exited code=${code} signal=${signal}`)
+      backendProcess = null
+    })
+  } else {
+    // TODO: Add production backend launch (build and bundle backend code)
+    console.warn('[backend] not started in production build')
+  }
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -52,9 +81,10 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  startBackend()
   createWindow()
 
-  app.on('activate', function() {
+  app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -67,6 +97,16 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
+  }
+})
+
+app.on('before-quit', () => {
+  if (backendProcess) {
+    try {
+      backendProcess.kill()
+    } catch {
+      console.log(':skull:')
+    }
   }
 })
 
