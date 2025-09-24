@@ -2,6 +2,7 @@ const isElectron = import.meta.env.VITE_TARGET === 'electron'
 
 import Versions from './components/Versions'
 import electronLogo from './assets/electron.svg'
+import { Button } from './components/ui/button'
 
 function App(): React.JSX.Element {
   const ipcHandle = (): void => {
@@ -19,6 +20,7 @@ function App(): React.JSX.Element {
         &nbsp;and <span className="ts">TypeScript</span>
       </div>
       <p className="text-red-600">I&apos;m running on {isElectron ? 'Electron' : 'Web'}</p>
+      <Button onMouseDown={() => alert("wazzap")}>hello</Button>
       <p className="tip">
         Please try pressing <code>F12</code> to open the devTool
       </p>

@@ -13,6 +13,9 @@
     "paths": {
       "@renderer/*": [
         "client-frontend/src/*"
+      ],
+      "@/*": [
+        "client-frontend/src/*"
       ]
     }
   }

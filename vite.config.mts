@@ -1,6 +1,8 @@
+import path from "path"
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 // Web-only Vite config; Electron uses electron.vite.config.ts
 export default defineConfig({
@@ -10,10 +12,14 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@renderer': resolve('client-frontend/src')
+      '@renderer': resolve('client-frontend/src'),
+      "@": path.resolve(__dirname, "./client-frontend/src")
     }
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    tailwindcss()
+  ],
   server: {
     port: 5173
   },
