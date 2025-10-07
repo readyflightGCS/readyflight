@@ -1,0 +1,212 @@
+:root {
+    --app-ui-dark: oklch(65.1% 0.006 286.286);
+    --app-ui: oklch(74.1% 0.006 286.286);
+    --app-ui-light: oklch(84.1% 0.006 286.286);
+    --app-accent: oklch(80.9% 0.105 251.813);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.app {
+    margin: 3em;
+    transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg);
+    background: #ddd;
+    width: 500pt;
+    height: 350pt;
+    border: 1px solid var(--app-ui);
+    border-radius: 5pt;
+    box-shadow: 0 20px 60px rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    transition: transform 300ms;
+}
+
+.app:hover {
+    transform: scale(1.02, 1.02) translateY(-10pt) perspective(1400px) rotate3d(0, 1, -0.3, -8deg);
+}
+
+.app-titlebar {
+    border-bottom: 1pt solid var(--app-ui);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.app-title {
+    padding-inline-start: 3pt;
+    font-size: 10pt;
+}
+
+.app-buttons {
+    display: flex;
+    flex-direction: row;
+    padding-inline-end: 3pt;
+}
+
+.app-btn {
+    stroke: none;
+    width: 10pt;
+    height: 10pt;
+}
+
+.app-minbtn {
+    fill: orange;
+}
+
+.app-maxbtn {
+    fill: green;
+}
+
+.app-closebtn {
+    fill: red;
+}
+
+.app-body {
+    /* Take up all available vertical space */
+    flex: auto;
+    display: grid;
+    grid-template-columns: 0.6fr 2fr;
+    grid-template-rows: 2fr 0.85fr;
+}
+
+.app-mission {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.app-tools {
+    border: 1.2pt solid var(--app-ui);
+    border-radius: 5pt;
+    margin: 3pt;
+}
+
+.app-tools-left {
+    padding-top: 4pt;
+    padding-left: 2pt;
+    padding-right: 2pt;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 2em;
+}
+
+
+.app-button {
+    margin: 3pt;
+    border: 1.5pt solid var(--app-ui);
+    border-radius: 3pt;
+}
+
+.app-short-button:hover, .app-long-button:hover {
+    background: var(--app-ui-light);
+    transition: background 50ms;
+}
+
+.app-solid {
+    background: var(--app-ui-light);
+}
+
+.app-solid:hover {
+    background: none;
+    transition: background 50ms;
+}
+
+.app-accent {
+    background: var(--app-accent);
+}
+
+.app-long-button {    
+    grid-column: 1 / 4;
+}
+
+.app-row-spacer {
+    grid-column: 1 / -1;
+}
+
+.app-long-list {
+    grid-column: 1 / 4 ;
+    grid-row: span 6;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 10pt;
+    padding: 4pt;
+}
+
+.app-tools-bottom {
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    padding: 2pt;
+    grid-template-columns: 1.5fr 2fr 2fr;
+    grid-template-rows: 1fr;
+}
+
+.app-pfd {
+    overflow: hidden;
+    height: 6.8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* https://stackoverflow.com/questions/3958463/centering-an-div-which-overflows-its-parent-within-another-centered-div */
+
+@keyframes rotate {
+    0% {
+        transform: rotate(-10deg);
+    }
+    100% {
+        transform: rotate(10deg);
+    }
+}
+
+.app-pfd-wrapper {
+    width: 100px;
+    height: 100px;
+    animation: ease-in-out rotate 3s infinite alternate;
+}
+
+.app-pfd-markings {
+    stroke: var(--app-ui-dark);
+}
+
+.app-telemetry {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.app-telemetry-entry {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10pt;
+    color: var(--app-ui-dark);
+}
+
+.app-mission-progress {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+.app-path {
+    fill: none;
+    stroke: var(--app-ui-dark);
+    margin: auto;
+}
+
+.app-airplane {
+    fill: var(--app-accent);
+    stroke: var(--app-ui-dark);
+}
+
+.app-airplane:hover {
+    fill: oklch(75.9% 0.105 251.813);
+    transition: fill 50ms;
+}

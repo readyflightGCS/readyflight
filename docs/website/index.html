@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./app.css">
+    <title>ReadyFlight</title>
+</head>
+
+<body>
+
+    <article>
+        <div class="content">
+            <h1>Ready<span id="text-flight"><i>Flight</i></span></h1>
+            <h3>The modern, cross-platform ground station</h3>
+            <ul>
+                <li>Plan missions with reusable components</li>
+                <li>View telemetry and mission progress in real time</li>
+                <li>Configure your UAV with mix-and-match parameter blocks</li>
+                <li>Run software in the loop simulations and tests </li>
+            </ul>
+            <h4><b>Coming soon!</b> Star our <a href="https://github.com/readyflightGCS">Github!</a></h4>
+        </div>
+    </article>
+
+    <div class="app-container">
+        <div class="app">
+            <div class="app-titlebar">
+                <div class="app-title">ReadyFlight v0.0.0 alpha</div>
+                <div class="app-buttons">
+                    <svg class="app-btn app-minbtn" viewBox="0 0 10 10">
+                        <circle cx="5" cy="5" r="3"></circle>
+                    </svg>
+                    <svg class="app-btn app-maxbtn" viewBox="0 0 10 10">
+                        <circle cx="5" cy="5" r="3"></circle>
+                    </svg>
+                    <svg class="app-btn app-closebtn" viewBox="0 0 10 10">
+                        <circle cx="5" cy="5" r="3"></circle>
+                    </svg>
+                </div>
+            </div>
+            <div class="app-body">
+                <div class="app-mission">
+                    <svg class="app-path" viewBox="30 0 360 210">
+                        <path class="app-trajectory"
+                            d="m117,108.45718c42.95238,-19.57143 150.66667,-46.90476 147.28571,-73.61905c-3.38095,-26.71429 -93.57143,-26.2381 -93,4c0.57143,30.2381 93.76191,38.23809 154.33333,64.28572c60.57143,26.04762 55.04762,55.76191 -4.76191,73.57143c-59.80952,17.80952 -158.19048,29.57143 -239.85714,1.71428c-81.66666,-27.85714 16.28572,-62.57143 15.61906,-62.17144 Z">
+                        </path>
+                        <path class="app-airplane" transform="rotate(7.00631, 138.814, 100.289)"
+                            d="m126.88389,98.44637l7.30318,9.80574l16.55695,-15.92531l-23.86013,6.11957z"></path>
+                    </svg>
+                </div>
+                <div class="app-tools app-tools-left">
+                    <div class="app-button app-long-button app-solid"></div>
+                    <div class="app-button app-short-button app-solid"></div>
+                    <div class="app-button app-short-button"></div>
+                    <div class="app-button app-short-button"></div>
+                    <div class="app-row-spacer"></div>
+                    <div class="app-button app-long-button"></div>
+                    <div class="app-button app-short-button"></div>
+                    <div class="app-button app-short-button app-solid"></div>
+                    <div class="app-button app-short-button"></div>
+                    <div class="app-button app-short-button app-solid"></div>
+                    <div class="app-button app-short-button"></div>
+                    <div class="app-button app-short-button"></div>
+                    <div class="app-row-spacer"></div>
+                    <div class="app-button app-long-list">
+                        <div></div>
+                        <div class="app-solid"></div>
+                        <div></div>
+                        <div class="app-solid"></div>
+                        <div></div>
+                        <div class="app-solid"></div>
+                        <div></div>
+                        <div class="app-solid"></div>
+                        <div></div>
+                        <div class="app-solid"></div>
+                        <div></div>
+                        <div class="app-solid"></div>
+                    </div>
+
+                </div>
+                <div class="app-tools app-tools-bottom">
+                    <div class="app-button app-pfd">
+                        <div class="app-pfd-wrapper">
+                            <svg class="app-pfd-markings" viewBox="0 0 100 100">
+                                <path d="M0,50 H100"></path>
+                                <path d="M25,20 h50"></path>
+                                <path d="M25,30 h50"></path>
+                                <path d="M25,40 h50"></path>
+                                <path d="M25,60 h50"></path>
+                                <path d="M25,70 h50"></path>
+                                <path d="M25,80 h50"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="app-telemetry">
+                        <div class="app-row-spacer"></div>
+                        <div class="app-telemetry-entry">23 m/s</div>
+                        <div class="app-telemetry-entry">20 m</div>
+                        <div class="app-telemetry-entry">25 m/s</div>
+                        <div class="app-telemetry-entry">24.4 V</div>
+                    </div>
+
+                    <div class="app-mission-progress">
+                        <div class="app-button app-long-button app-solid"></div>
+                        <div class="app-button app-long-button"></div>
+                        <div class="app-button app-long-button"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
