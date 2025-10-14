@@ -10,7 +10,7 @@ function startBackend(): void {
   if (backendProcess) return
   if (is.dev) {
     // Run the TypeScript backend directly with Bun in development
-    backendProcess = spawn('bun', ['client-backend/src/index.ts'], {
+    backendProcess = spawn('bun', ['../client-backend/src/index.ts'], {
       cwd: process.cwd(),
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe']
@@ -41,7 +41,7 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
+      preload: join(__dirname, '../preload/index.cjs'),
       sandbox: false
     }
   })

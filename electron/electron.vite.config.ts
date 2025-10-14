@@ -8,7 +8,7 @@ export default defineConfig({
   main: {
     build: {
       lib: {
-        entry: 'electron/main/index.ts',
+        entry: resolve(__dirname, 'main/index.ts'),
         formats: ['cjs']
       }
     },
@@ -17,26 +17,26 @@ export default defineConfig({
   preload: {
     build: {
       lib: {
-        entry: 'electron/preload/index.ts',
+        entry: resolve(__dirname, 'preload/index.ts'),
         formats: ['cjs']
       }
     },
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {
-    root: 'client-frontend',
+    root: resolve(__dirname, '../client-frontend'),
     define: {
       'import.meta.env.VITE_TARGET': JSON.stringify('electron')
     },
     build: {
       rollupOptions: {
-        input: resolve('client-frontend/index.html')
+        input: resolve(__dirname, '../client-frontend/index.html')
       }
     },
     resolve: {
       alias: {
-        '@renderer': resolve('client-frontend/src'),
-        "@": path.resolve(__dirname, "./client-frontend/src")
+        '@renderer': resolve(__dirname, '../client-frontend/src'),
+        "@": path.resolve(__dirname, "../client-frontend/src")
       }
     },
     plugins: [
@@ -45,3 +45,4 @@ export default defineConfig({
     ]
   }
 })
+
