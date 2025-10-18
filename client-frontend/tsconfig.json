@@ -2,12 +2,14 @@
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@renderer/*": ["*"]
+      "@/*": ["./src/*"],
+      "@renderer/*": ["./src/*"],
+      "@libs/*": ["../libs/*.ts"]
     }
   },
+  "references": [{ "path": "../libs" }],
   "include": [
     "src/env.d.ts",
     "src/**/*",

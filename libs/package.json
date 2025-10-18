@@ -1,0 +1,15 @@
+{
+  "name": "@libs/world",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "bunx tsc -p tsconfig.json"
+  }
+}

@@ -13,7 +13,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@renderer': resolve('src'),
-      "@": path.resolve(__dirname, "./src")
+      "@": path.resolve(__dirname, "./src"),
+      "@libs": path.resolve(__dirname, "../libs")
     }
   },
   plugins: [

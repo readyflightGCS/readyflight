@@ -1,0 +1,9 @@
+# bunfig.toml
+[workspace]
+members = [
+  "libs/*",
+  "client-frontend",
+  "client-backend",
+  "electron",
+  "docs"
+]
