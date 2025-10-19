@@ -36,6 +36,7 @@ function toKey(loc: LatLng): string {
  * @returns Promise resolving to array of elevation data or null if failed
  */
 export async function getTerrain(locs: LatLng[]): Promise<LatLngAlt[] | null> {
+  //TODO: decouple getting terrain and caching
   if (locs.length === 0) return [];
 
   const extrapolatedLocs = new Set<string>();
@@ -157,6 +158,7 @@ export async function fetchTerrain(locs: LatLng[]): Promise<LatLngAlt[] | null> 
  * @returns Interpolated altitude value
  */
 export function interpolateAlt(a: LatLngAlt, b: LatLngAlt, c: LatLngAlt, d: LatLngAlt, target: LatLng): number {
+  // TODO switch to bilinear interpolation
   const distA = haversineDistance(target, a);
   if (distA == 0) return a.alt
   const distB = haversineDistance(target, b);

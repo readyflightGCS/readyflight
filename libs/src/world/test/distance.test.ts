@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { haversineDistance, worldBearing } from "@libs/world/distance";
+import { angleBetweenPoints, gradient, haversineDistance, worldBearing } from "@libs/world/distance";
 import { avgLatLng } from "@libs/world/latlng";
 
 test("world distance better func", () => {
@@ -23,4 +23,73 @@ test("Average LatLng", () => {
   expect(avgLatLng([])).toBeUndefined()
 
   expect(avgLatLng([{ lat: 10, lng: 10 }, { lat: -10, lng: 10 }, { lat: -10, lng: -10 }, { lat: 10, lng: -10 }])).toEqual({ lat: 0, lng: 0 })
+})
+
+test("angle between points 90º", () => {
+  const p1 = { lat: 0, lng: 1 }
+  const p2 = { lat: 0, lng: 0 }
+  const p3 = { lat: 1, lng: 0 }
+  expect(angleBetweenPoints(p1, p2, p3)).toBeCloseTo(90)
+})
+
+test("angle between points 0º", () => {
+  const p1 = { lat: 0, lng: 1 }
+  const p2 = { lat: 0, lng: 0 }
+  const p3 = { lat: 0, lng: 1 }
+  expect(angleBetweenPoints(p1, p2, p3)).toBeCloseTo(0)
+})
+
+test("angle between points p1=p2", () => {
+  const p1 = { lat: 0, lng: 0 }
+  const p2 = { lat: 0, lng: 0 }
+  const p3 = { lat: 1, lng: 0 }
+  expect(angleBetweenPoints(p1, p2, p3)).toBeUndefined()
+})
+
+test("angle between points same p2=p3", () => {
+  const p1 = { lat: 0, lng: 1 }
+  const p2 = { lat: 0, lng: 0 }
+  const p3 = { lat: 0, lng: 0 }
+  expect(angleBetweenPoints(p1, p2, p3)).toBeUndefined()
+})
+
+test("angle between points same p1=p2=p3", () => {
+  const p1 = { lat: 0, lng: 0 }
+  const p2 = { lat: 0, lng: 0 }
+  const p3 = { lat: 0, lng: 0 }
+  expect(angleBetweenPoints(p1, p2, p3)).toBeUndefined()
+})
+
+test("angle between points left 90", () => {
+  const p1 = { lat: 0, lng: 1 }
+  const p2 = { lat: 0, lng: 0 }
+  const p3 = { lat: -1, lng: 0 }
+  expect(angleBetweenPoints(p1, p2, p3)).toBeCloseTo(270)
+})
+
+test("angle between points left 90", () => {
+  const p1 = { lat: 0, lng: 90 }
+  const p2 = { lat: 0, lng: 0 }
+  const p3 = { lat: 90, lng: 0 }
+  expect(angleBetweenPoints(p1, p2, p3)).toBeCloseTo(90)
+})
+
+test("gradient level", () => {
+  expect(gradient(10, 10, 10)).toBe(0)
+})
+
+test("gradient slope down", () => {
+  expect(gradient(10, 10, 0)).toBe(-45)
+})
+
+test("gradient slope up", () => {
+  expect(gradient(10, 10, 20)).toBe(45)
+})
+
+test("gradient infinite slope up", () => {
+  expect(gradient(0, 10, 20)).toBe(90)
+})
+
+test("gradient infinite slope down", () => {
+  expect(gradient(0, 10, 0)).toBe(-90)
 })

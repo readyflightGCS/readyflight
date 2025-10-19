@@ -1,3 +1,5 @@
+import { XY } from "./types";
+
 /**
  * Calculate the dot product of two vectors
  * @param {number[]} v1 - The first vector
@@ -6,6 +8,10 @@
  */
 export function dotProduct(v1: [number, number, number], v2: [number, number, number]): number {
   return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+}
+
+export function crossProduct(p1: XY, p2: XY, p3: XY) {
+  return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
 }
 
 /**
