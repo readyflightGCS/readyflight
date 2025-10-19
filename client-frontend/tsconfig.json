@@ -6,14 +6,15 @@
     "paths": {
       "@/*": ["./src/*"],
       "@renderer/*": ["./src/*"],
-      "@libs/*": ["../libs/*.ts"]
+      "@libs/*": ["../libs/src/*.ts"]
     }
   },
-  "references": [{ "path": "../libs" }],
+  "references": [{ "path": "../libs/src" }],
   "include": [
     "src/env.d.ts",
     "src/**/*",
     "src/**/*.tsx",
-    "../electron/preload/*.d.ts"
+    "../electron/preload/*.d.ts",
+    "../libs/src"
   ]
 }

@@ -16,7 +16,7 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@libs/*": ["libs/*/index.ts"]
+      "@libs/*": ["libs/src/*"]
     }
   }
 }
