@@ -10,6 +10,13 @@ export function dotProduct(v1: [number, number, number], v2: [number, number, nu
   return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 }
 
+/**
+ * Calculate the cross product of three points
+ * @param {XY} p1 - The first vector
+ * @param {XY} p2 - The second vector
+ * @param {XY} p3 - The third vector
+ * @returns {number} The dot product of the two vectors
+ */
 export function crossProduct(p1: XY, p2: XY, p3: XY) {
   return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x)
 }

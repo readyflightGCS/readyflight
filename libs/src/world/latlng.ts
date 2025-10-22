@@ -1,14 +1,24 @@
-import { Command, LatLngAltCommand, LatLngCommand } from "@libs/commands/commands";
+// import { Command, LatLngAltCommand, LatLngCommand } from "@libs/commands/commands";
 
 export type LatLng = {
-  lat: number,
-  lng: number
+  lat: number, // the Y axis
+  lng: number // the X axis
 }
 
 export type LatLngAlt = {
   lat: number,
   lng: number,
   alt: number
+}
+
+/*
+ * Check if two positions are equal, doesn't check modulo around the earth; possible TODO
+ * @param {LatLng} pos1 - the first position
+ * @param {LatLng} pos2 - the second position
+ * @returns {boolean} - If the positions are equal
+ */
+export function latLngEqual(pos1: LatLng | LatLngAlt, pos2: LatLng | LatLngAlt): boolean {
+  return pos1.lat == pos2.lat && pos1.lng == pos2.lng
 }
 
 /* get the latitude and longitude of a mission command

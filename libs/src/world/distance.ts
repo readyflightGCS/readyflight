@@ -1,6 +1,5 @@
-import { deg2rad, mod2pi, rad2deg } from "@libs/math/geometry";
-import { angleBetweenVectors } from "@libs/math/vector";
-import { LatLng } from "./latlng";
+import { deg2rad, mod2pi, modf, rad2deg } from "@libs/math/geometry";
+import { LatLng, latLngEqual } from "./latlng";
 
 /*
  * Calculate the distance between two points on a globe
@@ -29,23 +28,21 @@ export function haversineDistance(pos1: LatLng, pos2: LatLng): number {
  * @param {LatLng} pos3 - The third point
  * @returns {number} The angle between the three points in degrees
  */
-export function angleBetweenPoints(pos1: LatLng, pos2: LatLng, pos3: LatLng): number {
-  const v1 = latLngToVector(pos1);
-  const v2 = latLngToVector(pos2);
-  const v3 = latLngToVector(pos3);
+export function bearingBetweenPoints(pos1: LatLng, pos2: LatLng, pos3: LatLng): number | undefined {
+  if (latLngEqual(pos1, pos2) || latLngEqual(pos2, pos3)) {
+    return undefined
+  }
+  const a2b = worldBearing(pos1, pos2) as number
+  const b2c = worldBearing(pos2, pos3) as number
 
-  const vectorA: [number, number, number] = [v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2]];
-  const vectorB: [number, number, number] = [v3[0] - v2[0], v3[1] - v2[1], v3[2] - v2[2]];
-
-  const angleRad = angleBetweenVectors(vectorA, vectorB);
-
-  return angleRad * (180 / Math.PI);
+  return modf(b2c - a2b, 360)
 }
 
 /**
- * Convert a latitude/longitude coordinate to a 3D Cartesian vector
+ * Convert a latitude/longitude coordinate to a 3D Cartesian vector 
+ * TODO: rename/fix for proper spheroid units/calculations
  * @param {LatLng} pos - The latitude/longitude coordinate to convert
- * @returns {[number, number, number]} A tuple containing the x, y, z coordinates of the vector
+ * @returns {[number, number, number]} A tuple containing the x, y, z coordinates of the vector normalised to 1
  */
 export function latLngToVector(pos: LatLng): [number, number, number] {
   const latRad = deg2rad(pos.lat);
@@ -90,7 +87,14 @@ export function formatDistance(distanceInMeters: number): string {
   }
 }
 
-export function worldBearing(a: LatLng, b: LatLng): number {
+/*
+ * The Bearing between two points in degrees
+ */
+export function worldBearing(a: LatLng, b: LatLng): number | undefined {
+  if (latLngEqual(a, b)) {
+    return undefined
+  }
+
   const lat1 = deg2rad(a.lat)
   const lat2 = deg2rad(b.lat)
   const lon1 = deg2rad(a.lng)
@@ -102,11 +106,16 @@ export function worldBearing(a: LatLng, b: LatLng): number {
   const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLon);
 
   const initialBearing = Math.atan2(y, x); // Bearing in radians
-  const normalizedBearing = mod2pi(initialBearing); // Convert to degrees and normalize
 
-  return normalizedBearing;
+  return rad2deg(mod2pi(initialBearing))
 }
 
+/*
+ * Offset get a point offset from start by a distance and bearing in degrees
+ * @param {LatLng} start - the starting location
+ * @param {number} distance - the distance to offset
+ * @param {number} bearing - the bearing to offset in degrees from north, clockwise
+ */
 export function worldOffset(start: LatLng, distance: number, bearing: number): LatLng {
   if (distance === 0) return start;
 
@@ -120,12 +129,12 @@ export function worldOffset(start: LatLng, distance: number, bearing: number): L
   // Calculate new latitude
   const lat2 = Math.asin(
     Math.sin(lat1) * Math.cos(angularDistance) +
-    Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing)
+    Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(deg2rad(bearing))
   );
 
   // Calculate new longitude
   const lon2 = lon1 + Math.atan2(
-    Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(lat1),
+    Math.sin(deg2rad(bearing)) * Math.sin(angularDistance) * Math.cos(lat1),
     Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2)
   );
 
@@ -141,12 +150,11 @@ export function worldOffset(start: LatLng, distance: number, bearing: number): L
     finalLon = lon2 + Math.PI;
   }
 
-  // Normalize longitude to [-π, π]
-  while (finalLon > Math.PI) finalLon -= 2 * Math.PI;
-  while (finalLon < -Math.PI) finalLon += 2 * Math.PI;
+  let lng = rad2deg(mod2pi(finalLon + Math.PI) - Math.PI)
+  if (lng == -180) { lng = 180 }
 
   return {
-    lat: rad2deg(finalLat),
-    lng: rad2deg(finalLon)
+    lat: rad2deg(mod2pi(finalLat + Math.PI) - Math.PI),
+    lng
   };
 }

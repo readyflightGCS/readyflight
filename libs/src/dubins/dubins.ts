@@ -175,10 +175,6 @@ export function DubinsBetweenDiffRad(a: XY, b: XY, thetaA: number, thetaB: numbe
 
   sections.sort((a, b) => segmentLength(a.turnA) + segmentLength(a.straight) + segmentLength(a.turnB) - segmentLength(b.turnA) - segmentLength(b.straight) - segmentLength(b.turnB))
   if (sections.length == 0) {
-    console.log(thetaA, thetaB)
-    console.log(dirA, dirB)
-  }
-  if (sections.length == 0) {
     return {
       error: new Error("No path found"),
       data: null
