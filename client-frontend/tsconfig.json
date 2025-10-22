@@ -2,16 +2,19 @@
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["*"],
-      "@renderer/*": ["*"]
+      "@/*": ["./src/*"],
+      "@renderer/*": ["./src/*"],
+      "@libs/*": ["../libs/src/*.ts"]
     }
   },
+  "references": [{ "path": "../libs/src" }],
   "include": [
     "src/env.d.ts",
     "src/**/*",
     "src/**/*.tsx",
-    "../electron/preload/*.d.ts"
+    "../electron/preload/*.d.ts",
+    "../libs/src"
   ]
 }

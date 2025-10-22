@@ -1,11 +1,22 @@
 {
   "files": [],
   "references": [
-    { "path": "electron/tsconfig.json" },
-    { "path": "client-frontend/tsconfig.json" },
-    { "path": "client-backend/tsconfig.json" }
+    { "path": "./libs" },
+    { "path": "./client-frontend" },
+    { "path": "./client-backend" },
+    { "path": "./electron" },
+    { "path": "./docs" }
   ],
   "compilerOptions": {
-    "composite": false
+    "composite": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "skipLibCheck": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@libs/*": ["libs/src/*"]
+    }
   }
 }
