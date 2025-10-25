@@ -110,7 +110,7 @@ export default function NumericInput({
         onBlur={handleBlur}
         min={min || -Infinity}
         max={max || Infinity}
-        className={`bg-card cursor-move ${className} ${internalValue === null ? 'text-center' : ''}`}
+        className={`bg-card rounded-lg pl-2 border-2 cursor-move text-black ${className} ${internalValue === null ? 'text-center' : ''}`}
       />
       {isDragging && (
         <div className="fixed inset-0 z-50 cursor-move" />
