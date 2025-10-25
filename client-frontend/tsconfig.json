@@ -9,7 +9,7 @@
       "@libs/*": ["../libs/src/*.ts"]
     }
   },
-  "references": [{ "path": "../libs/src" }],
+  "references": [{ "path": "../libs" }],
   "include": [
     "src/env.d.ts",
     "src/**/*",
