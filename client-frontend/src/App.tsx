@@ -3,6 +3,8 @@ const isElectron = import.meta.env.VITE_TARGET === 'electron'
 import Versions from './components/Versions'
 import electronLogo from './assets/electron.svg'
 import { Button } from './components/ui/button'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+
 
 function App(): React.JSX.Element {
   const ipcHandle = (): void => {
@@ -13,29 +15,17 @@ function App(): React.JSX.Element {
 
   return (
     <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="text-red-600">I&apos;m running on {isElectron ? 'Electron' : 'Web'}</p>
-      <Button onMouseDown={() => alert("wazzap")}>hello</Button>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
-      </div>
+      <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[51.505, -0.09]}>
+          <Popup>
+            A pretty CSS3 popup. <br /> Easily customizable.
+          </Popup>
+        </Marker>
+      </MapContainer>
       {isElectron ? <Versions /> : null}
     </>
   )
