@@ -12,6 +12,8 @@ body {
   height: 100vh;
 }
 
+.leaflet-control-container { position: absolute; right: 56px } 
+
 code {
   font-weight: 600;
   padding: 3px 5px;
