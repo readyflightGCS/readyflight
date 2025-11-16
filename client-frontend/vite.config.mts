@@ -18,7 +18,12 @@ export default defineConfig({
     }
   },
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: ['babel-plugin-react-compiler'],
+      }
+    },
+    ),
     tailwindcss()
   ],
   server: {
@@ -26,6 +31,6 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: false
   }
 })

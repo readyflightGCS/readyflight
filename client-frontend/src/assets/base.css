@@ -60,14 +60,6 @@
   --sidebar-ring: oklch(0.704 0.04 256.788);
 }
 
-:root {
-  --color-background: var(--ev-c-black);
-  --color-background-soft: var(--ev-c-black-soft);
-  --color-background-mute: var(--ev-c-black-mute);
-
-  --color-text: var(--ev-c-text-1);
-}
-
 *,
 *::before,
 *::after {
