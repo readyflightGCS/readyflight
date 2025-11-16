@@ -1,10 +1,10 @@
 const isElectron = import.meta.env.VITE_TARGET === 'electron'
 
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
-import { Button } from './components/ui/button'
+import SideBar from '@/components/navigation/sidebar'
+import SidePanel from './components/navigation/sidePanel/sidePanel'
+import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
 
-function App(): React.JSX.Element {
+export default function App(): React.JSX.Element {
   const ipcHandle = (): void => {
     if (isElectron) {
       window.electron.ipcRenderer.send('ping')
@@ -12,33 +12,27 @@ function App(): React.JSX.Element {
   }
 
   return (
-    <>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="text-red-600">I&apos;m running on {isElectron ? 'Electron' : 'Web'}</p>
-      <Button onMouseDown={() => alert("wazzap")}>hello</Button>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
+    <div className="flex flex-cols-2 h-full w-full bg-gray-200 text-foreground">
+      <SideBar />
+      <div className="flex-grow relative">
+
+        {/* the overlay div */}
+        <div className="flex h-full absolute inset-0 ">
+          <div>
+            <SidePanel />
+          </div>
+          <div className="flex-grow flex flex-col">
+            <div className="flex-grow">
+            </div>
+            <BottomPanel />
+          </div>
         </div>
-        <div className="action">
-          <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
-          </a>
-        </div>
+
+        { /*map component goes here (temporary grid for now :))*/}
+        <div className="w-full h-full bg-[linear-gradient(90deg,#c2c2c2_1px,transparent_1px),linear-gradient(#c2c2c2_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+        { /* or a gradient to test overlaying stuff */}
+        {/*<div className="w-full h-full bg-[radial-gradient(circle_at_top_left,#ff8a80,#80d8ff)]"></div>*/}
       </div>
-      {isElectron ? <Versions /> : null}
-    </>
+    </div>
   )
 }
-
-export default App
