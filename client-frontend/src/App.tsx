@@ -1,6 +1,6 @@
 const isElectron = import.meta.env.VITE_TARGET === 'electron'
 
-import Map from "./components/ui/map"
+import Map from "./components/map/map"
 
 import SideBar from '@/components/navigation/sidebar'
 import SidePanel from './components/navigation/sidePanel/sidePanel'
