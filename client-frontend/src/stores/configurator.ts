@@ -2,7 +2,8 @@ import { create } from 'zustand'
 
 export const ConfiguratorTabs = [
   "Telemetry",
-  "Mission"
+  "Mission",
+  "Settings"
 ] as const
 
 export type ConfiguratorTab = typeof ConfiguratorTabs[number]
