@@ -1,10 +1,7 @@
-import { useEditorStore } from "@/stores/configurator"
-
 export default function Settings() {
-  const { currentTab } = useEditorStore()
   return (
     <div>
-      I am settings :) in bottom pannel
+      I am settings :) in bottom panel
     </div>
   )
 }

@@ -15,7 +15,7 @@ interface State {
   setSidePanelOpen: (state: boolean) => void
 }
 
-export const useEditorStore = create<State>((set) => ({
+export const useEditor = create<State>((set) => ({
   sidePanelOpen: true,
   currentTab: "Telemetry",
   setTab: (tab: ConfiguratorTab) => set({ currentTab: tab }),

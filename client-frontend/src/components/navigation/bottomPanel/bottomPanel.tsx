@@ -1,10 +1,10 @@
-import { useEditorStore } from "@/stores/configurator"
+import { useEditor } from "@/stores/configurator"
 import Settings from "./settings"
 import Telemetry from "./telemetry"
 import Mission from "./mission"
 export default function BottomPanel() {
 
-  const currentTab = useEditorStore((state) => state.currentTab)
+  const currentTab = useEditor((state) => state.currentTab)
 
   return (
     <div className="px-8 pb-2 w-full">

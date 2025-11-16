@@ -1,11 +1,13 @@
-import { useEditorStore } from "@/stores/configurator"
+import { useEditor } from "@/stores/configurator"
 import Settings from "./settings"
 import Telemetry from "./telemetry"
 import Mission from "./mission"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 export default function SidePanel() {
 
-  const { currentTab, sidePanelOpen, setSidePanelOpen } = useEditorStore()
+  const currentTab = useEditor(state => state.currentTab)
+  const sidePanelOpen = useEditor(state => state.sidePanelOpen)
+  const setSidePanelOpen = useEditor(state => state.setSidePanelOpen)
 
   return (
     <div className="h-full flex items-center">

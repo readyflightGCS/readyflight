@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ConfiguratorTab, useEditorStore } from "@/stores/configurator";
+import { ConfiguratorTab, useEditor } from "@/stores/configurator";
 import { Cog, LucideIcon, MapPin, Satellite } from "lucide-react";
 
 const tabs: {
@@ -11,8 +11,8 @@ const tabs: {
   ]
 
 export default function SideBar() {
-  const currentTab = useEditorStore((state) => state.currentTab)
-  const setTab = useEditorStore((state) => state.setTab)
+  const currentTab = useEditor((state) => state.currentTab)
+  const setTab = useEditor((state) => state.setTab)
 
   return (
     <div className="flex flex-col h-full bg-sidebar w-20">
