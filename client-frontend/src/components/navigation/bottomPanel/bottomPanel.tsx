@@ -4,7 +4,7 @@ import Telemetry from "./telemetry"
 import Mission from "./mission"
 export default function BottomPanel() {
 
-  const { currentTab } = useEditorStore()
+  const currentTab = useEditorStore((state) => state.currentTab)
 
   return (
     <div className="px-8 pb-2 w-full">
