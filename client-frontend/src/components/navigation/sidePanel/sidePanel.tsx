@@ -11,7 +11,7 @@ export default function SidePanel() {
     <div className="h-full flex items-center">
       {sidePanelOpen ?
         (
-          <div className="h-full w-60 bg-background">
+          <div className="h-full w-60 bg-background p-2">
             {
               (() => {
                 switch (currentTab) {

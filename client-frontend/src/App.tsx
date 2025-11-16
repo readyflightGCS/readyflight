@@ -12,7 +12,7 @@ export default function App(): React.JSX.Element {
   }
 
   return (
-    <div className="flex flex-cols-2 h-full w-full bg-gray-200">
+    <div className="flex flex-cols-2 h-full w-full bg-gray-200 text-foreground">
       <SideBar />
       <div className="flex-grow relative">
 

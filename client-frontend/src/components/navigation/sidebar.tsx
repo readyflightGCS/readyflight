@@ -28,8 +28,8 @@ export default function SideBar() {
 export function Item({ name, Icon, onClick, active }: { name: string, Icon: LucideIcon, onClick: () => void, active: boolean }) {
   return (
     <button name={name} className="p-2" onMouseDown={onClick}>
-      <div className={cn("rounded-lg", active ? "bg-black" : "bg-white")}>
-        <Icon className={cn("w-full h-full p-2", active ? "text-accent" : "text-black")} />
+      <div className={cn("rounded-lg", active ? "bg-foreground" : "bg-background")}>
+        <Icon className={cn("w-full h-full p-2", active ? "text-accent" : "text-foreground")} />
       </div>
     </button >
 
