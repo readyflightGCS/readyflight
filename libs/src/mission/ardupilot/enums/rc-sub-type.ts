@@ -1,0 +1,6 @@
+export enum RcSubType {
+	RC_SUB_TYPE_SPEKTRUM_DSM2 = 0, // Spektrum DSM2
+	RC_SUB_TYPE_SPEKTRUM_DSMX = 1, // Spektrum DSMX
+	RC_SUB_TYPE_SPEKTRUM_DSMX8 = 2, // Spektrum DSMX8
+	RC_SUB_TYPE_ENUM_END = 3, // 
+}
