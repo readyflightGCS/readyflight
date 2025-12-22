@@ -43,4 +43,3 @@ export type SetServo = {
 }
 
 export type RFCommand = DubinsPath | Group | Waypoint | Takeoff | Land | SetServo
-

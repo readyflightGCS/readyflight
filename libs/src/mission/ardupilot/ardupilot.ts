@@ -29,10 +29,9 @@ export type ICommand<T extends CommandName> = {
   autocontinue: number
   params: CommandParams<T>
 }
-
+//
 // generic command type
 export type MavCommand = { [K in CommandName]: ICommand<K> }[CommandName]
-
 
 
 

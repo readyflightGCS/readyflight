@@ -4,7 +4,7 @@ import { useThemeStore } from "@/stores/theme";
 import { Moon, Sun } from "lucide-react";
 
 export default function Settings() {
-  const { theme, setTheme } = useThemeStore();
+  const { setTheme } = useThemeStore();
   return (
     <div>
       <p>

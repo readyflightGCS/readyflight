@@ -1,13 +1,9 @@
 import { LatLng } from "@libs/world/latlng";
-import { CommandDescription } from "./dialectCommand"
 import { Group, RFCommand } from "./RFCommands"
+import type { BaseDialectCommand } from "./dialect";
 
 
-
-
-
-
-export class Mission<DialectCommand extends CommandDescription> {
+export class Mission<DialectCommand extends BaseDialectCommand> {
 
   private collection: Map<string, (RFCommand | DialectCommand)[]>
   private referencePoint: LatLng
@@ -57,11 +53,12 @@ export class Mission<DialectCommand extends CommandDescription> {
   pushToMission(missionName: string, waypoint: RFCommand | DialectCommand) {
     const mission = this.collection.get(missionName)
     if (!mission) throw new MissingMission(missionName)
-    if (waypoint.type == "Collection") {
-      if (this.contains(waypoint.name, missionName)) {
+    // Prevent recursive group references; only RF Group can be recursive.
+    if ((waypoint as RFCommand).type === "Group") {
+      const group = waypoint as Group
+      if (this.contains(group.name, missionName)) {
         throw new RecursiveMission()
       }
-
     }
     mission.push(waypoint)
   }
