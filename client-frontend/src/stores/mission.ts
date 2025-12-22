@@ -1,13 +1,21 @@
 import { create } from 'zustand'
 
 import { ardupilot, MavCommand } from '@libs/mission/ardupilot/ardupilot'
-import { Dialect } from '@libs/mission/dialect'
 import { Mission } from '@libs/mission/mission'
 import { RFCommand } from '@libs/mission/RFCommands'
 import { LatLng } from '@libs/world/latlng'
+import { Dialect } from '@libs/mission/dialect'
+
+export const tools = [
+  { name: "Takeoff" },
+  { name: "Waypoint" },
+  { name: "Payload" },
+  { name: "Land" }
+]
 
 type ArdupilotState = {
   dialectId: 'ardupilot'
+  tool: typeof tools[number]["name"]
   dialect: Dialect<MavCommand>
   mission: Mission<MavCommand>
 }
@@ -23,6 +31,7 @@ export type DialectCommand =
 type Actions = {
   switchDialect: (id: DialectId) => void
   addCommand: (cmd: DialectCommand) => void
+  setTool: (tool: typeof tools[number]["name"]) => void
 }
 
 const createDialectState = (id: DialectId, referencePoint: LatLng): DialectState => {
@@ -30,6 +39,7 @@ const createDialectState = (id: DialectId, referencePoint: LatLng): DialectState
     case 'ardupilot':
     default:
       return {
+        tool: "Takeoff",
         dialectId: 'ardupilot',
         dialect: ardupilot,
         mission: new Mission<MavCommand>(referencePoint),
@@ -51,4 +61,7 @@ export const useMission = create<DialectState & Actions>((set, get) => ({
     cloned.pushToMission('Main', cmd)
     set({ mission: cloned })
   },
+  setTool: (tool) => {
+    set({ tool: tool })
+  }
 }))

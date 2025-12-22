@@ -4,10 +4,9 @@ import { useMission } from "@/stores/mission";
 export default function Mission() {
   const a = useMission()
   const commands = a.mission.flatten("Main")
-  console.log(commands)
   return (
     <div>
-      <Button onClick={() => { console.log("adding"); a.addCommand({ type: "Waypoint", latitude: -3, longitude: 52, altitude: 10 }) }}>Add</Button>
+      <Button onClick={() => { a.addCommand({ type: "Waypoint", latitude: -3, longitude: 52, altitude: 10 }) }}>Add</Button>
       {commands.map((x) => {
         return (
           <div>{x.type}
