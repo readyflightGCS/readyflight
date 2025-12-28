@@ -16,6 +16,7 @@ export const tools = [
 type ArdupilotState = {
   dialectId: 'ardupilot'
   tool: typeof tools[number]["name"]
+  currentSubMission: string
   dialect: Dialect<MavCommand>
   mission: Mission<MavCommand>
 }
@@ -40,6 +41,7 @@ const createDialectState = (id: DialectId, referencePoint: LatLng): DialectState
     default:
       return {
         tool: "Takeoff",
+        currentSubMission: "Main",
         dialectId: 'ardupilot',
         dialect: ardupilot,
         mission: new Mission<MavCommand>(referencePoint),
