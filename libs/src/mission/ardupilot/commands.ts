@@ -1,13 +1,14 @@
-import { CommandDescription } from "../mission";
+import { DialectCommand } from "@libs/commands/command";
 
 export const mavCmds = [{
   value: 16,
-  name: "MAV_CMD_NAV_WAYPOINT",
+  type: "D_MAV_CMD_NAV_WAYPOINT",
+  label: "Waypoint",
   description: "Navigate to waypoint. This is intended for use in missions (for guided commands outside of missions use MAV_CMD_DO_REPOSITION).",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Hold",
     description: "Hold time. (ignored by fixed wing, time to stay at waypoint for rotary wing)",
     units: "s",
@@ -17,7 +18,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Accept Radius",
     description: "Acceptance radius (if the sphere with this radius is hit, the waypoint counts as reached)",
     units: "m",
@@ -27,7 +28,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Pass Radius",
     description: "0 to pass through the WP, if &gt; 0 radius to pass by WP. Positive value for clockwise orbit, negative value for counter-clockwise orbit. Allows trajectory control.",
     units: "m",
@@ -37,7 +38,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Yaw",
     description: "Desired yaw angle at waypoint (rotary wing). NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
     units: "deg",
@@ -47,7 +48,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -57,7 +58,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -67,7 +68,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Altitude",
     units: "m",
@@ -79,12 +80,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 17,
-  name: "MAV_CMD_NAV_LOITER_UNLIM",
+  label: "Loiter Unlimited",
+  type: "D_MAV_CMD_NAV_LOITER_UNLIM",
   description: "Loiter around this waypoint an unlimited amount of time",
   hasLocation: true,
   isDestination: true,
   parameters: [null, null, {
-    index: 3,
+    parameterType: "number",
     label: "Radius",
     description: "Loiter radius around waypoint for forward-only moving vehicles (not multicopters). If positive loiter clockwise, else counter-clockwise",
     units: "m",
@@ -94,7 +96,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-      index: 4,
+      parameterType: "number",
       label: "Yaw",
       description: "Desired yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
       units: "deg",
@@ -104,7 +106,7 @@ export const mavCmds = [{
       default: null,
       options: [],
     }, {
-      index: 5,
+      parameterType: "number",
       label: "Latitude",
       description: "Latitude",
       units: "",
@@ -114,7 +116,7 @@ export const mavCmds = [{
       default: null,
       options: [],
     }, {
-      index: 6,
+      parameterType: "number",
       label: "Longitude",
       description: "Longitude",
       units: "",
@@ -124,7 +126,7 @@ export const mavCmds = [{
       default: null,
       options: [],
     }, {
-      index: 7,
+      parameterType: "number",
       label: "Altitude",
       description: "Altitude",
       units: "m",
@@ -136,12 +138,13 @@ export const mavCmds = [{
     }],
 }, {
   value: 18,
-  name: "MAV_CMD_NAV_LOITER_TURNS",
+  label: "Loiter Turns",
+  type: "D_MAV_CMD_NAV_LOITER_TURNS",
   description: "Loiter around this waypoint for X turns",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Turns",
     description: "Number of turns.",
     units: "",
@@ -151,7 +154,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-    index: 3,
+    parameterType: "number",
     label: "Radius",
     description: "Radius around waypoint. If positive loiter clockwise, else counter-clockwise",
     units: "m",
@@ -161,7 +164,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "",
     description: "Forward moving aircraft this sets exit xtrack location: 0 for center of loiter wp, 1 for exit location. Else, this is desired yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
     units: "",
@@ -171,7 +174,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -181,7 +184,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -191,7 +194,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Altitude",
     units: "m",
@@ -203,12 +206,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 19,
-  name: "MAV_CMD_NAV_LOITER_TIME",
+  type: "D_MAV_CMD_NAV_LOITER_TIME",
+  label: "Loiter Time",
   description: "Loiter around this waypoint for X seconds",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Time",
     description: "Loiter time.",
     units: "s",
@@ -218,7 +222,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-    index: 3,
+    parameterType: "number",
     label: "Radius",
     description: "Radius around waypoint. If positive loiter clockwise, else counter-clockwise.",
     units: "m",
@@ -228,7 +232,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "",
     description: "Forward moving aircraft this sets exit xtrack location: 0 for center of loiter wp, 1 for exit location. Else, this is desired yaw angle.  NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
     units: "",
@@ -238,7 +242,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -248,7 +252,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -258,7 +262,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Altitude",
     units: "m",
@@ -270,19 +274,21 @@ export const mavCmds = [{
   }],
 }, {
   value: 20,
-  name: "MAV_CMD_NAV_RETURN_TO_LAUNCH",
+  type: "D_MAV_CMD_NAV_RETURN_TO_LAUNCH",
+  label: "Return To Launch",
   description: "Return to launch location",
   hasLocation: false,
   isDestination: false,
   parameters: [null, null, null, null, null, null, null],
 }, {
   value: 21,
-  name: "MAV_CMD_NAV_LAND",
+  type: "D_MAV_CMD_NAV_LAND",
+  label: "Land",
   description: "Land at location.",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Abort Alt",
     description: "Minimum target altitude if landing is aborted (0 = undefined/use system default).",
     units: "m",
@@ -292,7 +298,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Land Mode",
     description: "Precision land mode.",
     units: "",
@@ -302,7 +308,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-    index: 4,
+    parameterType: "number",
     label: "Yaw Angle",
     description: "Desired yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
     units: "deg",
@@ -312,7 +318,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude.",
     units: "",
@@ -322,7 +328,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude.",
     units: "",
@@ -332,7 +338,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Landing altitude (ground level in current frame).",
     units: "m",
@@ -344,12 +350,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 22,
-  name: "MAV_CMD_NAV_TAKEOFF",
+  type: "D_MAV_CMD_NAV_TAKEOFF",
+  label: "Takeoff",
   description: "Takeoff from ground / hand. Vehicles that support multiple takeoff modes (e.g. VTOL quadplane) should take off using the currently configured mode.",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Pitch",
     description: "Minimum pitch (if airspeed sensor present), desired pitch without sensor",
     units: "deg",
@@ -359,7 +366,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, null, {
-    index: 4,
+    parameterType: "number",
     label: "Yaw",
     description: "Yaw angle (if magnetometer present), ignored without magnetometer. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
     units: "deg",
@@ -369,7 +376,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -379,7 +386,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -389,7 +396,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Altitude",
     units: "m",
@@ -401,12 +408,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 30,
-  name: "MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT",
+  type: "D_MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT",
+  label: "Change Altitude",
   description: "Continue on the current course and climb/descend to specified altitude.  When the altitude is reached continue to the next command (i.e., don't proceed to the next command until the desired altitude is reached.",
   hasLocation: false,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Action",
     description: "Climb or Descend (0 = Neutral, command completes when within 5m of this command's altitude, 1 = Climbing, command completes when at or above this command's altitude, 2 = Descending, command completes when at or below this command's altitude.",
     units: "",
@@ -416,7 +424,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, null, null, null, null, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Desired altitude",
     units: "m",
@@ -428,12 +436,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 31,
-  name: "MAV_CMD_NAV_LOITER_TO_ALT",
+  type: "D_MAV_CMD_NAV_LOITER_TO_ALT",
+  label: "Loiter To altitude",
   description: "Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint.",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Heading Required",
     description: "Heading Required (0 = False)",
     units: "",
@@ -443,7 +452,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Radius",
     description: "Loiter radius around waypoint for forward-only moving vehicles (not multicopters). If positive loiter clockwise, negative counter-clockwise, 0 means no change to standard loiter.",
     units: "m",
@@ -453,7 +462,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-    index: 4,
+    parameterType: "number",
     label: "Xtrack Location",
     description: "Forward moving aircraft this sets exit xtrack location: 0 for center of loiter wp, 1 for exit location",
     units: "",
@@ -463,7 +472,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -473,7 +482,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -483,7 +492,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Altitude",
     units: "m",
@@ -495,12 +504,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 82,
-  name: "MAV_CMD_NAV_SPLINE_WAYPOINT",
+  type: "D_MAV_CMD_NAV_SPLINE_WAYPOINT",
+  label: "Spline Waypoint",
   description: "Navigate to waypoint using a spline path.",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Hold",
     description: "Hold time. (ignored by fixed wing, time to stay at waypoint for rotary wing)",
     units: "s",
@@ -510,7 +520,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, null, null, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude/X",
     description: "Latitude/X of goal",
     units: "",
@@ -520,7 +530,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude/Y",
     description: "Longitude/Y of goal",
     units: "",
@@ -530,7 +540,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude/Z",
     description: "Altitude/Z of goal",
     units: "",
@@ -542,12 +552,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 84,
-  name: "MAV_CMD_NAV_VTOL_TAKEOFF",
+  type: "D_MAV_CMD_NAV_VTOL_TAKEOFF",
+  label: "VTOL Takeoff",
   description: "Takeoff from ground using VTOL mode, and transition to forward flight with specified heading. The command should be ignored by vehicles that dont support both VTOL and fixed-wing flight (multicopters, boats,etc.).",
   hasLocation: true,
   isDestination: true,
   parameters: [null, {
-    index: 2,
+    parameterType: "number",
     label: "Transition Heading",
     description: "Front transition heading.",
     units: "",
@@ -557,7 +568,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-      index: 4,
+      parameterType: "number",
       label: "Yaw Angle",
       description: "Yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
       units: "deg",
@@ -567,7 +578,7 @@ export const mavCmds = [{
       default: null,
       options: [],
     }, {
-      index: 5,
+      parameterType: "number",
       label: "Latitude",
       description: "Latitude",
       units: "",
@@ -577,7 +588,7 @@ export const mavCmds = [{
       default: null,
       options: [],
     }, {
-      index: 6,
+      parameterType: "number",
       label: "Longitude",
       description: "Longitude",
       units: "",
@@ -587,7 +598,7 @@ export const mavCmds = [{
       default: null,
       options: [],
     }, {
-      index: 7,
+      parameterType: "number",
       label: "Altitude",
       description: "Altitude",
       units: "m",
@@ -599,12 +610,13 @@ export const mavCmds = [{
     }],
 }, {
   value: 85,
-  name: "MAV_CMD_NAV_VTOL_LAND",
+  type: "D_MAV_CMD_NAV_VTOL_LAND",
+  label: "VTOL Land",
   description: "Land using VTOL mode",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "",
     description: "See NAV_VTOL_LAND_OPTIONS enum",
     units: "",
@@ -614,7 +626,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-    index: 3,
+    parameterType: "number",
     label: "Approach Altitude",
     description: "Approach altitude (with the same reference as the Altitude field). NaN if unspecified.",
     units: "m",
@@ -624,7 +636,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Yaw",
     description: "Yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
     units: "deg",
@@ -634,7 +646,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -644,7 +656,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -654,7 +666,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Ground Altitude",
     description: "Altitude (ground level)",
     units: "m",
@@ -666,12 +678,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 92,
-  name: "MAV_CMD_NAV_GUIDED_ENABLE",
+  type: "D_MAV_CMD_NAV_GUIDED_ENABLE",
+  label: "Guided Enable",
   description: "hand control over to an external controller",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Enable",
     description: "On / Off (&gt; 0.5f on)",
     units: "",
@@ -683,12 +696,13 @@ export const mavCmds = [{
   }, null, null, null, null, null, null],
 }, {
   value: 93,
-  name: "MAV_CMD_NAV_DELAY",
+  type: "D_MAV_CMD_NAV_DELAY",
+  label: "Delay",
   description: "Delay the next navigation command a number of seconds or until a specified time",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Delay",
     description: "Delay (-1 to enable time-of-day fields)",
     units: "s",
@@ -698,7 +712,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Hour",
     description: "hour (24h format, UTC, -1 to ignore)",
     units: "",
@@ -708,7 +722,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Minute",
     description: "minute (24h format, UTC, -1 to ignore)",
     units: "",
@@ -718,7 +732,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Second",
     description: "second (24h format, UTC, -1 to ignore)",
     units: "",
@@ -730,12 +744,13 @@ export const mavCmds = [{
   }, null, null, null],
 }, {
   value: 94,
-  name: "MAV_CMD_NAV_PAYLOAD_PLACE",
+  type: "D_MAV_CMD_NAV_PAYLOAD_PLACE",
+  label: "Payload Place",
   description: "Descend and place payload. Vehicle moves to specified location, descends until it detects a hanging payload has reached the ground, and then releases the payload. If ground is not detected before the reaching the maximum descent value (param1), the command will complete without releasing the payload.",
   hasLocation: true,
   isDestination: true,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Max Descent",
     description: "Maximum distance to descend.",
     units: "m",
@@ -745,7 +760,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, null, null, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -755,7 +770,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -765,7 +780,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Altitude",
     units: "m",
@@ -777,12 +792,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 112,
-  name: "MAV_CMD_CONDITION_DELAY",
+  type: "D_MAV_CMD_CONDITION_DELAY",
+  label: "Condition Delay",
   description: "Delay mission state machine.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Delay",
     description: "Delay",
     units: "s",
@@ -794,12 +810,13 @@ export const mavCmds = [{
   }, null, null, null, null, null, null],
 }, {
   value: 114,
-  name: "MAV_CMD_CONDITION_DISTANCE",
+  type: "D_MAV_CMD_CONDITION_DISTANCE",
+  label: "Condition Distance",
   description: "Delay mission state machine until within desired distance of next NAV point.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Distance",
     description: "Distance.",
     units: "m",
@@ -811,12 +828,13 @@ export const mavCmds = [{
   }, null, null, null, null, null, null],
 }, {
   value: 115,
-  name: "MAV_CMD_CONDITION_YAW",
+  type: "D_MAV_CMD_CONDITION_YAW",
+  label: "Condition Yaw",
   description: "Reach a certain target angle.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Angle",
     description: "target angle [0-360]. Absolute angles: 0 is north. Relative angle: 0 is initial yaw. Direction set by param3.",
     units: "deg",
@@ -826,7 +844,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Angular Speed",
     description: "angular speed",
     units: "deg/s",
@@ -836,7 +854,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Direction",
     description: "direction: -1: counter clockwise, 0: shortest direction, 1: clockwise",
     units: "",
@@ -846,7 +864,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Relative",
     description: "0: absolute angle, 1: relative offset",
     units: "",
@@ -858,12 +876,13 @@ export const mavCmds = [{
   }, null, null, null],
 }, {
   value: 177,
-  name: "MAV_CMD_DO_JUMP",
+  type: "D_MAV_CMD_DO_JUMP",
+  label: "Do Jump",
   description: "Jump to the desired command in the mission list.  Repeat this action only the specified number of times",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Number",
     description: "Sequence number",
     units: "",
@@ -873,7 +892,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Repeat",
     description: "Repeat count",
     units: "",
@@ -885,12 +904,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 178,
-  name: "MAV_CMD_DO_CHANGE_SPEED",
+  type: "D_MAV_CMD_DO_CHANGE_SPEED",
+  label: "Change Speed",
   description: "Change speed and/or throttle set points. The value persists until it is overridden or there is a mode change",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Speed Type",
     description: "Speed type of value set in param2 (such as airspeed, ground speed, and so on)",
     units: "",
@@ -900,7 +920,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Speed",
     description: "Speed (-1 indicates no change, -2 indicates return to default vehicle speed)",
     units: "m/s",
@@ -910,7 +930,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Throttle",
     description: "Throttle (-1 indicates no change, -2 indicates return to default vehicle throttle value)",
     units: "%",
@@ -920,7 +940,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Relative",
     description: "0: absolute, 1: relative",
     units: "",
@@ -932,12 +952,13 @@ export const mavCmds = [{
   }, null, null, null],
 }, {
   value: 179,
-  name: "MAV_CMD_DO_SET_HOME",
+  type: "D_MAV_CMD_DO_SET_HOME",
+  label: "Set Home",
   description: "Changes the home location either to the current location or a specified location.",
   hasLocation: true,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Use Current",
     description: "Use current (1=use current location, 0=use specified location)",
     units: "",
@@ -947,7 +968,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, null, null, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -957,7 +978,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Longitude",
     description: "Longitude",
     units: "",
@@ -967,7 +988,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Altitude",
     description: "Altitude",
     units: "m",
@@ -979,12 +1000,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 181,
-  name: "MAV_CMD_DO_SET_RELAY",
+  type: "D_MAV_CMD_DO_SET_RELAY",
+  label: "Set Relay",
   description: "Set a relay to a condition.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Instance",
     description: "Relay instance number.",
     units: "",
@@ -994,7 +1016,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Setting",
     description: "Setting. (1=on, 0=off, others possible depending on system hardware)",
     units: "",
@@ -1006,12 +1028,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 182,
-  name: "MAV_CMD_DO_REPEAT_RELAY",
+  type: "D_MAV_CMD_DO_REPEAT_RELAY",
+  label: "Repeat Relay",
   description: "Cycle a relay on and off for a desired number of cycles with a desired period.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Instance",
     description: "Relay instance number.",
     units: "",
@@ -1021,7 +1044,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Count",
     description: "Cycle count.",
     units: "",
@@ -1031,7 +1054,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Time",
     description: "Cycle time.",
     units: "s",
@@ -1043,12 +1066,13 @@ export const mavCmds = [{
   }, null, null, null, null],
 }, {
   value: 183,
-  name: "MAV_CMD_DO_SET_SERVO",
+  type: "D_MAV_CMD_DO_SET_SERVO",
+  label: "Set Servo",
   description: "Set a servo to a desired PWM value.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Instance",
     description: "Servo instance number.",
     units: "",
@@ -1058,7 +1082,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "PWM",
     description: "Pulse Width Modulation.",
     units: "us",
@@ -1070,12 +1094,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 184,
-  name: "MAV_CMD_DO_REPEAT_SERVO",
+  type: "D_MAV_CMD_DO_REPEAT_SERVO",
+  label: "Repeat Servo",
   description: "Cycle a between its nominal setting and a desired PWM for a desired number of cycles with a desired period.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Instance",
     description: "Servo instance number.",
     units: "",
@@ -1085,7 +1110,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "PWM",
     description: "Pulse Width Modulation.",
     units: "us",
@@ -1095,7 +1120,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Count",
     description: "Cycle count.",
     units: "",
@@ -1105,7 +1130,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Time",
     description: "Cycle time.",
     units: "s",
@@ -1117,12 +1142,13 @@ export const mavCmds = [{
   }, null, null, null],
 }, {
   value: 189,
-  name: "MAV_CMD_DO_LAND_START",
+  type: "D_MAV_CMD_DO_LAND_START",
+  label: "Land Start",
   description: "Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts.\n\t  It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used.\n\t  The Latitude/Longitude/Altitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.\n\t",
   hasLocation: true,
   isDestination: false,
   parameters: [null, null, null, null, {
-    index: 5,
+    parameterType: "number",
     label: "Latitude",
     description: "Latitude",
     units: "",
@@ -1132,7 +1158,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-      index: 6,
+      parameterType: "number",
       label: "Longitude",
       description: "Longitude",
       units: "",
@@ -1142,7 +1168,7 @@ export const mavCmds = [{
       default: null,
       options: [],
     }, {
-      index: 7,
+      parameterType: "number",
       label: "Altitude",
       description: "Altitude",
       units: "m",
@@ -1154,12 +1180,13 @@ export const mavCmds = [{
     }],
 }, {
   value: 201,
-  name: "MAV_CMD_DO_SET_ROI",
+  type: "D_MAV_CMD_DO_SET_ROI",
+  label: "Set ROI",
   description: "Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.",
   hasLocation: true,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "ROI Mode",
     description: "Region of interest mode.",
     units: "",
@@ -1169,7 +1196,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "WP Index",
     description: "Waypoint index/ target ID (depends on param 1).",
     units: "",
@@ -1179,7 +1206,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "ROI Index",
     description: "Region of interest index. (allows a vehicle to manage multiple ROI's)",
     units: "",
@@ -1189,7 +1216,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-    index: 5,
+    parameterType: "number",
     label: "",
     description: "x the location of the fixed ROI (see MAV_FRAME)",
     units: "",
@@ -1199,7 +1226,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "",
     description: "y",
     units: "",
@@ -1209,7 +1236,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "",
     description: "z",
     units: "",
@@ -1221,12 +1248,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 202,
-  name: "MAV_CMD_DO_DIGICAM_CONFIGURE",
+  type: "D_MAV_CMD_DO_DIGICAM_CONFIGURE",
+  label: "Digicam Configure",
   description: "Configure digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html ).",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Mode",
     description: "Modes: P, TV, AV, M, Etc.",
     units: "",
@@ -1236,7 +1264,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Shutter Speed",
     description: "Shutter speed: Divisor number for one second.",
     units: "",
@@ -1246,7 +1274,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Aperture",
     description: "Aperture: F stop number.",
     units: "",
@@ -1256,7 +1284,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "ISO",
     description: "ISO number e.g. 80, 100, 200, Etc.",
     units: "",
@@ -1266,7 +1294,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Exposure",
     description: "Exposure type enumerator.",
     units: "",
@@ -1276,7 +1304,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Command Identity",
     description: "Command Identity.",
     units: "",
@@ -1286,7 +1314,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Engine Cut-off",
     description: "Main engine cut-off time before camera trigger. (0 means no cut-off)",
     units: "ds",
@@ -1298,12 +1326,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 203,
-  name: "MAV_CMD_DO_DIGICAM_CONTROL",
+  type: "D_MAV_CMD_DO_DIGICAM_CONTROL",
+  label: "Digicam Control",
   description: "Control digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html ).",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Session Control",
     description: "Session control e.g. show/hide lens",
     units: "",
@@ -1313,7 +1342,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Zoom Absolute",
     description: "Zoom's absolute position",
     units: "",
@@ -1323,7 +1352,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Zoom Relative",
     description: "Zooming step value to offset zoom from the current position",
     units: "",
@@ -1333,7 +1362,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Focus",
     description: "Focus Locking, Unlocking or Re-locking",
     units: "",
@@ -1343,7 +1372,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Shoot Command",
     description: "Shooting Command",
     units: "",
@@ -1353,7 +1382,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "Command Identity",
     description: "Command Identity",
     units: "",
@@ -1363,7 +1392,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Shot ID",
     description: "Test shot identifier. If set to 1, image will only be captured, but not counted towards internal frame count.",
     units: "",
@@ -1375,12 +1404,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 205,
-  name: "MAV_CMD_DO_MOUNT_CONTROL",
+  type: "D_MAV_CMD_DO_MOUNT_CONTROL",
+  label: "Mount Control",
   description: "Mission command to control a camera or antenna mount",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "",
     description: "pitch (WIP: DEPRECATED: or lat in degrees) depending on mount mode.",
     units: "",
@@ -1390,7 +1420,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "",
     description: "roll (WIP: DEPRECATED: or lon in degrees) depending on mount mode.",
     units: "",
@@ -1400,7 +1430,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "",
     description: "yaw (WIP: DEPRECATED: or alt in meters) depending on mount mode.",
     units: "",
@@ -1410,7 +1440,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "",
     description: "WIP: alt in meters depending on mount mode.",
     units: "",
@@ -1420,7 +1450,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "",
     description: "WIP: latitude in degrees * 1E7, set if appropriate mount mode.",
     units: "",
@@ -1430,7 +1460,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 6,
+    parameterType: "number",
     label: "",
     description: "WIP: longitude in degrees * 1E7, set if appropriate mount mode.",
     units: "",
@@ -1440,7 +1470,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 7,
+    parameterType: "number",
     label: "Mode",
     description: "Mount mode.",
     units: "",
@@ -1452,12 +1482,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 206,
-  name: "MAV_CMD_DO_SET_CAM_TRIGG_DIST",
+  type: "D_MAV_CMD_DO_SET_CAM_TRIGG_DIST",
+  label: "Trigger Distance",
   description: "Mission command to set camera trigger distance for this flight. The camera is triggered each time this distance is exceeded. This command can also be used to set the shutter integration time for the camera.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Distance",
     description: "Camera trigger distance. 0 to stop triggering.",
     units: "m",
@@ -1467,7 +1498,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Shutter",
     description: "Camera shutter integration time. -1 or 0 to ignore",
     units: "ms",
@@ -1477,7 +1508,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Trigger",
     description: "Trigger camera once immediately. (0 = no trigger, 1 = trigger)",
     units: "",
@@ -1489,12 +1520,13 @@ export const mavCmds = [{
   }, null, null, null, null],
 }, {
   value: 207,
-  name: "MAV_CMD_DO_FENCE_ENABLE",
+  type: "D_MAV_CMD_DO_FENCE_ENABLE",
+  label: "Fence Enable",
   description: "\n          Enable the geofence.\n          This can be used in a mission or via the command protocol.\n          The persistence/lifetime of the setting is undefined.\n          Depending on flight stack implementation it may persist until superseded, or it may revert to a system default at the end of a mission.\n          Flight stacks typically reset the setting to system defaults on reboot.\n\t",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Enable",
     description: "enable? (0=disable, 1=enable, 2=disable_floor_only)",
     units: "",
@@ -1504,7 +1536,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Types",
     description: "Fence types to enable or disable as a bitmask. 0: all fences should be enabled or disabled (parameter is ignored, for compatibility reasons).Parameter is ignored if param1=2",
     units: "",
@@ -1516,12 +1548,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 208,
-  name: "MAV_CMD_DO_PARACHUTE",
+  type: "D_MAV_CMD_DO_PARACHUTE",
+  label: "Do Parachute",
   description: "Mission item/command to release a parachute or enable/disable auto release.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Action",
     description: "Action",
     units: "",
@@ -1533,12 +1566,13 @@ export const mavCmds = [{
   }, null, null, null, null, null, null],
 }, {
   value: 210,
-  name: "MAV_CMD_DO_INVERTED_FLIGHT",
+  type: "D_MAV_CMD_DO_INVERTED_FLIGHT",
+  label: "Inverted Flight",
   description: "Change to/from inverted flight.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Inverted",
     description: "Inverted flight. (0=normal, 1=inverted)",
     units: "",
@@ -1550,12 +1584,13 @@ export const mavCmds = [{
   }, null, null, null, null, null, null],
 }, {
   value: 211,
-  name: "MAV_CMD_DO_GRIPPER",
+  type: "D_MAV_CMD_DO_GRIPPER",
+  label: "Gripper",
   description: "Mission command to operate a gripper.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Instance",
     description: "Gripper instance number.",
     units: "",
@@ -1565,7 +1600,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Action",
     description: "Gripper action to perform.",
     units: "",
@@ -1577,12 +1612,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 212,
-  name: "MAV_CMD_DO_AUTOTUNE_ENABLE",
+  type: "D_MAV_CMD_DO_AUTOTUNE_ENABLE",
+  label: "Enable Autotune",
   description: "Enable/disable autotune.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Enable",
     description: "Enable (1: enable, 0:disable).",
     units: "",
@@ -1592,7 +1628,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Axis",
     description: "Specify axes for which autotuning is enabled/disabled. 0 indicates the field is unused (for compatiblity reasons). If 0 the autopilot will follow its default behaviour, which is usually to tune all axes.",
     units: "",
@@ -1604,12 +1640,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 222,
-  name: "MAV_CMD_DO_GUIDED_LIMITS",
+  type: "D_MAV_CMD_DO_GUIDED_LIMITS",
+  label: "Guided Limis",
   description: "Set limits for external control",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Timeout",
     description: "Timeout - maximum time that external controller will be allowed to control vehicle. 0 means no timeout.",
     units: "s",
@@ -1619,7 +1656,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Min Altitude",
     description: "Altitude (MSL) min - if vehicle moves below this alt, the command will be aborted and the mission will continue. 0 means no lower altitude limit.",
     units: "m",
@@ -1629,7 +1666,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Max Altitude",
     description: "Altitude (MSL) max - if vehicle moves above this alt, the command will be aborted and the mission will continue. 0 means no upper altitude limit.",
     units: "m",
@@ -1639,7 +1676,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Horiz. Move Limit",
     description: "Horizontal move limit - if vehicle moves more than this distance from its location at the moment the command was executed, the command will be aborted and the mission will continue. 0 means no horizontal move limit.",
     units: "m",
@@ -1651,12 +1688,13 @@ export const mavCmds = [{
   }, null, null, null],
 }, {
   value: 223,
-  name: "MAV_CMD_DO_ENGINE_CONTROL",
+  type: "D_MAV_CMD_DO_ENGINE_CONTROL",
+  label: "Engine Conrol",
   description: "Control vehicle engine. This is interpreted by the vehicles engine controller to change the target engine state. It is intended for vehicles with internal combustion engines",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Start Engine",
     description: "0: Stop engine, 1:Start Engine",
     units: "",
@@ -1666,7 +1704,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Cold Start",
     description: "0: Warm start, 1:Cold start. Controls use of choke where applicable",
     units: "",
@@ -1676,7 +1714,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Height Delay",
     description: "Height delay. This is for commanding engine start only after the vehicle has gained the specified height. Used in VTOL vehicles during takeoff to start engine after the aircraft is off the ground. Zero for no delay.",
     units: "m",
@@ -1686,7 +1724,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Options",
     description: "A bitmask of options for engine control",
     units: "",
@@ -1698,12 +1736,13 @@ export const mavCmds = [{
   }, null, null, null],
 }, {
   value: 300,
-  name: "MAV_CMD_MISSION_START",
+  type: "D_MAV_CMD_MISSION_START",
+  label: "Mission Start",
   description: "start running a mission",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "First Item",
     description: "first_item: the first mission item to run",
     units: "",
@@ -1713,7 +1752,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Last Item",
     description: "last_item:  the last mission item to run (after this item is run, the mission ends)",
     units: "",
@@ -1725,12 +1764,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 400,
-  name: "MAV_CMD_COMPONENT_ARM_DISARM",
+  type: "D_MAV_CMD_COMPONENT_ARM_DISARM",
+  label: "Component Arm Disarm",
   description: "Arms / Disarms a component",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Arm",
     description: "0: disarm, 1: arm",
     units: "",
@@ -1740,7 +1780,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Force",
     description: "0: arm-disarm unless prevented by safety checks (i.e. when landed), 21196: force arming/disarming (e.g. allow arming to override preflight checks and disarming in flight)",
     units: "",
@@ -1752,12 +1792,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 526,
-  name: "MAV_CMD_STORAGE_FORMAT",
+  type: "D_MAV_CMD_STORAGE_FORMAT",
+  label: "Format Storage",
   description: "Format a storage medium. Once format is complete, a STORAGE_INFORMATION message is sent. Use the command's target_component to target a specific component's storage.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Storage ID",
     description: "Storage ID (1 for first, 2 for second, etc.)",
     units: "",
@@ -1767,7 +1808,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Format",
     description: "0: No action 1: Format storage",
     units: "",
@@ -1777,7 +1818,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "",
     description: "Reserved (all remaining params)",
     units: "",
@@ -1789,12 +1830,13 @@ export const mavCmds = [{
   }, null, null, null, null],
 }, {
   value: 600,
-  name: "MAV_CMD_JUMP_TAG",
+  type: "D_MAV_CMD_JUMP_TAG",
+  label: "Jump Tag",
   description: "Tagged jump target. Can be jumped to with MAV_CMD_DO_JUMP_TAG.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Tag",
     description: "Tag.",
     units: "",
@@ -1806,12 +1848,13 @@ export const mavCmds = [{
   }, null, null, null, null, null, null],
 }, {
   value: 601,
-  name: "MAV_CMD_DO_JUMP_TAG",
+  type: "D_MAV_CMD_DO_JUMP_TAG",
+  label: "Do Jump Tag",
   description: "Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Tag",
     description: "Target tag to jump to.",
     units: "",
@@ -1821,7 +1864,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Repeat",
     description: "Repeat count.",
     units: "",
@@ -1833,12 +1876,13 @@ export const mavCmds = [{
   }, null, null, null, null, null],
 }, {
   value: 1000,
-  name: "MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
+  type: "D_MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
+  label: "Gimbal Manager Pitchyaw",
   description: "Set gimbal manager pitch/yaw setpoints (low rate command). It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: only the gimbal manager will react to this command - it will be ignored by a gimbal device. Use GIMBAL_MANAGER_SET_PITCHYAW if you need to stream pitch/yaw setpoints at higher rate. ",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Pitch angle",
     description: "Pitch angle (positive to pitch up, relative to vehicle for FOLLOW mode, relative to world horizon for LOCK mode).",
     units: "deg",
@@ -1848,7 +1892,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Yaw angle",
     description: "Yaw angle (positive to yaw to the right, relative to vehicle for FOLLOW mode, absolute to North for LOCK mode).",
     units: "deg",
@@ -1858,7 +1902,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Pitch rate",
     description: "Pitch rate (positive to pitch up).",
     units: "deg/s",
@@ -1868,7 +1912,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Yaw rate",
     description: "Yaw rate (positive to yaw to the right).",
     units: "deg/s",
@@ -1878,7 +1922,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 5,
+    parameterType: "number",
     label: "Gimbal manager flags",
     description: "Gimbal manager flags to use.",
     units: "",
@@ -1888,7 +1932,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, {
-    index: 7,
+    parameterType: "number",
     label: "Gimbal device ID",
     description: "Component ID of gimbal device to address (or 1-6 for non-MAVLink gimbal), 0 for all gimbal device components. Send command multiple times for more than one gimbal (but not all gimbals).",
     units: "",
@@ -1900,12 +1944,13 @@ export const mavCmds = [{
   }],
 }, {
   value: 3000,
-  name: "MAV_CMD_DO_VTOL_TRANSITION",
+  type: "D_MAV_CMD_DO_VTOL_TRANSITION",
+  label: "VTOL transition",
   description: "Request VTOL transition",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "State",
     description: "The target VTOL state. Only MAV_VTOL_STATE_MC and MAV_VTOL_STATE_FW can be used.",
     units: "",
@@ -1917,12 +1962,13 @@ export const mavCmds = [{
   }, null, null, null, null, null, null],
 }, {
   value: 42600,
-  name: "MAV_CMD_DO_WINCH",
+  type: "D_MAV_CMD_DO_WINCH",
+  label: "Winch",
   description: "Command to operate winch.",
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    index: 1,
+    parameterType: "number",
     label: "Instance",
     description: "Winch instance number.",
     units: "",
@@ -1932,7 +1978,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 2,
+    parameterType: "number",
     label: "Action",
     description: "Action to perform.",
     units: "",
@@ -1942,7 +1988,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 3,
+    parameterType: "number",
     label: "Length",
     description: "Length of line to release (negative to wind).",
     units: "m",
@@ -1952,7 +1998,7 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, {
-    index: 4,
+    parameterType: "number",
     label: "Rate",
     description: "Release rate (negative to wind).",
     units: "m/s",
@@ -1962,4 +2008,4 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, null, null],
-}] as const satisfies CommandDescription[]
+}] as const satisfies DialectCommand[]

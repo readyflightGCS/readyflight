@@ -1,5 +1,6 @@
 export type DubinsPath = {
-  type: "DubinsPath"
+  type: "RF.DubinsPath"
+  label: string
   points: {
     latitude: number,
     longitude: number,
@@ -11,33 +12,38 @@ export type DubinsPath = {
 }
 
 export type Group = {
-  type: "Group"
+  type: "RF.Group"
+  label: string
   name: string
 }
 
 export type Waypoint = {
-  type: "Waypoint"
+  type: "RF.Waypoint"
+  label: string
   latitude: number,
   longitude: number,
   altitude: number // TODO make a generic type for Altitude that we can switch case over (AMSL, Relative, Terrain ...)
 }
 
 export type Takeoff = {
-  type: "Takeoff"
+  type: "RF.Takeoff"
+  label: string
   latitude: number,
   longitude: number,
   altitude: number
 }
 
 export type Land = {
-  type: "Land"
+  type: "RF.Land"
+  label: string
   latitude: number,
   longitude: number,
   altitude: number
 }
 
 export type SetServo = {
-  type: "SetServo",
+  type: "RF.SetServo",
+  label: string
   servoID: number,
   pwm: number
 }

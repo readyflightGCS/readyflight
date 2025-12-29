@@ -15,7 +15,8 @@ export function useMapClickHandler() {
       case "Mission": {
         const cmd: DialectCommand = {
           // For now we emit a simple RF waypoint; we can refine per-tool later.
-          type: "Waypoint",
+          type: "RF.Waypoint",
+          label: "Waypoint",
           latitude: e.latlng.lat,
           longitude: e.latlng.lng,
           altitude: 0,

@@ -1,18 +1,21 @@
+import { DialectCommand } from "@libs/commands/command"
 import { Mission } from "./mission"
 import { RFCommand } from "./RFCommands"
 
-export type BaseDialectCommand = {
-  type: number
-  params: Record<string, unknown>
-}
-
-export type Dialect<DialectCommand extends BaseDialectCommand> = {
+export type Dialect<DC extends DialectCommand> = {
   name: string
-  convert: (mission: Mission<DialectCommand>) => DialectCommand[] // idk if we'll need something like this ?? maybe just another format but with an "internal" flag
+  convert: (mission: Mission<DC>) => DC[] // idk if we'll need something like this ?? maybe just another format but with an "internal" flag
+
+  // a list of supported commands that this dialect can compile from
   supportedRFCommands: { [K in RFCommand["type"]]: boolean }
+
+  // the command definitions that this dialect supports
+  commands: DC[]
+
+  // file formats that this dialect imports/exports
   formats: {
     name: string,
-    export: (mission: Mission<DialectCommand>) => Blob //notably this takes a mission as we want to preseve as much info as possible when converting
+    export: (mission: Mission<DC>) => Blob //notably this takes a mission as we want to preseve as much info as possible when converting
     import: (mission: Blob) => Mission<DialectCommand>
   }[]
 }

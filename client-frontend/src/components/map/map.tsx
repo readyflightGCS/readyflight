@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, useMapEvent } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { useMapClickHandler } from "@/hooks/useMapClickHandler";
+import MissionLayer from "./layers/mission";
 
 function Map(): React.JSX.Element {
   const handleMapClick = useMapClickHandler();
@@ -25,6 +26,7 @@ function Map(): React.JSX.Element {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <CreateHandler />
+      <MissionLayer />
     </MapContainer>
   )
 }
