@@ -40,6 +40,16 @@ export default function MissionLayer() {
   let items = []
   let subMission = mission.get(selectedSubMission)
 
+  let polyPoints = []
+
+  for (let i = 0; i < subMission.length - 1; i++) {
+    //@ts-ignore
+    const avg = avgLatLng([{ lat: subMission[i].latitude, lng: subMission[i].longitude }, { lng: subMission[i + 1].longitude, lat: subMission[i + 1].latitude }]) as LatLng
+    items.push(
+      <InsertBtn key={i} lat={avg.lat} lng={avg.lng} onClick={() => handleInsert(i + 1, avg.lat, avg.lng)} />
+    )
+  }
+
   for (let i = 0; i < subMission.length; i++) {
     const isActive = (() => {
       const x = mission.findNthPosition(selectedSubMission, i);
@@ -58,12 +68,14 @@ export default function MissionLayer() {
             onClick={handleMarkerClick}
           />
         )
+        polyPoints.push({ lat: cur.latitude, lng: cur.longitude })
     }
   }
 
   return (
     <LayerGroup>
       {items}
+      <Polyline pathOptions={limeOptions} positions={polyPoints} />
     </LayerGroup>
   )
 }
