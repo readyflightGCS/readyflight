@@ -1,11 +1,12 @@
+import { DialectCommand } from "@libs/commands/command"
 import { Dialect } from "../dialect"
-import { mavCmds } from "./commands"
+import { mavCmdDescription } from "./commands"
 
-export const ardupilot: Dialect<(typeof mavCmds)[number]> = {
+export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   name: "ardupilot",
-  commands: mavCmds,
+  commandDescriptions: mavCmdDescription,
   convert: (mission) => {
-    let commands: typeof mavCmds[number][] = []
+    let commands: DialectCommand<typeof mavCmdDescription[number]>[] = []
     for (let _ of mission.get("main")) {
       //if typeof c is MavCommand commands.push(c)
       //
@@ -17,14 +18,32 @@ export const ardupilot: Dialect<(typeof mavCmds)[number]> = {
     }
     return commands
   },
+  getCommandLocation: (cmd) => {
+    let a = mavCmdDescription.find(x => x.type == cmd.type)
+    if (!a.hasLocation) {
+      return null
+    }
+    //@ts-ignore
+    let b = Object.keys(cmd.params).includes("Latitude") ? cmd.params.latitude : null
+    //@ts-ignore
+    let c = Object.keys(cmd.params).includes("Longitude") ? cmd.params.longitude : null
+    if (b === null || c === null) {
+      return null
+    }
+    return { lat: b, lng: c }
+  },
+  getCommandLabel: (cmd) => {
+    let a = mavCmdDescription.find(x => x.type == cmd.type)
+    return a.label
+  },
   formats: [],
   supportedRFCommands: {
-    "DubinsPath": false,
-    "Group": false,
-    "SetServo": false,
-    "Land": false,
-    "Takeoff": false,
-    "Waypoint": false,
+    "RF.DubinsPath": false,
+    "RF.Group": false,
+    "RF.SetServo": false,
+    "RF.Land": false,
+    "RF.Takeoff": false,
+    "RF.Waypoint": true,
   }
 
 }

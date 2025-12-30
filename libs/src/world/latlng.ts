@@ -1,5 +1,7 @@
 // import { Command, LatLngAltCommand, LatLngCommand } from "@libs/commands/commands";
 
+import { Command } from "@libs/commands/command"
+
 export type LatLng = {
   lat: number, // the Y axis
   lng: number // the X axis
@@ -20,26 +22,6 @@ export type LatLngAlt = {
 export function latLngEqual(pos1: LatLng | LatLngAlt, pos2: LatLng | LatLngAlt): boolean {
   return pos1.lat == pos2.lat && pos1.lng == pos2.lng
 }
-
-/* get the latitude and longitude of a mission command
- */
-export function getLatLng<T extends Command>(cmd: T): T extends LatLngCommand ? LatLng : (LatLng | undefined) {
-  if ("latitude" in cmd.params && "longitude" in cmd.params) {
-    return { lat: cmd.params.latitude, lng: cmd.params.longitude }
-  }
-  else return undefined as T extends LatLngCommand ? LatLng : (LatLng | undefined);
-}
-
-/* get the latitude, longitude and alitude of a mission command
- */
-export function getLatLngAlt<T extends Command>(cmd: T): T extends LatLngAltCommand ? LatLngAlt : (LatLngAlt | undefined) {
-  if ("latitude" in cmd.params && "longitude" in cmd.params && "altitude" in cmd.params) {
-    return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
-  }
-  else return undefined as T extends LatLngAltCommand ? LatLngAlt : (LatLngAlt | undefined);
-}
-
-
 
 // Terrain Altiotudes
 

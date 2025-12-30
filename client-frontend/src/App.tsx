@@ -8,6 +8,7 @@ import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
 
 
 export default function App(): React.JSX.Element {
+  //@ts-ignore
   const ipcHandle = (): void => {
     if (isElectron) {
       window.electron.ipcRenderer.send('ping')

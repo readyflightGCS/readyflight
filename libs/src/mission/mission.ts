@@ -1,18 +1,20 @@
+import { CommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
 import { LatLng } from "@libs/world/latlng";
-import { DialectCommand } from "@libs/commands/command";
-import { Group, RFCommand } from "@libs/commands/readyflightCommands";
 
 
-export class Mission<DC extends DialectCommand> {
+// Type for RF.Group command
+type GroupCommand = Extract<RFCommand, { type: "RF.Group" }>
 
-  private collection: Map<string, (RFCommand | DC)[]>
+export class Mission<CD extends CommandDescription> {
+
+  private collection: Map<string, MissionCommand<CD>[]>
   private referencePoint: LatLng
 
   destructure() {
     return this.collection;
   }
 
-  constructor(referencePoint: LatLng = { lat: 0, lng: 0 }, collection?: Map<string, (RFCommand | DC)[]>) {
+  constructor(referencePoint: LatLng = { lat: 0, lng: 0 }, collection?: Map<string, MissionCommand<CD>[]>) {
     if (collection) {
       let newMap = new Map()
       for (let key of Array.from(collection.keys())) {
@@ -34,7 +36,7 @@ export class Mission<DC extends DialectCommand> {
     return this.referencePoint
   }
 
-  get(mission: string): (RFCommand | DC)[] {
+  get(mission: string): MissionCommand<CD>[] {
     const a = this.collection.get(mission)
     if (a === undefined) {
       throw new MissingMission(mission)
@@ -42,7 +44,7 @@ export class Mission<DC extends DialectCommand> {
     return a
   }
 
-  set(mission: string, nodes: (RFCommand | DC)[]) {
+  set(mission: string, nodes: MissionCommand<CD>[]) {
     this.collection.set(mission, nodes)
   }
 
@@ -50,13 +52,13 @@ export class Mission<DC extends DialectCommand> {
     return Array.from(this.collection.keys())
   }
 
-  pushToMission(missionName: string, waypoint: RFCommand | DC) {
+  pushToMission(missionName: string, waypoint: MissionCommand<CD>) {
     const mission = this.collection.get(missionName)
     if (!mission) throw new MissingMission(missionName)
     // Prevent recursive group references; only RF Group can be recursive.
     if ((waypoint as RFCommand).type === "RF.Group") {
-      const group = waypoint as Group
-      if (this.contains(group.name, missionName)) {
+      const group = waypoint as GroupCommand
+      if (this.contains(group.params.name, missionName)) {
         throw new RecursiveMission()
       }
     }
@@ -69,7 +71,7 @@ export class Mission<DC extends DialectCommand> {
   }
 
   flatten(mission: string) {
-    let retList: Exclude<(RFCommand | DC), Group>[] = []
+    let retList: Exclude<MissionCommand<CD>, GroupCommand>[] = []
     const commands = this.collection.get(mission)
     if (commands === undefined) return []
     for (let i = 0; i < commands.length; i++) {
@@ -79,17 +81,18 @@ export class Mission<DC extends DialectCommand> {
     return retList
   }
 
-  flattenNode(node: RFCommand | DC) {
-    let retList: Exclude<(RFCommand | DC), Group>[] = []
-    if (node.type == "RF.Group") {
-      retList = retList.concat(this.flatten(node.name))
+  flattenNode(node: MissionCommand<CD>) {
+    let retList: Exclude<MissionCommand<CD>, GroupCommand>[] = []
+    if ((node as RFCommand).type == "RF.Group") {
+      const group = node as GroupCommand
+      retList = retList.concat(this.flatten(group.params.name))
     } else {
-      retList.push(node as Exclude<(RFCommand | DC), Group>)
+      retList.push(node as Exclude<MissionCommand<CD>, GroupCommand>)
     }
     return retList
   }
 
-  addSubMission(name: string, nodes: (RFCommand | DC)[] = []) {
+  addSubMission(name: string, nodes: MissionCommand<CD>[] = []) {
     this.collection.set(name, nodes)
   }
 
@@ -101,8 +104,9 @@ export class Mission<DC extends DialectCommand> {
       const currentMissionNodes = this.collection.get(missionKey);
       if (currentMissionNodes) {
         const filteredNodes = currentMissionNodes.filter(node => {
-          if (node.type === "RF.Group") {
-            return node.name !== name;
+          if ((node as RFCommand).type === "RF.Group") {
+            const group = node as GroupCommand
+            return group.params.name !== name;
           }
           return true;
         });
@@ -115,11 +119,12 @@ export class Mission<DC extends DialectCommand> {
     const commands = this.collection.get(missionName)
     if (!commands) { throw new MissingMission(missionName) }
     for (let cmd of commands) {
-      if (cmd.type === "RF.Group") {
-        if (cmd.name === A) {
+      if ((cmd as RFCommand).type === "RF.Group") {
+        const group = cmd as GroupCommand
+        if (group.params.name === A) {
           return true
         }
-        if (this.contains(cmd.name, A)) return true
+        if (this.contains(group.params.name, A)) return true
       }
     }
     return false
@@ -144,13 +149,14 @@ export class Mission<DC extends DialectCommand> {
 
     let count = 0;
 
-    const findNth = (node: (RFCommand | DC)[], name: string): [string, number] | undefined => {
+    const findNth = (node: MissionCommand<CD>[], name: string): [string, number] | undefined => {
       for (let i = 0; i < node.length; i++) {
         const curNode = node[i];
-        if (curNode.type == "RF.Group") {
-          const subMission = this.collection.get(curNode.name);
+        if ((curNode as RFCommand).type == "RF.Group") {
+          const group = curNode as GroupCommand
+          const subMission = this.collection.get(group.params.name);
           if (subMission !== undefined) {
-            const result = findNth(subMission, curNode.name);
+            const result = findNth(subMission, group.params.name);
             if (result !== undefined) {
               return result;
             }
@@ -167,7 +173,7 @@ export class Mission<DC extends DialectCommand> {
     return findNth(missionNodes, missionName);
   }
 
-  pop(missionName: string, id?: number): (RFCommand | DC) | undefined {
+  pop(missionName: string, id?: number): MissionCommand<CD> | undefined {
     const mission = this.collection.get(missionName)
     if (!mission) throw new MissingMission(missionName)
     if (id !== undefined) {
@@ -182,7 +188,7 @@ export class Mission<DC extends DialectCommand> {
     return JSON.stringify(Array.from(this.collection), null, 2)
   }
 
-  insert(id: number, missionName: string, command: (RFCommand | DC)) {
+  insert(id: number, missionName: string, command: MissionCommand<CD>) {
 
     const rec = (count: number, mission: string): number => {
       const curMission = this.collection.get(mission)
@@ -199,8 +205,9 @@ export class Mission<DC extends DialectCommand> {
           return count
         }
         let cur = curMission[i]
-        if (cur.type === "RF.Group") {
-          count = rec(count, cur.name)
+        if ((cur as RFCommand).type === "RF.Group") {
+          const group = cur as GroupCommand
+          count = rec(count, group.params.name)
         } else {
           count++;
         }
@@ -216,9 +223,10 @@ export class Mission<DC extends DialectCommand> {
     const cur = this.collection.get(missionName)
     if (!cur) throw new MissingMission(missionName)
     cur.forEach((x) => {
-      if (x.type == "RF.Group") {
-        names.add(x.name)
-        names = names.union(this.findAllSubMissions(x.name))
+      if ((x as RFCommand).type == "RF.Group") {
+        const group = x as GroupCommand
+        names.add(group.params.name)
+        names = names.union(this.findAllSubMissions(group.params.name))
       }
     })
     return names
@@ -232,17 +240,18 @@ export class Mission<DC extends DialectCommand> {
    * @param recurse - If true and the target is a Collection, recursively apply changes to all commands in the collection
    * @throws {MissingMission} If the specified mission does not exist
    */
-  changeParam(id: number, missionName: string, mod: (cmd: (RFCommand | DC)) => (RFCommand | DC), recurse?: boolean) {
+  changeParam(id: number, missionName: string, mod: (cmd: MissionCommand<CD>) => MissionCommand<CD>, recurse?: boolean) {
     const curMission = this.collection.get(missionName)
     if (curMission == undefined) { throw new MissingMission(missionName) }
 
     let updatedWaypoint = curMission[id]
 
-    if (updatedWaypoint.type === "RF.Group" && recurse) {
-      const col = this.collection.get(updatedWaypoint.name)
+    if ((updatedWaypoint as RFCommand).type === "RF.Group" && recurse) {
+      const group = updatedWaypoint as GroupCommand
+      const col = this.collection.get(group.params.name)
       if (col != null) {
         for (let i = 0; i < col.length; i++) {
-          this.changeAllParams(updatedWaypoint.name, mod)
+          this.changeAllParams(group.params.name, mod)
         }
       }
     } else {
@@ -258,14 +267,15 @@ export class Mission<DC extends DialectCommand> {
    * @param recurse - If true and any target is a Collection, recursively apply changes to all commands in those collections
    * @throws {MissingMission} If the specified mission does not exist
    */
-  changeManyParams(ids: number[], missionName: string, mod: (cmd: (RFCommand | DC)) => (RFCommand | DC), recurse?: boolean) {
+  changeManyParams(ids: number[], missionName: string, mod: (cmd: MissionCommand<CD>) => MissionCommand<CD>, recurse?: boolean) {
     let names = new Set<string>()
     const cur = this.collection.get(missionName)
     if (!cur) throw new MissingMission(missionName)
     for (let x of ids) {
-      if (cur[x].type == "RF.Group" && recurse) {
-        names = names.add(cur[x].name)
-        names = names.union(this.findAllSubMissions(cur[x].name))
+      if ((cur[x] as RFCommand).type == "RF.Group" && recurse) {
+        const group = cur[x] as GroupCommand
+        names = names.add(group.params.name)
+        names = names.union(this.findAllSubMissions(group.params.name))
       } else {
         this.changeParam(x, missionName, mod)
       }
@@ -280,7 +290,7 @@ export class Mission<DC extends DialectCommand> {
    * @param recurse - If true, recursively apply changes to all commands in sub-missions
    * @throws {MissingMission} If the specified mission does not exist
    */
-  changeAllParams(missionName: string, mod: (cmd: (RFCommand | DC)) => (RFCommand | DC), recurse?: boolean) {
+  changeAllParams(missionName: string, mod: (cmd: MissionCommand<CD>) => MissionCommand<CD>, recurse?: boolean) {
     const cur = this.collection.get(missionName)
     if (!cur) throw new MissingMission(missionName)
     this.changeManyParams(cur.map((_, i) => i), missionName, mod, recurse)

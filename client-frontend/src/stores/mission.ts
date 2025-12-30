@@ -2,74 +2,49 @@ import { create } from 'zustand'
 
 import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
 import { Mission } from '@libs/mission/mission'
-import { LatLng } from '@libs/world/latlng'
-import { Dialect } from '@libs/mission/dialect'
 import { Vehicle } from '@libs/vehicle/types'
 import { defaultPlane } from '@libs/vehicle/copter'
-import { mavCmds } from '@libs/mission/ardupilot/commands'
-import { RFCommand } from '@libs/commands/readyflightCommands'
+import { CommandDescription, DialectCommand } from '@libs/commands/command'
+import { Dialect } from '@libs/mission/dialect'
+import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
 
 export const tools = [
   { name: "Takeoff" },
   { name: "Waypoint" },
   { name: "Payload" },
   { name: "Land" }
-]
-
-type ArdupilotState = {
-  dialectId: 'ardupilot'
-  dialect: Dialect<typeof mavCmds[number]>
-  mission: Mission<typeof mavCmds[number]>
-}
-
-// union of all dialects
-export type DialectState = ArdupilotState
-
-export type DialectId = DialectState["dialectId"]
-
-export type DialectCommand =
-  DialectState extends { mission: Mission<infer C> } ? C | RFCommand : never
+] as const
 
 type Actions = {
-  switchDialect: (id: DialectId) => void
-  addCommand: (cmd: DialectCommand) => void
+  switchDialect: (dialect: Dialect<CommandDescription>) => void
+  addCommand: (cmd: DialectCommand<CommandDescription>) => void
   setTool: (tool: typeof tools[number]["name"]) => void
   setSelectedSubMission: (name: string) => void
   setSelectedCommandIDs: (n: number[]) => void
-  setMission: (m: Mission<typeof mavCmds[number]>) => void
+  setMission: (m: Mission<CommandDescription>) => void
   setVehicle: (v: Vehicle) => void
 }
 
-const createDialectState = (id: DialectId, referencePoint: LatLng): DialectState => {
-  switch (id) {
-    case 'ardupilot':
-    default:
-      return {
-        dialectId: 'ardupilot',
-        dialect: ardupilot,
-        mission: new Mission<typeof mavCmds[number]>(referencePoint),
-      }
-  }
-}
-
-type GenericState = {
+type State = {
+  mission: Mission<CommandDescription>
+  dialect: Dialect<CommandDescription>
   tool: typeof tools[number]["name"]
   selectedSubMission: string
   vehicle: Vehicle
   selectedCommandIDs: number[]
 }
 
-export const useMission = create<DialectState & GenericState & Actions>((set, get) => ({
-  ...createDialectState('ardupilot', { lat: 0, lng: 0 }),
+export const useMission = create<State & Actions>((set, get) => ({
+  mission: new Mission<typeof mavCmdDescription[number]>(),
+  dialect: ardupilot,
 
   tool: "Takeoff",
   selectedSubMission: "Main",
   selectedCommandIDs: [],
   vehicle: defaultPlane,
 
-  switchDialect: (id) => {
-    const ref = get().mission.getReferencePoint()
-    set(createDialectState(id, ref))
+  switchDialect: (dialect) => {
+    set({ dialect: dialect, mission: new Mission() })
   },
 
   addCommand: (cmd) => {

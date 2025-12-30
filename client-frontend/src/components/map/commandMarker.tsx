@@ -8,12 +8,14 @@ import NonDestChip from "./nonDestChip"
 import { useMission } from "@/stores/mission"
 import { getMinTurnRadius } from "@libs/dubins/dubinWaypoints"
 import { useRFMap } from "@/stores/map"
-import { RFCommand } from "@libs/commands/readyflightCommands"
-import { DialectCommand } from "@libs/commands/command"
+import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command"
+import { getCommandLabel } from "@libs/commands/helpers"
 
 type props = {
   basePosition: LatLng,
-  command: { cmd: (DialectCommand | RFCommand), id: number, other: (DialectCommand | RFCommand)[] }
+  command: {
+    cmd: (DialectCommand<CommandDescription> | RFCommand), id: number, other: (DialectCommand<CommandDescription> | RFCommand)[]
+  }
   onMove: (lat: number, lng: number, id: number) => void,
   onClick: (id: number) => void,
   active: boolean,
@@ -23,6 +25,7 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
 
   const { mission, selectedSubMission, selectedCommandIDs, vehicle } = useMission()
   const { viewable } = useRFMap()
+  const { dialect } = useMission()
 
   let items: ReactNode[] = []
 
@@ -32,8 +35,7 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
   if (viewable["loiter radius"] && (command.cmd.type === "D_MAV_CMD_NAV_LOITER_UNLIM" || command.cmd.type === "D_MAV_CMD_NAV_LOITER_TURNS" || command.cmd.type === "D_MAV_CMD_NAV_LOITER_TIME")) {
 
     // make sure the right radius is used, default to plane specific, otherwise use command param
-    // @ts-ignore
-    let radius = command.cmd.params.radius
+    let radius = command.cmd.params.radius as number
     if (radius === 0 && vehicle.type === "Plane") {
       radius = getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed)
     }
@@ -105,7 +107,7 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
         return (
           <NonDestChip
             key={id}
-            name={cmd.label}
+            name={getCommandLabel(cmd, dialect)}
             offset={id}
             position={basePosition}
             active={isActive}

@@ -1,6 +1,6 @@
-import { DialectCommand } from "@libs/commands/command";
+import { CommandDescription } from "@libs/commands/command";
 
-export const mavCmds = [{
+export const mavCmdDescription = [{
   value: 16,
   type: "D_MAV_CMD_NAV_WAYPOINT",
   label: "Waypoint",
@@ -2008,4 +2008,4 @@ export const mavCmds = [{
     default: null,
     options: [],
   }, null, null, null],
-}] as const satisfies DialectCommand[]
+}] as const satisfies CommandDescription[]

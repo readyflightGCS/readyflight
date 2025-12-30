@@ -2,7 +2,7 @@ import type { LeafletMouseEvent } from "leaflet";
 
 import { useEditor } from "@/stores/configurator";
 import { useMission } from "@/stores/mission";
-import type { DialectCommand } from "@/stores/mission";
+import { Command, CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command";
 
 export function useMapClickHandler() {
   const currentTab = useEditor((s) => s.currentTab);
@@ -13,17 +13,32 @@ export function useMapClickHandler() {
   return (e: LeafletMouseEvent) => {
     switch (currentTab) {
       case "Mission": {
-        const cmd: DialectCommand = {
-          // For now we emit a simple RF waypoint; we can refine per-tool later.
-          type: "RF.Waypoint",
-          label: "Waypoint",
-          latitude: e.latlng.lat,
-          longitude: e.latlng.lng,
-          altitude: 0,
-        } as DialectCommand;
+        switch (tool) {
+          case "Takeoff":
+          case "Land":
+          case "Payload":
+          case "Waypoint":
+            {
+              const cmd: RFCommand = {
+                // For now we emit a simple RF waypoint; we can refine per-tool later. TODO ***
+                type: "RF.Waypoint",
+                frame: 0,
+                params: {
+                  latitude: e.latlng.lat,
+                  longitude: e.latlng.lng,
+                  altitude: 0,
+                }
+              };
 
-        addCommand(cmd);
-        break;
+              addCommand(cmd);
+              break;
+            }
+          default: {
+            const _exhaustiveCheck: never = tool
+            return _exhaustiveCheck
+          }
+
+        }
       }
 
       case "Telemetry":

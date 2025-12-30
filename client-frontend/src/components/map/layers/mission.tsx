@@ -1,7 +1,7 @@
 import { LayerGroup, Polyline } from "react-leaflet";
 import { useMission } from "@/stores/mission";
 import CommandMarker from "../commandMarker";
-import { avgLatLng, getLatLng, LatLng } from "@libs/world/latlng";
+import { avgLatLng, LatLng } from "@libs/world/latlng";
 import InsertBtn from "../insertButton";
 
 const limeOptions = { color: 'lime' }
@@ -14,7 +14,7 @@ export default function MissionLayer() {
   // handle insert at specific id
   function handleInsert(id: number, lat: number, lng: number) {
     const a = mission.clone()
-    a.insert(id, selectedSubMission, { type: "RF.Waypoint", label: "Waypoint", latitude: lat, longitude: lng, altitude: 100 })
+    a.insert(id, selectedSubMission, { type: "RF.Waypoint", frame: 0, params: { latitude: lat, longitude: lng, altitude: 100 } })
     setMission(a);
   }
 
@@ -32,7 +32,7 @@ export default function MissionLayer() {
     if (a == null) return
     const [submission, pos] = a
     const b = mission.clone()
-    b.changeParam(pos, submission, (wp) => { if ("latitude" in wp) { wp.latitude = lat; wp.longitude = lng } return wp })
+    b.changeParam(pos, submission, (wp) => { if ("latitude" in wp.params) { wp.params.latitude = lat; wp.params.longitude = lng } return wp })
     setMission(b)
   }
 
@@ -43,10 +43,9 @@ export default function MissionLayer() {
   let polyPoints = []
 
   for (let i = 0; i < subMission.length - 1; i++) {
-    //@ts-ignore
-    const avg = avgLatLng([{ lat: subMission[i].latitude, lng: subMission[i].longitude }, { lng: subMission[i + 1].longitude, lat: subMission[i + 1].latitude }]) as LatLng
+    const avg = avgLatLng([{ lat: subMission[i].params.latitude, lng: subMission[i].params.longitude }, { lng: subMission[i + 1].params.longitude, lat: subMission[i + 1].params.latitude }]) as LatLng
     items.push(
-      <InsertBtn key={i} lat={avg.lat} lng={avg.lng} onClick={() => handleInsert(i + 1, avg.lat, avg.lng)} />
+      <InsertBtn key={a++} lat={avg.lat} lng={avg.lng} onClick={() => handleInsert(i + 1, avg.lat, avg.lng)} />
     )
   }
 
@@ -62,13 +61,13 @@ export default function MissionLayer() {
           <CommandMarker
             command={{ cmd: subMission[i], id: i, other: [] }}
             key={a++}
-            basePosition={{ lat: cur.latitude, lng: cur.longitude }}
+            basePosition={{ lat: cur.params.latitude as number, lng: cur.params.longitude as number }}
             onMove={onMove}
             active={isActive}
             onClick={handleMarkerClick}
           />
         )
-        polyPoints.push({ lat: cur.latitude, lng: cur.longitude })
+        polyPoints.push({ lat: cur.params.latitude, lng: cur.params.longitude })
     }
   }
 
