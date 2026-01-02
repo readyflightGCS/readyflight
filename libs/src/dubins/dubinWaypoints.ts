@@ -13,10 +13,10 @@ import { crossProduct } from "@libs/math/vector";
 import { deg2rad } from "@libs/math/geometry";
 import { bound, DubinsPath, dubinsPoint, Path, Segment } from "./types";
 import { XY } from "@libs/math/types";
-import { Command, LatLngAltCommand, LatLngCommand } from "../commands/commands";
-import { Plane } from "../vehicles/types";
-import { getLatLng, LatLng } from "../world/latlng";
-import { MainLine } from "../mission/mission";
+import { LatLng } from "@libs/world/latlng";
+import { getCommandLocation } from "@libs/commands/helpers";
+import { MainLine } from "@libs/mission/mission";
+import { Plane } from "@libs/vehicle/types";
 
 /*
  * find all the sections of a waypoint list which require a dubins path between
@@ -198,9 +198,9 @@ export function applyBounds(params: number[], bounds: bound[]): void {
  */
 export function waypointToDubins(cmd: LatLngCommand, reference: LatLng): dubinsPoint {
   if (cmd.type == 69) {
-    return { pos: g2l(reference, getLatLng(cmd)), bounds: {}, radius: cmd.params.radius, heading: cmd.params.heading, tunable: true, passbyRadius: cmd.params["fly-by distance"] }
+    return { pos: g2l(reference, getCommandLocation(cmd)), bounds: {}, radius: cmd.params.radius, heading: cmd.params.heading, tunable: true, passbyRadius: cmd.params["fly-by distance"] }
   } else {
-    return { pos: g2l(reference, getLatLng(cmd)), bounds: {}, radius: 0, heading: 0, tunable: false, passbyRadius: 0 }
+    return { pos: g2l(reference, getCommandLocation(cmd)), bounds: {}, radius: 0, heading: 0, tunable: false, passbyRadius: 0 }
   }
 }
 

@@ -14,7 +14,7 @@ export default defineConfig({
     alias: {
       '@renderer': resolve('src'),
       "@": path.resolve(__dirname, "./src"),
-      "@libs": path.resolve(__dirname, "../libs")
+      "@libs": path.resolve(__dirname, "../libs/src")
     }
   },
   plugins: [
