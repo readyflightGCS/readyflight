@@ -1,21 +1,14 @@
-import { Button } from "@/components/ui/button";
 import ListItem from "@/components/ui/listItem";
-import { cn } from "@/lib/utils";
 import { useMission } from "@/stores/mission";
-import { getCommandLabel } from "@libs/commands/helpers";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { CornerLeftUp, Fence, MapPin, PlaneLanding, PlaneTakeoff, Route, Trash2 } from "lucide-react";
-import { useState } from "react";
 import CommandList from "./commandList";
 
 const noAddNames = ["Main", "Geofence", "Takeoff", "Landing", "Markers"]
 
 export default function Mission() {
-  const { mission, setMission, selectedSubMission, selectedCommandIDs, setSelectedSubMission, setSelectedCommandIDs, dialect } = useMission()
-  const commands = mission.flatten(selectedSubMission)
-  const curMission = mission.get(selectedSubMission)
+  const { mission, setMission, selectedSubMission, setSelectedSubMission } = useMission()
 
-  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
 
   function addSub(name: string) {
     if (selectedSubMission == name) return
@@ -29,18 +22,6 @@ export default function Mission() {
     }
   }
 
-
-  function handleClick(id: number, e: React.MouseEvent<HTMLDivElement>) {
-    if (e.shiftKey && lastSelectedIndex !== null) {
-      const range = [lastSelectedIndex, id].sort((a, b) => a - b)
-      const newSelection = []
-      for (let i = range[0]; i <= range[1]; i++) newSelection.push(i)
-      setSelectedCommandIDs(newSelection)
-    } else {
-      setSelectedCommandIDs([id])
-      setLastSelectedIndex(id)
-    }
-  }
 
   function clearMission(missionName: string) {
     const a = confirm("Are you sure you want to clear")
@@ -59,40 +40,11 @@ export default function Mission() {
     setMission(temp)
   }
 
-
-  function handleGroup() {
-    // get name for mission
-    let name: string | null = null
-    name = prompt("enter name")
-    if (name == null) return
-
-    // remove all selected
-    const newCmds = curMission.filter((_, id) => selectedCommandIDs.includes(id))
-
-    // get the nodes for sub mission
-    const subMissionCmds = curMission.filter((_, id) => !selectedCommandIDs.includes(id))
-
-    // if _ at the start of the name, don't add to the main mission
-    if (name.charAt(0) != '_') {
-      subMissionCmds.splice(Math.min(...selectedCommandIDs), 0, { type: "RF.Group", frame: 0, params: { name: name } })
-      setSelectedCommandIDs([Math.min(...selectedCommandIDs)])
-    } else {
-      setSelectedCommandIDs([])
-    }
-
-    // update the actual waypoints
-    let w = mission.clone()
-    w.set(selectedSubMission, subMissionCmds)
-    w.set(name, newCmds)
-    setMission(w)
-
-  }
-
   return (
     <div className="flex flex-col gap-2 h-full">
       <div className="bg-muted p-2 rounded-lg flex-grow flex flex-col gap-2">
         <h3>{selectedSubMission}</h3>
-        <CommandList onHide={() => { }} />
+        <CommandList />
       </div>
       <div className="bg-muted p-2 rounded-lg">
         <h3>Sub Missions</h3>

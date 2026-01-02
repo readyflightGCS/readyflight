@@ -8,13 +8,13 @@ import NonDestChip from "./nonDestChip"
 import { useMission } from "@/stores/mission"
 import { getMinTurnRadius } from "@libs/dubins/dubinWaypoints"
 import { useRFMap } from "@/stores/map"
-import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command"
+import { CommandDescription, MissionCommand } from "@libs/commands/command"
 import { getCommandLabel } from "@libs/commands/helpers"
 
 type props = {
   basePosition: LatLng,
   command: {
-    cmd: (DialectCommand<CommandDescription> | RFCommand), id: number, other: (DialectCommand<CommandDescription> | RFCommand)[]
+    cmd: MissionCommand<CommandDescription>, id: number, other: MissionCommand<CommandDescription>[]
   }
   onMove: (lat: number, lng: number, id: number) => void,
   onClick: (id: number) => void,

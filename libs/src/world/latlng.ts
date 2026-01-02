@@ -1,6 +1,5 @@
-// import { Command, LatLngAltCommand, LatLngCommand } from "@libs/commands/commands";
 
-import { Command } from "@libs/commands/command"
+import { CommandDescription, MissionCommand } from "@libs/commands/command"
 
 export type LatLng = {
   lat: number, // the Y axis
@@ -26,51 +25,51 @@ export function latLngEqual(pos1: LatLng | LatLngAlt, pos2: LatLng | LatLngAlt):
 // Terrain Altiotudes
 
 // covret the command's altitude to amsl
-export function getAltAMSL(cmd: Command, referenceAlt: number, terrainAlt: number): number | undefined {
+export function getAltAMSL(cmd: MissionCommand<CommandDescription>, referenceAlt: number, terrainAlt: number): number | undefined {
   if ("altitude" in cmd.params) {
     switch (cmd.frame) {
       case 0: // MSL
-        return cmd.params.altitude
+        return cmd.params.altitude as number
       case 2: // non destination
         return undefined
       case 3: // relative to reference
-        return cmd.params.altitude + referenceAlt
+        return cmd.params.altitude as number + referenceAlt
       case 10: //relative to terrain
-        return cmd.params.altitude + terrainAlt
+        return cmd.params.altitude as number + terrainAlt
     }
   }
   else return undefined
 }
 
 // convert the command's altitude to relative to terrain
-export function getAltTer(cmd: Command, referenceAlt: number, terrainAlt: number): number | undefined {
+export function getAltTer(cmd: MissionCommand<CommandDescription>, referenceAlt: number, terrainAlt: number): number | undefined {
   if ("altitude" in cmd.params) {
     switch (cmd.frame) {
       case 0: // MSL
-        return cmd.params.altitude - terrainAlt
+        return cmd.params.altitude as number - terrainAlt
       case 2: // non destination
         return undefined
       case 3: // relative to reference
-        return cmd.params.altitude + referenceAlt - terrainAlt
+        return cmd.params.altitude as number + referenceAlt - terrainAlt
       case 10: //relative to terrain
-        return cmd.params.altitude
+        return cmd.params.altitude as number
     }
   }
   else return undefined
 }
 
 // convert the command's altitude to relative to reference
-export function getAltRel(cmd: Command, referenceAlt: number, terrainAlt: number): number | undefined {
+export function getAltRel(cmd: MissionCommand<CommandDescription>, referenceAlt: number, terrainAlt: number): number | undefined {
   if ("altitude" in cmd.params) {
     switch (cmd.frame) {
       case 0: // MSL
-        return cmd.params.altitude - referenceAlt
+        return cmd.params.altitude as number - referenceAlt
       case 2: // non destination
         return undefined
       case 3: // relative to reference
-        return cmd.params.altitude
+        return cmd.params.altitude as number
       case 10: //relative to terrain
-        return cmd.params.altitude + terrainAlt - referenceAlt
+        return cmd.params.altitude as number + terrainAlt - referenceAlt
     }
   }
   else return undefined

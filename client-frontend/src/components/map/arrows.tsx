@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Marker } from "react-leaflet";
+// @ts-ignore
 import L from "leaflet";
 import { LatLng } from "@libs/world/latlng";
 

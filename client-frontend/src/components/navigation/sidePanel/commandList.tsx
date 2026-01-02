@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { ArrowDownNarrowWide, ArrowRight, Locate, MoveDown, MoveUp, Route, Trash2 } from "lucide-react";
+import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, Route, Trash2 } from "lucide-react";
 import { useMission } from "@/stores/mission";
 import { Button } from "@/components/ui/button";
 import ListItem from "@/components/ui/listItem";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { getCommandLabel } from "@libs/commands/helpers";
 
-export default function CommandList({ onHide }: { onHide: () => void }) {
+export default function CommandList() {
   const { setSelectedSubMission, mission, setSelectedCommandIDs, selectedCommandIDs, dialect, setMission, selectedSubMission, setTool } = useMission()
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
 
@@ -94,7 +94,7 @@ export default function CommandList({ onHide }: { onHide: () => void }) {
 
   // ungroup the waypoint group in place in the mission, leaving the sub mission itself alone
   function ungroup(i: number) {
-    if (curMission[i].type != "Collection") return
+    if (curMission[i].type != "RF.Group") return
     const subMission = mission.get(curMission[i].params.name as string)
     const mainMission = mission.get(selectedSubMission)
     // Remove the collection node and insert the sub mission commands
@@ -156,7 +156,7 @@ export default function CommandList({ onHide }: { onHide: () => void }) {
 
 
       {curMission.map((node, i) => {
-        if (node.type == "Collection") {
+        if (node.type == "RF.Group") {
 
           return (
             <ListItem key={i} icon={<Route />} name={getCommandLabel(node, dialect)} onClick={(e) => handleClick(i, e)} selected={selectedCommandIDs.includes(i)}

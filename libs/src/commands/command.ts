@@ -1,6 +1,27 @@
 import { LatLngAlt } from "@libs/world/latlng"
 import { RFCommandDescription } from "./readyflightCommands"
 
+type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
+
+
+// #########################################
+// #          Command Description          #
+// #########################################
+//
+// The shape of the definition of a command, when we want to add new dialects,
+// their commands should conform to this description
+
+export type CommandDescription = {
+  type: string
+  value: number
+  label: string
+  description: string
+  hasLocation: boolean,
+  isDestination: boolean
+  // parameters types that it can accept.
+  parameters: (CommandParameterUnion)[]
+}
+
 export type CommandParameterDescriptionN = {
   parameterType: "number"
   label: string
@@ -29,95 +50,52 @@ export type CommandParameterDescriptionLLAA = {
   description: string
 }
 
-export type CommandDescription = {
-  type: string
-  value: number
-  label: string
-  description: string
-  hasLocation: boolean,
-  isDestination: boolean
-  parameters: (CommandParameterDescriptionN | CommandParameterDescriptionS | CommandParameterDescriptionLLAA)[]
-}
+// remember to add any new types to this union
+export type CommandParameterUnion =
+  CommandParameterDescriptionS |
+  CommandParameterDescriptionN |
+  CommandParameterDescriptionLLAA
 
-// Helper type to map parameterType to value type
-type ParameterTypeToValueType<T extends CommandParameterDescriptionN | CommandParameterDescriptionS | CommandParameterDescriptionLLAA> =
+// and remember to add it to this thing. TODO maybe derive this somehow
+type ParameterTypeToValueType<T extends CommandParameterUnion> =
   T extends { parameterType: "number" } ? number :
   T extends { parameterType: "string" } ? string :
   T extends { parameterType: "latlngaltarr" } ? LatLngAlt[] :
   never
 
-// Generic types that work with any command description array
-// These types allow you to create type-safe command types from any array of CommandDescription
 
-// Extract command type names from a command description array
-export type CommandNameFromDescriptions<T extends readonly CommandDescription[]> = T[number]["type"]
 
-// Extract parameter names (lowercased) for a specific command from a description array
-export type CommandParamsNamesFromDescriptions<
-  T extends readonly CommandDescription[],
-  CmdName extends CommandNameFromDescriptions<T>
-> = Lowercase<NonNullable<Extract<T[number], { type: CmdName }>["parameters"][number]>["label"]>
+// #########################################
+// #            Dialect Command            #
+// #########################################
+//
+// This is the shape of the data in memory that we store about commands. 
 
-// Map parameter names to their value types based on parameterType field
-export type CommandParamsFromDescriptions<
-  T extends readonly CommandDescription[],
-  CmdName extends CommandNameFromDescriptions<T>
-> = {
-    [K in Extract<T[number], { type: CmdName }>["parameters"][number]as Lowercase<K["label"]> extends string ? Lowercase<K["label"]> : never]:
-    ParameterTypeToValueType<K>
-  }
 
-// A single command instance for a specific command type
-export type ICommandFromDescriptions<
-  T extends readonly CommandDescription[],
-  CmdName extends CommandNameFromDescriptions<T>
-> = {
-  type: Extract<T[number], { type: CmdName }>["type"]
-  frame: number
-  params: CommandParamsFromDescriptions<T, CmdName>
-}
-
-// Types for working with a single CommandDescription
-// Map parameter names to their value types for a single command description
-export type CommandParamsFromSingle<CD extends CommandDescription> = {
-  [K in CD["parameters"][number]as Lowercase<K["label"]> extends string ? Lowercase<K["label"]> : never]:
-  ParameterTypeToValueType<K>
-}
-
-// A single command instance from a single command description
-export type ICommandFromSingle<CD extends CommandDescription> = {
-  type: CD["type"]
-  frame: number
-  params: CommandParamsFromSingle<CD>
-}
-
-// Union type of all commands from a command description array or a single command description
-// Usage examples:
-//   - Full type safety: DialectCommand<typeof MyCommandDescription> (array)
-//   - Generic type safety: DialectCommand<CommandDescription> (single)
-//   - Specific command: DialectCommand<MySpecificCommandDescription> (single)
-export type DialectCommand<T extends readonly CommandDescription[] | CommandDescription> =
-  // Check if T is an array (readonly array check comes first for specificity)
-  T extends readonly CommandDescription[]
-  ? {
-    [K in CommandNameFromDescriptions<T>]: ICommandFromDescriptions<T, K>
-  }[CommandNameFromDescriptions<T>]
-  : // Otherwise, treat as a single CommandDescription
-  T extends CommandDescription
-  ? ICommandFromSingle<T>
+// This is the definition for the parameters, it basically grabs all of the 
+// parameters from the Command definition and puts the lowercase label against 
+// the type of the parameter. For instance {name: string, altitude: number ..}
+export type DialectCommandParams<CD extends CommandDescription> = {
+  [K in CD["parameters"][number]as
+  Lowercase<K["label"]> extends string
+  ? Lowercase<K["label"]>
   : never
+  ]: ParameterTypeToValueType<K>
+}
 
-// ReadyFlight-specific types (using the generic types)
-export type CommandName = CommandNameFromDescriptions<typeof RFCommandDescription>
+export type DialectCommand<CD extends CommandDescription> =
+  CD extends CommandDescription ?
+  {
+    type: CD["type"]
+    frame: number
+    params: Expand<DialectCommandParams<CD>>
+  } : never
 
-export type CommandParamsNames<T extends CommandName> = CommandParamsNamesFromDescriptions<typeof RFCommandDescription, T>
-
-export type CommandParams<T extends CommandName> = CommandParamsFromDescriptions<typeof RFCommandDescription, T>
-
-export type ICommand<T extends CommandName> = ICommandFromDescriptions<typeof RFCommandDescription, T>
-
-export type RFCommand = DialectCommand<typeof RFCommandDescription>
+export type RFCommand = DialectCommand<typeof RFCommandDescription[number]>
 
 // Type alias for cleaner code - represents any command that can be in a mission
-export type MissionCommand<CD extends CommandDescription> = RFCommand | DialectCommand<CD>
+export type MissionCommand<CD extends CommandDescription> =
+  RFCommand | (DialectCommand<CD> & { type: `D_${string}` })
 
+// Just a sanity check to make sure params type is working correctly
+// let a: MissionCommand<CommandDescription> = { type: "RF.Waypoint", frame: 0, params: {} }

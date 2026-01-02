@@ -4,7 +4,7 @@ import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
 import { Mission } from '@libs/mission/mission'
 import { Vehicle } from '@libs/vehicle/types'
 import { defaultPlane } from '@libs/vehicle/copter'
-import { CommandDescription, DialectCommand } from '@libs/commands/command'
+import { CommandDescription, MissionCommand } from '@libs/commands/command'
 import { Dialect } from '@libs/mission/dialect'
 import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
 
@@ -17,7 +17,7 @@ export const tools = [
 
 type Actions = {
   switchDialect: (dialect: Dialect<CommandDescription>) => void
-  addCommand: (cmd: DialectCommand<CommandDescription>) => void
+  addCommand: (cmd: MissionCommand<CommandDescription>) => void
   setTool: (tool: typeof tools[number]["name"]) => void
   setSelectedSubMission: (name: string) => void
   setSelectedCommandIDs: (n: number[]) => void
