@@ -1,21 +1,48 @@
-import { LayerGroup, Polyline } from "react-leaflet";
 import { useMission } from "@/stores/mission";
-import CommandMarker from "../commandMarker";
 import { avgLatLng, LatLng } from "@libs/world/latlng";
+import { LayerGroup, Polyline } from "react-leaflet";
 import InsertBtn from "../insertButton";
+import CommandMarker from "../commandMarker";
+import { getCommandLocation } from "@libs/commands/helpers";
 
 const limeOptions = { color: 'lime' }
 const noshow = ["Markers", "Geofence"]
 
-export default function MissionLayer() {
-  const { mission, selectedSubMission, selectedCommandIDs, setSelectedSubMission, setSelectedCommandIDs, setMission } = useMission()
+export default function ActiveLayer() {
+  const { setSelectedSubMission, setSelectedCommandIDs, mission, dialect, selectedSubMission, setMission, selectedCommandIDs } = useMission()
+
+  let a = 0;
+
+
   if (noshow.includes(selectedSubMission)) return null
+
+  // store each destination in an array, with non destinations in other (to be stacked as they act in the same location)
+  const mainLine = mission.mainLine(dialect, selectedSubMission)
+
+  // create a button between each latlng command
+  let insertBtns = []
+  for (let i = 0; i < mainLine.length - 1; i++) {
+    const avg = avgLatLng([getCommandLocation(mainLine[i].cmd, dialect), getCommandLocation(mainLine[i + 1].cmd, dialect)]) as LatLng
+    insertBtns.push(
+      <InsertBtn key={a++} lat={avg.lat} lng={avg.lng} onClick={() => handleInsert(mainLine[i + 1].id, avg.lat, avg.lng)} />
+    )
+  }
 
   // handle insert at specific id
   function handleInsert(id: number, lat: number, lng: number) {
     const a = mission.clone()
-    a.insert(id, selectedSubMission, { type: "RF.Waypoint", frame: 0, params: { latitude: lat, longitude: lng, altitude: 100 } })
+    a.insert(id, selectedSubMission, { type: "RF.Waypoint", frame: 0, params: { latitude: lat, longitude: lng, altitude: 10 } })
     setMission(a);
+  }
+
+  function onMove(lat: number, lng: number, id: number) {
+    const a = mission.findNthPosition(selectedSubMission, id)
+    if (a == null) return
+    const [subMission, pos] = a
+    const b = mission.clone()
+    b.changeParam(pos, subMission, (wp) => { if ("latitude" in wp.params) { wp.params.latitude = lat; wp.params.longitude = lng } return wp })
+    setMission(b)
+    return
   }
 
   // handle when marker is clicked 
@@ -26,55 +53,31 @@ export default function MissionLayer() {
     setSelectedCommandIDs([a[1]])
   }
 
+  return (
+    <LayerGroup>
+      {mainLine.map((command, _) => {
+        const position = getCommandLocation(command.cmd, dialect);
+        const isActive = (() => {
+          const x = mission.findNthPosition(selectedSubMission, command.id);
+          return x?.[0] === selectedSubMission && selectedCommandIDs.includes(x[1]);
+        })();
 
-  function onMove(lat: number, lng: number, id: number) {
-    const a = mission.findNthPosition(selectedSubMission, id)
-    if (a == null) return
-    const [submission, pos] = a
-    const b = mission.clone()
-    b.changeParam(pos, submission, (wp) => { if ("latitude" in wp.params) { wp.params.latitude = lat; wp.params.longitude = lng } return wp })
-    setMission(b)
-  }
 
-  let a = 0;
-  let items = []
-  let subMission = mission.get(selectedSubMission)
-
-  let polyPoints = []
-
-  for (let i = 0; i < subMission.length - 1; i++) {
-    const avg = avgLatLng([{ lat: subMission[i].params.latitude, lng: subMission[i].params.longitude }, { lng: subMission[i + 1].params.longitude, lat: subMission[i + 1].params.latitude }]) as LatLng
-    items.push(
-      <InsertBtn key={a++} lat={avg.lat} lng={avg.lng} onClick={() => handleInsert(i + 1, avg.lat, avg.lng)} />
-    )
-  }
-
-  for (let i = 0; i < subMission.length; i++) {
-    const isActive = (() => {
-      const x = mission.findNthPosition(selectedSubMission, i);
-      return x?.[0] === selectedSubMission && selectedCommandIDs.includes(x[1]);
-    })();
-    let cur = subMission[i]
-    switch (cur.type) {
-      case "RF.Waypoint":
-        items.push(
+        return (
           <CommandMarker
-            command={{ cmd: subMission[i], id: i, other: [] }}
+            command={command}
             key={a++}
-            basePosition={{ lat: cur.params.latitude as number, lng: cur.params.longitude as number }}
+            basePosition={position}
             onMove={onMove}
             active={isActive}
             onClick={handleMarkerClick}
           />
-        )
-        polyPoints.push({ lat: cur.params.latitude, lng: cur.params.longitude })
-    }
-  }
+        );
+      })}
 
-  return (
-    <LayerGroup>
-      {items}
-      <Polyline pathOptions={limeOptions} positions={polyPoints} />
+      <Polyline pathOptions={limeOptions} positions={mainLine.map(x => getCommandLocation(x.cmd, dialect))} />
+      {insertBtns}
     </LayerGroup>
   )
+
 }

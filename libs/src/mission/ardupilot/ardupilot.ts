@@ -36,6 +36,12 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     let a = mavCmdDescription.find(x => x.type == cmd.type)
     return a.label
   },
+  getLatLng: (cmd) => {
+    if ("latitude" in cmd.params && "longitude" in cmd.params) {
+      return { lat: cmd.params.latitude as number, lng: cmd.params.longitude as number }
+    }
+    else return undefined;
+  },
   formats: [],
   supportedRFCommands: {
     "RF.DubinsPath": false,

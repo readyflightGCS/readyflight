@@ -13,6 +13,7 @@ import { crossProduct } from "@libs/math/vector";
 import { deg2rad } from "@libs/math/geometry";
 import { bound, DubinsPath, dubinsPoint, Path, Segment } from "./types";
 import { XY } from "@libs/math/types";
+import { LatLng } from "@libs/world/latlng";
 
 /*
  * find all the sections of a waypoint list which require a dubins path between

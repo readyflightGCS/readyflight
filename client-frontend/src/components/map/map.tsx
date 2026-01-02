@@ -4,6 +4,8 @@ import 'leaflet/dist/leaflet.css';
 
 import { useMapClickHandler } from "@/hooks/useMapClickHandler";
 import MissionLayer from "./layers/mission";
+import GeofenceLayer from "./layers/geofenceLayer";
+import MarkerLayer from "./layers/markerLayer";
 
 function Map(): React.JSX.Element {
   const handleMapClick = useMapClickHandler();
@@ -27,6 +29,8 @@ function Map(): React.JSX.Element {
       />
       <CreateHandler />
       <MissionLayer />
+      <GeofenceLayer />
+      <MarkerLayer />
     </MapContainer>
   )
 }

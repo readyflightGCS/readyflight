@@ -1,5 +1,7 @@
 import { CommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
 import { LatLng } from "@libs/world/latlng";
+import { Dialect } from "./dialect";
+import { getCommandLocation } from "@libs/commands/helpers";
 
 
 // Type for RF.Group command
@@ -295,6 +297,44 @@ export class Mission<CD extends CommandDescription> {
     if (!cur) throw new MissingMission(missionName)
     this.changeManyParams(cur.map((_, i) => i), missionName, mod, recurse)
   }
+  /**
+    * Converts a mission into a mainline representation, which groups commands by their destination points.
+    * Commands that are not destinations (like actions) are grouped with their preceding destination command.
+    * @param mission - Optional mission name to convert. Defaults to "Main" mission.
+    * @returns An array of MainLineItem objects, where each item contains:
+    *          - cmd: The destination command (with lat/lng/alt)
+    *          - id: The original index of the command in the flattened mission
+    *          - other: Array of non-destination commands that should be executed at this location
+    */
+  mainLine(dialect: Dialect<CD>, mission?: string) {
+    const commands = this.flatten(mission ?? "Main")
+    return convertToMainLine(commands, dialect)
+  }
+}
+
+export type MainLine = MainLineItem[]
+export type MainLineItem = { cmd: MissionCommand<CommandDescription>, id: number, other: MissionCommand<CommandDescription>[] }
+
+/**
+ * Converts an array of commands into a mainline representation.
+ * This groups non-destination commands (like actions) with their preceding destination command.
+ * @param commands - Array of commands to convert
+ * @returns An array of MainLineItem objects representing the mainline structure
+ */
+export function convertToMainLine(commands: Exclude<MissionCommand<CommandDescription>, GroupCommand>[], dialect: Dialect<CommandDescription>) {
+  const mainLine: MainLine = []
+
+  commands.forEach((cmd, id) => {
+    let loc = getCommandLocation(cmd, dialect)
+    if (loc !== null) {
+      mainLine.push({ cmd: cmd, id, other: [] })
+    } else {
+      if (mainLine.length !== 0) {
+        mainLine[mainLine.length - 1].other.push(cmd)
+      }
+    }
+  })
+  return mainLine
 }
 
 export class MissingMission extends Error {

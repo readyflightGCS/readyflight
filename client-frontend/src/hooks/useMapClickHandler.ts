@@ -2,13 +2,15 @@ import type { LeafletMouseEvent } from "leaflet";
 
 import { useEditor } from "@/stores/configurator";
 import { useMission } from "@/stores/mission";
-import { Command, CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command";
+import { RFCommand } from "@libs/commands/command";
 
 export function useMapClickHandler() {
   const currentTab = useEditor((s) => s.currentTab);
 
   const tool = useMission((s) => s.tool);
-  const addCommand = useMission((s) => s.addCommand);
+  const setMission = useMission((s) => s.setMission);
+  const mission = useMission((s) => s.mission);
+  const selectedSubMission = useMission((s) => s.selectedSubMission);
 
   return (e: LeafletMouseEvent) => {
     switch (currentTab) {
@@ -29,8 +31,9 @@ export function useMapClickHandler() {
                   altitude: 0,
                 }
               };
-
-              addCommand(cmd);
+              let a = mission.clone()
+              a.pushToMission(selectedSubMission, cmd)
+              setMission(a)
               break;
             }
           default: {

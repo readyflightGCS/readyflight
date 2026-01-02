@@ -14,6 +14,7 @@ export type Dialect<CD extends CommandDescription> = {
 
   getCommandLocation: (command: DialectCommand<CD>) => (LatLng | null)
   getCommandLabel: (command: DialectCommand<CD>) => string
+  getLatLng: (command: DialectCommand<CD>) => LatLng | undefined
 
   // file formats that this dialect imports/exports
   formats: {
