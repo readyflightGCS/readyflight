@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "",
+          "bg-background",
         active:
           "bg-muted",
         destructive:

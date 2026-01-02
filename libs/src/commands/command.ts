@@ -121,8 +121,3 @@ export type RFCommand = DialectCommand<typeof RFCommandDescription>
 // Type alias for cleaner code - represents any command that can be in a mission
 export type MissionCommand<CD extends CommandDescription> = RFCommand | DialectCommand<CD>
 
-export type Command = RFCommand | {
-  type: `D_${string}`
-  frame: number
-  params: (number | string | LatLngAlt[])[]
-}

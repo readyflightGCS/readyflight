@@ -3,11 +3,12 @@ import { filterLatLngCmds, getCommandLocation } from "@libs/commands/helpers";
 import { LayerGroup } from "react-leaflet";
 import DraggableMarker from "../draggableMarker";
 import GeofenceMarker from "../geofenceMarker";
+import { useRFMap } from "@/stores/map";
 
 
 export default function MarkerLayer() {
   const { mission, setMission, selectedCommandIDs, selectedSubMission, dialect } = useMission()
-  const { viewable } = { viewable: { markers: true } }
+  const { viewable } = useRFMap()
 
   // check if they are visible
   if (!viewable["markers"] && selectedSubMission !== "Markers") return null

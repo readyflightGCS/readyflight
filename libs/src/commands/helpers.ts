@@ -1,10 +1,13 @@
 import { Dialect } from "@libs/mission/dialect";
-import { CommandDescription, DialectCommand, MissionCommand } from "./command";
+import { CommandDescription, MissionCommand } from "./command";
 
 export function getCommandLabel(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>) {
   switch (cmd.type) {
     case "RF.Waypoint": {
       return "Waypoint"
+    }
+    case "RF.Group": {
+      return `${cmd.params.name}`
     }
     default:
       return dialect.getCommandLabel(cmd)

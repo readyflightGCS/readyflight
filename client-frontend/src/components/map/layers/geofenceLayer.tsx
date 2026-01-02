@@ -2,12 +2,13 @@ import { useMission } from "@/stores/mission";
 import { filterLatLngCmds, getCommandLocation } from "@libs/commands/helpers";
 import { LayerGroup, Polygon } from "react-leaflet";
 import DraggableMarker from "../draggableMarker";
+import { useRFMap } from "@/stores/map";
 
 const fenceOptions = { color: 'red', fillOpacity: 0.1 }
 
 export default function GeofenceLayer() {
   const { mission, selectedSubMission, setMission, selectedCommandIDs, dialect } = useMission()
-  const { viewable } = { viewable: { geofence: false } }
+  const { viewable } = useRFMap()
 
   // check if visible
   if (!viewable["geofence"] && selectedSubMission !== "Geofence") return
