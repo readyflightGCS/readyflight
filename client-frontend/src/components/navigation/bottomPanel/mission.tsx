@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { tools, useMission } from "@/stores/mission"
+import ParamEditor from "./mission/paramEdit"
 
 
 export default function mission() {
@@ -14,6 +15,7 @@ export default function mission() {
           </Button>
         ))}
       </div>
+      <ParamEditor />
     </div>
 
   )
