@@ -25,7 +25,7 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
 
   const { mission, selectedSubMission, selectedCommandIDs, vehicle } = useMission()
   const { viewable } = useRFMap()
-  const { dialect } = useMission()
+  const dialect = useMission((s) => s.dialect)
 
   let items: ReactNode[] = []
 
