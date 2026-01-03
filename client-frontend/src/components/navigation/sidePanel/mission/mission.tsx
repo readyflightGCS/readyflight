@@ -3,6 +3,7 @@ import { useMission } from "@/stores/mission";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { CornerLeftUp, Fence, MapPin, PlaneLanding, PlaneTakeoff, Route, Trash2 } from "lucide-react";
 import CommandList from "./commandList";
+import MissionFile from "./file";
 
 const noAddNames = ["Main", "Geofence", "Takeoff", "Landing", "Markers"]
 
@@ -42,6 +43,10 @@ export default function Mission() {
 
   return (
     <div className="flex flex-col gap-2 h-full">
+      <div className="bg-muted p-2 rounded-lg flex flex-col gap-2">
+        <h3>File</h3>
+        <MissionFile />
+      </div>
       <div className="bg-muted p-2 rounded-lg flex-grow flex flex-col gap-2">
         <h3>{selectedSubMission}</h3>
         <CommandList />

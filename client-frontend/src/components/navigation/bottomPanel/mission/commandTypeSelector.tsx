@@ -1,8 +1,10 @@
 "use client"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMission } from "@/stores/mission";
 import { CommandDescription, MissionCommand } from "@libs/commands/command";
 import { coerceCommand, getCommandDescription } from "@libs/commands/helpers";
 import { RFCommandDescription } from "@libs/commands/readyflightCommands";
+import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
 import { ChangeEvent } from "react";
 
 export default function CommandTypeSelector({ selected }: { selected: MissionCommand<CommandDescription>[] }) {
@@ -26,10 +28,9 @@ export default function CommandTypeSelector({ selected }: { selected: MissionCom
     types.add(x.type)
   })
 
-  function onChange(e: ChangeEvent<HTMLSelectElement>) {
+  function onChange(type: MissionCommand<CommandDescription>["type"]) {
     const newWPs = mission.clone()
     newWPs.changeManyParams(selectedIDs, selectedSubMission, (cmd) => {
-      let type = e.target.selectedOptions[0].getAttribute('data-cmd') as MissionCommand<CommandDescription>["type"]
       if (type === null) return cmd
       return coerceCommand(cmd, type, dialect) as MissionCommand<CommandDescription>
     }, true)
@@ -40,16 +41,27 @@ export default function CommandTypeSelector({ selected }: { selected: MissionCom
     <div className="p-2 flex flex-col">
       <label>
         <span className="block pl-[3.5px]">Type</span>
-        <select className="w-40 h-[25px] border-input bg-card" onChange={onChange} value={types.size > 1 ? "" : getCommandDescription(selected[0].type, dialect).label}>
+        <Select value={types.size > 1 ? "--" : selected[0].type} onValueChange={onChange}>
+          <SelectTrigger>
+            <SelectValue />
 
-          {types.size > 1 ? <option value="" disabled>--</option> : null}
-          {RFCommandDescription.map((x, i) => (
-            <option key={i} data-cmd={x.type}>{x.label}</option>
-          ))}
-          {dialect.commandDescriptions.map((x, i) => (
-            <option key={i} data-cmd={x.type}>{x.label}</option>
-          ))}
-        </select>
+          </SelectTrigger>
+          <SelectContent>
+            {types.size > 1 ? <option value="--" disabled>--</option> : null}
+            <SelectGroup>
+              <SelectLabel>ReadyFlight Commands</SelectLabel>
+              {RFCommandDescription.map((x, i) => (
+                <SelectItem key={i} value={x.type}>{x.label}</SelectItem>
+              ))}
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Dialect Commands</SelectLabel>
+              {dialect.commandDescriptions.map((x, i) => (
+                <SelectItem key={i} value={x.type}>{x.label}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </label>
     </div >
   );
