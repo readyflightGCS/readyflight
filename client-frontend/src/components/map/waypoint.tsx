@@ -1,4 +1,6 @@
 import * as L from "leaflet"
+import markerIconUrl from "@/assets/marker-icon.png"
+import insertIconUrl from "@/assets/insert.png"
 
 export const createAnimatedIcon = (isActive: boolean) =>
   L.divIcon({
@@ -10,7 +12,7 @@ export const createAnimatedIcon = (isActive: boolean) =>
         transform: scale(${isActive ? 1.2 : 1});
         width: 25px;
         height: 41px;
-        background-image: url('/marker-icon.png');
+        background-image: url('${markerIconUrl}');
         background-size: contain;
         background-repeat: no-repeat;
         position: relative;
@@ -20,7 +22,7 @@ export const createAnimatedIcon = (isActive: boolean) =>
   });
 
 export var insertIcon = L.icon({
-  iconUrl: '/insert.png',
+  iconUrl: insertIconUrl,
   iconSize: [30, 30],
   iconAnchor: [15, 15],
   popupAnchor: [1, -34],
