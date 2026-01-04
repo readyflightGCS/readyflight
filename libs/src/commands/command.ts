@@ -38,7 +38,7 @@ export type CommandParameterDescriptionS = {
   parameterType: "string"
   label: string
   description: string
-  default: number | null
+  default: string | null
   minLen: number | null
   maxLen: number | null
   options: string[]
@@ -48,6 +48,7 @@ export type CommandParameterDescriptionLLAA = {
   parameterType: "latlngaltarr"
   label: string
   description: string
+  default: LatLngAlt[]
 }
 
 // remember to add any new types to this union

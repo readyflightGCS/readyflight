@@ -1,6 +1,7 @@
 import { DialectCommand } from "@libs/commands/command"
 import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
+import { objectKeys } from "@libs/util/types"
 
 export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   name: "ardupilot",
@@ -24,9 +25,9 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       return null
     }
     //@ts-ignore
-    let b = Object.keys(cmd.params).includes("Latitude") ? cmd.params.latitude : null
+    let b = objectKeys(cmd.params).includes("latitude") ? cmd.params.latitude : null
     //@ts-ignore
-    let c = Object.keys(cmd.params).includes("Longitude") ? cmd.params.longitude : null
+    let c = objectKeys(cmd.params).includes("longitude") ? cmd.params.longitude : null
     if (b === null || c === null) {
       return null
     }

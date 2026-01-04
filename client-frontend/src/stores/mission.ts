@@ -12,7 +12,8 @@ export const tools = [
   { name: "Takeoff" },
   { name: "Waypoint" },
   { name: "Payload" },
-  { name: "Land" }
+  { name: "Land" },
+  { name: "Place" }
 ] as const
 
 type Actions = {
