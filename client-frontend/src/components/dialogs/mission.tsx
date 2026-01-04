@@ -5,6 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import NumericInput from "../ui/numericInput";
 import { getMinTurnRadius } from "@libs/dubins/dubinWaypoints";
 import { defaultCopter, defaultPlane } from "@libs/vehicle/copter";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Separator } from "../ui/separator";
 
 export default function MissionDialog() {
   const { vehicle, setVehicle } = useMission()
@@ -20,6 +22,19 @@ export default function MissionDialog() {
           </DialogTitle>
         </DialogHeader>
         <div>
+          <h2>Mission Dialect</h2>
+          <Select value="Mavlink">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Mavlink">Mavlink</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <Separator />
+        <div>
+          <h2>Mission Vehicle</h2>
           <Tabs value={vehicle.type}>
 
             <TabsList>
