@@ -1,5 +1,6 @@
 {
   "name": "@readyflight/electron",
+  "homepage": "https://github.com/readyflight/readyflight",
   "private": true,
   "main": "./out/main/index.cjs",
   "version": "0.0.1",
@@ -17,12 +18,12 @@
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@electron-toolkit/tsconfig": "^2.0.0",
-    "electron": "^38.2.2",
-    "electron-builder": "^26.0.12",
     "electron-updater": "^6.6.2",
     "electron-vite": "^4.0.1"
   },
   "devDependencies": {
+    "electron": "38.2.2",
+    "electron-builder": "26.0.12",
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
     "@electron-toolkit/eslint-config-ts": "^3.1.0",
     "typescript": "^5.9.3",
