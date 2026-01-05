@@ -1,8 +1,8 @@
 import { useEditor } from "@/stores/configurator"
 import Settings from "./settings"
 import Telemetry from "./telemetry"
-import Mission from "./mission"
 import { ArrowLeft, ArrowRight } from "lucide-react"
+import Mission from "./mission/mission"
 export default function SidePanel() {
 
   const currentTab = useEditor(state => state.currentTab)

@@ -5,7 +5,10 @@
     "composite": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "types": ["electron-vite/node"]
+    "types": ["electron-vite/node"],
+    "paths": {
+      "@libs/*": ["../libs/src/*"]
+    },
   },
   "include": [
     "main/**/*",

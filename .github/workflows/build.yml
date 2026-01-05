@@ -1,0 +1,87 @@
+name: Build Electron App
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            artifact-name: linux
+          - os: windows-latest
+            platform: win
+            artifact-name: windows
+          - os: macos-latest
+            platform: mac
+            artifact-name: macos
+
+    continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            **/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build Electron app
+        run: bun run build:${{ matrix.platform }}
+        working-directory: .
+
+      - name: Upload Linux artifacts
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: readyflight-linux-${{ github.sha }}
+          path: |
+            electron/dist/*.AppImage
+            electron/dist/*.deb
+            electron/dist/*.snap
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Windows artifacts
+        if: matrix.platform == 'win'
+        uses: actions/upload-artifact@v4
+        with:
+          name: readyflight-windows-${{ github.sha }}
+          path: |
+            electron/dist/*.exe
+            electron/dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload macOS artifacts
+        if: matrix.platform == 'mac'
+        uses: actions/upload-artifact@v4
+        with:
+          name: readyflight-macos-${{ github.sha }}
+          path: |
+            electron/dist/*.dmg
+            electron/dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
+

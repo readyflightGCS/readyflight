@@ -37,7 +37,7 @@ export default defineConfig({
       alias: {
         '@renderer': resolve(__dirname, '../client-frontend/src'),
         "@": path.resolve(__dirname, "../client-frontend/src"),
-        "@libs": path.resolve(__dirname, "../libs")
+        "@libs": path.resolve(__dirname, "../libs/src")
       }
     },
     plugins: [

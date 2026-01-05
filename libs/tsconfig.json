@@ -8,7 +8,9 @@
     "baseUrl": ".",
     "paths": {
       "@libs/*": ["./src/*"]
-    }
+    },
+    "target": "ESNext",
+    "lib": ["ESNext"],
   },
   "include": ["./src/**/*"]
 }

@@ -6,7 +6,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@renderer/*": ["./src/*"],
-      "@libs/*": ["../libs/src/*.ts"]
+      "@libs/*": ["../libs/src/*"]
     }
   },
   "references": [{ "path": "../libs" }],
