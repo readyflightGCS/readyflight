@@ -3,10 +3,11 @@ import { tools, useMission } from "@/stores/mission"
 import ParamEditor from "./mission/paramEdit"
 import { ReactNode, useState } from "react"
 import { Separator } from "@/components/ui/separator"
+import HeightMap from "./mission/terrain/heightMap"
 
 const tabs = [
   { name: "Parameter", component: <ParamEditor /> },
-  { name: "Terrain", component: <div /> },
+  { name: "Terrain", component: <HeightMap /> },
   { name: "Waypoint Check", component: <div /> }
 ] as const satisfies { name: string, component: ReactNode }[]
 
