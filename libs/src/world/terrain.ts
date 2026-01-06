@@ -1,11 +1,18 @@
 import { haversineDistance } from "@libs/world/distance";
 import { LatLng, LatLngAlt } from "@libs/world/latlng";
-//import { createStore, getMany, setMany } from "idb-keyval";
 
 const TERRAIN_RES = 2
 const offset = 1 / 10 ** TERRAIN_RES
+function getMany(keys: string[], store: any) {
+  let re = []
+  for (let i = 0; i < keys.length; i++) {
+    re.push(0)
+  }
+  return re
+}
 
 //const terStore = createStore('terStore', 'terStore')
+const terStore = "TODO"
 
 /**
  * Gets the four surrounding grid points for bilinear interpolation
