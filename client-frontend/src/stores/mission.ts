@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { createWithEqualityFn as create } from 'zustand/traditional'
 
 import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
 import { Mission } from '@libs/mission/mission'
@@ -7,13 +7,20 @@ import { defaultPlane } from '@libs/vehicle/copter'
 import { CommandDescription, MissionCommand } from '@libs/commands/command'
 import { Dialect } from '@libs/mission/dialect'
 import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
+import { Locate, MousePointer, PlaneLanding, PlaneTakeoff, ShowerHead } from 'lucide-react'
+
+type Tool = {
+  name: string
+  display: boolean,
+}
 
 export const tools = [
-  { name: "Takeoff" },
-  { name: "Waypoint" },
-  { name: "Payload" },
-  { name: "Land" },
-  { name: "Place" }
+  { name: "Select", display: true, icon: MousePointer },
+  { name: "Waypoint", display: true, icon: Locate },
+  { name: "Takeoff", display: true, icon: PlaneTakeoff },
+  { name: "Land", display: true, icon: PlaneLanding },
+  { name: "Payload", display: true, icon: ShowerHead },
+  { name: "Place", display: false, icon: null }
 ] as const
 
 type Actions = {
@@ -24,6 +31,9 @@ type Actions = {
   setSelectedCommandIDs: (n: number[]) => void
   setMission: (m: Mission<CommandDescription>) => void
   setVehicle: (v: Vehicle) => void
+  clearSubMission: (name: string) => void
+  deleteSubMission: (name: string) => void
+  addSub: (name: string) => void
 }
 
 type State = {
@@ -60,7 +70,28 @@ export const useMission = create<State & Actions>((set, get) => ({
   setMission: (m) => {
     set({ mission: m })
   },
+  clearSubMission: (name) => {
+    const temp = get().mission.clone()
+    temp.set(name, [])
+    set({ mission: temp })
+  },
+  deleteSubMission: (name) => {
+    const temp = get().mission.clone()
+    temp.removeSubMission(name)
+    set({ mission: temp, selectedSubMission: "Main" })
+  },
+  addSub: (name) => {
+    if (get().selectedSubMission == name) return
+
+    let newWaypoints = get().mission.clone()
+    try {
+      newWaypoints.pushToMission(get().selectedSubMission, { type: "RF.Group", frame: 0, params: { name: name } })
+      set({ mission: newWaypoints })
+    } catch (err) {
+      return
+    }
+  },
   setSelectedCommandIDs: (n) => set({ selectedCommandIDs: n }),
   setSelectedSubMission: (name) => set({ selectedSubMission: name }),
-  setVehicle: (v) => set({ vehicle: v })
+  setVehicle: (v) => set({ vehicle: v }),
 }))

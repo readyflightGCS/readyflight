@@ -33,15 +33,25 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     }
     return { lat: b, lng: c }
   },
+  getCommandLocationAlt: (cmd) => {
+    let a = mavCmdDescription.find(x => x.type == cmd.type)
+    if (!a.hasLocation) {
+      return null
+    }
+    //@ts-ignore
+    let b = objectKeys(cmd.params).includes("latitude") ? cmd.params.latitude : null
+    //@ts-ignore
+    let c = objectKeys(cmd.params).includes("longitude") ? cmd.params.longitude : null
+    //@ts-ignore
+    let d = objectKeys(cmd.params).includes("altitude") ? cmd.params.altitude : null
+    if (b === null || c === null || d === null) {
+      return null
+    }
+    return { lat: b, lng: c, alt: d }
+  },
   getCommandLabel: (cmd) => {
     let a = mavCmdDescription.find(x => x.type == cmd.type)
     return a.label
-  },
-  getLatLng: (cmd) => {
-    if ("latitude" in cmd.params && "longitude" in cmd.params) {
-      return { lat: cmd.params.latitude as number, lng: cmd.params.longitude as number }
-    }
-    else return undefined;
   },
   formats: [],
   supportedRFCommands: {

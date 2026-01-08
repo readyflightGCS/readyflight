@@ -1,5 +1,5 @@
 import { Mission } from "./mission"
-import { LatLng } from "@libs/world/latlng"
+import { LatLng, LatLngAlt } from "@libs/world/latlng"
 import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command"
 
 export type Dialect<CD extends CommandDescription> = {
@@ -13,6 +13,7 @@ export type Dialect<CD extends CommandDescription> = {
   commandDescriptions: CD[]
 
   getCommandLocation: (command: DialectCommand<CD>) => (LatLng | null)
+  getCommandLocationAlt: (command: DialectCommand<CD>) => (LatLngAlt | null)
   getCommandLabel: (command: DialectCommand<CD>) => string
   getLatLng: (command: DialectCommand<CD>) => LatLng | undefined
 

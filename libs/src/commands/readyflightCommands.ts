@@ -11,6 +11,7 @@ export const RFCommandDescription = [{
     parameterType: "latlngaltarr",
     label: "Points",
     description: "The lat lng alt points of the path",
+    default: []
   }]
 }, {
   type: "RF.Group",
