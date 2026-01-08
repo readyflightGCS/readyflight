@@ -53,6 +53,19 @@ export default function ActiveLayer() {
     setSelectedCommandIDs([a[1]])
   }
 
+  // handle when marker is double clicked 
+  function handleDoubleClick(id: number) {
+    console.log("Deleting")
+    const temp = mission.clone()
+    const wp = mission.get(selectedSubMission)[id]
+    if (wp.type == "RF.Group" && ["Landing", "Takeoff"].includes(wp.params.name as string)) {
+      temp.removeSubMission(wp.params.name as string)
+    }
+    temp.pop(selectedSubMission, id)
+    setMission(temp)
+    setSelectedCommandIDs([])
+  }
+
   return (
     <LayerGroup>
       {mainLine.map((command, _) => {
@@ -71,6 +84,7 @@ export default function ActiveLayer() {
             onMove={onMove}
             active={isActive}
             onClick={handleMarkerClick}
+            onDoubleClick={handleDoubleClick}
           />
         );
       })}
