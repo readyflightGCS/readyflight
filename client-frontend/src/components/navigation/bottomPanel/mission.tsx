@@ -8,9 +8,9 @@ export default function mission() {
   const currentTool = useMission((state) => state.tool)
   return (
     <div>
-      <div className="flex justify-between">
+      <div className="flex justify-center items-center gap-2">
         {tools.map((x) => (
-          <Button variant={x.name == currentTool ? "active" : null} onClick={() => setTool(x.name)}>
+          <Button variant={x.name == currentTool ? "active" : null} className="hover:bg-sidebar" onClick={() => setTool(x.name)}>
             {x.name}
           </Button>
         ))}
