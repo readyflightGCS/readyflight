@@ -7,13 +7,20 @@ import { defaultPlane } from '@libs/vehicle/copter'
 import { CommandDescription, MissionCommand } from '@libs/commands/command'
 import { Dialect } from '@libs/mission/dialect'
 import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
+import { Locate, MousePointer, PlaneLanding, PlaneTakeoff, ShowerHead } from 'lucide-react'
+
+type Tool = {
+  name: string
+  display: boolean,
+}
 
 export const tools = [
-  { name: "Takeoff" },
-  { name: "Waypoint" },
-  { name: "Payload" },
-  { name: "Land" },
-  { name: "Place" }
+  { name: "Select", display: true, icon: MousePointer },
+  { name: "Waypoint", display: true, icon: Locate },
+  { name: "Takeoff", display: true, icon: PlaneTakeoff },
+  { name: "Land", display: true, icon: PlaneLanding },
+  { name: "Payload", display: true, icon: ShowerHead },
+  { name: "Place", display: false, icon: null }
 ] as const
 
 type Actions = {
@@ -74,7 +81,6 @@ export const useMission = create<State & Actions>((set, get) => ({
     set({ mission: temp, selectedSubMission: "Main" })
   },
   addSub: (name) => {
-
     if (get().selectedSubMission == name) return
 
     let newWaypoints = get().mission.clone()
