@@ -1,6 +1,6 @@
 # readyflight
 
-An Electron application with React and TypeScript test
+An Electron application with React and TypeScript
 
 
 ## Project Setup
