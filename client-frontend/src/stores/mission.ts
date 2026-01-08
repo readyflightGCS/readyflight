@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { createWithEqualityFn as create } from 'zustand/traditional'
 
 import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
 import { Mission } from '@libs/mission/mission'
@@ -24,6 +24,9 @@ type Actions = {
   setSelectedCommandIDs: (n: number[]) => void
   setMission: (m: Mission<CommandDescription>) => void
   setVehicle: (v: Vehicle) => void
+  clearSubMission: (name: string) => void
+  deleteSubMission: (name: string) => void
+  addSub: (name: string) => void
 }
 
 type State = {
@@ -60,7 +63,29 @@ export const useMission = create<State & Actions>((set, get) => ({
   setMission: (m) => {
     set({ mission: m })
   },
+  clearSubMission: (name) => {
+    const temp = get().mission.clone()
+    temp.set(name, [])
+    set({ mission: temp })
+  },
+  deleteSubMission: (name) => {
+    const temp = get().mission.clone()
+    temp.removeSubMission(name)
+    set({ mission: temp, selectedSubMission: "Main" })
+  },
+  addSub: (name) => {
+
+    if (get().selectedSubMission == name) return
+
+    let newWaypoints = get().mission.clone()
+    try {
+      newWaypoints.pushToMission(get().selectedSubMission, { type: "RF.Group", frame: 0, params: { name: name } })
+      set({ mission: newWaypoints })
+    } catch (err) {
+      return
+    }
+  },
   setSelectedCommandIDs: (n) => set({ selectedCommandIDs: n }),
   setSelectedSubMission: (name) => set({ selectedSubMission: name }),
-  setVehicle: (v) => set({ vehicle: v })
+  setVehicle: (v) => set({ vehicle: v }),
 }))
