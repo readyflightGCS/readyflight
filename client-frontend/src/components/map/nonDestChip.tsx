@@ -3,17 +3,20 @@ import { Marker } from "react-leaflet"
 import * as Leaflet from "leaflet"
 import { LatLng } from "@libs/world/latlng"
 
-export default function NonDestChip({ name, position, active, onClick, offset }: { name: string, position: LatLng, offset: number, active: boolean, onClick?: () => void }) {
+export default function NonDestChip({ name, position, active, onClick, onDoubleClick, offset }: { name: string, position: LatLng, offset: number, active: boolean, onClick?: () => void, onDoubleClick?: () => void }) {
 
   const markerRef = useRef<Leaflet.Marker>(null)
 
   const eventHandlers = useMemo(
     () => ({
+      dblclick() {
+        if (onDoubleClick) onDoubleClick()
+      },
       click() {
         if (onClick) onClick()
       },
     }),
-    [onClick],
+    [onClick, onDoubleClick],
   )
 
   return (

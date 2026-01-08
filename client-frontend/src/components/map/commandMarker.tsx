@@ -114,6 +114,7 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
             position={basePosition}
             active={isActive}
             onClick={() => onClick(command.id + id + 1)}
+            onDoubleClick={() => { onDoubleClick(command.id + id + 1) }}
           />
         );
       })}
