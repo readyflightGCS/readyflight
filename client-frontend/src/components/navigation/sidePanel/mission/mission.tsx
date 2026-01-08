@@ -6,6 +6,7 @@ import CommandList from "./commandList";
 import MissionFile from "./file";
 import { Button } from "@/components/ui/button";
 import MissionDialog from "@/components/dialogs/mission";
+import SidePanelSection from "@/components/ui/sidePanelSection";
 
 const noAddNames = ["Main", "Geofence", "Takeoff", "Landing", "Markers"]
 
@@ -45,17 +46,17 @@ export default function Mission() {
 
   return (
     <div className="flex flex-col gap-2 h-full">
-      <div className="bg-muted p-2 rounded-lg flex flex-col gap-2">
-        <h3>File</h3>
+
+      <SidePanelSection title="File">
         <MissionDialog />
         <MissionFile />
-      </div>
-      <div className="bg-muted p-2 rounded-lg flex-grow flex flex-col gap-2">
-        <h3>{selectedSubMission}</h3>
+      </SidePanelSection>
+
+      <SidePanelSection title={selectedSubMission} className="flex-grow">
         <CommandList />
-      </div>
-      <div className="bg-muted p-2 rounded-lg">
-        <h3>Sub Missions</h3>
+      </SidePanelSection>
+
+      <SidePanelSection title="Sub Missions">
         <div className="flex flex-col gap-2">
           {mission.getMissions().map((subMission, id) => {
             const wp = mission.get(subMission)
@@ -95,7 +96,7 @@ export default function Mission() {
             )
           })}
         </div>
-      </div>
-    </div>
+      </SidePanelSection>
+    </div >
   )
 }

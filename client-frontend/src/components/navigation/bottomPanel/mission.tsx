@@ -8,7 +8,7 @@ import HeightMap from "./mission/terrain/heightMap"
 const tabs = [
   { name: "Parameter", component: <ParamEditor /> },
   { name: "Terrain", component: <HeightMap /> },
-  { name: "Waypoint Check", component: <div /> }
+  { name: "Mission Check", component: <div /> }
 ] as const satisfies { name: string, component: ReactNode }[]
 
 export default function mission() {
