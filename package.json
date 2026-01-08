@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "leaflet": "^1.9.4",
-    "react-leaflet": "^5.0.0-rc.2"
+    "react-leaflet": "^5.0.0-rc.2",
+    "use-sync-external-store": "^1.6.0"
   }
 }
