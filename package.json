@@ -26,6 +26,7 @@
     "docs:website": "cd docs && bun run dev:website",
     "start": "cd electron && bun run preview",
     "build": "cd electron && bun run build",
+    "build:web": "cd client-frontend && bun run build",
     "build:unpack": "cd electron && bun run build:unpack",
     "build:win": "cd electron && bun run build:win",
     "build:mac": "cd electron && bun run build:mac",
