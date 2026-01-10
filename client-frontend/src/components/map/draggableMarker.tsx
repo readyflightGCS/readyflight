@@ -10,8 +10,7 @@ export default function DraggableMarker({ text, position, active, onMove, onClic
 
   const eventHandlers = useMemo(
     () => ({
-      dblclick: (e) => {
-        console.log("Marker double-clicked", e);
+      dblclick: () => {
         onDoubleClick()
       },
       click() {

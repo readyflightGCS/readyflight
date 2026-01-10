@@ -59,11 +59,6 @@ export default function HeightMap() {
   // Calculate terrain distances (cumulative distances along the fetched terrain path)
   const currentTerrainDistances = calculateCumulativeDistances(terrainData);
 
-  // Calculate minimum terrain height
-  const minOverallTerrainHeight = terrainData.length > 0
-    ? Math.min(...terrainData.map(td => td.alt))
-    : 0;
-
   // Prepare terrain profile for the chart (normalized elevation)
   const terrainProfileForChart = terrainData.map((td, index) => ({
     distance: parseFloat(currentTerrainDistances[index]?.toFixed(1) || "0"),
