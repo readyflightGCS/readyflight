@@ -2,10 +2,9 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMission } from "@/stores/mission";
 import { CommandDescription, MissionCommand } from "@libs/commands/command";
-import { coerceCommand, getCommandDescription } from "@libs/commands/helpers";
+import { coerceCommand } from "@libs/commands/helpers";
 import { RFCommandDescription } from "@libs/commands/readyflightCommands";
 import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
-import { ChangeEvent } from "react";
 
 export default function CommandTypeSelector({ selected }: { selected: MissionCommand<CommandDescription>[] }) {
   const { selectedSubMission, selectedCommandIDs, mission, setMission, dialect } = useMission()
@@ -50,7 +49,7 @@ export default function CommandTypeSelector({ selected }: { selected: MissionCom
             {types.size > 1 ? <option value="--" disabled>--</option> : null}
             <SelectGroup>
               <SelectLabel>ReadyFlight Commands</SelectLabel>
-              {RFCommandDescription.map((x, i) => (
+              {RFCommandDescription.filter(x => x.type !== "RF.Group").map((x, i) => (
                 <SelectItem key={i} value={x.type}>{x.label}</SelectItem>
               ))}
             </SelectGroup>
