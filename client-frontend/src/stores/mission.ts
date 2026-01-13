@@ -9,11 +9,6 @@ import { Dialect } from '@libs/mission/dialect'
 import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
 import { Locate, MousePointer, PlaneLanding, PlaneTakeoff, ShowerHead } from 'lucide-react'
 
-type Tool = {
-  name: string
-  display: boolean,
-}
-
 export const tools = [
   { name: "Select", display: true, icon: MousePointer },
   { name: "Waypoint", display: true, icon: Locate },

@@ -1,42 +1,67 @@
 import { Dialect } from "@libs/mission/dialect";
-import { CommandDescription, CommandParameterUnion, DialectCommandParams, MissionCommand } from "./command";
+import { CommandDescription, CommandParameterUnion, DialectCommandParams, MissionCommand, RFCommand } from "./command";
 import { RFCommandDescription } from "./readyflightCommands";
 import { objectKeys } from "@libs/util/types";
+import { LatLng, LatLngAlt } from "@libs/world/latlng";
 
+// Get the label which for a command. Check the Readyflight commands first, then
+// fallback to the dialect for labels. 
+// TODO: possibly replace the readyflight ones
+// with a better way of getting the label (probably from the command
+// description) and just make an exception for Group
 export function getCommandLabel(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>) {
   switch (cmd.type) {
-    case "RF.Waypoint": {
-      return "Waypoint"
-    }
+    case "RF.Waypoint": return "Waypoint"
+    case "RF.DubinsPath": return "Dubins Path"
+    case "RF.Land": return "Land"
+    case "RF.Takeoff": return "Takeoff"
+    case "RF.SetServo": return "Set Servo"
     case "RF.Group": {
       return `${cmd.params.name}`
     }
     default:
+      // throw type error here if we've not covered all RF commands
+      let exhaustiveCheck: `D_${string}` = cmd.type
       return dialect.getCommandLabel(cmd)
   }
 }
 
-export function getCommandLocation(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>) {
+// get the command's location, use the dialect as a fallback if non RF command
+export function getCommandLocation(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>): LatLng | null {
   switch (cmd.type) {
-    case "RF.Waypoint": {
-      return { lat: cmd.params.latitude, lng: cmd.params.longitude }
+    case "RF.Waypoint": return { lat: cmd.params.latitude, lng: cmd.params.longitude }
+    case "RF.DubinsPath": return null
+    case "RF.Land": return { lat: cmd.params.latitude, lng: cmd.params.longitude }
+    case "RF.Takeoff": return { lat: cmd.params.latitude, lng: cmd.params.longitude }
+    case "RF.SetServo": return null
+    case "RF.Group": return null
+    default: {
+      let exhaustiveCheck: `D_${string}` = cmd.type
+      return dialect.getCommandLocation(cmd)
     }
   }
-  return dialect.getCommandLocation(cmd)
 }
 
-export function getCommandLocationAlt(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>) {
+// get the command's location, use the dialect as a fallback if non RF command
+export function getCommandLocationAlt(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>): LatLngAlt {
   switch (cmd.type) {
-    case "RF.Waypoint": {
-      return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
+    case "RF.Waypoint": return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
+    case "RF.DubinsPath": return null
+    case "RF.Land": return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
+    case "RF.Takeoff": return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
+    case "RF.SetServo": return null
+    case "RF.Group": return null
+    default: {
+      let exhaustiveCheck: `D_${string}` = cmd.type
+      return dialect.getCommandLocationAlt(cmd)
     }
   }
-  return dialect.getCommandLocationAlt(cmd)
 }
 
+// get the command description of a command. use the dialect as a fallback if
+// non RF command
 export function getCommandDescription(cmdType: MissionCommand<CommandDescription>["type"], dialect: Dialect<CommandDescription>) {
-  //@ts-ignore
-  if (RFCommandDescription.map(x => x.type).includes(cmdType)) {
+  if (cmdType.startsWith("RF.")) {
     return RFCommandDescription.find(x => x.type == cmdType)
   } else {
     return dialect.commandDescriptions.find(x => x.type == cmdType)
@@ -73,11 +98,14 @@ export function coerceCommand<T extends CommandDescription>(cmd: MissionCommand<
  * @param {[K in keyof CommandParams<T>]?: number} params - An object containing key/value params for the command
  * @returns {ICommand<T>} The new command
  */
-export function makeCommand<T extends CommandDescription>(type: MissionCommand<T>["type"], params: { [K in keyof DialectCommandParams<T>]?: number }, dialect: Dialect<T>): MissionCommand<T> {
+export function makeCommand<T extends CommandDescription>(
+  type: MissionCommand<T>["type"],
+  params: { [K in keyof DialectCommandParams<T>]?: number },
+  dialect: Dialect<T>
+): MissionCommand<T> {
   const newParams: Record<string, CommandParameterUnion["default"]> = {}
-  let cmd: T | undefined = undefined
+  let cmd: T | typeof RFCommandDescription[number] | undefined = undefined
   if (RFCommandDescription.find(cmd => cmd.type === type)) {
-    //@ts-ignore
     cmd = RFCommandDescription.find(cmd => cmd.type === type)
   }
   if (cmd === undefined && dialect.commandDescriptions.find(cmd => cmd.type === type)) {

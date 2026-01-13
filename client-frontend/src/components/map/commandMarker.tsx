@@ -73,7 +73,6 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
   if (viewable["accept radius"] && command.id === 16) {
 
     // make sure the right radius is used, default to plane specific, otherwise use command param
-    // @ts-ignore
     let radius = command.cmd.params["accept radius"]
     if (radius === 0) {
       // default aparently ??
