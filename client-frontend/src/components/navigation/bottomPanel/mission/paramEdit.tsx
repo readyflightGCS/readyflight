@@ -1,7 +1,6 @@
 import { useMission } from "@/stores/mission"
 import { CommandDescription, MissionCommand } from "@libs/commands/command"
 import { getCommandDescription } from "@libs/commands/helpers"
-import CommandTypeSelector from "./commandTypeSelector"
 import { LatLngEditor } from "./LatLngEditor"
 import Parameter from "./parameter"
 
@@ -102,7 +101,6 @@ export default function ParamEditor() {
 
   return (
     <div className="flex-1 flex flex-wrap overflow-y-auto">
-      <CommandTypeSelector selected={selected} />
       {Array.from(params).map((x, i) => {
         // latitude and longitude are handled by the LatLng editor
         if (["longitude", "latitude"].includes(x)) {
