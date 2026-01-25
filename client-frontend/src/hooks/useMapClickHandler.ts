@@ -10,6 +10,7 @@ export function useMapClickHandler() {
   const setMission = useMission((s) => s.setMission);
   const mission = useMission((s) => s.mission);
   const selectedSubMission = useMission((s) => s.selectedSubMission);
+  const setSelectedCommandIDs = useMission((s) => s.setSelectedCommandIDs);
 
   return (e: LeafletMouseEvent) => {
     switch (currentTab) {
@@ -24,8 +25,10 @@ export function useMapClickHandler() {
           }
         };
         let a = mission.clone()
+        const newIndex = mission.get(selectedSubMission).length
         a.pushToMission(selectedSubMission, cmd)
         setMission(a)
+        setSelectedCommandIDs([newIndex])
         break;
       }
 

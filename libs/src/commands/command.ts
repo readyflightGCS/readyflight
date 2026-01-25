@@ -44,24 +44,24 @@ export type CommandParameterDescriptionS = {
   options: string[]
 }
 
-export type CommandParameterDescriptionLLAA = {
-  parameterType: "latlngaltarr"
+export type CommandParameterDescriptionDubins = {
+  parameterType: "dubinsParameters"
   label: string
   description: string
-  default: LatLngAlt[]
+  default: { lat: number, lng: number, alt: number, heading: number, radius: number }[]
 }
 
 // remember to add any new types to this union
 export type CommandParameterUnion =
   CommandParameterDescriptionS |
   CommandParameterDescriptionN |
-  CommandParameterDescriptionLLAA
+  CommandParameterDescriptionDubins
 
 // and remember to add it to this thing. TODO maybe derive this somehow
 type ParameterTypeToValueType<T extends CommandParameterUnion> =
   T extends { parameterType: "number" } ? number :
   T extends { parameterType: "string" } ? string :
-  T extends { parameterType: "latlngaltarr" } ? LatLngAlt[] :
+  T extends { parameterType: "dubinsParameters" } ? { lat: number, lng: number, alt: number, heading: number, radius: number }[] :
   never
 
 

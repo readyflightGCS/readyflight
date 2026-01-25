@@ -1,6 +1,34 @@
 import { CommandDescription } from "@libs/commands/command";
 
 export const mavCmdDescription = [{
+  value: 183,
+  type: "D_MAV_CMD_DO_SET_SERVO",
+  label: "Set Servo",
+  description: "Set a servo to a desired PWM value.",
+  hasLocation: false,
+  isDestination: false,
+  parameters: [{
+    parameterType: "number",
+    label: "Servo Instance",
+    description: "Servo instance number.",
+    units: "",
+    minValue: 0,
+    maxValue: null,
+    increment: 1,
+    default: null,
+    options: [],
+  }, {
+    parameterType: "number",
+    label: "PWM",
+    description: "Pulse Width Modulation.",
+    units: "us",
+    minValue: 0,
+    maxValue: null,
+    increment: 1,
+    default: null,
+    options: [],
+  }, null, null, null, null, null],
+}, {
   value: 16,
   type: "D_MAV_CMD_NAV_WAYPOINT",
   label: "Waypoint",
