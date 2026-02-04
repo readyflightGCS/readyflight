@@ -5,7 +5,7 @@
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/readyflightGCS/readyflight/test.yml?style=for-the-badge)
 ![GitHub repo size](https://img.shields.io/github/repo-size/readyflightgcs/readyflight?style=for-the-badge)
-
+![GitHub License](https://img.shields.io/github/license/readyflightgcs/readyflight?style=for-the-badge)
 
 
 An Electron application with React and TypeScript
