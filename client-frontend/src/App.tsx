@@ -27,7 +27,7 @@ export default function App(): React.JSX.Element {
           <SidePanel />
         </div>
         <div className={`absolute bottom-0 left-0 w-full z-20 flex justify-center mb-4 transition-all duration-300 pointer-events-none ${isSidePanelOpen ? 'pl-60' : ''}`}>
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto w-fit">
             <BottomPanel />
           </div>
         </div>
