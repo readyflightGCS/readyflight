@@ -1,8 +1,37 @@
 import { haversineDistance } from "@libs/world/distance";
 import { LatLng, LatLngAlt } from "@libs/world/latlng";
 
+/**
+ * Resolution used for terrain‑grid calculations.
+ *
+ * @remarks
+ * This value determines the number of decimal places used when converting
+ * terrain coordinates into storage keys. A resolution of `2` means values
+ * are quantized to hundredths.
+ */
 const TERRAIN_RES = 2
+
+/**
+ * Offset applied when converting floating‑point coordinates into terrain‑store keys.
+ *
+ * @remarks
+ * Computed as `1 / 10 ** TERRAIN_RES`, producing a small increment used to
+ * avoid boundary collisions when mapping coordinates to discrete grid cells.
+ */
 const offset = 1 / 10 ** TERRAIN_RES
+
+/**
+ * Retrieve multiple values from a key‑value store.
+ *
+ * @remarks
+ * This placeholder implementation returns an array of zeros with the same
+ * length as the provided key list. It is intended to be replaced with a real
+ * lookup mechanism once the terrain store is implemented.
+ *
+ * @param keys List of lookup keys
+ * @param store Backing store object or API
+ * @returns An array of values corresponding to the requested keys
+ */
 function getMany(keys: string[], store: any) {
   let re = []
   for (let i = 0; i < keys.length; i++) {
@@ -12,6 +41,13 @@ function getMany(keys: string[], store: any) {
 }
 
 //const terStore = createStore('terStore', 'terStore')
+
+/**
+ * Placeholder reference to the terrain‑data store.
+ *
+ * @remarks
+ * This constant is a temporary stand‑in for a persistent storage layer
+ */
 const terStore = "TODO"
 
 /**
@@ -379,4 +415,3 @@ export function calculateInterpolatedAltitudes(
 
   return { interpolatedAltitudes, totalDistance };
 }
-

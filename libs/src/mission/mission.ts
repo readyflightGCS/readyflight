@@ -1,21 +1,76 @@
+/**
+ * Represents a mission containing commands organized into sub-missions.
+ * Supports hierarchical command structures with group references, flattening,
+ * and various query and modification operations.
+ * 
+ * @template CD - The command description type that extends CommandDescription
+ * 
+ * @example
+ * ```typescript
+ * const mission = new Mission({ lat: 0, lng: 0 });
+ * mission.addSubMission("Survey", []);
+ * mission.pushToMission("Main", waypoint);
+ * const flattened = mission.flatten("Main");
+ * ```
+ */
 import { CommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
 import { LatLng } from "@libs/world/latlng";
 import { Dialect } from "./dialect";
 import { getCommandLocation } from "@libs/commands/helpers";
 
 
-// Type for RF.Group command
+/**
+ * Represents a command of type "RF.Group" extracted from the RFCommand union.
+ * 
+ * This type is useful for narrowing down RFCommand instances to those specifically
+ * related to group operations, enabling type-safe handling of group commands.
+ */
 type GroupCommand = Extract<RFCommand, { type: "RF.Group" }>
 
+/**
+ * Represents a mission
+ * @extends CommandDescription
+ */
 export class Mission<CD extends CommandDescription> {
 
+  /**
+   * Stores a collection of mission commands grouped by their string identifiers.
+   * 
+   * @remarks
+   * Each key in the map represents a unique mission identifier, and the value is an array of `MissionCommand<CD>` objects associated with that mission.
+   * 
+   * @typeParam CD - The type of command data associated with each mission command.
+   */
   private collection: Map<string, MissionCommand<CD>[]>
+
+  /**
+   * The geographic reference point for the mission.
+   * Used as the origin for relative positioning and calculations.
+   * 
+   * @remarks
+   * This point is typically set during mission initialization and remains constant throughout the mission.
+   *
+   * @see LatLng
+   */
   private referencePoint: LatLng
 
+  /**
+   * Returns the collection associated with the current instance.
+   *
+   * @returns The collection property of the instance.
+   */
   destructure() {
     return this.collection;
   }
 
+  /**
+   * Initializes a new instance of the mission class.
+   * 
+   * @param referencePoint - The reference point for the mission, specified as a `LatLng` object. Defaults to `{ lat: 0, lng: 0 }`.
+   * @param collection - An optional map containing mission command collections. If provided, the constructor creates a deep copy of the collection.
+   * 
+   * If `collection` is not provided, the constructor initializes the collection with default keys: "Main", "Geofence", and "Markers", each mapped to an empty array.
+   */
   constructor(referencePoint: LatLng = { lat: 0, lng: 0 }, collection?: Map<string, MissionCommand<CD>[]>) {
     if (collection) {
       let newMap = new Map()
@@ -34,10 +89,22 @@ export class Mission<CD extends CommandDescription> {
     this.referencePoint = referencePoint
   }
 
+  /**
+   * Returns the reference point for the mission.
+   *
+   * @returns {LatLng} The reference point as a LatLng object.
+   */
   getReferencePoint(): LatLng {
     return this.referencePoint
   }
 
+  /**
+   * Retrieves the list of mission commands associated with the specified mission name.
+   *
+   * @param mission - The name of the mission to retrieve commands for.
+   * @returns An array of `MissionCommand<CD>` objects corresponding to the mission.
+   * @throws {MissingMission} If the mission does not exist in the collection.
+   */
   get(mission: string): MissionCommand<CD>[] {
     const a = this.collection.get(mission)
     if (a === undefined) {
@@ -46,14 +113,33 @@ export class Mission<CD extends CommandDescription> {
     return a
   }
 
+  /**
+   * Sets the mission commands for a given mission identifier.
+   *
+   * @param mission - The unique identifier for the mission.
+   * @param nodes - An array of mission commands to associate with the mission.
+   */
   set(mission: string, nodes: MissionCommand<CD>[]) {
     this.collection.set(mission, nodes)
   }
 
+  /**
+   * Retrieves a list of mission identifiers from the collection.
+   *
+   * @returns {string[]} An array containing the keys of all missions in the collection.
+   */
   getMissions() {
     return Array.from(this.collection.keys())
   }
 
+  /**
+   * Adds a waypoint to the specified mission.
+   *
+   * @param missionName - The name of the mission to which the waypoint will be added.
+   * @param waypoint - The mission command to add as a waypoint.
+   * @throws {MissingMission} If the specified mission does not exist.
+   * @throws {RecursiveMission} If adding the waypoint would create a recursive group reference (except for RF Group).
+   */
   pushToMission(missionName: string, waypoint: MissionCommand<CD>) {
     const mission = this.collection.get(missionName)
     if (!mission) throw new MissingMission(missionName)
@@ -67,11 +153,19 @@ export class Mission<CD extends CommandDescription> {
     mission.push(waypoint)
   }
 
+  /**
+   * Creates a shallow copy of the Mission instance.
+   * @returns A new Mission instance with the same reference point and collection.
+   */
   clone() {
     return new Mission(this.referencePoint, this.collection)
-
   }
 
+  /**
+   * Flattens a mission by recursively expanding all group commands into individual commands.
+   * @param mission - The name of the mission to flatten
+   * @returns An array of flattened mission commands, excluding any group commands
+   */
   flatten(mission: string) {
     let retList: Exclude<MissionCommand<CD>, GroupCommand>[] = []
     const commands = this.collection.get(mission)
@@ -83,6 +177,12 @@ export class Mission<CD extends CommandDescription> {
     return retList
   }
 
+  /**
+   * Flattens a single mission command node, expanding group commands into their constituent commands.
+   * @typeParam CD - The command data type parameter.
+   * @param node - The mission command node to flatten.
+   * @returns An array of flattened mission commands, excluding any group commands.
+   */
   flattenNode(node: MissionCommand<CD>) {
     let retList: Exclude<MissionCommand<CD>, GroupCommand>[] = []
     if ((node as RFCommand).type == "RF.Group") {
@@ -94,10 +194,19 @@ export class Mission<CD extends CommandDescription> {
     return retList
   }
 
+  /**
+   * Adds a sub-mission to the collection with the specified name and nodes.
+   * @param name - The name of the sub-mission.
+   * @param nodes - An optional array of mission commands. Defaults to an empty array.
+   */
   addSubMission(name: string, nodes: MissionCommand<CD>[] = []) {
     this.collection.set(name, nodes)
   }
 
+  /**
+   * Removes a sub-mission by name and filters out any references to it from all mission groups.
+   * @param name - The name of the sub-mission to remove
+   */
   removeSubMission(name: string) {
     this.collection.delete(name)
 
@@ -117,6 +226,13 @@ export class Mission<CD extends CommandDescription> {
     }
   }
 
+  /**
+   * Checks if a mission contains a specific group by name, recursively searching through nested groups.
+   * @param missionName - The name of the mission to search within
+   * @param A - The name of the group to search for
+   * @returns `true` if the group is found in the mission or any of its nested groups, `false` otherwise
+   * @throws {MissingMission} Thrown when the specified mission is not found in the collection
+   */
   contains(missionName: string, A: string): boolean {
     const commands = this.collection.get(missionName)
     if (!commands) { throw new MissingMission(missionName) }
@@ -132,6 +248,11 @@ export class Mission<CD extends CommandDescription> {
     return false
   }
 
+  /**
+   * Determines whether a mission contains itself, either directly or indirectly.
+   * @param missionName - The name of the mission to check for recursion. Defaults to "Main".
+   * @returns `true` if the mission contains itself (is recursive), `false` otherwise.
+   */
   isRecursive(missionName: string = "Main") {
     return this.contains(missionName, missionName)
   }
@@ -175,6 +296,13 @@ export class Mission<CD extends CommandDescription> {
     return findNth(missionNodes, missionName);
   }
 
+  /**
+   * Removes and returns a command from a mission.
+   * @param missionName - The name of the mission to remove the command from.
+   * @param id - Optional index of the specific command to remove. If not provided, removes the last command.
+   * @returns The removed command, or undefined if the mission is empty.
+   * @throws {MissingMission} If the mission with the given name does not exist.
+   */
   pop(missionName: string, id?: number): MissionCommand<CD> | undefined {
     const mission = this.collection.get(missionName)
     if (!mission) throw new MissingMission(missionName)
@@ -186,10 +314,28 @@ export class Mission<CD extends CommandDescription> {
     return mission.pop()
   }
 
+  /**
+   * Converts the mission collection to a JSON string representation.
+   * @returns {string} A formatted JSON string representation of the mission collection with 2-space indentation.
+   */
   jsonify() {
     return JSON.stringify(Array.from(this.collection), null, 2)
   }
 
+  /**
+   * Inserts a mission command at a specified position within a mission hierarchy.
+   * 
+   * @template CD - The type of command data associated with the mission command.
+   * @param id - The zero-based index position where the command should be inserted.
+   * @param missionName - The name of the mission where the command will be inserted.
+   * @param command - The mission command object to be inserted.
+   * @throws {MissingMission} Thrown when the specified mission name does not exist in the collection.
+   * 
+   * @remarks
+   * This method performs a depth-first traversal of the mission hierarchy, recursively
+   * searching through nested groups to find the correct insertion point. Non-group commands
+   * increment the position counter, while group commands are traversed recursively.
+   */
   insert(id: number, missionName: string, command: MissionCommand<CD>) {
 
     const rec = (count: number, mission: string): number => {
@@ -220,6 +366,12 @@ export class Mission<CD extends CommandDescription> {
     rec(0, missionName)
   }
 
+  /**
+   * Finds all submissions (nested groups) for a given mission.
+   * @param missionName - The name of the mission to search for submissions
+   * @returns A set containing the names of all submissions found recursively
+   * @throws {MissingMission} If the mission with the specified name does not exist
+   */
   findAllSubMissions(missionName: string): Set<string> {
     let names = new Set<string>()
     const cur = this.collection.get(missionName)
@@ -312,7 +464,19 @@ export class Mission<CD extends CommandDescription> {
   }
 }
 
+/**
+ * Represents a main line as an array of main line items.
+ * @typedef {MainLineItem[]} MainLine
+ */
 export type MainLine = MainLineItem[]
+
+/**
+ * Represents a main line item in a mission.
+ * @typedef {Object} MainLineItem
+ * @property {MissionCommand<CommandDescription>} cmd - The primary mission command for this line item.
+ * @property {number} id - The unique identifier for this mission line item.
+ * @property {MissionCommand<CommandDescription>[]} other - An array of additional or alternative mission commands associated with this line item.
+ */
 export type MainLineItem = { cmd: MissionCommand<CommandDescription>, id: number, other: MissionCommand<CommandDescription>[] }
 
 /**
@@ -337,6 +501,10 @@ export function convertToMainLine(commands: Exclude<MissionCommand<CommandDescri
   return mainLine
 }
 
+/**
+ * Error thrown when a mission cannot be found.
+ * @extends Error
+ */
 export class MissingMission extends Error {
   constructor(missionName: string) {
     super(`Mission cannot be found: ${missionName}`)
@@ -345,10 +513,13 @@ export class MissingMission extends Error {
 }
 
 
+/**
+ * Error thrown when a mission is detected to be recursive.
+ * @extends Error
+ */
 export class RecursiveMission extends Error {
   constructor() {
     super(`Mission is recursive`)
     this.name = this.constructor.name
   }
 }
-

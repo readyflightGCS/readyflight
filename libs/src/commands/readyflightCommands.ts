@@ -1,5 +1,29 @@
 import { CommandDescription } from "./command"
 
+/**
+ * Array of ReadyFlight command descriptions defining the structure and metadata for various mission commands.
+ * 
+ * Includes the following command types:
+ * - RF.DubinsPath: A smooth dubins path through multiple lat/lng/alt points
+ * - RF.Group: Groups commands together under a named sub-mission
+ * - RF.Waypoint: Navigate to a specific location with lat/lng/altitude
+ * - RF.Takeoff: Takeoff from ground or hand with pitch, yaw, and location parameters
+ * - RF.Land: Land at a specified location with abort altitude and precision land mode options
+ * - RF.SetServo: Set a servo to a desired PWM value
+ * 
+ * Each command description includes:
+ * - type: Unique command identifier
+ * - label: Human-readable command name
+ * - value: Numeric command code
+ * - description: Detailed explanation of command purpose
+ * - hasLocation: Whether the command includes location parameters
+ * - isDestination: Whether the command represents a destination waypoint
+ * - parameters: Array of command-specific parameter definitions
+ * 
+ * @readonly
+ * @const
+ * @satisfies {CommandDescription[]}
+ */
 export const RFCommandDescription = [{
   type: "RF.DubinsPath",
   label: "Dubins Path",

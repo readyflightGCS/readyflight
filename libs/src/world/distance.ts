@@ -1,7 +1,7 @@
 import { deg2rad, mod2pi, modf, rad2deg } from "@libs/math/geometry";
 import { LatLng, latLngEqual } from "./latlng";
 
-/*
+/**
  * Calculate the distance between two points on a globe
  * @param {LatLng} pos1 the first position
  * @param {LatLng} pos2 the second position
@@ -87,7 +87,7 @@ export function formatDistance(distanceInMeters: number): string {
   }
 }
 
-/*
+/**
  * The Bearing between two points in degrees
  */
 export function worldBearing(a: LatLng, b: LatLng): number | undefined {
@@ -110,7 +110,7 @@ export function worldBearing(a: LatLng, b: LatLng): number | undefined {
   return rad2deg(mod2pi(initialBearing))
 }
 
-/*
+/**
  * Offset get a point offset from start by a distance and bearing in degrees
  * @param {LatLng} start - the starting location
  * @param {number} distance - the distance to offset

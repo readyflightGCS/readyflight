@@ -11,6 +11,18 @@ type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
 // The shape of the definition of a command, when we want to add new dialects,
 // their commands should conform to this description
 
+
+/**
+ * Describes the structure and metadata of a command.
+ * @typedef {Object} CommandDescription
+ * @property {string} type - The type identifier of the command.
+ * @property {number} value - The numeric value associated with the command.
+ * @property {string} label - A human-readable label for the command.
+ * @property {string} description - A detailed description of what the command does.
+ * @property {boolean} hasLocation - Indicates whether the command has a location associated with it.
+ * @property {boolean} isDestination - Indicates whether the command represents a destination.
+ * @property {CommandParameterUnion[]} parameters - An array of parameter types that the command can accept.
+ */
 export type CommandDescription = {
   type: string
   value: number
@@ -22,6 +34,19 @@ export type CommandDescription = {
   parameters: (CommandParameterUnion)[]
 }
 
+/**
+ * Describes a numeric command parameter with validation and configuration options.
+ * @typedef {Object} CommandParameterDescriptionN
+ * @property {string} parameterType - The type of the parameter, always "number".
+ * @property {string} label - The display label for the parameter.
+ * @property {string} description - A detailed description of what this parameter does.
+ * @property {string | null} units - The units of measurement for this parameter, or null if not applicable.
+ * @property {number | null} minValue - The minimum allowed value, or null if no minimum.
+ * @property {number | null} maxValue - The maximum allowed value, or null if no maximum.
+ * @property {number | null} increment - The step/increment value for adjustments, or null if no specific increment.
+ * @property {number | null} default - The default value for this parameter, or null if no default.
+ * @property {number[]} options - An array of valid numeric options for this parameter.
+ */
 export type CommandParameterDescriptionN = {
   parameterType: "number"
   label: string
@@ -34,6 +59,17 @@ export type CommandParameterDescriptionN = {
   options: number[]
 }
 
+/**
+ * Describes a string command parameter.
+ * @typedef {Object} CommandParameterDescriptionS
+ * @property {string} parameterType - The type of the parameter, set to "string".
+ * @property {string} label - A short label for the parameter.
+ * @property {string} description - A detailed description of the parameter.
+ * @property {string | null} default - The default value for the parameter, or null if no default is set.
+ * @property {number | null} minLen - The minimum length of the string, or null if no minimum is enforced.
+ * @property {number | null} maxLen - The maximum length of the string, or null if no maximum is enforced.
+ * @property {string[]} options - An array of valid string options for the parameter.
+ */
 export type CommandParameterDescriptionS = {
   parameterType: "string"
   label: string
@@ -44,6 +80,14 @@ export type CommandParameterDescriptionS = {
   options: string[]
 }
 
+/**
+ * Describes a command parameter of type latitude/longitude/altitude array.
+ * @typedef {Object} CommandParameterDescriptionLLAA
+ * @property {string} parameterType - The parameter type identifier, must be "latlngaltarr"
+ * @property {string} label - A short label for this parameter
+ * @property {string} description - A detailed description of what this parameter does
+ * @property {LatLngAlt[]} default - The default value as an array of latitude/longitude/altitude coordinates
+ */
 export type CommandParameterDescriptionLLAA = {
   parameterType: "latlngaltarr"
   label: string

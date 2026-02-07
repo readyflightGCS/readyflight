@@ -1,5 +1,36 @@
 import { CommandDescription } from "@libs/commands/command";
 
+/**
+ * Comprehensive array of MAVLink command descriptions for ArduPilot missions.
+ * 
+ * Contains detailed specifications for all supported mission command types including:
+ * - Navigation commands (waypoints, loitering, takeoff, land, RTL)
+ * - Condition commands (delay, distance, yaw)
+ * - DO commands (speed change, relay control, camera control, gimbal control)
+ * - Component commands (arm/disarm, storage format)
+ * - VTOL-specific commands (VTOL takeoff, VTOL land, transition)
+ * - Specialized commands (payload placement, winch operation)
+ * 
+ * Each command entry includes:
+ * - `value`: The MAVLink command ID
+ * - `type`: The command type identifier (D_MAV_CMD_*)
+ * - `label`: Human-readable command name
+ * - `description`: Detailed explanation of command behavior
+ * - `hasLocation`: Whether the command uses latitude/longitude/altitude
+ * - `isDestination`: Whether the command represents a waypoint destination
+ * - `parameters`: Array of parameter definitions with type, units, constraints, and validation rules
+ * 
+ * @constant
+ * @type {readonly CommandDescription[]}
+ * @see {@link CommandDescription} for individual command structure
+ * @example
+ * // Find a specific command
+ * const waypointCmd = mavCmdDescription.find(cmd => cmd.value === 16);
+ * 
+ * @example
+ * // Get all destination commands
+ * const destinations = mavCmdDescription.filter(cmd => cmd.isDestination);
+ */
 export const mavCmdDescription = [{
   value: 16,
   type: "D_MAV_CMD_NAV_WAYPOINT",

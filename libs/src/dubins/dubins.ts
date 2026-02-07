@@ -4,6 +4,10 @@ import { mod2pi, bearing, offset, dist } from "@libs/math/geometry"
 import { Curve, DubinsPath, Straight } from "./types";
 import { Result } from "@libs/util/try-catch";
 
+/**
+ * Enumeration representing turning direction options.
+ * @enum {number}
+ */
 export enum Dir {
   Left,
   Right,
