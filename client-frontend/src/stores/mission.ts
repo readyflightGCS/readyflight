@@ -7,21 +7,11 @@ import { defaultPlane } from '@libs/vehicle/copter'
 import { CommandDescription, MissionCommand } from '@libs/commands/command'
 import { Dialect } from '@libs/mission/dialect'
 import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
-import { Locate, MousePointer, PlaneLanding, PlaneTakeoff, ShowerHead } from 'lucide-react'
 
-export const tools = [
-  { name: "Select", display: true, icon: MousePointer },
-  { name: "Waypoint", display: true, icon: Locate },
-  { name: "Takeoff", display: true, icon: PlaneTakeoff },
-  { name: "Land", display: true, icon: PlaneLanding },
-  { name: "Payload", display: true, icon: ShowerHead },
-  { name: "Place", display: false, icon: null }
-] as const
 
 type Actions = {
   switchDialect: (dialect: Dialect<CommandDescription>) => void
   addCommand: (cmd: MissionCommand<CommandDescription>) => void
-  setTool: (tool: typeof tools[number]["name"]) => void
   setSelectedSubMission: (name: string) => void
   setSelectedCommandIDs: (n: number[]) => void
   setMission: (m: Mission<CommandDescription>) => void
@@ -34,7 +24,6 @@ type Actions = {
 type State = {
   mission: Mission<CommandDescription>
   dialect: Dialect<CommandDescription>
-  tool: typeof tools[number]["name"]
   selectedSubMission: string
   vehicle: Vehicle
   selectedCommandIDs: number[]
@@ -44,7 +33,6 @@ export const useMission = create<State & Actions>((set, get) => ({
   mission: new Mission<typeof mavCmdDescription[number]>(),
   dialect: ardupilot,
 
-  tool: "Takeoff",
   selectedSubMission: "Main",
   selectedCommandIDs: [],
   vehicle: defaultPlane,
@@ -58,9 +46,6 @@ export const useMission = create<State & Actions>((set, get) => ({
     const cloned = current.clone()
     cloned.pushToMission('Main', cmd)
     set({ mission: cloned })
-  },
-  setTool: (tool) => {
-    set({ tool: tool })
   },
   setMission: (m) => {
     set({ mission: m })

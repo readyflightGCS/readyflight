@@ -32,7 +32,7 @@ export const RFCommandDescription = [{
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    parameterType: "latlngaltarr",
+    parameterType: "dubinsParameters",
     label: "Points",
     description: "The lat lng alt points of the path",
     default: []

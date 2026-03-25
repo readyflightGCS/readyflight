@@ -1,7 +1,6 @@
-import { DialectCommand } from "@libs/commands/command"
+import { convertArdupilot } from "./export"
 import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
-import { objectKeys } from "@libs/util/types"
 
 /**
  * ArduPilot dialect configuration for mission command conversion and handling.
@@ -34,19 +33,7 @@ import { objectKeys } from "@libs/util/types"
 export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   name: "ardupilot",
   commandDescriptions: mavCmdDescription,
-  convert: (mission) => {
-    let commands: DialectCommand<typeof mavCmdDescription[number]>[] = []
-    for (let _ of mission.get("main")) {
-      //if typeof c is MavCommand commands.push(c)
-      //
-      //else switch on c,
-      // flatten group
-      // calculate dubins path in mavcommands
-      // etc.
-
-    }
-    return commands
-  },
+  convert: convertArdupilot,
   getCommandLocation: (cmd) => {
     let a = mavCmdDescription.find(x => x.type == cmd.type)
     if (!a.hasLocation) {
