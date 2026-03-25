@@ -74,6 +74,26 @@ export function offset(a: XY, dist: number, angle: number): XY {
 }
 
 
+/**
+ * Determine whether a point lies inside a polygon using the ray‑casting algorithm.
+ *
+ * @remarks
+ * The polygon is treated as a closed shape defined by an ordered list of vertices.
+ * The function casts a horizontal ray to the right of the test point and counts
+ * how many times it intersects polygon edges. An odd number of intersections
+ * indicates the point is inside; an even number indicates it is outside.
+ *
+ * The algorithm works for:
+ * - convex and concave polygons  
+ * - polygons whose first and last vertices are not explicitly repeated  
+ *
+ * It does not handle self‑intersecting polygons or edge‑case ambiguities such as
+ * points lying exactly on a vertex or boundary.
+ *
+ * @param polygon Ordered list of polygon vertices in 2D space
+ * @param point The point to test for inclusion
+ * @returns `true` if the point lies inside the polygon, otherwise `false`
+ */
 export function isPointInPolygon(polygon: XY[], point: XY) {
   const num_vertices = polygon.length;
   let inside = false;
@@ -101,4 +121,3 @@ export function isPointInPolygon(polygon: XY[], point: XY) {
 
   return inside;
 }
-

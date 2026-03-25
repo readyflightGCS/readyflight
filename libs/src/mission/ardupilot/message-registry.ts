@@ -322,6 +322,28 @@ import { AirlinkAuthResponse } from './messages/airlink-auth-response';
 import { GlobalPositionInt } from './messages/global-position-int';
 import { AutopilotVersion } from './messages/autopilot-version';
 import { Heartbeat } from './messages/heartbeat';
+/**
+ * Registry mapping MAVLink message IDs to their corresponding message class constructors.
+ * 
+ * This array maintains a bidirectional lookup between numeric message IDs and their respective
+ * MAVLink message types. Each entry contains a message ID and a constructor function that creates
+ * instances of the corresponding message class.
+ * 
+ * The registry includes standard MAVLink messages (IDs 0-1000), ArduPilot-specific extensions
+ * (IDs 150-250), and vendor-specific message types including:
+ * - OpenDroneId messages (12900-12920)
+ * - Uavionix ADSB messages (10001-10008)
+ * - ICAROUS messages (42000-42001)
+ * - Cubesat messages (50001-50005)
+ * - Airlink messages (52000-52001)
+ * 
+ * @type {Array<[number, new (system_id: number, component_id: number) => MAVLinkMessage]>}
+ * 
+ * @example
+ * // Find a message constructor by ID
+ * const [id, MessageClass] = messageRegistry.find(([msgId]) => msgId === 1);
+ * const message = new MessageClass(systemId, componentId);
+ */
 export const messageRegistry: Array<[number, new (system_id: number, component_id: number) => MAVLinkMessage]> = [
     [150, SensorOffsets],
     [151, SetMagOffsets],
