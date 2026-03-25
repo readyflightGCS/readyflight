@@ -34,7 +34,11 @@ export default function GeofenceLayer() {
         return <DraggableMarker key={idx} position={getCommandLocation(waypoint, dialect)} onMove={(lat, lng) => onMove(lat, lng, idx)} active={active} />
       }) : null
       }
-      <Polygon pathOptions={fenceOptions} positions={filterLatLngCmds(mission.flatten("Geofence"), dialect).map(x => getCommandLocation(x, dialect))} />
+      {mission.flatten("Geofence").length > 0 ?
+        <Polygon pathOptions={fenceOptions} positions={[[[90, -180],
+        [90, 180],
+        [-90, 180],
+        [-90, -180]], filterLatLngCmds(mission.flatten("Geofence"), dialect).map(x => getCommandLocation(x, dialect))]} /> : null}
     </LayerGroup>
   )
 
