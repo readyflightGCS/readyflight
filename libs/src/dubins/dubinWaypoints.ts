@@ -1,10 +1,4 @@
-
-
-
-
 // TODO: this file helps convert the Dubins mission commands into the MAVLINK compilant commands
-
-
 
 import { modf, offset } from "@libs/math/geometry"
 import { DubinsBetweenDiffRad } from "./dubins";
@@ -18,9 +12,25 @@ import { getCommandLocation } from "@libs/commands/helpers";
 import { MainLine } from "@libs/mission/mission";
 import { Plane } from "@libs/vehicle/types";
 
-/*
- * find all the sections of a waypoint list which require a dubins path between
- * include pre + post waypoints to connect
+/**
+ * Identify all contiguous waypoint segments that require Dubins‑path generation.
+ *
+ * @remarks
+ * A Dubins run is defined as any consecutive sequence of waypoints whose command
+ * type is `69` (the Dubins‑path marker). Each returned segment includes:
+ *
+ * - the index at which the Dubins run begins in the original waypoint list  
+ * - the full run of waypoints, including one waypoint before and after the run
+ *   when available, ensuring the Dubins path can connect smoothly to adjacent
+ *   mission legs  
+ *
+ * The function scans the waypoint list in order, grouping all adjacent Dubins
+ * waypoints into sections. When a non‑Dubins waypoint is encountered, the
+ * current section is closed and emitted.
+ *
+ * @param mainLine Ordered list of mission waypoints to analyze
+ * @returns An array of Dubins‑run descriptors, each containing the start index
+ * and the expanded waypoint slice needed for Dubins‑path computation
  */
 export function splitDubinsRuns(mainLine: MainLine): { start: number, run: { cmd: LatLngAltCommand, id: number, other: Command[] }[] }[] {
   let dubinSections: { start: number, run: { cmd: LatLngAltCommand, id: number, other: Command[] }[] }[] = []
@@ -53,6 +63,25 @@ export function splitDubinsRuns(mainLine: MainLine): { start: number, run: { cmd
   return dubinSections
 }
 
+/**
+ * Convert a Dubins path expressed in local ENU coordinates into a WGS84‑based
+ * Dubins path anchored to a given geographic reference point.
+ *
+ * @remarks
+ * Each component of the Dubins path—turn A, straight segment, and turn B—contains
+ * one or more XY coordinates representing centers or endpoints in the local ENU
+ * frame. This function transforms those coordinates into latitude/longitude
+ * positions by applying the `l2g` conversion relative to the supplied reference.
+ *
+ * The returned structure preserves all non‑geometric fields from the original
+ * path while replacing each XY coordinate with its corresponding geographic
+ * location. This is typically used when a locally planned Dubins maneuver must
+ * be exported or visualised in global WGS84 space.
+ *
+ * @param path Dubins path defined in local ENU coordinates
+ * @param reference Geographic reference point used for ENU→WGS84 conversion
+ * @returns A Dubins path with all coordinates expressed as WGS84 latitude/longitude
+ */
 export function localiseDubinsPath(path: DubinsPath<XY>, reference: LatLng): DubinsPath<LatLng> {
   return {
     turnA: { ...path.turnA, center: l2g(reference, path.turnA.center) },

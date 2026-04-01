@@ -18,10 +18,11 @@ type props = {
   }
   onMove: (lat: number, lng: number, id: number) => void,
   onClick: (id: number) => void,
+  onDoubleClick: (id: number) => void,
   active: boolean,
 }
 
-export default function CommandMarker({ basePosition, onMove, command, onClick, active }: props) {
+export default function CommandMarker({ basePosition, onMove, command, onClick, onDoubleClick, active }: props) {
 
   const { mission, selectedSubMission, selectedCommandIDs, vehicle } = useMission()
   const { viewable } = useRFMap()
@@ -72,7 +73,6 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
   if (viewable["accept radius"] && command.id === 16) {
 
     // make sure the right radius is used, default to plane specific, otherwise use command param
-    // @ts-ignore
     let radius = command.cmd.params["accept radius"]
     if (radius === 0) {
       // default aparently ??
@@ -95,6 +95,7 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
         onMove={(lat, lng) => onMove(lat, lng, command.id)}
         active={active}
         onClick={() => onClick(command.id)}
+        onDoubleClick={() => { console.log("bruh"); onDoubleClick(command.id) }}
       />
       {items}
 
@@ -112,6 +113,7 @@ export default function CommandMarker({ basePosition, onMove, command, onClick, 
             position={basePosition}
             active={isActive}
             onClick={() => onClick(command.id + id + 1)}
+            onDoubleClick={() => { onDoubleClick(command.id + id + 1) }}
           />
         );
       })}

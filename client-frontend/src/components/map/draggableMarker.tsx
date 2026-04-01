@@ -4,12 +4,15 @@ import * as Leaflet from "leaflet"
 import { LatLng } from "@libs/world/latlng"
 import { circleOverlayIcon, createAnimatedIcon } from "./waypoint"
 
-export default function DraggableMarker({ text, position, active, onMove, onClick }: { text?: string, position: LatLng, active: boolean, onMove?: (lat: number, lng: number) => void, onClick?: () => void }) {
+export default function DraggableMarker({ text, position, active, onMove, onClick, onDoubleClick }: { text?: string, position: LatLng, active: boolean, onMove?: (lat: number, lng: number) => void, onClick?: () => void, onDoubleClick?: () => void }) {
 
   const markerRef = useRef<Leaflet.Marker>(null)
 
   const eventHandlers = useMemo(
     () => ({
+      dblclick: () => {
+        onDoubleClick()
+      },
       click() {
         if (onClick) onClick()
       },
@@ -23,7 +26,7 @@ export default function DraggableMarker({ text, position, active, onMove, onClic
         }
       },
     }),
-    [onMove, onClick],
+    [onMove, onClick, onDoubleClick],
   )
 
   const textIcon = useMemo(() => {

@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, Route, Trash2 } from "lucide-react";
 import { useMission } from "@/stores/mission";
-import { Button } from "@/components/ui/button";
 import ListItem from "@/components/ui/listItem";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { getCommandLabel } from "@libs/commands/helpers";
+import { Button } from "@/components/ui/button";
 
 export default function CommandList() {
-  const { setSelectedSubMission, mission, setSelectedCommandIDs, selectedCommandIDs, dialect, setMission, selectedSubMission, setTool } = useMission()
+  const setSelectedSubMission = useMission(s => s.setSelectedSubMission)
+  const mission = useMission(s => s.mission)
+  const setSelectedCommandIDs = useMission(s => s.setSelectedCommandIDs)
+  const selectedCommandIDs = useMission(s => s.selectedCommandIDs)
+  const dialect = useMission(s => s.dialect)
+  const setMission = useMission(s => s.setMission)
+  const selectedSubMission = useMission(s => s.selectedSubMission)
+  const setTool = useMission(s => s.setTool)
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
 
   const curMission = mission.get(selectedSubMission)

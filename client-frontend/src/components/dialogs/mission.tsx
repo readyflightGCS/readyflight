@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Separator } from "../ui/separator";
 
 export default function MissionDialog() {
-  const { vehicle, setVehicle } = useMission()
+  const vehicle = useMission(s => s.vehicle)
+  const setVehicle = useMission(s => s.setVehicle)
   return (
     <Dialog>
       <DialogTrigger asChild>
