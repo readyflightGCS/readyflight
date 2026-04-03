@@ -1,9 +1,9 @@
 import { VehicleSchema } from "@libs/vehicle/types";
 import { z } from "zod";
 
-export const rf_json1_schema = z.object({
+export const RFJSON1Schema = z.object({
   RFVersion: z.string(),
-  fileVersion: z.sring().regex(/^01.[A-F0-9][A-F0-9]$/),
+  fileVersion: z.string().regex(/^01.[A-F0-9][A-F0-9]$/),
   exportTime: z.coerce.date(),
   dialect: z.string(),
   vehicle: VehicleSchema,
@@ -12,3 +12,5 @@ export const rf_json1_schema = z.object({
     commands: z.array(z.object().passthrough()) // update later to narrow more
   }))
 })
+
+export type RFJSON1 = z.infer<typeof RFJSON1Schema>

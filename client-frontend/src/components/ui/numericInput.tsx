@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 interface NumericInputProps {
@@ -13,7 +14,7 @@ export default function NumericInput({
   value: externalValue = null,
   name,
   onChange,
-  className = 'w-40 border-input',
+  className = 'w-40',
   min = -Infinity,
   max = Infinity
 }: NumericInputProps) {
@@ -110,7 +111,7 @@ export default function NumericInput({
         onBlur={handleBlur}
         min={min || -Infinity}
         max={max || Infinity}
-        className={`bg-card rounded-lg pl-2 border-2 cursor-move text-black ${className} ${internalValue === null ? 'text-center' : ''}`}
+        className={cn(`bg-card rounded-lg pl-2 border-2 cursor-move text-black text-sm h-8`, className, internalValue === null ? 'text-center' : '')}
       />
       {isDragging && (
         <div className="fixed inset-0 z-50 cursor-move" />

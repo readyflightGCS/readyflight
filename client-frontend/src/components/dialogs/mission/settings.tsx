@@ -1,12 +1,13 @@
 import { useMission } from "@/stores/mission";
-import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import NumericInput from "../ui/numericInput";
 import { getMinTurnRadius } from "@libs/dubins/dubinWaypoints";
 import { defaultCopter, defaultPlane } from "@libs/vehicle/defaults";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Separator } from "../ui/separator";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import NumericInput from "@/components/ui/numericInput";
+import ExportMission from "./export";
 
 export default function MissionDialog() {
   const vehicle = useMission(s => s.vehicle)
@@ -74,6 +75,10 @@ export default function MissionDialog() {
 
           </Tabs>
         </div >
+
+        <Separator />
+        <ExportMission />
+
 
       </DialogContent>
     </Dialog>
