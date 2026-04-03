@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 /**
  * A rotary‑wing vehicle with no additional performance parameters.
  *
@@ -5,10 +7,11 @@
  * This is the minimal shape required to represent a copter‑type vehicle in the system.
  * It serves as one branch of the {@link Vehicle} discriminated union.
  */
-export type Copter = {
-  type: "Copter"
+export const CopterSchema = z.object({
+  type: z.literal("Copter")
+})
 
-}
+export type Copter = z.infer<typeof CopterSchema>
 
 /**
  * A fixed‑wing aircraft definition with the parameters required for
@@ -21,12 +24,13 @@ export type Copter = {
  * @property maxBank Maximum permitted bank angle in degrees.
  * @property energyConstant Scalar used in energy‑based manoeuvre and performance modelling.
  */
-export type Plane = {
-  type: "Plane"
-  cruiseAirspeed: number
-  maxBank: number
-  energyConstant: number
-}
+export const PlaneSchema = z.object({
+  type: z.literal("Plane"),
+  cruiseAirspeed: z.number().positive(),
+  maxBank: z.number().positive().lt(90),
+  energyConstant: z.number().positive()
+})
+export type Plane = z.infer<typeof PlaneSchema>
 
 /**
  * A discriminated union representing any supported vehicle type.
@@ -35,6 +39,7 @@ export type Plane = {
  * The `type` field on each member (`"Copter"` or `"Plane"`) enables
  * safe narrowing and exhaustive handling in control logic.
  */
-export type Vehicle = Copter | Plane
+export const VehicleSchema = z.union([PlaneSchema, CopterSchema])
+export type Vehicle = z.infer<typeof VehicleSchema>
 
 

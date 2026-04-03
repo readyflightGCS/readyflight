@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import NumericInput from "../ui/numericInput";
 import { getMinTurnRadius } from "@libs/dubins/dubinWaypoints";
-import { defaultCopter, defaultPlane } from "@libs/vehicle/copter";
+import { defaultCopter, defaultPlane } from "@libs/vehicle/defaults";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Separator } from "../ui/separator";
 
