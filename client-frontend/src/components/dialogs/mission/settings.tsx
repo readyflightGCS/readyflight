@@ -76,7 +76,6 @@ export default function MissionDialog() {
           </Tabs>
         </div >
 
-        <Separator />
         <ExportMission />
 
 

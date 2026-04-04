@@ -1,6 +1,7 @@
 import { convertArdupilot } from "./export"
 import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
+import { exportRFJSON1 } from "../format/readlight/json1/export"
 
 /**
  * ArduPilot dialect configuration for mission command conversion and handling.
@@ -68,7 +69,15 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     let a = mavCmdDescription.find(x => x.type == cmd.type)
     return a.label
   },
-  formats: [],
+  fileFormats: [
+    {
+      name: "Readyflight JSON",
+      id: "RFJSON1",
+      import: () => { return { data: null, error: new Error("not implemented") } },
+      export: (mission, vehicle) => exportRFJSON1(mission, vehicle, ardupilot),
+      ext: ".json"
+    }
+  ],
   supportedRFCommands: {
     "RF.DubinsPath": false,
     "RF.Group": false,

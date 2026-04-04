@@ -3,8 +3,9 @@ import { Mission } from "@libs/mission/mission";
 import { Vehicle } from "@libs/vehicle/types";
 import { RFJSON1 } from "./schema";
 import { Dialect } from "@libs/mission/dialect";
+import { Result } from "@libs/util/try-catch";
 
-export function exportRFJSON1<CD extends CommandDescription>(mission: Mission<CD>, vehicle: Vehicle, dialect: Dialect<CD>) {
+export function exportRFJSON1<CD extends CommandDescription>(mission: Mission<CD>, vehicle: Vehicle, dialect: Dialect<CD>): Result<Blob> {
   let missionObj: RFJSON1 = {
     RFVersion: "Readyflight:00.00.00", // replace with git derived string
     fileVersion: "01.00",
@@ -16,8 +17,7 @@ export function exportRFJSON1<CD extends CommandDescription>(mission: Mission<CD
       commands: mission.get(submission).map((cmd) => (cmd))
     }))
   }
-  console.log(missionObj)
-  const str = JSON.stringify(missionObj)
-  return str
+  const data = new Blob([JSON.stringify(missionObj)])
+  return { data, error: null }
 
 }

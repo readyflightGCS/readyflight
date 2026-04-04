@@ -1,6 +1,8 @@
 import { Mission } from "./mission"
 import { LatLng, LatLngAlt } from "@libs/world/latlng"
 import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command"
+import { Result } from "@libs/util/try-catch"
+import { Vehicle } from "@libs/vehicle/types"
 
 /**
  * Represents a dialect—i.e., a specific command language or format—that can
@@ -66,27 +68,11 @@ export type Dialect<CD extends CommandDescription> = {
    * File formats that this dialect can import and export.
    * Each format defines its own import/export handlers
    */
-  formats: {
-    /**
-     * Name of the file format
-     */
+  fileFormats: {
     name: string,
-
-    /**
-     * Exports a mission into this file format.
-     * Takes the full mission so that as much information as possible is preserved.
-     * 
-     * @param mission  - The mission to export
-     * @returns A Blob containing the exported data
-     */
-    export: (mission: Mission<CD>) => Blob //notably this takes a mission as we want to preseve as much info as possible when converting
-
-    /**
-     * Imports a mission from a file in this format
-     * 
-     * @param mission - The Blob containing the mission data
-     * @returns A mission object reconstructed from the file
-     */
-    import: (mission: Blob) => Mission<CommandDescription>
+    id: string,
+    export?: (mission: Mission<CD>, vehicle: Vehicle) => Result<Blob> //notably this takes a mission as we want to preseve as much info as possible when converting
+    import?: (mission: Blob) => Result<{ mission: Mission<CD>, vehicle: Vehicle }>
+    ext: string
   }[]
 }
