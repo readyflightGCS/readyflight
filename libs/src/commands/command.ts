@@ -133,7 +133,7 @@ export type DialectCommand<CD extends CommandDescription> =
   {
     type: CD["type"]
     frame: number
-    params: Expand<DialectCommandParams<CD>>
+    params: DialectCommandParams<CD>
   } : never
 
 export type RFCommand = DialectCommand<typeof RFCommandDescription[number]>

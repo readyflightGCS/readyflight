@@ -1,5 +1,5 @@
 
-import { DialectCommand, RFCommand } from "@libs/commands/command";
+import { DialectCommand, DialectCommandParams, RFCommand } from "@libs/commands/command";
 import { Mission } from "../mission";
 import { mavCmdDescription } from "./commands";
 import { dubinsBetweenDubins, localiseDubinsPath } from "@libs/dubins/dubinWaypoints";
@@ -7,6 +7,7 @@ import { g2l } from "@libs/world/conversion";
 import { dubinsPoint } from "@libs/dubins/types";
 import { haversineDistance, worldOffset } from "@libs/world/distance";
 import { LatLng } from "@libs/world/latlng";
+import { Result } from "@libs/util/try-catch";
 
 export function convertArdupilot(mission: Mission<typeof mavCmdDescription[number]>): DialectCommand<typeof mavCmdDescription[number]>[] {
     const flattened = mission.flatten("Main");
@@ -27,17 +28,51 @@ export function convertArdupilot(mission: Mission<typeof mavCmdDescription[numbe
 }
 
 // Helper to create basic Mavlink command
-const createMavCmd = (type: string, params: any): DialectCommand<typeof mavCmdDescription[number]> => {
+function createMavCmd<CMD extends typeof mavCmdDescription[number]>(type: CMD["type"], params: DialectCommandParams<CMD>): DialectCommand<CMD> {
     // Find the command definition to ensure we are creating a valid command
     // This is a bit dynamic/loose, ideally would use type guards or specific creators
     // But for now we trust the type string matches one of mavCmdDescription
+    //@ts-ignore
     return {
-        type: type as any,
+        type: type,
         frame: 3, // Global Relative Alt usually
         params: params
     };
 };
 
+
+export type MavCommand = {
+    frame: number
+    type: (typeof mavCmdDescription)[number]["value"]
+
+    param1: number
+    param2: number
+    param3: number
+    param4: number
+    param5: number
+    param6: number
+    param7: number
+
+    autocontinue: number
+}
+
+
+export function MAV2MAVparam(command: DialectCommand<typeof mavCmdDescription[number]>): MavCommand {
+    const cmdDesc = mavCmdDescription.find((x) => x.type == command.type)
+    console.log("MAV2MAVparam", cmdDesc, command)
+    return {
+        type: cmdDesc.value,
+        frame: command.frame,
+        autocontinue: 1,
+        param1: cmdDesc?.parameters[0] ? command.params[cmdDesc.parameters[0].label.toLowerCase() as keyof typeof command.params] : 0,
+        param2: cmdDesc?.parameters[1] ? command.params[cmdDesc.parameters[1].label.toLowerCase() as keyof typeof command.params] : 0,
+        param3: cmdDesc?.parameters[2] ? command.params[cmdDesc.parameters[2].label.toLowerCase() as keyof typeof command.params] : 0,
+        param4: cmdDesc?.parameters[3] ? command.params[cmdDesc.parameters[3].label.toLowerCase() as keyof typeof command.params] : 0,
+        param5: cmdDesc?.parameters[4] ? command.params[cmdDesc.parameters[4].label.toLowerCase() as keyof typeof command.params] : 0,
+        param6: cmdDesc?.parameters[5] ? command.params[cmdDesc.parameters[5].label.toLowerCase() as keyof typeof command.params] : 0,
+        param7: cmdDesc?.parameters[6] ? command.params[cmdDesc.parameters[6].label.toLowerCase() as keyof typeof command.params] : 0,
+    }
+}
 
 function RF2MAV(cmd: RFCommand, reference: LatLng): DialectCommand<typeof mavCmdDescription[number]>[] {
     const rfCmd = cmd as RFCommand;
@@ -140,7 +175,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
         const endAlt = points[j].alt
 
         if (j === 0) {
-            result.push(createMavCmd("MAV_CMD_NAV_WAYPOINT", {
+            result.push(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
                 latitude: points[0].lat,
                 longitude: points[0].lng,
                 altitude: points[0].alt
@@ -156,7 +191,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
         if (Math.abs(section.turnA.radius) > 0 && absThetaA > 0.03) {
             const turnAAlt = calculateInterpolatedAltitude(startAlt, endAlt, turnALen, totalDistance)
 
-            result.push(createMavCmd("MAV_CMD_NAV_LOITER_TURNS", {
+            result.push(createMavCmd("D_MAV_CMD_NAV_LOITER_TURNS", {
                 turns: Number(absThetaA.toFixed(4)),
                 "": 1, // Magic exit tangent
                 altitude: turnAAlt,
@@ -171,7 +206,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
 
         const straightAlt = calculateInterpolatedAltitude(startAlt, endAlt, turnALen + straightLen, totalDistance)
 
-        result.push(createMavCmd("MAV_CMD_NAV_WAYPOINT", {
+        result.push(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
             yaw: 0,
             "accept radius": 0,
             latitude: section.straight.end.lat,
@@ -187,7 +222,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
 
         // Add turn command if significant
         if (Math.abs(section.turnB.radius) > 0 && absThetaB > 0.03) {
-            result.push(createMavCmd("MAV_CMD_NAV_LOITER_TURNS", {
+            result.push(createMavCmd("D_MAV_CMD_NAV_LOITER_TURNS", {
                 turns: Number(absThetaB.toFixed(4)),
                 "": 1, // Magic exit tangent
                 altitude: endAlt,
@@ -201,7 +236,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
         const next = dubinsPaths[j + 1]
         if ((next === undefined) || (next !== undefined && next.turnA.theta * section.turnB.theta < 0)) {
             const pos = worldOffset(section.turnB.center, section.turnB.radius, section.turnB.start + section.turnB.theta)
-            result.push(createMavCmd("MAV_CMD_NAV_WAYPOINT", {
+            result.push(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
                 yaw: 0,
                 "accept radius": 0,
                 latitude: pos.lat,
@@ -234,3 +269,21 @@ function calculateInterpolatedAltitude(
 }
 
 
+export function exportQGCWaypoints(mission: Mission<typeof mavCmdDescription[number]>): Result<Blob> {
+    let returnString = "QGC WPL 110\n"
+
+    const reference = mission.getReferencePoint()
+    console.log(reference)
+    const mavCommands = convertArdupilot(mission)
+    returnString += waypointString(0, MAV2MAVparam(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", { latitude: reference.lat, longitude: reference.lng })))
+
+    mavCommands.forEach((x, i) => {
+        returnString += waypointString(i + 1, MAV2MAVparam(x))
+    })
+
+    return { data: new Blob([returnString]), error: null }
+}
+
+function waypointString(i: number, wp: MavCommand): string {
+    return `${i}\t${i == 0 ? "1" : "0"}\t${wp.frame}\t${wp.type}\t${wp.param1}\t${wp.param2}\t${wp.param3}\t${wp.param4}\t${wp.param5}\t${wp.param6}\t${wp.param7}\t${wp.autocontinue}\n`
+}

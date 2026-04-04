@@ -1,4 +1,4 @@
-import { convertArdupilot } from "./export"
+import { convertArdupilot, exportQGCWaypoints } from "./export"
 import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
 import { exportRFJSON1 } from "../format/readlight/json1/export"
@@ -73,9 +73,14 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     {
       name: "Readyflight JSON",
       id: "RFJSON1",
-      import: () => { return { data: null, error: new Error("not implemented") } },
       export: (mission, vehicle) => exportRFJSON1(mission, vehicle, ardupilot),
       ext: ".json"
+    },
+    {
+      name: ".mission",
+      id: "QGCmission",
+      export: (mission, _) => exportQGCWaypoints(mission),
+      ext: ".mission"
     }
   ],
   supportedRFCommands: {
