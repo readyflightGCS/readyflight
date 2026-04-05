@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NumericInput from "@/components/ui/numericInput";
 import ExportMission from "./export";
+import ImportMission from "./import";
 
 export default function MissionDialog() {
   const vehicle = useMission(s => s.vehicle)
@@ -77,6 +78,8 @@ export default function MissionDialog() {
         </div >
 
         <ExportMission />
+        <ImportMission />
+
 
 
       </DialogContent>
