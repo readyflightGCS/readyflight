@@ -2,6 +2,7 @@ import { convertArdupilot, exportQGCWaypoints } from "./export"
 import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
 import { exportRFJSON1 } from "../format/readlight/json1/export"
+import { importRFJSON1 } from "../format/readlight/json1/import"
 
 /**
  * ArduPilot dialect configuration for mission command conversion and handling.
@@ -74,6 +75,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       name: "Readyflight JSON",
       id: "RFJSON1",
       export: (mission, vehicle) => exportRFJSON1(mission, vehicle, ardupilot),
+      import: (blob) => importRFJSON1(blob),
       ext: ".json"
     },
     {

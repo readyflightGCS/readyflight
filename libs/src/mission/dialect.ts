@@ -72,7 +72,7 @@ export type Dialect<CD extends CommandDescription> = {
     name: string,
     id: string,
     export?: (mission: Mission<CD>, vehicle: Vehicle) => Result<Blob> //notably this takes a mission as we want to preseve as much info as possible when converting
-    import?: (mission: Blob) => Result<{ mission: Mission<CD>, vehicle: Vehicle }>
+    import?: (mission: Blob) => Promise<Result<{ mission: Mission<CD>, vehicle: Vehicle }>>
     ext: string
   }[]
 }
