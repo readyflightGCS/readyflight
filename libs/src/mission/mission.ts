@@ -33,6 +33,8 @@ type GroupCommand = Extract<RFCommand, { type: "RF.Group" }>
  */
 export class Mission<CD extends CommandDescription> {
 
+  public missionID: string
+
   /**
    * Stores a collection of mission commands grouped by their string identifiers.
    * 
@@ -83,6 +85,7 @@ export class Mission<CD extends CommandDescription> {
       return
     }
     this.collection = new Map();
+    this.missionID = crypto.randomUUID()
     this.collection.set("Main", [])
     this.collection.set("Geofence", [])
     this.collection.set("Markers", [])

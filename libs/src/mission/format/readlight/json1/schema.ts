@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export const RFJSON1Schema = z.object({
   RFVersion: z.string(),
+  missionID: z.string(),
   fileVersion: z.string().regex(/^01.[A-F0-9][A-F0-9]$/),
   exportTime: z.coerce.date(),
   dialect: z.string(),
