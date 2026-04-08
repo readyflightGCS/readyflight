@@ -8,9 +8,8 @@ import { dubinsPoint } from "@libs/dubins/types";
 import { haversineDistance, worldOffset } from "@libs/world/distance";
 import { LatLng } from "@libs/world/latlng";
 import { Result } from "@libs/util/try-catch";
-import { ardupilot } from "./ardupilot";
 import { makeCommand } from "@libs/commands/helpers";
-import { number } from "zod";
+import { ardupilot } from "./ardupilot";
 
 export function convertArdupilot(mission: Mission<typeof mavCmdDescription[number]>): DialectCommand<typeof mavCmdDescription[number]>[] {
     const flattened = mission.flatten("Main");
@@ -19,7 +18,7 @@ export function convertArdupilot(mission: Mission<typeof mavCmdDescription[numbe
 
     for (const cmd of flattened) {
 
-        if (cmd.type.startsWith("D_")) {
+        if (cmd.type.startsWith("D.")) {
             // Already a Mavlink command
             result.push(cmd as DialectCommand<typeof mavCmdDescription[number]>);
         } else {
@@ -62,7 +61,6 @@ export type MavCommand = {
 
 export function MAV2MAVparam(command: DialectCommand<typeof mavCmdDescription[number]>): MavCommand {
     const cmdDesc = mavCmdDescription.find((x) => x.type == command.type)
-    console.log("MAV2MAVparam", cmdDesc, command)
     return {
         type: cmdDesc.value,
         frame: command.frame,
@@ -279,6 +277,7 @@ export function exportQGCWaypoints(mission: Mission<typeof mavCmdDescription[num
     const mavCommands = convertArdupilot(mission)
 
     // QGC format expects the first point to be the reference point as a waypoint command
+    // @ts-ignore REMOVE ONCE MAKECOMMAND DOES BETTER TYPE LIMITING
     returnString += waypointString(0, MAV2MAVparam(makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: reference.lat, longitude: reference.lng }, ardupilot)))
 
     mavCommands.forEach((x, i) => {

@@ -16,7 +16,6 @@ test(".waypoints export uses QGC WPL 110 and includes reference waypoint + missi
   const lines = text.trimEnd().split("\n");
 
   expect(lines[0]).toBe("QGC WPL 110");
-  console.log(lines)
   expect(lines.length).toBe(3); // header + reference WP + 1 mission WP
 
   const refCols = lines[1].split("\t");
@@ -24,9 +23,13 @@ test(".waypoints export uses QGC WPL 110 and includes reference waypoint + missi
   expect(refCols[1]).toBe("1"); // current
   expect(refCols[2]).toBe("0"); // frame
   expect(refCols[3]).toBe("16"); // MAV_CMD_NAV_WAYPOINT
+  expect(refCols[4]).toBe("0"); // MAV_CMD_NAV_WAYPOINT
+  expect(refCols[5]).toBe("0"); // MAV_CMD_NAV_WAYPOINT
+  expect(refCols[6]).toBe("0"); // MAV_CMD_NAV_WAYPOINT
+  expect(refCols[7]).toBe("0"); // MAV_CMD_NAV_WAYPOINT
   expect(refCols[8]).toBe(String(reference.lat)); // param5 (lat)
   expect(refCols[9]).toBe(String(reference.lng)); // param6 (lng)
-  expect(refCols[10]).toBe("1"); // param6 (lng)
+  expect(refCols[11]).toBe("1"); // autocontinue
 
   const wpCols = lines[2].split("\t");
   expect(wpCols[0]).toBe("1");
@@ -34,11 +37,11 @@ test(".waypoints export uses QGC WPL 110 and includes reference waypoint + missi
   expect(wpCols[1]).toBe("0");
   expect(wpCols[3]).toBe("16");
   expect(wpCols[8]).toBe("10.11");
-  expect(wpCols[9]).toBe("20.22");
+  expect(wpCols[9]).toBe("20.02");
   expect(wpCols[10]).toBe("123"); // param7 (alt)
 });
 
-test(".waypoints export uses QGC WPL 110 and includes reference waypoint + mission waypoint", async () => {
+test(".waypoints exports various types correctly", async () => {
   const reference = { lat: 10.1, lng: 20.2 };
   const mission = new Mission<typeof ardupilot.commandDescriptions[number]>(reference);
   mission.pushToMission("Main", makeCommand("D.MAV_CMD_NAV_TAKEOFF", { latitude: 10.11, longitude: 21.02, altitude: 123 }, ardupilot))
@@ -50,6 +53,26 @@ test(".waypoints export uses QGC WPL 110 and includes reference waypoint + missi
 
   const exported = exportQGCWaypoints(mission);
   expect(exported.error).toBeNull();
+
+  const text = await exported.data!.text();
+  const lines = text.trimEnd().split("\n");
+
+  expect(lines.length).toBe(8); // header + reference WP + 1 mission WP
+  let wpCols = lines[1].split("\t");
+  expect(wpCols[0]).toBe("0");
+  expect(wpCols[3]).toBe("16");
+
+  wpCols = lines[2].split("\t");
+  expect(wpCols[0]).toBe("1");
+  expect(wpCols[3]).toBe("22");
+
+  wpCols = lines[3].split("\t");
+  expect(wpCols[0]).toBe("2");
+  expect(wpCols[3]).toBe("16");
+
+  wpCols = lines[7].split("\t");
+  expect(wpCols[0]).toBe("6");
+  expect(wpCols[3]).toBe("21");
 });
 
 

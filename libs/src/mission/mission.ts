@@ -82,13 +82,13 @@ export class Mission<CD extends CommandDescription> {
         newMap.set(key, [...items])
       }
       this.collection = new Map(newMap)
-      return
+    } else {
+      this.collection = new Map();
+      this.collection.set("Main", [])
+      this.collection.set("Geofence", [])
+      this.collection.set("Markers", [])
     }
-    this.collection = new Map();
     this.missionID = crypto.randomUUID()
-    this.collection.set("Main", [])
-    this.collection.set("Geofence", [])
-    this.collection.set("Markers", [])
     this.referencePoint = referencePoint
   }
 
