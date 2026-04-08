@@ -1,8 +1,8 @@
 import { convertArdupilot, exportQGCWaypoints } from "./export"
 import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
-import { exportRFJSON1 } from "../format/readlight/json1/export"
-import { importRFJSON1 } from "../format/readlight/json1/import"
+import { exportRFJSON1 } from "../format/readyflight/json1/export"
+import { importRFJSON1 } from "../format/readyflight/json1/import"
 
 /**
  * ArduPilot dialect configuration for mission command conversion and handling.
@@ -33,7 +33,7 @@ import { importRFJSON1 } from "../format/readlight/json1/import"
  *   Only RF.Waypoint commands are natively supported.
  */
 export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
-  name: "ardupilot",
+  name: "mavlink-ardupilot",
   commandDescriptions: mavCmdDescription,
   convert: convertArdupilot,
   getCommandLocation: (cmd) => {
