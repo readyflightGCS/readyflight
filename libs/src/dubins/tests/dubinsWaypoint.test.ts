@@ -40,8 +40,8 @@ test("Split Dubins runs sandwich 1", () => {
 
 test("Split Dubins runs end dubins", () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("D_MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
-  a.push({ cmd: makeCommand("D_MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
+  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
+  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
   a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
   a[2].cmd.frame = 0
   let runs = splitDubinsRuns(a)
@@ -54,9 +54,9 @@ test("Split Dubins runs end dubins", () => {
 
 test("Split Dubins runs start + end", () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("WM_CMD_NAV_DUBINS", { latitude: 0, longitude: 0 }), id: 0, other: [] })
-  a.push({ cmd: makeCommand("MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }), id: 1, other: [] })
-  a.push({ cmd: makeCommand("WM_CMD_NAV_DUBINS", { latitude: 0, longitude: 0 }), id: 2, other: [] })
+  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
+  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
+  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
   a[0].cmd.frame = 0
   a[2].cmd.frame = 10
   let runs = splitDubinsRuns(a)
@@ -76,9 +76,9 @@ test("Split Dubins runs start + end", () => {
 
 test("Split Dubins runs all dubins", () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("WM_CMD_NAV_DUBINS", { latitude: 0, longitude: 0 }), id: 0, other: [] })
-  a.push({ cmd: makeCommand("WM_CMD_NAV_DUBINS", { latitude: 0, longitude: 0 }), id: 1, other: [] })
-  a.push({ cmd: makeCommand("WM_CMD_NAV_DUBINS", { latitude: 0, longitude: 0 }), id: 2, other: [] })
+  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
+  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
+  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
   let runs = splitDubinsRuns(a)
 
   expect(runs.length).toBe(1)
