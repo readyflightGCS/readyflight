@@ -39,7 +39,7 @@ export function splitDubinsRuns(mainLine: MainLine): { start: number, run: { cmd
   let start = 0
   for (let i = 0; i < mainLine.length; i++) {
     const curWaypoint = mainLine[i].cmd
-    if (curWaypoint.type == 69) {
+    if (curWaypoint.type == "RF.DubinsPath") {
       if (curSection.length == 0) {
         start = i
         if (i > 0) {

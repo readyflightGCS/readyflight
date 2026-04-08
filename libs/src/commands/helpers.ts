@@ -154,7 +154,7 @@ export function makeCommand<T extends CommandDescription>(
   //@ts-ignore
   return {
     type: cmd.type,
-    frame: 2,
+    frame: 0,
     params: params2,
   }
 }

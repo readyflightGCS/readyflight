@@ -79,10 +79,10 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       ext: ".json"
     },
     {
-      name: ".mission",
+      name: ".waypoints",
       id: "QGCmission",
       export: (mission, _) => exportQGCWaypoints(mission),
-      ext: ".mission"
+      ext: ".waypoints"
     }
   ],
   supportedRFCommands: {
