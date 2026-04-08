@@ -12,7 +12,7 @@ export const RFJSON1Schema = z.object({
   explicitReferencePoint: LatLngSchema.optional(),
   mission: z.array(z.object({
     name: z.string(),
-    commands: z.array(z.object().passthrough()) // update later to narrow more
+    commands: z.array(z.object().passthrough()) // TODO; update later to narrow based on dialect specific commands
   }))
 })
 

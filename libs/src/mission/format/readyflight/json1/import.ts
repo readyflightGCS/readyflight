@@ -5,16 +5,25 @@ import { Vehicle } from "@libs/vehicle/types";
 import { RFJSON1Schema } from "./schema";
 
 export async function importRFJSON1(blob: Blob): Promise<Result<{ mission: Mission<CommandDescription>, vehicle: Vehicle }>> {
-  let x = await blob.text()
-  let parsed = await tryCatch(JSON.parse(x))
-  if (parsed.error !== null) {
+
+  let fileText = await tryCatch(blob.text())
+  if (fileText.error !== null) {
     return {
-      error: parsed.error,
+      error: fileText.error,
       data: null
     }
   }
-  let data = RFJSON1Schema.safeParse(parsed.data)
-  if (data.success === false) {
+
+  let parsedJSON = await tryCatch(JSON.parse(fileText.data))
+  if (parsedJSON.error !== null) {
+    return {
+      error: parsedJSON.error,
+      data: null
+    }
+  }
+
+  let missionObj = RFJSON1Schema.safeParse(parsedJSON.data)
+  if (missionObj.success === false) {
     return {
       error: new Error("Does not match RFJSON1 format"),
       data: null
@@ -24,8 +33,9 @@ export async function importRFJSON1(blob: Blob): Promise<Result<{ mission: Missi
   return {
     error: null,
     data: {
-      vehicle: data.data.vehicle,
-      mission: new Mission(data.data.explicitReferencePoint, new Map(data.data.mission.map(x => {
+      vehicle: missionObj.data.vehicle,
+      mission: new Mission(missionObj.data.explicitReferencePoint, new Map(missionObj.data.mission.map(x => {
+        // A bit hacky; We don't currently validate each individual command
         return [x.name, x.commands as MissionCommand<CommandDescription>[]]
       })))
     }

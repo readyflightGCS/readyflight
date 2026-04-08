@@ -273,8 +273,9 @@ export function exportQGCWaypoints(mission: Mission<typeof mavCmdDescription[num
     let returnString = "QGC WPL 110\n"
 
     const reference = mission.getReferencePoint()
-    console.log(reference)
     const mavCommands = convertArdupilot(mission)
+
+    // QGC format expects the first point to be the reference point as a waypoint command
     returnString += waypointString(0, MAV2MAVparam(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", { latitude: reference.lat, longitude: reference.lng })))
 
     mavCommands.forEach((x, i) => {

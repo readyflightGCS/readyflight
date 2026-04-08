@@ -7,7 +7,7 @@ import { Result } from "@libs/util/try-catch";
 
 export function exportRFJSON1<CD extends CommandDescription>(mission: Mission<CD>, vehicle: Vehicle, dialect: Dialect<CD>): Result<Blob> {
   let missionObj: RFJSON1 = {
-    RFVersion: "Readyflight:00.00.00", // replace with git derived string
+    RFVersion: "Readyflight:00.00.00", // TODO replace with git derived string
     missionID: mission.missionID,
     fileVersion: "01.00",
     exportTime: new Date(),
