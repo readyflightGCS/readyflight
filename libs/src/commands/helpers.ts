@@ -24,7 +24,7 @@ export function getCommandLabel(cmd: MissionCommand<CommandDescription>, dialect
     }
     default:
       // throw type error here if we've not covered all RF commands
-      let exhaustiveCheck: `D_${string}` = cmd.type
+      let exhaustiveCheck: `D.${string}` = cmd.type
       return dialect.getCommandLabel(cmd)
   }
 }
@@ -44,7 +44,7 @@ export function getCommandLocation(cmd: MissionCommand<CommandDescription>, dial
     case "RF.SetServo": return null
     case "RF.Group": return null
     default: {
-      let exhaustiveCheck: `D_${string}` = cmd.type
+      let exhaustiveCheck: `D.${string}` = cmd.type
       return dialect.getCommandLocation(cmd)
     }
   }
@@ -71,7 +71,7 @@ export function getCommandLocationAlt(cmd: MissionCommand<CommandDescription>, d
     case "RF.SetServo": return null
     case "RF.Group": return null
     default: {
-      let exhaustiveCheck: `D_${string}` = cmd.type
+      let exhaustiveCheck: `D.${string}` = cmd.type
       return dialect.getCommandLocationAlt(cmd)
     }
   }

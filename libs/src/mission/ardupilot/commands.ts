@@ -13,7 +13,7 @@ import { CommandDescription } from "@libs/commands/command";
  * 
  * Each command entry includes:
  * - `value`: The MAVLink command ID
- * - `type`: The command type identifier (D_MAV_CMD_*)
+ * - `type`: The command type identifier (D.MAV_CMD_*)
  * - `label`: Human-readable command name
  * - `description`: Detailed explanation of command behavior
  * - `hasLocation`: Whether the command uses latitude/longitude/altitude
@@ -33,7 +33,7 @@ import { CommandDescription } from "@libs/commands/command";
  */
 export const mavCmdDescription = [{
   value: 183,
-  type: "D_MAV_CMD_DO_SET_SERVO",
+  type: "D.MAV_CMD_DO_SET_SERVO",
   label: "Set Servo",
   description: "Set a servo to a desired PWM value.",
   hasLocation: false,
@@ -61,7 +61,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 16,
-  type: "D_MAV_CMD_NAV_WAYPOINT",
+  type: "D.MAV_CMD_NAV_WAYPOINT",
   label: "Waypoint",
   description: "Navigate to waypoint. This is intended for use in missions (for guided commands outside of missions use MAV_CMD_DO_REPOSITION).",
   hasLocation: true,
@@ -140,7 +140,7 @@ export const mavCmdDescription = [{
 }, {
   value: 17,
   label: "Loiter Unlimited",
-  type: "D_MAV_CMD_NAV_LOITER_UNLIM",
+  type: "D.MAV_CMD_NAV_LOITER_UNLIM",
   description: "Loiter around this waypoint an unlimited amount of time",
   hasLocation: true,
   isDestination: true,
@@ -198,7 +198,7 @@ export const mavCmdDescription = [{
 }, {
   value: 18,
   label: "Loiter Turns",
-  type: "D_MAV_CMD_NAV_LOITER_TURNS",
+  type: "D.MAV_CMD_NAV_LOITER_TURNS",
   description: "Loiter around this waypoint for X turns",
   hasLocation: true,
   isDestination: true,
@@ -265,7 +265,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 19,
-  type: "D_MAV_CMD_NAV_LOITER_TIME",
+  type: "D.MAV_CMD_NAV_LOITER_TIME",
   label: "Loiter Time",
   description: "Loiter around this waypoint for X seconds",
   hasLocation: true,
@@ -333,7 +333,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 20,
-  type: "D_MAV_CMD_NAV_RETURN_TO_LAUNCH",
+  type: "D.MAV_CMD_NAV_RETURN_TO_LAUNCH",
   label: "Return To Launch",
   description: "Return to launch location",
   hasLocation: false,
@@ -341,7 +341,7 @@ export const mavCmdDescription = [{
   parameters: [null, null, null, null, null, null, null],
 }, {
   value: 21,
-  type: "D_MAV_CMD_NAV_LAND",
+  type: "D.MAV_CMD_NAV_LAND",
   label: "Land",
   description: "Land at location.",
   hasLocation: true,
@@ -409,7 +409,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 22,
-  type: "D_MAV_CMD_NAV_TAKEOFF",
+  type: "D.MAV_CMD_NAV_TAKEOFF",
   label: "Takeoff",
   description: "Takeoff from ground / hand. Vehicles that support multiple takeoff modes (e.g. VTOL quadplane) should take off using the currently configured mode.",
   hasLocation: true,
@@ -467,7 +467,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 30,
-  type: "D_MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT",
+  type: "D.MAV_CMD_NAV_CONTINUE_AND_CHANGE_ALT",
   label: "Change Altitude",
   description: "Continue on the current course and climb/descend to specified altitude.  When the altitude is reached continue to the next command (i.e., don't proceed to the next command until the desired altitude is reached.",
   hasLocation: false,
@@ -495,7 +495,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 31,
-  type: "D_MAV_CMD_NAV_LOITER_TO_ALT",
+  type: "D.MAV_CMD_NAV_LOITER_TO_ALT",
   label: "Loiter To altitude",
   description: "Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint.",
   hasLocation: true,
@@ -563,7 +563,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 82,
-  type: "D_MAV_CMD_NAV_SPLINE_WAYPOINT",
+  type: "D.MAV_CMD_NAV_SPLINE_WAYPOINT",
   label: "Spline Waypoint",
   description: "Navigate to waypoint using a spline path.",
   hasLocation: true,
@@ -611,7 +611,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 84,
-  type: "D_MAV_CMD_NAV_VTOL_TAKEOFF",
+  type: "D.MAV_CMD_NAV_VTOL_TAKEOFF",
   label: "VTOL Takeoff",
   description: "Takeoff from ground using VTOL mode, and transition to forward flight with specified heading. The command should be ignored by vehicles that dont support both VTOL and fixed-wing flight (multicopters, boats,etc.).",
   hasLocation: true,
@@ -669,7 +669,7 @@ export const mavCmdDescription = [{
     }],
 }, {
   value: 85,
-  type: "D_MAV_CMD_NAV_VTOL_LAND",
+  type: "D.MAV_CMD_NAV_VTOL_LAND",
   label: "VTOL Land",
   description: "Land using VTOL mode",
   hasLocation: true,
@@ -737,7 +737,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 92,
-  type: "D_MAV_CMD_NAV_GUIDED_ENABLE",
+  type: "D.MAV_CMD_NAV_GUIDED_ENABLE",
   label: "Guided Enable",
   description: "hand control over to an external controller",
   hasLocation: false,
@@ -755,7 +755,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null, null],
 }, {
   value: 93,
-  type: "D_MAV_CMD_NAV_DELAY",
+  type: "D.MAV_CMD_NAV_DELAY",
   label: "Delay",
   description: "Delay the next navigation command a number of seconds or until a specified time",
   hasLocation: false,
@@ -803,7 +803,7 @@ export const mavCmdDescription = [{
   }, null, null, null],
 }, {
   value: 94,
-  type: "D_MAV_CMD_NAV_PAYLOAD_PLACE",
+  type: "D.MAV_CMD_NAV_PAYLOAD_PLACE",
   label: "Payload Place",
   description: "Descend and place payload. Vehicle moves to specified location, descends until it detects a hanging payload has reached the ground, and then releases the payload. If ground is not detected before the reaching the maximum descent value (param1), the command will complete without releasing the payload.",
   hasLocation: true,
@@ -851,7 +851,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 112,
-  type: "D_MAV_CMD_CONDITION_DELAY",
+  type: "D.MAV_CMD_CONDITION_DELAY",
   label: "Condition Delay",
   description: "Delay mission state machine.",
   hasLocation: false,
@@ -869,7 +869,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null, null],
 }, {
   value: 114,
-  type: "D_MAV_CMD_CONDITION_DISTANCE",
+  type: "D.MAV_CMD_CONDITION_DISTANCE",
   label: "Condition Distance",
   description: "Delay mission state machine until within desired distance of next NAV point.",
   hasLocation: false,
@@ -887,7 +887,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null, null],
 }, {
   value: 115,
-  type: "D_MAV_CMD_CONDITION_YAW",
+  type: "D.MAV_CMD_CONDITION_YAW",
   label: "Condition Yaw",
   description: "Reach a certain target angle.",
   hasLocation: false,
@@ -935,7 +935,7 @@ export const mavCmdDescription = [{
   }, null, null, null],
 }, {
   value: 177,
-  type: "D_MAV_CMD_DO_JUMP",
+  type: "D.MAV_CMD_DO_JUMP",
   label: "Do Jump",
   description: "Jump to the desired command in the mission list.  Repeat this action only the specified number of times",
   hasLocation: false,
@@ -963,7 +963,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 178,
-  type: "D_MAV_CMD_DO_CHANGE_SPEED",
+  type: "D.MAV_CMD_DO_CHANGE_SPEED",
   label: "Change Speed",
   description: "Change speed and/or throttle set points. The value persists until it is overridden or there is a mode change",
   hasLocation: false,
@@ -1011,7 +1011,7 @@ export const mavCmdDescription = [{
   }, null, null, null],
 }, {
   value: 179,
-  type: "D_MAV_CMD_DO_SET_HOME",
+  type: "D.MAV_CMD_DO_SET_HOME",
   label: "Set Home",
   description: "Changes the home location either to the current location or a specified location.",
   hasLocation: true,
@@ -1059,7 +1059,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 181,
-  type: "D_MAV_CMD_DO_SET_RELAY",
+  type: "D.MAV_CMD_DO_SET_RELAY",
   label: "Set Relay",
   description: "Set a relay to a condition.",
   hasLocation: false,
@@ -1087,7 +1087,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 182,
-  type: "D_MAV_CMD_DO_REPEAT_RELAY",
+  type: "D.MAV_CMD_DO_REPEAT_RELAY",
   label: "Repeat Relay",
   description: "Cycle a relay on and off for a desired number of cycles with a desired period.",
   hasLocation: false,
@@ -1125,7 +1125,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null],
 }, {
   value: 183,
-  type: "D_MAV_CMD_DO_SET_SERVO",
+  type: "D.MAV_CMD_DO_SET_SERVO",
   label: "Set Servo",
   description: "Set a servo to a desired PWM value.",
   hasLocation: false,
@@ -1153,7 +1153,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 184,
-  type: "D_MAV_CMD_DO_REPEAT_SERVO",
+  type: "D.MAV_CMD_DO_REPEAT_SERVO",
   label: "Repeat Servo",
   description: "Cycle a between its nominal setting and a desired PWM for a desired number of cycles with a desired period.",
   hasLocation: false,
@@ -1201,7 +1201,7 @@ export const mavCmdDescription = [{
   }, null, null, null],
 }, {
   value: 189,
-  type: "D_MAV_CMD_DO_LAND_START",
+  type: "D.MAV_CMD_DO_LAND_START",
   label: "Land Start",
   description: "Mission command to perform a landing. This is used as a marker in a mission to tell the autopilot where a sequence of mission items that represents a landing starts.\n\t  It may also be sent via a COMMAND_LONG to trigger a landing, in which case the nearest (geographically) landing sequence in the mission will be used.\n\t  The Latitude/Longitude/Altitude is optional, and may be set to 0 if not needed. If specified then it will be used to help find the closest landing sequence.\n\t",
   hasLocation: true,
@@ -1239,7 +1239,7 @@ export const mavCmdDescription = [{
     }],
 }, {
   value: 201,
-  type: "D_MAV_CMD_DO_SET_ROI",
+  type: "D.MAV_CMD_DO_SET_ROI",
   label: "Set ROI",
   description: "Sets the region of interest (ROI) for a sensor set or the vehicle itself. This can then be used by the vehicle's control system to control the vehicle attitude and the attitude of various sensors such as cameras.",
   hasLocation: true,
@@ -1307,7 +1307,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 202,
-  type: "D_MAV_CMD_DO_DIGICAM_CONFIGURE",
+  type: "D.MAV_CMD_DO_DIGICAM_CONFIGURE",
   label: "Digicam Configure",
   description: "Configure digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html ).",
   hasLocation: false,
@@ -1385,7 +1385,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 203,
-  type: "D_MAV_CMD_DO_DIGICAM_CONTROL",
+  type: "D.MAV_CMD_DO_DIGICAM_CONTROL",
   label: "Digicam Control",
   description: "Control digital camera. This is a fallback message for systems that have not yet implemented PARAM_EXT_XXX messages and camera definition files (see https://mavlink.io/en/services/camera_def.html ).",
   hasLocation: false,
@@ -1463,7 +1463,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 205,
-  type: "D_MAV_CMD_DO_MOUNT_CONTROL",
+  type: "D.MAV_CMD_DO_MOUNT_CONTROL",
   label: "Mount Control",
   description: "Mission command to control a camera or antenna mount",
   hasLocation: false,
@@ -1541,7 +1541,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 206,
-  type: "D_MAV_CMD_DO_SET_CAM_TRIGG_DIST",
+  type: "D.MAV_CMD_DO_SET_CAM_TRIGG_DIST",
   label: "Trigger Distance",
   description: "Mission command to set camera trigger distance for this flight. The camera is triggered each time this distance is exceeded. This command can also be used to set the shutter integration time for the camera.",
   hasLocation: false,
@@ -1579,7 +1579,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null],
 }, {
   value: 207,
-  type: "D_MAV_CMD_DO_FENCE_ENABLE",
+  type: "D.MAV_CMD_DO_FENCE_ENABLE",
   label: "Fence Enable",
   description: "\n          Enable the geofence.\n          This can be used in a mission or via the command protocol.\n          The persistence/lifetime of the setting is undefined.\n          Depending on flight stack implementation it may persist until superseded, or it may revert to a system default at the end of a mission.\n          Flight stacks typically reset the setting to system defaults on reboot.\n\t",
   hasLocation: false,
@@ -1607,7 +1607,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 208,
-  type: "D_MAV_CMD_DO_PARACHUTE",
+  type: "D.MAV_CMD_DO_PARACHUTE",
   label: "Do Parachute",
   description: "Mission item/command to release a parachute or enable/disable auto release.",
   hasLocation: false,
@@ -1625,7 +1625,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null, null],
 }, {
   value: 210,
-  type: "D_MAV_CMD_DO_INVERTED_FLIGHT",
+  type: "D.MAV_CMD_DO_INVERTED_FLIGHT",
   label: "Inverted Flight",
   description: "Change to/from inverted flight.",
   hasLocation: false,
@@ -1643,7 +1643,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null, null],
 }, {
   value: 211,
-  type: "D_MAV_CMD_DO_GRIPPER",
+  type: "D.MAV_CMD_DO_GRIPPER",
   label: "Gripper",
   description: "Mission command to operate a gripper.",
   hasLocation: false,
@@ -1671,7 +1671,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 212,
-  type: "D_MAV_CMD_DO_AUTOTUNE_ENABLE",
+  type: "D.MAV_CMD_DO_AUTOTUNE_ENABLE",
   label: "Enable Autotune",
   description: "Enable/disable autotune.",
   hasLocation: false,
@@ -1699,7 +1699,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 222,
-  type: "D_MAV_CMD_DO_GUIDED_LIMITS",
+  type: "D.MAV_CMD_DO_GUIDED_LIMITS",
   label: "Guided Limis",
   description: "Set limits for external control",
   hasLocation: false,
@@ -1747,7 +1747,7 @@ export const mavCmdDescription = [{
   }, null, null, null],
 }, {
   value: 223,
-  type: "D_MAV_CMD_DO_ENGINE_CONTROL",
+  type: "D.MAV_CMD_DO_ENGINE_CONTROL",
   label: "Engine Conrol",
   description: "Control vehicle engine. This is interpreted by the vehicles engine controller to change the target engine state. It is intended for vehicles with internal combustion engines",
   hasLocation: false,
@@ -1795,7 +1795,7 @@ export const mavCmdDescription = [{
   }, null, null, null],
 }, {
   value: 300,
-  type: "D_MAV_CMD_MISSION_START",
+  type: "D.MAV_CMD_MISSION_START",
   label: "Mission Start",
   description: "start running a mission",
   hasLocation: false,
@@ -1823,7 +1823,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 400,
-  type: "D_MAV_CMD_COMPONENT_ARM_DISARM",
+  type: "D.MAV_CMD_COMPONENT_ARM_DISARM",
   label: "Component Arm Disarm",
   description: "Arms / Disarms a component",
   hasLocation: false,
@@ -1851,7 +1851,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 526,
-  type: "D_MAV_CMD_STORAGE_FORMAT",
+  type: "D.MAV_CMD_STORAGE_FORMAT",
   label: "Format Storage",
   description: "Format a storage medium. Once format is complete, a STORAGE_INFORMATION message is sent. Use the command's target_component to target a specific component's storage.",
   hasLocation: false,
@@ -1889,7 +1889,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null],
 }, {
   value: 600,
-  type: "D_MAV_CMD_JUMP_TAG",
+  type: "D.MAV_CMD_JUMP_TAG",
   label: "Jump Tag",
   description: "Tagged jump target. Can be jumped to with MAV_CMD_DO_JUMP_TAG.",
   hasLocation: false,
@@ -1907,7 +1907,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null, null],
 }, {
   value: 601,
-  type: "D_MAV_CMD_DO_JUMP_TAG",
+  type: "D.MAV_CMD_DO_JUMP_TAG",
   label: "Do Jump Tag",
   description: "Jump to the matching tag in the mission list. Repeat this action for the specified number of times. A mission should contain a single matching tag for each jump. If this is not the case then a jump to a missing tag should complete the mission, and a jump where there are multiple matching tags should always select the one with the lowest mission sequence number.",
   hasLocation: false,
@@ -1935,7 +1935,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null],
 }, {
   value: 1000,
-  type: "D_MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
+  type: "D.MAV_CMD_DO_GIMBAL_MANAGER_PITCHYAW",
   label: "Gimbal Manager Pitchyaw",
   description: "Set gimbal manager pitch/yaw setpoints (low rate command). It is possible to set combinations of the values below. E.g. an angle as well as a desired angular rate can be used to get to this angle at a certain angular rate, or an angular rate only will result in continuous turning. NaN is to be used to signal unset. Note: only the gimbal manager will react to this command - it will be ignored by a gimbal device. Use GIMBAL_MANAGER_SET_PITCHYAW if you need to stream pitch/yaw setpoints at higher rate. ",
   hasLocation: false,
@@ -2003,7 +2003,7 @@ export const mavCmdDescription = [{
   }],
 }, {
   value: 3000,
-  type: "D_MAV_CMD_DO_VTOL_TRANSITION",
+  type: "D.MAV_CMD_DO_VTOL_TRANSITION",
   label: "VTOL transition",
   description: "Request VTOL transition",
   hasLocation: false,
@@ -2021,7 +2021,7 @@ export const mavCmdDescription = [{
   }, null, null, null, null, null, null],
 }, {
   value: 42600,
-  type: "D_MAV_CMD_DO_WINCH",
+  type: "D.MAV_CMD_DO_WINCH",
   label: "Winch",
   description: "Command to operate winch.",
   hasLocation: false,

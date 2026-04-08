@@ -79,7 +79,7 @@ function RF2MAV(cmd: RFCommand, reference: LatLng): DialectCommand<typeof mavCmd
 
     switch (rfCmd.type) {
         case "RF.Waypoint": {
-            return [createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
+            return [createMavCmd("D.MAV_CMD_NAV_WAYPOINT", {
                 hold: 0,
                 "accept radius": 0,
                 "pass radius": 0,
@@ -90,7 +90,7 @@ function RF2MAV(cmd: RFCommand, reference: LatLng): DialectCommand<typeof mavCmd
             })]
         }
         case "RF.Takeoff": {
-            return [createMavCmd("D_MAV_CMD_NAV_TAKEOFF", {
+            return [createMavCmd("D.MAV_CMD_NAV_TAKEOFF", {
                 pitch: rfCmd.params.pitch ?? 0,
                 yaw: rfCmd.params.yaw ?? NaN,
                 latitude: rfCmd.params.latitude,
@@ -99,7 +99,7 @@ function RF2MAV(cmd: RFCommand, reference: LatLng): DialectCommand<typeof mavCmd
             })]
         }
         case "RF.Land": {
-            return [createMavCmd("D_MAV_CMD_NAV_LAND", {
+            return [createMavCmd("D.MAV_CMD_NAV_LAND", {
                 "abort alt": rfCmd.params["abort alt"],
                 "land mode": rfCmd.params["land mode"],
                 "yaw angle": rfCmd.params["yaw angle"],
@@ -115,7 +115,7 @@ function RF2MAV(cmd: RFCommand, reference: LatLng): DialectCommand<typeof mavCmd
             break;
         }
         case "RF.SetServo": {
-            return [createMavCmd("D_MAV_CMD_DO_SET_SERVO", {
+            return [createMavCmd("D.MAV_CMD_DO_SET_SERVO", {
                 "servo instance": rfCmd.params.instance,
                 pwm: rfCmd.params.pwm
             })]
@@ -134,7 +134,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
     // Handle single point as a simple waypoint
     if (points.length === 1) {
         const p = points[0];
-        return [createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
+        return [createMavCmd("D.MAV_CMD_NAV_WAYPOINT", {
             hold: 0, "accept radius": 0, "pass radius": 0, yaw: NaN,
             latitude: p.lat,
             longitude: p.lng,
@@ -175,7 +175,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
         const endAlt = points[j].alt
 
         if (j === 0) {
-            result.push(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
+            result.push(createMavCmd("D.MAV_CMD_NAV_WAYPOINT", {
                 latitude: points[0].lat,
                 longitude: points[0].lng,
                 altitude: points[0].alt
@@ -191,7 +191,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
         if (Math.abs(section.turnA.radius) > 0 && absThetaA > 0.03) {
             const turnAAlt = calculateInterpolatedAltitude(startAlt, endAlt, turnALen, totalDistance)
 
-            result.push(createMavCmd("D_MAV_CMD_NAV_LOITER_TURNS", {
+            result.push(createMavCmd("D.MAV_CMD_NAV_LOITER_TURNS", {
                 turns: Number(absThetaA.toFixed(4)),
                 "": 1, // Magic exit tangent
                 altitude: turnAAlt,
@@ -206,7 +206,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
 
         const straightAlt = calculateInterpolatedAltitude(startAlt, endAlt, turnALen + straightLen, totalDistance)
 
-        result.push(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
+        result.push(createMavCmd("D.MAV_CMD_NAV_WAYPOINT", {
             yaw: 0,
             "accept radius": 0,
             latitude: section.straight.end.lat,
@@ -222,7 +222,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
 
         // Add turn command if significant
         if (Math.abs(section.turnB.radius) > 0 && absThetaB > 0.03) {
-            result.push(createMavCmd("D_MAV_CMD_NAV_LOITER_TURNS", {
+            result.push(createMavCmd("D.MAV_CMD_NAV_LOITER_TURNS", {
                 turns: Number(absThetaB.toFixed(4)),
                 "": 1, // Magic exit tangent
                 altitude: endAlt,
@@ -236,7 +236,7 @@ function dubinsPath2MAV(rfCmd: Extract<RFCommand, { type: "RF.DubinsPath" }>, re
         const next = dubinsPaths[j + 1]
         if ((next === undefined) || (next !== undefined && next.turnA.theta * section.turnB.theta < 0)) {
             const pos = worldOffset(section.turnB.center, section.turnB.radius, section.turnB.start + section.turnB.theta)
-            result.push(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", {
+            result.push(createMavCmd("D.MAV_CMD_NAV_WAYPOINT", {
                 yaw: 0,
                 "accept radius": 0,
                 latitude: pos.lat,
@@ -276,7 +276,7 @@ export function exportQGCWaypoints(mission: Mission<typeof mavCmdDescription[num
     const mavCommands = convertArdupilot(mission)
 
     // QGC format expects the first point to be the reference point as a waypoint command
-    returnString += waypointString(0, MAV2MAVparam(createMavCmd("D_MAV_CMD_NAV_WAYPOINT", { latitude: reference.lat, longitude: reference.lng })))
+    returnString += waypointString(0, MAV2MAVparam(createMavCmd("D.MAV_CMD_NAV_WAYPOINT", { latitude: reference.lat, longitude: reference.lng })))
 
     mavCommands.forEach((x, i) => {
         returnString += waypointString(i + 1, MAV2MAVparam(x))
