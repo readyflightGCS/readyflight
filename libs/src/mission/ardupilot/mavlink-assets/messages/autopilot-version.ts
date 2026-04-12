@@ -1,12 +1,11 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
-import {MavProtocolCapability} from '../enums/mav-protocol-capability';
+import { MAVLinkMessage } from 'node-mavlink';
+import { readInt64LE, readUInt64LE } from 'node-mavlink';
+import { MavProtocolCapability } from '../enums/mav-protocol-capability';
 /*
 Version and capability of autopilot software. This should be emitted in response to a request with MAV_CMD_REQUEST_MESSAGE.
 */
 // capabilities Bitmap of capabilities uint64_t
-// flight_sw_version Firmware version number.
-        The field must be encoded as 4 bytes, where each byte (shown from MSB to LSB) is part of a semantic version: (major) (minor) (patch) (FIRMWARE_VERSION_TYPE). uint32_t
+// flight_sw_version Firmware version number. The field must be encoded as 4 bytes, where each byte (shown from MSB to LSB) is part of a semantic version: (major) (minor) (patch) (FIRMWARE_VERSION_TYPE). uint32_t
 // middleware_sw_version Middleware version number uint32_t
 // os_sw_version Operating system version number uint32_t
 // board_version HW / board version (last 8 bits should be silicon ID, if any). The first 16 bits of this field specify a board type from an enumeration stored at https://github.com/PX4/PX4-Bootloader/blob/master/board_types.txt and with extensive additions at https://github.com/ArduPilot/ardupilot/blob/master/Tools/AP_Bootloader/board_types.txt uint32_t

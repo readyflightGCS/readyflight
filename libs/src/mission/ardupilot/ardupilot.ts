@@ -3,6 +3,12 @@ import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
 import { exportRFJSON1 } from "../format/readyflight/json1/export"
 import { importRFJSON1 } from "../format/readyflight/json1/import"
+import { decodePacket } from "./mavlink-decoder"
+import { Attitude } from "./mavlink-assets/messages/attitude"
+import { GlobalPositionInt } from "./mavlink-assets/messages/global-position-int"
+import { GpsRawInt } from "./mavlink-assets/messages/gps-raw-int"
+import { SysStatus } from "./mavlink-assets/messages/sys-status"
+import { Statustext } from "./mavlink-assets/messages/statustext"
 
 /**
  * ArduPilot dialect configuration for mission command conversion and handling.
@@ -92,7 +98,42 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     "RF.Land": false,
     "RF.Takeoff": false,
     "RF.Waypoint": true,
+  },
+  handleTelemetryMessage: (data, setVehicleState) => {
+    const msg = decodePacket(data)
+    if (!msg) return
+
+    console.log(`[mavlink] ${msg._message_name}`, msg)
+
+    if (msg instanceof GlobalPositionInt) {
+      setVehicleState({
+        lat: msg.lat / 1e7,
+        lon: msg.lon / 1e7,
+        alt: msg.alt / 1000,
+        relativeAlt: msg.relative_alt / 1000,
+        heading: msg.hdg !== 65535 ? msg.hdg / 100 : null,
+      })
+    } else if (msg instanceof Attitude) {
+      const toDeg = (r: number) => r * (180 / Math.PI)
+      setVehicleState({
+        roll: toDeg(msg.roll),
+        pitch: toDeg(msg.pitch),
+        yaw: toDeg(msg.yaw),
+      })
+    } else if (msg instanceof GpsRawInt) {
+      setVehicleState({
+        gpsSatellites: msg.satellites_visible,
+        gpsFixType: msg.fix_type,
+        groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
+      })
+    } else if (msg instanceof SysStatus) {
+      setVehicleState({
+        batteryVoltage: msg.voltage_battery !== 65535 ? msg.voltage_battery / 1000 : null,
+        batteryCurrent: msg.current_battery !== -1 ? msg.current_battery / 100 : null,
+        batteryRemaining: msg.battery_remaining,
+      })
+    } else if (msg instanceof Statustext) {
+      console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
+    }
   }
-
 }
-

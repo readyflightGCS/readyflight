@@ -6,6 +6,9 @@ import SideBar from '@/components/navigation/sidebar'
 import SidePanel from './components/navigation/sidePanel/sidePanel'
 import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
 import { useEditor } from "@/stores/configurator"
+import { useMission } from "./stores/mission"
+import { useVehicle } from "./stores/vehicle"
+import { useEffect } from "react"
 
 export default function App(): React.JSX.Element {
   //@ts-ignore
@@ -15,13 +18,25 @@ export default function App(): React.JSX.Element {
     }
   }
 
+  const dialect = useMission(s => s.dialect)
+  const setVehicleState = useVehicle(s => s.setVehicleState)
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:9999')
+    ws.binaryType = 'arraybuffer'
+    ws.onmessage = (e) => {
+      dialect.handleTelemetryMessage(e.data as ArrayBuffer, setVehicleState)
+    }
+    return () => ws.close()
+  }, [])
+
   const isSidePanelOpen = useEditor((state) => state.sidePanelOpen)
 
   return (
 
     <div className="flex flex-cols-2 h-full w-full bg-gray-200 text-foreground">
       <SideBar />
-      
+
       <div className="flex-grow relative">
         <div className="absolute top-0 left-0 h-full z-20">
           <SidePanel />

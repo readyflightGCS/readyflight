@@ -3,6 +3,7 @@ import { LatLng, LatLngAlt } from "@libs/world/latlng"
 import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command"
 import { Result } from "@libs/util/try-catch"
 import { Vehicle } from "@libs/vehicle/types"
+import { VehicleState } from "@libs/vehicle/state"
 
 /**
  * Represents a dialect—i.e., a specific command language or format—that can
@@ -75,4 +76,6 @@ export type Dialect<CD extends CommandDescription> = {
     import?: (mission: Blob) => Promise<Result<{ mission: Mission<CD>, vehicle: Vehicle }>>
     ext: string
   }[]
+
+  handleTelemetryMessage: (message: ArrayBuffer, setVehicleState: (state: Partial<VehicleState>) => void) => void
 }
