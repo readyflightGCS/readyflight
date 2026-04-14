@@ -6,9 +6,7 @@ import SideBar from '@/components/navigation/sidebar'
 import SidePanel from './components/navigation/sidePanel/sidePanel'
 import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
 import { useEditor } from "@/stores/configurator"
-import { useMission } from "./stores/mission"
-import { useVehicle } from "./stores/vehicle"
-import { useEffect } from "react"
+import ConnectionHandler from "./components/telemetry/connectionHandler"
 
 export default function App(): React.JSX.Element {
   //@ts-ignore
@@ -18,17 +16,6 @@ export default function App(): React.JSX.Element {
     }
   }
 
-  const dialect = useMission(s => s.dialect)
-  const setVehicleState = useVehicle(s => s.setVehicleState)
-
-  useEffect(() => {
-    const ws = new WebSocket('ws://localhost:9999')
-    ws.binaryType = 'arraybuffer'
-    ws.onmessage = (e) => {
-      dialect.handleTelemetryMessage(e.data as ArrayBuffer, setVehicleState)
-    }
-    return () => ws.close()
-  }, [])
 
   const isSidePanelOpen = useEditor((state) => state.sidePanelOpen)
 
@@ -48,6 +35,7 @@ export default function App(): React.JSX.Element {
         </div>
         <Map />
       </div>
+      <ConnectionHandler />
     </div>
   )
 }
