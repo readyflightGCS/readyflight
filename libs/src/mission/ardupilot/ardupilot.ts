@@ -9,6 +9,14 @@ import { GlobalPositionInt } from "./mavlink-assets/messages/global-position-int
 import { GpsRawInt } from "./mavlink-assets/messages/gps-raw-int"
 import { SysStatus } from "./mavlink-assets/messages/sys-status"
 import { Statustext } from "./mavlink-assets/messages/statustext"
+import { VfrHud } from "./mavlink-assets/messages/vfr-hud"
+import { rad2deg } from "@libs/math/geometry"
+import { Wind } from "./mavlink-assets/messages/wind"
+import { BatteryStatus } from "./mavlink-assets/messages/battery-status"
+import { AoaSsa } from "./mavlink-assets/messages/aoa-ssa"
+import { MissionCurrent } from "./mavlink-assets/messages/mission-current"
+import { NavControllerOutput } from "./mavlink-assets/messages/nav-controller-output"
+import { EkfStatusReport } from "./mavlink-assets/messages/ekf-status-report"
 
 /**
  * ArduPilot dialect configuration for mission command conversion and handling.
@@ -103,22 +111,23 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     const msg = decodePacket(data)
     if (!msg) return
 
-    console.log(`[mavlink] ${msg._message_name}`, msg)
-
     if (msg instanceof GlobalPositionInt) {
       setVehicleState({
-        lat: msg.lat / 1e7,
-        lon: msg.lon / 1e7,
         alt: msg.alt / 1000,
-        relativeAlt: msg.relative_alt / 1000,
-        heading: msg.hdg !== 65535 ? msg.hdg / 100 : null,
+        heading: msg.hdg / 100,
+        lat: msg.lat / 10000000,
+        lon: msg.lon / 10000000,
+        relativeAlt: msg.relative_alt / 100
+
       })
     } else if (msg instanceof Attitude) {
-      const toDeg = (r: number) => r * (180 / Math.PI)
       setVehicleState({
-        roll: toDeg(msg.roll),
-        pitch: toDeg(msg.pitch),
-        yaw: toDeg(msg.yaw),
+        roll: rad2deg(msg.roll),
+        pitch: rad2deg(msg.pitch),
+        yaw: rad2deg(msg.yaw),
+        pitchRate: msg.pitchspeed,
+        rollRate: msg.rollspeed,
+        yawRate: msg.yawspeed
       })
     } else if (msg instanceof GpsRawInt) {
       setVehicleState({
@@ -126,14 +135,62 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
         gpsFixType: msg.fix_type,
         groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
       })
-    } else if (msg instanceof SysStatus) {
+    } else if (msg instanceof BatteryStatus) {
       setVehicleState({
-        batteryVoltage: msg.voltage_battery !== 65535 ? msg.voltage_battery / 1000 : null,
-        batteryCurrent: msg.current_battery !== -1 ? msg.current_battery / 100 : null,
+        batteryVoltage: msg.voltages / 1000,
+        batteryCurrent: msg.current_battery,
         batteryRemaining: msg.battery_remaining,
+        batteryConsumedmAh: msg.current_consumed
+      })
+    } else if (msg instanceof VfrHud) {
+      setVehicleState({
+        airspeed: msg.airspeed,
+        climb: msg.climb,
+        groundspeed: msg.groundspeed,
+        throttle: msg.throttle
+      })
+    } else if (msg instanceof Wind) {
+      setVehicleState({
+        windDirection: msg.direction,
+        windHSpeed: msg.speed,
+        windZSpeed: msg.speed_z
+      })
+    } else if (msg instanceof AoaSsa) {
+      setVehicleState({
+        AOA: msg.AOA,
+        SSA: msg.SSA
+      })
+    } else if (msg instanceof MissionCurrent) {
+      setVehicleState({
+        missionId: msg.mission_id,
+        missionSeq: msg.seq,
+        missionMode: msg.mission_mode,
+        missionState: msg.mission_state,
+        missionTotal: msg.total
+      })
+    } else if (msg instanceof NavControllerOutput) {
+      setVehicleState({
+        altError: msg.alt_error,
+        aspdError: msg.aspd_error,
+        navBearing: msg.nav_bearing,
+        navPitch: msg.nav_pitch,
+        navRoll: msg.nav_roll,
+        targetBearing: msg.target_bearing,
+        wpDist: msg.wp_dist,
+        xtrackError: msg.xtrack_error
+      })
+    } else if (msg instanceof EkfStatusReport) {
+      setVehicleState({
+        airspeedVariance: msg.airspeed_variance,
+        compassVariance: msg.compass_variance,
+        posHorizVariance: msg.pos_horiz_variance,
+        posVertVariance: msg.pos_vert_variance,
+        velocityVariance: msg.velocity_variance
       })
     } else if (msg instanceof Statustext) {
       console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
+    } else {
+      console.log(msg)
     }
   }
 }

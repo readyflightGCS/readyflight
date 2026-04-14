@@ -140,7 +140,7 @@ export function deserializePayload<T extends MAVLinkMessage>(instance: T, payloa
         str += String.fromCharCode(padded[i])
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(instance as any)[name] = str
+      ; (instance as any)[name] = str
       offset = actualLen
       continue
     }
@@ -148,7 +148,7 @@ export function deserializePayload<T extends MAVLinkMessage>(instance: T, payloa
     const [value, size] = readField(view, offset, type)
     if (size > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(instance as any)[name] = value
+      ; (instance as any)[name] = value
       offset += size
     }
   }
@@ -163,12 +163,16 @@ export function deserializePayload<T extends MAVLinkMessage>(instance: T, payloa
  * Returns null for malformed frames or unknown message IDs.
  */
 export function decodePacket(data: ArrayBuffer): MAVLinkMessage | null {
-  const frame = parseFrame(data)
-  if (!frame) return null
+  try {
+    const frame = parseFrame(data)
+    if (!frame) return null
 
-  const Cls = CLASS_BY_ID.get(frame.msgid)
-  if (!Cls) return null
+    const Cls = CLASS_BY_ID.get(frame.msgid)
+    if (!Cls) return null
 
-  const instance = new Cls(frame.sysid, frame.compid)
-  return deserializePayload(instance, frame.payload)
+    const instance = new Cls(frame.sysid, frame.compid)
+    return deserializePayload(instance, frame.payload)
+  } catch {
+    return null
+  }
 }
