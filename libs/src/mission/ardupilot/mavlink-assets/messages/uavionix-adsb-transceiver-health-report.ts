@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {UavionixAdsbRfHealth} from '../enums/uavionix-adsb-rf-health';
 /*
 Transceiver heartbeat with health report (updated every 10s)

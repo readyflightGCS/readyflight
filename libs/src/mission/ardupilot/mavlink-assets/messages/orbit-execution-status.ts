@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {MavFrame} from '../enums/mav-frame';
 /*
 Vehicle status report that is sent out while orbit execution is in progress (see MAV_CMD_DO_ORBIT).

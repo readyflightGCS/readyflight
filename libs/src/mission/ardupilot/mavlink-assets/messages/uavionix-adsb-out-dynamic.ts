@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {UavionixAdsbOutDynamicGpsFix} from '../enums/uavionix-adsb-out-dynamic-gps-fix';
 import {UavionixAdsbEmergencyStatus} from '../enums/uavionix-adsb-emergency-status';
 import {UavionixAdsbOutDynamicState} from '../enums/uavionix-adsb-out-dynamic-state';

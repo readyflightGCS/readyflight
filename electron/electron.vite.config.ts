@@ -38,7 +38,7 @@ export default defineConfig({
         '@renderer': resolve(__dirname, '../client-frontend/src'),
         "@": path.resolve(__dirname, "../client-frontend/src"),
         "@libs": path.resolve(__dirname, "../libs/src"),
-        "node-mavlink": path.resolve(__dirname, "../libs/src/mavlink-browser-shim.ts")
+        "@ifrunistuttgart/node-mavlink": path.resolve(__dirname, "../libs/src/mavlink-browser-shim.ts")
       }
     },
     plugins: [

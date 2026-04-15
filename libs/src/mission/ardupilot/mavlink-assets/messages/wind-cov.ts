@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 /*
 Wind estimate from vehicle. Note that despite the name, this message does not actually contain any covariances but instead variability and accuracy fields in terms of standard deviation (1-STD).
 */

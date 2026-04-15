@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 /*
 Manual (joystick) control message.
         This message represents movement axes and button using standard joystick axes nomenclature. Unused axes can be disabled and buttons states are transmitted as individual on/off bits of a bitmask. For more information see https://mavlink.io/en/manual_control.html

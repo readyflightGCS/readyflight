@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {MavCollisionSrc} from '../enums/mav-collision-src';
 import {MavCollisionAction} from '../enums/mav-collision-action';
 import {MavCollisionThreatLevel} from '../enums/mav-collision-threat-level';

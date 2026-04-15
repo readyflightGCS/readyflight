@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {MavMode} from '../enums/mav-mode';
 /*
 Sent from autopilot to simulation. Hardware in the loop control outputs. Alternative to HIL_ACTUATOR_CONTROLS.

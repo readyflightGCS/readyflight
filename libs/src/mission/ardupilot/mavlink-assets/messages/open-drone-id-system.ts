@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {MavOdidOperatorLocationType} from '../enums/mav-odid-operator-location-type';
 import {MavOdidClassificationType} from '../enums/mav-odid-classification-type';
 import {MavOdidCategoryEu} from '../enums/mav-odid-category-eu';

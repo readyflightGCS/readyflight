@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 /*
 Set the mission item with sequence number seq as the current item and emit MISSION_CURRENT (whether or not the mission number changed).
         If a mission is currently being executed, the system will continue to this new mission item on the shortest path, skipping any intermediate mission items.

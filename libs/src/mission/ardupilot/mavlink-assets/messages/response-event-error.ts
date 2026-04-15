@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {MavEventErrorReason} from '../enums/mav-event-error-reason';
 /*
 Response to a REQUEST_EVENT in case of an error (e.g. the event is not available anymore).

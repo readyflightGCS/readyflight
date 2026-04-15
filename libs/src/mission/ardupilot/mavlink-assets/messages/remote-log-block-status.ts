@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {MavRemoteLogDataBlockStatuses} from '../enums/mav-remote-log-data-block-statuses';
 /*
 Send Status of each log block that autopilot board might have sent.

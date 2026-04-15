@@ -3,7 +3,7 @@
 // _message_fields / _message_id / _crc_extra from the generated message class
 // and writes each field into a DataView in wire order.
 
-import { MAVLinkMessage } from 'node-mavlink'
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
 
 // GCS identity — system 255 is the conventional MAVLink GCS system ID.
 const GCS_SYSID = 255

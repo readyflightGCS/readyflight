@@ -6,7 +6,7 @@
 // layout.  We iterate that metadata and read each field with DataView, mirroring
 // what MAVLinkParserV1.read() does on the Node.js side.
 
-import { MAVLinkMessage } from 'node-mavlink'
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
 import { messageRegistry } from './mavlink-assets/message-registry'
 
 // Build an O(1) id → class lookup from the registry array.

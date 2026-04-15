@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {AdsbEmitterType} from '../enums/adsb-emitter-type';
 import {UavionixAdsbOutCfgAircraftSize} from '../enums/uavionix-adsb-out-cfg-aircraft-size';
 import {UavionixAdsbOutCfgGpsOffsetLat} from '../enums/uavionix-adsb-out-cfg-gps-offset-lat';

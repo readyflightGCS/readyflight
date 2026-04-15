@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {GpsInputIgnoreFlags} from '../enums/gps-input-ignore-flags';
 /*
 GPS sensor input message.  This is a raw sensor value sent by the GPS. This is NOT the global position estimate of the system.

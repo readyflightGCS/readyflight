@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from 'node-mavlink';
-import {readInt64LE, readUInt64LE} from 'node-mavlink';
+import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
+import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
 import {GimbalManagerFlags} from '../enums/gimbal-manager-flags';
 /*
 Current status about a high level gimbal manager. This message should be broadcast at a low regular rate (e.g. 5Hz).

@@ -1,4 +1,4 @@
-import { MAVLinkMessage } from 'node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink';
 import { SensorOffsets } from './messages/sensor-offsets';
 import { SetMagOffsets } from './messages/set-mag-offsets';
 import { Meminfo } from './messages/meminfo';
