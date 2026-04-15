@@ -7,7 +7,6 @@ import { decodePacket } from "./mavlink-decoder"
 import { Attitude } from "./mavlink-assets/messages/attitude"
 import { GlobalPositionInt } from "./mavlink-assets/messages/global-position-int"
 import { GpsRawInt } from "./mavlink-assets/messages/gps-raw-int"
-import { SysStatus } from "./mavlink-assets/messages/sys-status"
 import { Statustext } from "./mavlink-assets/messages/statustext"
 import { VfrHud } from "./mavlink-assets/messages/vfr-hud"
 import { rad2deg } from "@libs/math/geometry"
@@ -190,7 +189,13 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     } else if (msg instanceof Statustext) {
       console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
     } else {
-      console.log(msg)
     }
+  },
+
+  handleSendTelemetryMessage: (msg) => {
+    // handle byte stream
+
+    console.log(res)
+    return res
   }
 }

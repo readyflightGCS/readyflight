@@ -50,6 +50,7 @@ const initialState: VehicleState = {
   missionState: null,
   missionSeq: null,
   missionTotal: null,
+  sendMessage: null,
 }
 
 export const useVehicle = create<VehicleState & Actions>((set) => ({

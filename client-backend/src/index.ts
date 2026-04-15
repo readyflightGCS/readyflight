@@ -4,6 +4,7 @@ const UDP_PORT = 14550
 const WS_PORT = 9999
 const TOPIC = 'mavlink'
 
+const udp = createSocket('udp4')
 const server = Bun.serve({
   port: WS_PORT,
   fetch(req, server) {
@@ -13,11 +14,10 @@ const server = Bun.serve({
   websocket: {
     open(ws) { ws.subscribe(TOPIC); console.log('[ws] client connected') },
     close(ws) { ws.unsubscribe(TOPIC); console.log('[ws] client disconnected') },
-    message() { },
+    message(ws, msg) { console.log(msg); udp.send(msg, 14550, "localhost") },
   },
 })
 
-const udp = createSocket('udp4')
 udp.on('message', (msg) => server.publish(TOPIC, msg))
 udp.bind({ port: UDP_PORT }, () => console.log(`[udp] listening on ${UDP_PORT}`))
 

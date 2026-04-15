@@ -23,6 +23,9 @@ export default function ConnectionHandler() {
       ws.onopen = () => {
         console.log("[ws] Connected to backend")
         reconnectDelay.current = 1000
+        setVehicleState({
+          sendMessage: (m) => ws.send(dialect.handleSendTelemetryMessage(m))
+        })
       }
 
       ws.onmessage = (e) => {
@@ -32,10 +35,16 @@ export default function ConnectionHandler() {
       ws.onclose = () => {
         console.log("[ws] Lost connection to backend; Reconnecting ...")
         scheduleReconnect()
+        setVehicleState({
+          sendMessage: null
+        })
       }
 
       ws.onerror = () => {
         ws.close()
+        setVehicleState({
+          sendMessage: null
+        })
       }
     }
 

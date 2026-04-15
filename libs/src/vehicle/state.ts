@@ -43,4 +43,5 @@ export type VehicleState = {
   missionState: number | null
   missionSeq: number | null
   missionTotal: number | null
+  sendMessage: ((msg: any) => void) | null
 }

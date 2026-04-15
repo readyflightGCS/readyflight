@@ -78,4 +78,6 @@ export type Dialect<CD extends CommandDescription> = {
   }[]
 
   handleTelemetryMessage: (message: ArrayBuffer, setVehicleState: (state: Partial<VehicleState>) => void) => void
+
+  handleSendTelemetryMessage: (message: any) => ArrayBuffer
 }
