@@ -63,6 +63,23 @@ $ npm run build:mac
 $ npm run build:linux
 ```
 
+### Vehicle simulator
+
+Various vehicles can be simulated via a docker container. The docker daemon or docker desktop must be running for these to work. The container can be built with the following command. It may take a few minutes
+
+``` bash
+$ bun run build:sim
+```
+
+Either plane or copter can be simulated:
+
+``` bash
+$ bun run start:sim:plane
+or 
+$ bun run start:sim:copter
+```
+
+
 ## Project Layout
 
 The codebase is split into the following four sections:
