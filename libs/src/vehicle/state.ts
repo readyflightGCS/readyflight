@@ -1,3 +1,5 @@
+import { VehicleCommand } from "./commands"
+
 export type VehicleState = {
   lat: number | null
   lon: number | null
@@ -43,5 +45,5 @@ export type VehicleState = {
   missionState: number | null
   missionSeq: number | null
   missionTotal: number | null
-  sendMessage: ((msg: any) => void) | null
+  sendMessage: ((msg: VehicleCommand) => void) | null
 }

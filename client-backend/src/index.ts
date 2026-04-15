@@ -4,6 +4,9 @@ const UDP_PORT = 14550
 const WS_PORT = 9999
 const TOPIC = 'mavlink'
 
+// Track the vehicle's address so we know where to send commands back.
+let vehicleAddr: { address: string; port: number } | null = null
+
 const udp = createSocket('udp4')
 const server = Bun.serve({
   port: WS_PORT,
@@ -14,11 +17,22 @@ const server = Bun.serve({
   websocket: {
     open(ws) { ws.subscribe(TOPIC); console.log('[ws] client connected') },
     close(ws) { ws.unsubscribe(TOPIC); console.log('[ws] client disconnected') },
-    message(ws, msg) { console.log(msg); udp.send(msg, 14550, "localhost") },
+    message(ws, msg) {
+      if (!vehicleAddr) {
+        console.warn('[udp] no vehicle address known yet — dropping outbound packet')
+        return
+      }
+      udp.send(msg as Buffer, vehicleAddr.port, vehicleAddr.address)
+    },
   },
 })
 
-udp.on('message', (msg) => server.publish(TOPIC, msg))
+
+udp.on('message', (msg, rinfo) => {
+  vehicleAddr = { address: rinfo.address, port: rinfo.port }
+  server.publish(TOPIC, msg)
+})
+
 udp.bind({ port: UDP_PORT }, () => console.log(`[udp] listening on ${UDP_PORT}`))
 
 console.log(`[ws] listening on ${WS_PORT}`)

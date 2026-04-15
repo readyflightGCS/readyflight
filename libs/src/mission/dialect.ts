@@ -4,6 +4,7 @@ import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/co
 import { Result } from "@libs/util/try-catch"
 import { Vehicle } from "@libs/vehicle/types"
 import { VehicleState } from "@libs/vehicle/state"
+import { VehicleCommand } from "@libs/vehicle/commands"
 
 /**
  * Represents a dialect—i.e., a specific command language or format—that can
@@ -79,5 +80,5 @@ export type Dialect<CD extends CommandDescription> = {
 
   handleTelemetryMessage: (message: ArrayBuffer, setVehicleState: (state: Partial<VehicleState>) => void) => void
 
-  handleSendTelemetryMessage: (message: any) => ArrayBuffer
+  handleSendTelemetryMessage: (message: VehicleCommand) => ArrayBuffer
 }

@@ -4,6 +4,7 @@ import { mavCmdDescription } from "./commands"
 import { exportRFJSON1 } from "../format/readyflight/json1/export"
 import { importRFJSON1 } from "../format/readyflight/json1/import"
 import { decodePacket } from "./mavlink-decoder"
+import { encodePacket } from "./mavlink-encoder"
 import { Attitude } from "./mavlink-assets/messages/attitude"
 import { GlobalPositionInt } from "./mavlink-assets/messages/global-position-int"
 import { GpsRawInt } from "./mavlink-assets/messages/gps-raw-int"
@@ -16,6 +17,10 @@ import { AoaSsa } from "./mavlink-assets/messages/aoa-ssa"
 import { MissionCurrent } from "./mavlink-assets/messages/mission-current"
 import { NavControllerOutput } from "./mavlink-assets/messages/nav-controller-output"
 import { EkfStatusReport } from "./mavlink-assets/messages/ekf-status-report"
+import { CommandLong } from "./mavlink-assets/messages/command-long"
+import { SetMode } from "./mavlink-assets/messages/set-mode"
+import { MavCmd } from "./mavlink-assets/enums/mav-cmd"
+import { MavModeFlag } from "./mavlink-assets/enums/mav-mode-flag"
 
 /**
  * ArduPilot dialect configuration for mission command conversion and handling.
@@ -193,9 +198,30 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   },
 
   handleSendTelemetryMessage: (msg) => {
-    // handle byte stream
+    if (msg.type === 'arm' || msg.type === 'disarm') {
+      const cmd = new CommandLong()
+      cmd.target_system = 1
+      cmd.target_component = 1
+      cmd.command = MavCmd.MAV_CMD_COMPONENT_ARM_DISARM
+      cmd.confirmation = 0
+      cmd.param1 = msg.type === 'arm' ? 1 : 0
+      cmd.param2 = 0
+      cmd.param3 = 0
+      cmd.param4 = 0
+      cmd.param5 = 0
+      cmd.param6 = 0
+      cmd.param7 = 0
+      return encodePacket(cmd)
+    }
 
-    console.log(res)
-    return res
+    if (msg.type === 'setMode') {
+      const cmd = new SetMode()
+      cmd.target_system = 1
+      cmd.base_mode = MavModeFlag.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
+      cmd.custom_mode = msg.mode
+      return encodePacket(cmd)
+    }
+
+    throw new Error(`[ardupilot] Unknown command type: ${(msg as any).type}`)
   }
 }
