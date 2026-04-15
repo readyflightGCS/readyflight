@@ -3,10 +3,10 @@ import { useVehicle } from "@/stores/vehicle"
 import { PlaneMode } from "@libs/mission/ardupilot/mavlink-assets/enums/plane-mode"
 
 export default function Telemetry() {
-  let [alt, lat, lon, heading, sendMessage] = useVehicle((v) => [v.alt, v.lat, v.lon, v.heading, v.sendMessage])
+  let [connected, alt, lat, lon, heading, sendMessage] = useVehicle((v) => [v.connected, v.alt, v.lat, v.lon, v.heading, v.sendMessage])
   return (
     <div>
-      <div>I am the Telemetry view</div>
+      <div>{connected ? "Backend Connected" : "Backend Not Connected"}</div>
       <div>Altitude {alt}</div>
       <div>Latitude {lat}</div>
       <div>Longitude {lon}</div>
@@ -20,3 +20,4 @@ export default function Telemetry() {
     </div>
   )
 }
+

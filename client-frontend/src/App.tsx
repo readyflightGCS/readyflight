@@ -16,14 +16,12 @@ export default function App(): React.JSX.Element {
     }
   }
 
-
   const isSidePanelOpen = useEditor((state) => state.sidePanelOpen)
 
   return (
 
     <div className="flex flex-cols-2 h-full w-full bg-gray-200 text-foreground">
       <SideBar />
-
       <div className="flex-grow relative">
         <div className="absolute top-0 left-0 h-full z-20">
           <SidePanel />
