@@ -20,30 +20,40 @@ export default function ConnectionHandler() {
       ws.binaryType = 'arraybuffer'
       wsRef.current = ws
 
+      const sendPacket = (buf: ArrayBuffer) => ws.send(buf)
+
       ws.onopen = () => {
+        if (!isMouted) return
         console.log("[ws] Connected to backend")
         reconnectDelay.current = 1000
         setVehicleState({
-          sendMessage: (m) => ws.send(dialect.handleSendTelemetryMessage(m))
+          sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
+          sendPacket,
+          connected: true,
         })
       }
 
       ws.onmessage = (e) => {
-        dialect.handleTelemetryMessage(e.data as ArrayBuffer, setVehicleState)
+        if (!isMouted) return
+        dialect.handleTelemetryMessage(e.data as ArrayBuffer, setVehicleState, sendPacket)
       }
 
       ws.onclose = () => {
         console.log("[ws] Lost connection to backend; Reconnecting ...")
         scheduleReconnect()
         setVehicleState({
-          sendMessage: null
+          sendMessage: null,
+          sendPacket: null,
+          connected: false,
         })
       }
 
       ws.onerror = () => {
         ws.close()
         setVehicleState({
-          sendMessage: null
+          sendMessage: null,
+          sendPacket: null,
+          connected: false,
         })
       }
     }

@@ -1,4 +1,4 @@
-import { convertArdupilot, exportQGCWaypoints } from "./export"
+import { convertArdupilot, exportQGCWaypoints, MAV2MAVparam, MavCommand } from "./export"
 import { Dialect } from "../dialect"
 import { mavCmdDescription } from "./commands"
 import { exportRFJSON1 } from "../format/readyflight/json1/export"
@@ -19,41 +19,63 @@ import { NavControllerOutput } from "./mavlink-assets/messages/nav-controller-ou
 import { EkfStatusReport } from "./mavlink-assets/messages/ekf-status-report"
 import { CommandLong } from "./mavlink-assets/messages/command-long"
 import { SetMode } from "./mavlink-assets/messages/set-mode"
+import { MissionCount } from "./mavlink-assets/messages/mission-count"
+import { MissionItemInt } from "./mavlink-assets/messages/mission-item-int"
+import { MissionRequest } from "./mavlink-assets/messages/mission-request"
+import { MissionRequestInt } from "./mavlink-assets/messages/mission-request-int"
+import { MissionAck } from "./mavlink-assets/messages/mission-ack"
 import { MavCmd } from "./mavlink-assets/enums/mav-cmd"
 import { MavModeFlag } from "./mavlink-assets/enums/mav-mode-flag"
+import { MavMissionType } from "./mavlink-assets/enums/mav-mission-type"
+import { makeCommand } from "@libs/commands/helpers"
+import { Mission } from "../mission"
 
-/**
- * ArduPilot dialect configuration for mission command conversion and handling.
- * 
- * Defines the ArduPilot-specific dialect for processing MAVLink commands with support for
- * location extraction, command labeling, and format conversion.
- * 
- * @constant
- * @type {Dialect<typeof mavCmdDescription[number]>}
- * 
- * @property {string} name - The dialect identifier ("ardupilot")
- * @property {typeof mavCmdDescription[number][]} commandDescriptions - Array of MAVLink command descriptions
- * @property {Function} convert - Converts a mission object into an array of dialect-specific commands.
- *   Handles command flattening, Dubins path calculation, and group expansion.
- *   @param {Object} mission - The mission object containing commands to convert
- *   @returns {DialectCommand<typeof mavCmdDescription[number]>[]} Converted command array
- * @property {Function} getCommandLocation - Extracts latitude and longitude from a command if it has location data.
- *   @param {DialectCommand<typeof mavCmdDescription[number]>} cmd - The command to extract location from
- *   @returns {{lat: number, lng: number} | null} Location object or null if command has no location
- * @property {Function} getCommandLocationAlt - Extracts latitude, longitude, and altitude from a command.
- *   @param {DialectCommand<typeof mavCmdDescription[number]>} cmd - The command to extract location and altitude from
- *   @returns {{lat: number, lng: number, alt: number} | null} Location and altitude object or null if data is missing
- * @property {Function} getCommandLabel - Retrieves the human-readable label for a command.
- *   @param {DialectCommand<typeof mavCmdDescription[number]>} cmd - The command to get the label for
- *   @returns {string} The command label
- * @property {any[]} formats - Supported file formats (empty for ArduPilot)
- * @property {Object} supportedRFCommands - Feature support matrix for ReadyFlight command types.
- *   Only RF.Waypoint commands are natively supported.
- */
+// ---------------------------------------------------------------------------
+// Mission upload state — one active upload at a time.
+// Stored at module scope so that handleTelemetryMessage (called on every
+// incoming frame) can respond to MISSION_REQUEST/MISSION_REQUEST_INT without
+// any extra wiring in the connection handler.
+// ---------------------------------------------------------------------------
+let pendingUpload: MavCommand[] | null = null
+
+// Deduplication for React StrictMode / brief double-connection window.
+// Two WebSocket connections can race on the same MISSION_REQUEST packet (the
+// backend broadcasts to all subscribers). Track the last seq we actually sent
+// and suppress any repeat within a short window.
+const DEDUP_MS = 200
+let dedupSeq = -1
+let dedupTime = 0
+
+function resetUploadState() {
+  pendingUpload = null
+  dedupSeq = -1
+  dedupTime = 0
+}
+
+function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
+  const msg = new MissionItemInt()
+  msg.target_system = 1
+  msg.target_component = 1
+  msg.seq = seq
+  msg.frame = item.frame
+  msg.command = item.type as unknown as MavCmd
+  msg.current = seq === 0 ? 1 : 0
+  msg.autocontinue = item.autocontinue
+  msg.param1 = item.param1
+  msg.param2 = item.param2
+  msg.param3 = item.param3
+  msg.param4 = item.param4
+  msg.x = Math.round(item.param5 * 1e7)  // lat → int32 (deg * 1e7)
+  msg.y = Math.round(item.param6 * 1e7)  // lon → int32 (deg * 1e7)
+  msg.z = item.param7                     // alt stays as float
+  return msg
+}
+
 export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   name: "mavlink-ardupilot",
   commandDescriptions: mavCmdDescription,
   convert: convertArdupilot,
+
   getCommandLocation: (cmd) => {
     let a = mavCmdDescription.find(x => x.type == cmd.type)
     if (!a.hasLocation) {
@@ -68,6 +90,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     }
     return { lat: b, lng: c }
   },
+
   getCommandLocationAlt: (cmd) => {
     let a = mavCmdDescription.find(x => x.type == cmd.type)
     if (!a.hasLocation) {
@@ -84,10 +107,12 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     }
     return { lat: b, lng: c, alt: d }
   },
+
   getCommandLabel: (cmd) => {
     let a = mavCmdDescription.find(x => x.type == cmd.type)
     return a.label
   },
+
   fileFormats: [
     {
       name: "Readyflight JSON",
@@ -103,15 +128,17 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       ext: ".waypoints"
     }
   ],
+
   supportedRFCommands: {
-    "RF.DubinsPath": false,
-    "RF.Group": false,
-    "RF.SetServo": false,
-    "RF.Land": false,
-    "RF.Takeoff": false,
+    "RF.DubinsPath": true,
+    "RF.Group": true,
+    "RF.SetServo": true,
+    "RF.Land": true,
+    "RF.Takeoff": true,
     "RF.Waypoint": true,
   },
-  handleTelemetryMessage: (data, setVehicleState) => {
+
+  handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
     const msg = decodePacket(data)
     if (!msg) return
 
@@ -122,7 +149,6 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
         lat: msg.lat / 10000000,
         lon: msg.lon / 10000000,
         relativeAlt: msg.relative_alt / 100
-
       })
     } else if (msg instanceof Attitude) {
       setVehicleState({
@@ -193,11 +219,46 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       })
     } else if (msg instanceof Statustext) {
       console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
-    } else {
+
+      // ------------------------------------------------------------------
+      // Mission upload handshake — respond to both legacy MISSION_REQUEST
+      // and the preferred MISSION_REQUEST_INT with MISSION_ITEM_INT.
+      // Modern ArduPilot (4.x) always expects MISSION_ITEM_INT and will log
+      // a warning if it receives the float MISSION_ITEM variant.
+      // ------------------------------------------------------------------
+    } else if (msg instanceof MissionRequest || msg instanceof MissionRequestInt) {
+      if (!pendingUpload) return
+
+      const seq = msg.seq
+      const item = pendingUpload[seq]
+      if (!item) {
+        console.warn(`[mavlink] request for unknown seq ${seq} (upload has ${pendingUpload.length} items)`)
+        return
+      }
+
+      // Deduplicate: suppress the same seq if it arrives again within DEDUP_MS.
+      // This handles the React-StrictMode / double-connection case where the
+      // backend broadcasts one MISSION_REQUEST to two WebSocket clients and
+      // both would otherwise respond, causing INVALID_SEQUENCE on the vehicle.
+      const now = Date.now()
+      if (seq === dedupSeq && now - dedupTime < DEDUP_MS) return
+      dedupSeq = seq
+      dedupTime = now
+
+      console.log(`[mavlink] Sending MISSION_ITEM_INT seq=${seq}`)
+      sendPacket(encodePacket(buildMissionItemInt(item, seq)))
+
+    } else if (msg instanceof MissionAck) {
+      if (msg.type === 0 /* MAV_MISSION_ACCEPTED */) {
+        console.log('[mavlink] Mission upload accepted')
+      } else {
+        console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
+      }
+      resetUploadState()
     }
   },
 
-  handleSendTelemetryMessage: (msg) => {
+  handleSendTelemetryMessage: (msg, sendPacket) => {
     if (msg.type === 'arm' || msg.type === 'disarm') {
       const cmd = new CommandLong()
       cmd.target_system = 1
@@ -211,7 +272,8 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       cmd.param5 = 0
       cmd.param6 = 0
       cmd.param7 = 0
-      return encodePacket(cmd)
+      sendPacket(encodePacket(cmd))
+      return
     }
 
     if (msg.type === 'setMode') {
@@ -219,9 +281,40 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       cmd.target_system = 1
       cmd.base_mode = MavModeFlag.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
       cmd.custom_mode = msg.mode
-      return encodePacket(cmd)
+      sendPacket(encodePacket(cmd))
+      return
     }
 
     throw new Error(`[ardupilot] Unknown command type: ${(msg as any).type}`)
-  }
+  },
+
+  uploadMission: (mission, sendPacket) => {
+    // Convert the RF/dialect mission into flat MAVLink param items.
+    // Item 0 is always the home position (reference point, absolute altitude 0).
+    const typedMission = mission as unknown as Mission<typeof mavCmdDescription[number]>
+    const reference = typedMission.getReferencePoint()
+
+    //@ts-ignore
+    const homeItem = MAV2MAVparam(makeCommand("D.MAV_CMD_NAV_WAYPOINT", {
+      latitude: reference.lat,
+      longitude: reference.lng,
+      altitude: 0
+    }, ardupilot))
+    homeItem.frame = 0  // MAV_FRAME_GLOBAL — absolute altitude for home
+
+    const missionItems = convertArdupilot(typedMission).map(MAV2MAVparam)
+
+    // Reset state for the new upload
+    resetUploadState()
+    pendingUpload = [homeItem, ...missionItems]
+
+    console.log(`[mavlink] Starting mission upload: ${pendingUpload.length} items`)
+
+    const countMsg = new MissionCount()
+    countMsg.target_system = 1
+    countMsg.target_component = 1
+    countMsg.count = pendingUpload.length
+    countMsg.mission_type = MavMissionType.MAV_MISSION_TYPE_MISSION
+    sendPacket(encodePacket(countMsg))
+  },
 }

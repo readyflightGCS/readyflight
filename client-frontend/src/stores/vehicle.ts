@@ -5,7 +5,11 @@ type Actions = {
   setVehicleState: (state: Partial<VehicleState>) => void
 }
 
+// Agnostic vehicle type
+// It's heavily derived from mavlink
+
 const initialState: VehicleState = {
+  connected: false,
   lat: null,
   lon: null,
   alt: null,         // MSL altitude in metres
@@ -50,7 +54,8 @@ const initialState: VehicleState = {
   missionState: null,
   missionSeq: null,
   missionTotal: null,
-  sendMessage: null,
+  sendMessage: null, // All readyflight commands will be passed through this
+  sendPacket: null, // For when your dialect requires access outside of sendMessage.
 }
 
 export const useVehicle = create<VehicleState & Actions>((set) => ({

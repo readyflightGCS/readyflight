@@ -54,7 +54,10 @@ function fieldSize(type: string): number {
 }
 
 function serializePayload(msg: MAVLinkMessage): Uint8Array {
-  const fields = (msg as any)._message_fields as [string, string, boolean][]
+  // Extension fields (isExtension === true) are a MAVLink 2 concept; omit them
+  // when building a v1 frame so the payload length and CRC stay correct.
+  const fields = ((msg as any)._message_fields as [string, string, boolean][])
+    .filter(([, , isExt]) => !isExt)
 
   const size = fields.reduce((acc, [, type]) => acc + fieldSize(type), 0)
   const buf = new ArrayBuffer(size)

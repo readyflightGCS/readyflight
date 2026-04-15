@@ -4,12 +4,15 @@ import { LayerGroup, Polyline } from "react-leaflet";
 import InsertBtn from "../insertButton";
 import CommandMarker from "../commandMarker";
 import { getCommandLocation } from "@libs/commands/helpers";
+import { useVehicle } from "@/stores/vehicle";
+import DraggableMarker from "../draggableMarker";
 
 const limeOptions = { color: 'lime' }
 const noshow = ["Markers", "Geofence"]
 
 export default function ActiveLayer() {
   const { setSelectedSubMission, setSelectedCommandIDs, mission, dialect, selectedSubMission, setMission, selectedCommandIDs } = useMission()
+  const v = useVehicle()
 
   let a = 0;
 
@@ -88,6 +91,7 @@ export default function ActiveLayer() {
           />
         );
       })}
+      <DraggableMarker position={{ lat: v.lat, lng: v.lon }} active={false} />
 
       <Polyline pathOptions={limeOptions} positions={mainLine.map(x => getCommandLocation(x.cmd, dialect))} />
       {insertBtns}

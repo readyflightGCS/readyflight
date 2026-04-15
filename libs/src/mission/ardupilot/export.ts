@@ -84,7 +84,7 @@ function RF2MAV(cmd: RFCommand, reference: LatLng): DialectCommand<typeof mavCmd
                 hold: 0,
                 "accept radius": 0,
                 "pass radius": 0,
-                yaw: NaN,
+                yaw: 0,
                 latitude: rfCmd.params.latitude,
                 longitude: rfCmd.params.longitude,
                 altitude: rfCmd.params.altitude
@@ -93,7 +93,7 @@ function RF2MAV(cmd: RFCommand, reference: LatLng): DialectCommand<typeof mavCmd
         case "RF.Takeoff": {
             return [createMavCmd("D.MAV_CMD_NAV_TAKEOFF", {
                 pitch: rfCmd.params.pitch ?? 0,
-                yaw: rfCmd.params.yaw ?? NaN,
+                yaw: rfCmd.params.yaw ?? 0,
                 latitude: rfCmd.params.latitude,
                 longitude: rfCmd.params.longitude,
                 altitude: rfCmd.params.altitude

@@ -78,7 +78,16 @@ export type Dialect<CD extends CommandDescription> = {
     ext: string
   }[]
 
-  handleTelemetryMessage: (message: ArrayBuffer, setVehicleState: (state: Partial<VehicleState>) => void) => void
+  /** Called for every incoming binary frame. sendPacket may be used to send immediate responses (e.g. during mission upload handshake). */
+  handleTelemetryMessage: (
+    message: ArrayBuffer,
+    setVehicleState: (state: Partial<VehicleState>) => void,
+    sendPacket: (buf: ArrayBuffer) => void
+  ) => void
 
-  handleSendTelemetryMessage: (message: VehicleCommand) => ArrayBuffer
+  /** Encode and dispatch a single vehicle command. */
+  handleSendTelemetryMessage: (message: VehicleCommand, sendPacket: (buf: ArrayBuffer) => void) => void
+
+  /** Run the MAVLink mission-upload handshake for the given mission. */
+  uploadMission: (mission: Mission<CD>, sendPacket: (buf: ArrayBuffer) => void) => void
 }

@@ -1,6 +1,7 @@
 import { VehicleCommand } from "./commands"
 
 export type VehicleState = {
+  connected: boolean
   lat: number | null
   lon: number | null
   alt: number | null         // MSL altitude in metres
@@ -46,4 +47,5 @@ export type VehicleState = {
   missionSeq: number | null
   missionTotal: number | null
   sendMessage: ((msg: VehicleCommand) => void) | null
+  sendPacket: ((buf: ArrayBuffer) => void) | null
 }
