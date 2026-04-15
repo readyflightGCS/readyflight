@@ -4,6 +4,7 @@
     "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
+    "moduleResolution": "Bundler",
     "composite": true,
     "baseUrl": ".",
     "paths": {

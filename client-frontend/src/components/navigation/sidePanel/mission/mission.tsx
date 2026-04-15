@@ -1,6 +1,6 @@
 import CommandList from "./commandList";
 import MissionFile from "./file";
-import MissionDialog from "@/components/dialogs/mission";
+import MissionDialog from "@/components/dialogs/mission/settings";
 import SidePanelSection from "@/components/ui/sidePanelSection";
 import SubMissionList from "./subMissionList";
 import { useMission } from "@/stores/mission";

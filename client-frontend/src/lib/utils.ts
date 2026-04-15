@@ -34,3 +34,19 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+/**
+ * Downloads text content as a file to the user's device
+ * @param filename Name of the file to download
+ * @param text Text content to download
+ */
+export function downloadBlobAsFile(filename: string, data: Blob): void {
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(data);
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(link.href); // Clean up memory
+}
+

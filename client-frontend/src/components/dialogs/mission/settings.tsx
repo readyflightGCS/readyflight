@@ -1,27 +1,33 @@
 import { useMission } from "@/stores/mission";
-import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import NumericInput from "../ui/numericInput";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import NumericInput from "@/components/ui/numericInput";
 import { getMinTurnRadius } from "@libs/dubins/dubinWaypoints";
-import { defaultCopter, defaultPlane } from "@libs/vehicle/copter";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Separator } from "../ui/separator";
+import { defaultCopter, defaultPlane } from "@libs/vehicle/defaults";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import ExportMission from "./export";
+import ImportMission from "./import";
 
 export default function MissionDialog() {
-  const vehicle = useMission(s => s.vehicle)
-  const setVehicle = useMission(s => s.setVehicle)
+
+  const [vehicle, setVehicle] = useMission(s => [s.vehicle, s.setVehicle])
+
   return (
     <Dialog>
+
       <DialogTrigger asChild>
         <Button>Settings</Button>
       </DialogTrigger>
       <DialogContent>
+
         <DialogHeader>
           <DialogTitle>
             Mission Settings
           </DialogTitle>
         </DialogHeader>
+
         <div>
           <h2>Mission Dialect</h2>
           <Select value="Mavlink">
@@ -33,7 +39,9 @@ export default function MissionDialog() {
             </SelectContent>
           </Select>
         </div>
+
         <Separator />
+
         <div>
           <h2>Mission Vehicle</h2>
           <Tabs value={vehicle.type}>
@@ -74,6 +82,10 @@ export default function MissionDialog() {
 
           </Tabs>
         </div >
+
+        <ExportMission />
+
+        <ImportMission />
 
       </DialogContent>
     </Dialog>

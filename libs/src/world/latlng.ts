@@ -1,4 +1,4 @@
-
+import { z } from "zod"
 import { CommandDescription, MissionCommand } from "@libs/commands/command"
 
 /**
@@ -9,10 +9,11 @@ import { CommandDescription, MissionCommand } from "@libs/commands/command"
  * represents the east–west axis (X‑axis). This type is used throughout navigation,
  * mapping, and mission‑planning utilities.
  */
-export type LatLng = {
-  lat: number, // the Y axis
-  lng: number // the X axis
-}
+export const LatLngSchema = z.object({
+  lat: z.number(),
+  lng: z.number()
+})
+export type LatLng = z.infer<typeof LatLngSchema>
 
 /**
  * A geographic coordinate including altitude above mean sea level.

@@ -140,7 +140,7 @@ export type RFCommand = DialectCommand<typeof RFCommandDescription[number]>
 
 // Type alias for cleaner code - represents any command that can be in a mission
 export type MissionCommand<CD extends CommandDescription> =
-  RFCommand | (DialectCommand<CD> & { type: `D_${string}` })
+  RFCommand | (DialectCommand<CD> & { type: `D.${string}` })
 
 // Just a sanity check to make sure params type is working correctly
 // let a: MissionCommand<CommandDescription> = { type: "RF.Waypoint", frame: 0, params: {} }
