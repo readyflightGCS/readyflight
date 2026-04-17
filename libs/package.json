@@ -9,6 +9,7 @@
     "build": "bunx tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@ifrunistuttgart/node-mavlink": "^0.1.2",
     "zod": "^4.3.6"
   }
 }

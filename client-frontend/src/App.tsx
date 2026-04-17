@@ -6,6 +6,7 @@ import SideBar from '@/components/navigation/sidebar'
 import SidePanel from './components/navigation/sidePanel/sidePanel'
 import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
 import { useEditor } from "@/stores/configurator"
+import ConnectionHandler from "./components/telemetry/connectionHandler"
 
 export default function App(): React.JSX.Element {
   //@ts-ignore
@@ -21,7 +22,6 @@ export default function App(): React.JSX.Element {
 
     <div className="flex flex-cols-2 h-full w-full bg-gray-200 text-foreground">
       <SideBar />
-      
       <div className="flex-grow relative">
         <div className="absolute top-0 left-0 h-full z-20">
           <SidePanel />
@@ -33,6 +33,7 @@ export default function App(): React.JSX.Element {
         </div>
         <Map />
       </div>
+      <ConnectionHandler />
     </div>
   )
 }

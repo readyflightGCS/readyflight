@@ -3,6 +3,8 @@ import { LatLng, LatLngAlt } from "@libs/world/latlng"
 import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command"
 import { Result } from "@libs/util/try-catch"
 import { Vehicle } from "@libs/vehicle/types"
+import { VehicleState } from "@libs/vehicle/state"
+import { VehicleCommand } from "@libs/vehicle/commands"
 
 /**
  * Represents a dialect—i.e., a specific command language or format—that can
@@ -75,4 +77,17 @@ export type Dialect<CD extends CommandDescription> = {
     import?: (mission: Blob) => Promise<Result<{ mission: Mission<CD>, vehicle: Vehicle }>>
     ext: string
   }[]
+
+  /** Called for every incoming binary frame. sendPacket may be used to send immediate responses (e.g. during mission upload handshake). */
+  handleTelemetryMessage: (
+    message: ArrayBuffer,
+    setVehicleState: (state: Partial<VehicleState>) => void,
+    sendPacket: (buf: ArrayBuffer) => void
+  ) => void
+
+  /** Encode and dispatch a single vehicle command. */
+  handleSendTelemetryMessage: (message: VehicleCommand, sendPacket: (buf: ArrayBuffer) => void) => void
+
+  /** Run the MAVLink mission-upload handshake for the given mission. */
+  uploadMission: (mission: Mission<CD>, sendPacket: (buf: ArrayBuffer) => void) => void
 }
