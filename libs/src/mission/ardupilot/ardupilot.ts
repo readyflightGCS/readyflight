@@ -29,6 +29,7 @@ import { MavModeFlag } from "./mavlink-assets/enums/mav-mode-flag"
 import { MavMissionType } from "./mavlink-assets/enums/mav-mission-type"
 import { makeCommand } from "@libs/commands/helpers"
 import { Mission } from "../mission"
+import { Heartbeat } from "./mavlink-assets/messages/heartbeat"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -53,7 +54,7 @@ function resetUploadState() {
 }
 
 function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
-  const msg = new MissionItemInt()
+  const msg = new MissionItemInt(0, 0)
   msg.target_system = 1
   msg.target_component = 1
   msg.seq = seq
@@ -70,6 +71,8 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
   msg.z = item.param7                     // alt stays as float
   return msg
 }
+
+let heartbeatTimer = null
 
 export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   name: "mavlink-ardupilot",
@@ -260,7 +263,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
 
   handleSendTelemetryMessage: (msg, sendPacket) => {
     if (msg.type === 'arm' || msg.type === 'disarm') {
-      const cmd = new CommandLong()
+      const cmd = new CommandLong(0, 0)
       cmd.target_system = 1
       cmd.target_component = 1
       cmd.command = MavCmd.MAV_CMD_COMPONENT_ARM_DISARM
@@ -277,7 +280,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     }
 
     if (msg.type === 'setMode') {
-      const cmd = new SetMode()
+      const cmd = new SetMode(0, 0)
       cmd.target_system = 1
       cmd.base_mode = MavModeFlag.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
       cmd.custom_mode = msg.mode
@@ -287,6 +290,49 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
 
     throw new Error(`[ardupilot] Unknown command type: ${(msg as any).type}`)
   },
+
+  onConnect: (sendPacket) => {
+    const cmd = new CommandLong(0, 0)
+    cmd.command = MavCmd.MAV_CMD_REQUEST_MESSAGE
+    cmd.param1 = 148
+    cmd.target_system = 1
+    cmd.target_component = 1
+    sendPacket(encodePacket(cmd))
+
+    cmd.command = MavCmd.MAV_CMD_SET_MESSAGE_INTERVAL
+    cmd.param1 = 242
+    cmd.param2 = 1000000
+    cmd.target_system = 1
+    cmd.target_component = 1
+    sendPacket(encodePacket(cmd))
+
+    heartbeatTimer = setInterval(() => {
+      const cmd = new Heartbeat(0, 0)
+      sendPacket(encodePacket(cmd))
+    }, 1000)
+  },
+  onDisconnect: (sendPacket) => {
+    clearInterval(heartbeatTimer)
+  },
+
+
+  // readyflight
+  //0000   ee 64 c9 f6 0e 03 ba d6 de 2a 95 9f 08 00 45 00   .d.......*....E.
+  //0010   00 48 58 ee 00 00 40 11 98 63 c0 a8 04 02 c0 a8   .HX...@..c......
+  //0020   04 01 38 d6 38 db 00 34 98 cd fd 20 00 00 01 ff   ..8.8..4... ....
+  //0030   be 4c 00 00 00 00 14 43 00 00 00 00 00 00 00 00   .L.....C........
+  //0040   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+  //0050   00 02 01 01 99 00                                 ......
+
+  //qground
+  //0000   ee 64 c9 f6 0e 03 ba d6 de 2a 95 9f 08 00 45 00   .d.......*....E.
+  //0010   00 48 06 2e 00 00 40 11 eb 23 c0 a8 04 02 c0 a8   .H....@..#......
+  //0020   04 01 38 d6 38 db 00 34 a4 68 fd 20 00 00 01 ff   ..8.8..4.h. ....
+  //0030   be 4c 00 00 00 00 14 43 00 00 00 00 00 00 00 00   .L.....C........
+  //0040   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+  //0050   00 02 01 01 8d 65                                 .....e
+
+
 
   uploadMission: (mission, sendPacket) => {
     // Convert the RF/dialect mission into flat MAVLink param items.
@@ -310,7 +356,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
 
     console.log(`[mavlink] Starting mission upload: ${pendingUpload.length} items`)
 
-    const countMsg = new MissionCount()
+    const countMsg = new MissionCount(0, 0)
     countMsg.target_system = 1
     countMsg.target_component = 1
     countMsg.count = pendingUpload.length

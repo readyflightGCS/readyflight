@@ -90,4 +90,7 @@ export type Dialect<CD extends CommandDescription> = {
 
   /** Run the MAVLink mission-upload handshake for the given mission. */
   uploadMission: (mission: Mission<CD>, sendPacket: (buf: ArrayBuffer) => void) => void
+
+  onConnect: (sendPacket: (buf: ArrayBuffer) => void) => void
+  onDisconnect: (sendPacket: (buf: ArrayBuffer) => void) => void
 }

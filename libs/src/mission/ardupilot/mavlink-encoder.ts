@@ -9,7 +9,7 @@ import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
 const GCS_SYSID = 255
 const GCS_COMPID = 190 // MAV_COMP_ID_MISSIONPLANNER
 
-let sequence = 0
+let sequence = 1
 
 function writeField(view: DataView, offset: number, type: string, value: number): number {
   switch (type) {
@@ -69,7 +69,15 @@ function serializePayload(msg: MAVLinkMessage): Uint8Array {
     offset += writeField(view, offset, type, value)
   }
 
-  return new Uint8Array(buf)
+  const raw = new Uint8Array(buf)
+
+  // ---- trim trailing 0x00 bytes ----
+  let end = raw.length
+  while (end > 0 && raw[end - 1] === 0x00) {
+    end--
+  }
+
+  return raw.slice(0, end)
 }
 
 /** X.25 CRC — same algorithm ArduPilot uses for MAVLink checksums. */
@@ -81,6 +89,8 @@ function crcAccumulate(b: number, crc: number): number {
 
 function mavlinkCrc(
   payloadLen: number,
+  incFlags: number,
+  cmpFlags: number,
   seq: number,
   sysid: number,
   compid: number,
@@ -91,10 +101,14 @@ function mavlinkCrc(
   // CRC covers bytes 1–5 of the header (LEN, SEQ, SYS, COMP, MSGID) + payload + crc_extra.
   let crc = 0xFFFF
   crc = crcAccumulate(payloadLen, crc)
+  crc = crcAccumulate(incFlags, crc)
+  crc = crcAccumulate(cmpFlags, crc)
   crc = crcAccumulate(seq, crc)
   crc = crcAccumulate(sysid, crc)
   crc = crcAccumulate(compid, crc)
-  crc = crcAccumulate(msgid, crc)
+  crc = crcAccumulate(msgid & 0xff, crc)
+  crc = crcAccumulate((msgid >> 8) & 0xff, crc)
+  crc = crcAccumulate((msgid >> 16) & 0xff, crc)
   for (const b of payload) crc = crcAccumulate(b, crc)
   crc = crcAccumulate(crcExtra, crc)
   return crc
@@ -111,18 +125,22 @@ export function encodePacket(msg: MAVLinkMessage): ArrayBuffer {
   const msgid: number = (msg as any)._message_id
   const crcExtra: number = (msg as any)._crc_extra
 
-  const crc = mavlinkCrc(payload.length, seq, GCS_SYSID, GCS_COMPID, msgid, payload, crcExtra)
+  const crc = mavlinkCrc(payload.length, 0, 0, seq, GCS_SYSID, GCS_COMPID, msgid, payload, crcExtra)
 
-  const frame = new Uint8Array(6 + payload.length + 2)
-  frame[0] = 0xFE              // STX
+  const frame = new Uint8Array(10 + payload.length + 2)
+  frame[0] = 0xFD              // STX
   frame[1] = payload.length    // LEN
-  frame[2] = seq               // SEQ
-  frame[3] = GCS_SYSID         // SYS
-  frame[4] = GCS_COMPID        // COMP
-  frame[5] = msgid             // MSGID
-  frame.set(payload, 6)
-  frame[6 + payload.length] = crc & 0xFF
-  frame[6 + payload.length + 1] = (crc >> 8) & 0xFF
+  frame[2] = 0                 // LEN
+  frame[3] = 0                 // LEN
+  frame[4] = seq               // SEQ
+  frame[5] = GCS_SYSID         // SYS
+  frame[6] = GCS_COMPID        // COMP
+  frame[7] = msgid & 0xFF      // MSGID
+  frame[8] = (msgid >> 8) & 0xFF            // MSGID
+  frame[9] = (msgid >> 16) & 0xFF             // MSGID
+  frame.set(payload, 10)
+  frame[10 + payload.length] = crc & 0xFF
+  frame[10 + payload.length + 1] = (crc >> 8) & 0xFF
 
   return frame.buffer
 }
