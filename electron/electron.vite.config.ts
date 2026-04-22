@@ -12,7 +12,6 @@ export default defineConfig({
         formats: ['cjs']
       }
     },
-    plugins: [externalizeDepsPlugin()]
   },
   preload: {
     build: {
@@ -21,7 +20,6 @@ export default defineConfig({
         formats: ['cjs']
       }
     },
-    plugins: [externalizeDepsPlugin()]
   },
   renderer: {
     root: resolve(__dirname, '../client-frontend'),
