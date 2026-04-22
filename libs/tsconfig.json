@@ -8,7 +8,8 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@libs/*": ["./src/*"]
+      "@libs/*": ["./src/*"],
+      "@client-frontend/*": ["../client-frontend/src/*"]
     },
     "target": "ESNext",
     "lib": ["ESNext"],

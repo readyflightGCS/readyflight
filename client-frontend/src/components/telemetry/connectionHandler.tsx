@@ -27,7 +27,6 @@ export default function ConnectionHandler() {
       ws.onopen = () => {
         if (!isMouted) return
         // change these to be on connection with uav not backend
-        dialect.onConnect(sendPacket)
         console.log("[ws] Connected to backend")
         reconnectDelay.current = 1000
         setVehicleState({
@@ -45,7 +44,6 @@ export default function ConnectionHandler() {
       ws.onclose = () => {
         console.log("[ws] Lost connection to backend; Reconnecting ...")
         // change these to be on connection with uav not backend
-        dialect.onDisconnect(sendPacket)
         scheduleReconnect()
         setVehicleState({
           sendMessage: null,
