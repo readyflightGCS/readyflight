@@ -32,7 +32,6 @@ export default function ConnectionHandler() {
         setVehicleState({
           sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
           sendPacket,
-          connected: true,
         })
       }
 
@@ -48,7 +47,6 @@ export default function ConnectionHandler() {
         setVehicleState({
           sendMessage: null,
           sendPacket: null,
-          connected: false,
         })
       }
 
@@ -57,7 +55,6 @@ export default function ConnectionHandler() {
         setVehicleState({
           sendMessage: null,
           sendPacket: null,
-          connected: false,
         })
       }
     }

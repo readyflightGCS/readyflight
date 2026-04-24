@@ -31,6 +31,7 @@ import { makeCommand } from "@libs/commands/helpers"
 import { Mission } from "../mission"
 import { Heartbeat } from "./mavlink-assets/messages/heartbeat"
 import { useVehicle } from "@/stores/vehicle"
+import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -143,9 +144,13 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     "RF.Waypoint": true,
   },
 
+  //fd 06 00 00 02 ff be 42 00 00  02 00  01 01 01 01 32 d8
+
+
   handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
     const msg = decodePacket(data)
     if (!msg) return
+    console.log(msg)
 
     if (msg instanceof Heartbeat) {
       if (heartbeatTimeout) {
@@ -158,7 +163,6 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       }, 3000);
       const connected = useVehicle.getState().connected
       if (!connected) {
-        useVehicle.setState({ connected: true })
         const cmd = new CommandLong(0, 0)
         cmd.command = MavCmd.MAV_CMD_REQUEST_MESSAGE
         cmd.param1 = 148
@@ -166,18 +170,21 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
         cmd.target_component = 1
         sendPacket(encodePacket(cmd))
 
-        cmd.command = MavCmd.MAV_CMD_SET_MESSAGE_INTERVAL
-        cmd.param1 = 242
-        cmd.param2 = 1000000
-        cmd.target_system = 1
-        cmd.target_component = 1
-        sendPacket(encodePacket(cmd))
+        const cmd2 = new RequestDataStream(0, 0)
+        cmd2.target_system = 1
+        cmd2.target_component = 1
+        cmd2.req_stream_id = 0
+        cmd2.start_stop = 1
+        cmd2.req_message_rate = 32
+        sendPacket(encodePacket(cmd2))
+
 
 
         heartbeatTimer = setInterval(() => {
           const cmd = new Heartbeat(0, 0)
           sendPacket(encodePacket(cmd))
         }, 1000)
+        useVehicle.setState({ connected: true })
 
       }
     } else if (msg instanceof GlobalPositionInt) {
