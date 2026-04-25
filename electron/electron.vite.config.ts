@@ -25,9 +25,6 @@ export default defineConfig({
   },
   renderer: {
     root: resolve(__dirname, '../client-frontend'),
-    define: {
-      'import.meta.env.VITE_TARGET': JSON.stringify('electron')
-    },
     build: {
       rollupOptions: {
         input: resolve(__dirname, '../client-frontend/index.html')

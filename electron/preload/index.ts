@@ -11,6 +11,8 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('env', { isElectron: true })
+
   } catch (error) {
     console.error(error)
   }

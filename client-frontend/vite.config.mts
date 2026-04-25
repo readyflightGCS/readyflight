@@ -7,9 +7,6 @@ import tailwindcss from '@tailwindcss/vite'
 // Web-only Vite config; Electron uses electron.vite.config.ts
 export default defineConfig({
   root: '.',
-  define: {
-    'import.meta.env.VITE_TARGET': JSON.stringify('web')
-  },
   resolve: {
     alias: {
       '@renderer': resolve('src'),
