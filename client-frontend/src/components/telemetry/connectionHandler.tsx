@@ -2,6 +2,8 @@ import { useMission } from "@/stores/mission"
 import { useVehicle } from "@/stores/vehicle"
 import { useEffect, useRef } from "react"
 
+const isElectron = (window as any).env?.isElectron === true
+
 export default function ConnectionHandler() {
   const dialect = useMission(s => s.dialect)
   const setVehicleState = useVehicle(s => s.setVehicleState)

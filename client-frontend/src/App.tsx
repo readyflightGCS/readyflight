@@ -1,4 +1,4 @@
-const isElectron = import.meta.env.VITE_TARGET === 'electron'
+const isElectron = (window as any).env?.isElectron === true
 
 import Map from "./components/map/map"
 

@@ -3,6 +3,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useThemeStore } from "@/stores/theme";
 import { Moon, Sun } from "lucide-react";
 
+const isElectron = (window as any).env?.isElectron === true
+
 export default function Settings() {
   const { setTheme } = useThemeStore();
   return (
@@ -34,6 +36,7 @@ export default function Settings() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div >
+      <div>Running as {isElectron ? "Electron" : "Browser"}</div>
     </div>
   )
 }
