@@ -80,7 +80,7 @@ export type Dialect<CD extends CommandDescription> = {
 
   /** Called for every incoming binary frame. sendPacket may be used to send immediate responses (e.g. during mission upload handshake). */
   handleTelemetryMessage: (
-    message: ArrayBuffer,
+    message: Uint8Array<ArrayBufferLike>,
     setVehicleState: (state: Partial<VehicleState>) => void,
     sendPacket: (buf: ArrayBuffer) => void
   ) => void

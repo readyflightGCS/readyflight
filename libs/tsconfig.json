@@ -12,7 +12,7 @@
       "@client-frontend/*": ["../client-frontend/src/*"]
     },
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
   },
   "include": ["./src/**/*"]
 }

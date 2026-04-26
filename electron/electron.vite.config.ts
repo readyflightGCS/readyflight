@@ -12,6 +12,11 @@ export default defineConfig({
         formats: ['cjs']
       }
     },
+    resolve: {
+      alias: {
+        '@libs': path.resolve(__dirname, '../libs/src'),
+      }
+    },
     plugins: [externalizeDepsPlugin()]
   },
   preload: {
@@ -19,6 +24,11 @@ export default defineConfig({
       lib: {
         entry: resolve(__dirname, 'preload/index.ts'),
         formats: ['cjs']
+      }
+    },
+    resolve: {
+      alias: {
+        '@libs': path.resolve(__dirname, '../libs/src'),
       }
     },
     plugins: [externalizeDepsPlugin()]

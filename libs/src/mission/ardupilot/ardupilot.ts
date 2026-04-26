@@ -144,13 +144,9 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     "RF.Waypoint": true,
   },
 
-  //fd 06 00 00 02 ff be 42 00 00  02 00  01 01 01 01 32 d8
-
-
   handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
     const msg = decodePacket(data)
     if (!msg) return
-    console.log(msg)
 
     if (msg instanceof Heartbeat) {
       if (heartbeatTimeout) {
