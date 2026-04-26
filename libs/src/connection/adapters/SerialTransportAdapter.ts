@@ -13,13 +13,11 @@ export class SerialTransportAdapter implements ITransportAdapter {
   constructor(private config: SerialTransportConfig) { }
 
   static async listPorts(): Promise<string[]> {
-    const { SerialPort } = await import('serialport')
     const ports = await SerialPort.list()
     return ports.map((p: { path: string }) => p.path)
   }
 
   async start(): Promise<void> {
-    const { SerialPort } = await import('serialport')
     const sp = new SerialPort({
       path: this.config.path,
       baudRate: this.config.baudRate,

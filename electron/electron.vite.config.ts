@@ -16,8 +16,7 @@ export default defineConfig({
       alias: {
         '@libs': path.resolve(__dirname, '../libs/src'),
       }
-    },
-    plugins: [externalizeDepsPlugin()]
+    }
   },
   preload: {
     build: {
@@ -30,8 +29,7 @@ export default defineConfig({
       alias: {
         '@libs': path.resolve(__dirname, '../libs/src'),
       }
-    },
-    plugins: [externalizeDepsPlugin()]
+    }
   },
   renderer: {
     root: resolve(__dirname, '../client-frontend'),

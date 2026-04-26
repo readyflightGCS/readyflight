@@ -21,7 +21,8 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.webContents.openDevTools()
+  // Electron devtools
+  //mainWindow.webContents.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
     mainWindow!.show()
