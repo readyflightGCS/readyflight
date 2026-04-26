@@ -12,8 +12,6 @@ import {
 import type { UDPTransportConfig, SerialTransportConfig, ActiveConnection, ConnectionStats, ConnectionStatus } from "@libs/connection/types"
 import { Wifi, Usb, X, Plus, Circle } from "lucide-react"
 
-const isElectron = (window as any).env?.isElectron === true
-
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 
 type TransportType = 'udp' | 'serial'
@@ -97,18 +95,6 @@ function AddConnectionForm() {
   const [loadingPorts, setLoadingPorts] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
 
-  const fetchPorts = useCallback(async () => {
-    if (!isElectron) return
-    setLoadingPorts(true)
-    try {
-      const ports = await (window as Window & typeof globalThis).api.connection.listPorts()
-      setAvailablePorts(ports)
-      if (ports.length > 0 && !serialPath) setSerialPath(ports[0] ?? '')
-    } finally {
-      setLoadingPorts(false)
-    }
-  }, [serialPath])
-
   const validate = (): boolean => {
     const errs: FormErrors = {}
     if (transportType === 'udp') {
@@ -147,7 +133,7 @@ function AddConnectionForm() {
         {(['udp', 'serial'] as TransportType[]).map(t => (
           <button
             key={t}
-            onClick={() => { setTransportType(t); setErrors({}); if (t === 'serial') fetchPorts() }}
+            onClick={() => { setTransportType(t); setErrors({}); }}
             className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${transportType === t
               ? 'bg-primary text-primary-foreground'
               : 'bg-muted text-muted-foreground hover:bg-muted/80'
@@ -186,25 +172,12 @@ function AddConnectionForm() {
         <>
           <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Serial port</label>
-            {isElectron && availablePorts.length > 0 ? (
-              <Select value={serialPath} onValueChange={setSerialPath}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select port" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availablePorts.map(p => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <Input
-                value={serialPath}
-                onChange={e => setSerialPath(e.target.value)}
-                placeholder={loadingPorts ? 'Loading…' : '/dev/ttyUSB0'}
-                aria-invalid={!!errors.path}
-              />
-            )}
+            <Input
+              value={serialPath}
+              onChange={e => setSerialPath(e.target.value)}
+              placeholder={loadingPorts ? 'Loading…' : '/dev/ttyUSB0'}
+              aria-invalid={!!errors.path}
+            />
             {errors.path && <span className="text-xs text-destructive">{errors.path}</span>}
           </div>
           <div className="flex flex-col gap-1">
@@ -233,7 +206,6 @@ function AddConnectionForm() {
 
 export default function ConnectionsPanel() {
   const connection = useConnections(s => s.connectionStats)
-  console.log(connection)
 
   return (
     <div className="flex flex-col gap-2">

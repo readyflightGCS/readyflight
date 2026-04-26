@@ -61,7 +61,7 @@ export type ConnectionCommand =
   | { type: 'connect', config: TransportConfig }
   | { type: 'disconnect' }
   | { type: 'list' }
-  | { type: 'send'; connectionId: string; payload: Uint8Array }
+  | { type: 'send'; payload: Uint8Array }
 
 export type ConnectionMessage =
   | { type: 'data', payload: Uint8Array }

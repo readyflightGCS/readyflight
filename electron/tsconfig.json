@@ -10,10 +10,12 @@
       "@libs/*": ["../libs/src/*"]
     },
   },
+  "references": [{ "path": "../libs" }],
   "include": [
     "main/**/*",
     "preload/**/*",
     "vite.config.*", 
-    "../client-frontend/vite.config.mts"
+    "../client-frontend/vite.config.mts",
+    "../libs/src"
    ]
 }

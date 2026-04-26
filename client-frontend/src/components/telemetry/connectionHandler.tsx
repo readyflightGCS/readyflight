@@ -38,35 +38,47 @@ export default function ConnectionHandler() {
       const sendPacket = (buf: ArrayBuffer) => {
         const id = activeConnectionIdRef.current
         if (!id) return
-        api.send(id, Array.from(new Uint8Array(buf)))
+        api.send({ payload: new Uint8Array(buf) })
       }
+
 
       setVehicleState({
         sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
         sendPacket,
       })
 
-      setCommandSender((cmd: object) => {
-        const c = cmd as { type: string; config?: unknown; id?: string }
-        if (c.type === 'add') api.add(c.config as Parameters<typeof api.add>[0])
-        else if (c.type === 'remove' && c.id) api.remove(c.id)
-        else if (c.type === 'list') api.list()
+      setCommandSender((cmd) => {
+        switch (cmd.type) {
+          case "connect":
+            api.connect(cmd.config)
+            break
+          case "disconnect":
+            api.disconnect()
+            break
+          case "list":
+            api.list()
+            break
+          case "send":
+            api.send({ payload: cmd.payload })
+            break
+        }
       })
 
-      const offData = api.onData(({ payload }) => {
+      const offData = api.onData((data) => {
+        console.log(data)
         if (!isMounted) return
-        const buf = new Uint8Array(payload).buffer
-        dialect.handleTelemetryMessage(buf, setVehicleState, sendPacket)
+        dialect.handleTelemetryMessage(data, setVehicleState, sendPacket)
       })
 
-      const offStatus = api.onStatus(({ status, bytesPerSec, lastReceivedAt }) => {
+
+      const offStatus = api.onStatus((data) => {
         if (!isMounted) return
-        setConnection(status)
+        setConnection(data.stats)
       })
 
-      const offConnections = api.onConnections((connection: Activeconnection | null) => {
+      const offConnections = api.onAvailableConnections((data) => {
         if (!isMounted) return
-        setConnection(connection)
+        setAvailableConnections(data.connections)
       })
 
       api.list()

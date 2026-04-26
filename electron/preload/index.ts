@@ -1,49 +1,41 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import type { ConnectionConfig, Connection, ConnectionStatus, ConnectionStats } from '@libs/connection/types'
+import type { Connection, ConnectionStatus, ConnectionStats } from '@libs/connection/types'
 
 type DataPayload = { connectionId: string; payload: number[] }
 type StatusPayload = { connectionId: string; status: ConnectionStatus } & ConnectionStats
 type Unsubscribe = () => void
 
 const connectionAPI = {
-  add: (config: ConnectionConfig) =>
-    ipcRenderer.send('telemetry:connection:add', config),
+  connect: (config: ITransportConfig) =>
+    ipcRenderer.send('telemetry:command:connect', config),
 
-  remove: (id: string) =>
-    ipcRenderer.send('telemetry:connection:remove', id),
+  disconnect: (id: string) =>
+    ipcRenderer.send('telemetry:command:disconnect', id),
 
   send: (connectionId: string, payload: number[]) =>
-    ipcRenderer.send('telemetry:connection:send', { connectionId, payload }),
+    ipcRenderer.send('telemetry:command:send', { connectionId, payload }),
 
-  list: () =>
-    ipcRenderer.send('telemetry:connection:list'),
-
-  listPorts: (): Promise<string[]> =>
-    ipcRenderer.invoke('telemetry:connection:list-ports'),
+  list: () => {
+    ipcRenderer.send('telemetry:command:list')
+  },
 
   onData: (handler: (data: DataPayload) => void): Unsubscribe => {
     const listener = (_: Electron.IpcRendererEvent, data: DataPayload) => handler(data)
-    ipcRenderer.on('telemetry:connection:data', listener)
-    return () => ipcRenderer.removeListener('telemetry:connection:data', listener)
+    ipcRenderer.on('telemetry:message:data', listener)
+    return () => ipcRenderer.removeListener('telemetry:message:data', listener)
   },
 
   onStatus: (handler: (data: StatusPayload) => void): Unsubscribe => {
     const listener = (_: Electron.IpcRendererEvent, data: StatusPayload) => handler(data)
-    ipcRenderer.on('telemetry:connection:status', listener)
-    return () => ipcRenderer.removeListener('telemetry:connection:status', listener)
+    ipcRenderer.on('telemetry:message:status', listener)
+    return () => ipcRenderer.removeListener('telemetry:message:status', listener)
   },
 
-  onConnections: (handler: (connections: Connection[]) => void): Unsubscribe => {
+  onAvailableConnections: (handler: (connections: Connection[]) => void): Unsubscribe => {
     const listener = (_: Electron.IpcRendererEvent, connections: Connection[]) => handler(connections)
-    ipcRenderer.on('telemetry:connection:list', listener)
-    return () => ipcRenderer.removeListener('telemetry:connection:list', listener)
-  },
-
-  onPorts: (handler: (ports: string[]) => void): Unsubscribe => {
-    const listener = (_: Electron.IpcRendererEvent, ports: string[]) => handler(ports)
-    ipcRenderer.on('telemetry:connection:ports', listener)
-    return () => ipcRenderer.removeListener('telemetry:connection:ports', listener)
+    ipcRenderer.on('telemetry:message:availableConnections', listener)
+    return () => ipcRenderer.removeListener('telemetry:message:availableConnections', listener)
   },
 }
 

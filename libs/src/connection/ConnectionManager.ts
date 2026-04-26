@@ -20,6 +20,7 @@ export class ConnectionManager {
   ]
 
   constructor(hostAdapter: IHostAdapter) {
+    console.log("[conn-mng] Starting up")
     this.hostAdapter = hostAdapter
     hostAdapter.onCommand(cmd => this.handleCommand(cmd))
     this.connection = null

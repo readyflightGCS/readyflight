@@ -21,6 +21,8 @@ function createWindow(): void {
     }
   })
 
+  mainWindow.webContents.openDevTools()
+
   mainWindow.on('ready-to-show', () => {
     mainWindow!.show()
   })
@@ -48,17 +50,9 @@ app.whenReady().then(() => {
 
   const hostAdapter = new ElectronIPCHostAdapter(
     () => mainWindow,
-    () => SerialTransportAdapter.listPorts()
   )
 
-  connectionManager = new ConnectionManager(hostAdapter, createTransport)
-
-  // Pre-configure the default MAVLink UDP connection
-  connectionManager.addConnection({
-    id: 'default-udp',
-    label: 'Default UDP (14550)',
-    transport: { type: 'udp', host: '0.0.0.0', port: 14550 },
-  })
+  connectionManager = new ConnectionManager(hostAdapter)
 
   createWindow()
 
