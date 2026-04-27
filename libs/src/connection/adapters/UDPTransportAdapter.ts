@@ -69,6 +69,7 @@ export class UDPTransportAdapter implements ITransportAdapter {
   }
 
   send(data: Uint8Array): void {
+    console.log(data)
     if (!this.socket || !this.vehicleAddr) {
       console.warn('[udp] no vehicle address known yet — dropping outbound packet')
       return
