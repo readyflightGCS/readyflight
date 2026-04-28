@@ -1,16 +1,13 @@
 import type { IHostAdapter, ConnectionCommand, ConnectionMessage } from '@libs/connection/types'
 import type { ServerWebSocket } from 'bun'
 
-import { tryCatchS } from '@libs/util/try-catch'
-
-// The web socket host adapter is used to communicate with the host from the 
+// The web socket host adapter is used to communicate with the host from the
 // client backend. It's specifically used when on the web version as we can't
 // directly receive udp or serial (depending on browser)
 //
 // This class starts a websocket which any client frontend can connect to.
 
 export class WebSocketHostAdapter implements IHostAdapter {
-
   // Every client-frontend connected
   private clients = new Set<ServerWebSocket>()
 
@@ -28,7 +25,6 @@ export class WebSocketHostAdapter implements IHostAdapter {
         return new Response('MAVLink WebSocket relay')
       },
       websocket: {
-
         // add and remove clients when they join
         open(ws) {
           adapter.clients.add(ws)
@@ -45,13 +41,13 @@ export class WebSocketHostAdapter implements IHostAdapter {
           if (typeof raw !== 'string') return
           let msg: ConnectionCommand
           try {
-            let msga = JSON.parse(raw)
-            if (msga.type === "sendData"){
-              let payload = msga.payload
-              let b64Payload = Uint8Array.fromBase64(payload)
-              msg = {...msga, payload: b64Payload}
-            }else{
-              msg = {...msga}
+            const msga = JSON.parse(raw)
+            if (msga.type === 'sendData') {
+              const payload = msga.payload
+              const b64Payload = Uint8Array.fromBase64(payload)
+              msg = { ...msga, payload: b64Payload }
+            } else {
+              msg = { ...msga }
             }
           } catch {
             return
@@ -69,10 +65,10 @@ export class WebSocketHostAdapter implements IHostAdapter {
 
   sendMessage(msg: ConnectionMessage): void {
     let packet
-    if (msg.type === "sendData"){
-      packet = {...msg, payload: Buffer.from(msg.payload).toString('base64')}
-    }else{
-      packet = {...msg}
+    if (msg.type === 'sendData') {
+      packet = { ...msg, payload: Buffer.from(msg.payload).toString('base64') }
+    } else {
+      packet = { ...msg }
     }
     const msgString = JSON.stringify(packet)
     this.clients.forEach((ws) => {

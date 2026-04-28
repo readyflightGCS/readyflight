@@ -6,7 +6,6 @@
     "declarationMap": true,
     "moduleResolution": "Bundler",
     "composite": true,
-    "baseUrl": ".",
     "paths": {
       "@libs/*": ["./src/*"],
       "@client-frontend/*": ["../client-frontend/src/*"]

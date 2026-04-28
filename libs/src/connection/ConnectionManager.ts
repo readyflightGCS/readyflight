@@ -35,6 +35,12 @@ export class ConnectionManager {
     }
   }
 
+  destroy(){
+    if(this.connection.transport !== null){
+      this.connection.transport.stop()
+    }
+  }
+
 
   private updateStats(): void {
     if (this.connection === null) {

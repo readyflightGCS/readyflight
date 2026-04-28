@@ -2,7 +2,7 @@ import { useMission } from "@/stores/mission"
 import { useVehicle } from "@/stores/vehicle"
 import { useConnections } from "@/stores/connections"
 import { useEffect, useRef } from "react"
-import type { ConnectionMessage, ConnectionStatus } from "@libs/connection/types"
+import type { ConnectionMessage } from "@libs/connection/types"
 
 const isElectron = (window as any).env?.isElectron === true
 
@@ -38,7 +38,7 @@ export default function ConnectionHandler() {
       const sendPacket = (buf: ArrayBuffer) => {
         const id = activeConnectionIdRef.current
         if (!id) return
-        api.sendData({ payload: new Uint8Array(buf) })
+        api.sendCommand({type:"sendData", payload: new Uint8Array(buf) })
       }
 
 
@@ -48,45 +48,34 @@ export default function ConnectionHandler() {
       })
 
       setCommandSender((cmd) => {
-        switch (cmd.type) {
-          case "connect":
-            api.connect(cmd.config)
+        api.sendCommand(cmd)
+      })
+
+      const offMessage = api.onMessage((msg) => {
+        switch (msg.type) {
+          case 'sendData': {
+            dialect.handleTelemetryMessage(msg.payload, setVehicleState, sendPacket)
             break
-          case "disconnect":
-            api.disconnect()
+          }
+          case 'status': {
+            setConnection(msg.stats)
             break
-          case "list":
-            api.list()
+          }
+          case 'availableConnections': {
+            setAvailableConnections(msg.connections)
             break
-          case "sendData":
-            api.sendData({ payload: cmd.payload })
-            break
+          }
+          default: {
+            let exhaustiveCheck: never = msg
+          }
         }
       })
 
-      const offData = api.onSendData((data) => {
-        if (!isMounted) return
-        dialect.handleTelemetryMessage(data, setVehicleState, sendPacket)
-      })
-
-
-      const offStatus = api.onStatus((data) => {
-        if (!isMounted) return
-        setConnection(data.stats)
-      })
-
-      const offConnections = api.onAvailableConnections((data) => {
-        if (!isMounted) return
-        setAvailableConnections(data.connections)
-      })
-
-      api.list()
+      api.sendCommand({type: "list"})
 
       return () => {
         isMounted = false
-        offData()
-        offStatus()
-        offConnections()
+        offMessage()
         setCommandSender(null)
         setVehicleState({ sendMessage: null, sendPacket: null })
       }

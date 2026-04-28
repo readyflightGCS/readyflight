@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../build/icon.png?asset'
 import { ConnectionManager } from '@libs/connection/ConnectionManager'
-import { ElectronIPCHostAdapter } from './adapters/ElectronIPCHostAdapter'
+import { ElectronIPCHostAdapter } from '@electron/adapters/ElectronIPCHostAdapter'
 
 let mainWindow: BrowserWindow | null = null
 let connectionManager: ConnectionManager | null = null
@@ -17,7 +17,7 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs'),
-      sandbox: false,
+      sandbox: false
     }
   })
 
@@ -49,9 +49,7 @@ app.whenReady().then(() => {
 
   ipcMain.on('ping', () => console.log('pong'))
 
-  const hostAdapter = new ElectronIPCHostAdapter(
-    () => mainWindow,
-  )
+  const hostAdapter = new ElectronIPCHostAdapter(() => mainWindow)
 
   connectionManager = new ConnectionManager(hostAdapter)
 
