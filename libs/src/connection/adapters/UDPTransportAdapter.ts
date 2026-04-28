@@ -1,4 +1,3 @@
-// Node.js only — do not import in browser/renderer context
 import { createSocket, type Socket } from 'node:dgram'
 import type { ITransportAdapter, UDPTransportConfig } from '../types.js'
 
@@ -69,7 +68,6 @@ export class UDPTransportAdapter implements ITransportAdapter {
   }
 
   send(data: Uint8Array): void {
-    console.log(data)
     if (!this.socket || !this.vehicleAddr) {
       console.warn('[udp] no vehicle address known yet — dropping outbound packet')
       return

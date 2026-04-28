@@ -1,5 +1,5 @@
 import { ConnectionManager } from '@libs/connection/ConnectionManager'
-import { WebSocketHostAdapter } from './adapters/WebSocketHostAdapter'
+import { WebSocketHostAdapter } from '@client-backend/adapters/WebSocketHostAdapter'
 
 const WS_PORT = 9999
 

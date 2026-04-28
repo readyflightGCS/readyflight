@@ -38,7 +38,7 @@ export default function ConnectionHandler() {
       const sendPacket = (buf: ArrayBuffer) => {
         const id = activeConnectionIdRef.current
         if (!id) return
-        api.send({ payload: new Uint8Array(buf) })
+        api.sendData({ payload: new Uint8Array(buf) })
       }
 
 
@@ -58,14 +58,13 @@ export default function ConnectionHandler() {
           case "list":
             api.list()
             break
-          case "send":
-            api.send({ payload: cmd.payload })
+          case "sendData":
+            api.sendData({ payload: cmd.payload })
             break
         }
       })
 
-      const offData = api.onData((data) => {
-        console.log(data)
+      const offData = api.onSendData((data) => {
         if (!isMounted) return
         dialect.handleTelemetryMessage(data, setVehicleState, sendPacket)
       })
@@ -103,7 +102,7 @@ export default function ConnectionHandler() {
       const sendPacket = (buf: ArrayBuffer) => {
         if (ws.readyState !== WebSocket.OPEN) return
         ws.send(JSON.stringify({
-          type: 'send',
+          type: 'sendData',
           payload: arrayBufferToBase64(buf),
         }))
       }
@@ -117,7 +116,6 @@ export default function ConnectionHandler() {
           sendPacket,
         })
         setCommandSender((cmd) => {
-          console.log(cmd)
           if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(cmd))
         })
         ws.send(JSON.stringify({ type: 'list' }))
@@ -129,20 +127,18 @@ export default function ConnectionHandler() {
         let msga
 
         try { msga = JSON.parse(e.data as string) } catch { return }
-        if (msga.type === "data") {
-          msg = { ...msga, payload: base64ToArrayBuffer(msga.payload) }
-
+        if (msga.type === "sendData") {
+          msg = {...msga, payload: base64ToArrayBuffer(msga.payload)}
         } else {
           msg = msga
         }
 
         switch (msg.type) {
-          case 'data': {
+          case 'sendData': {
             dialect.handleTelemetryMessage(msg.payload, setVehicleState, sendPacket)
             break
           }
           case 'status': {
-            console.log(msg)
             setConnection(msg.stats)
             break
           }

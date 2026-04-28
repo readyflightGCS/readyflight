@@ -4,8 +4,8 @@ import type { IHostAdapter, ConnectionCommand, ActiveConnection, AvailableConnec
 
 export class ConnectionManager {
   private hostAdapter: IHostAdapter
-  private statsTimer: ReturnType<typeof setInterval>
-  private connection: ActiveConnection | null
+  private statsTimer: ReturnType<typeof setInterval> | null
+  private connection: ActiveConnection
   private availableConnections = [
     {
       name: "serialTransport",
@@ -23,19 +23,24 @@ export class ConnectionManager {
     console.log("[conn-mng] Starting up")
     this.hostAdapter = hostAdapter
     hostAdapter.onCommand(cmd => this.handleCommand(cmd))
-    this.connection = null
+    this.statsTimer = null
+    this.connection = {
+      transport: null,
+      status: {
+        type: null,
+        status: "disconnected",
+        bytesPerSec: 0,
+        lastReceivedAt: Date.now(),
+      }
+    }
   }
 
-
-  private broadcastConnection(): void {
-    this.hostAdapter.sendMessage({ type: "status", stats: this.connection.status })
-  }
 
   private updateStats(): void {
     if (this.connection === null) {
       return
     }
-    this.broadcastConnection()
+    this.hostAdapter.sendMessage({ type: "status", stats: this.connection.status })
   }
 
 
@@ -55,7 +60,7 @@ export class ConnectionManager {
         break
 
       case 'connect':
-        let t: ITransportAdapter = null
+        let t: ITransportAdapter | null = null
         switch (cmd.config.type) {
           case "udp":
             t = new UDPTransportAdapter(cmd.config)
@@ -74,28 +79,35 @@ export class ConnectionManager {
             lastReceivedAt: null,
           }
         }
-        t.on("data", (a) => this.hostAdapter.sendData(a))
+        t.on("data", (a) => this.hostAdapter.sendMessage({type: "sendData", payload: a}))
         t.start().then(() => {
           this.statsTimer = setInterval(() => this.updateStats(), 1000)
         })
         break
-      case 'send':
+      case 'sendData':
+        if (this.connection.transport === null) {
+          console.log("no connection, dropping data")
+          return
+        }
         this.connection.transport.send(cmd.payload)
         break
       case 'disconnect':
+        if (this.connection.transport === null) return
         this.connection.transport.stop().then(() => {
           this.connection = {
             transport: null,
             status: {
-              type: undefined,
+              type: null,
               status: "disconnected",
               bytesPerSec: 0,
               lastReceivedAt: Date.now(),
             }
           }
-          this.broadcastConnection()
+          this.hostAdapter.sendMessage({ type: "status", stats: this.connection.status })
         })
-        clearInterval(this.statsTimer)
+        if (this.statsTimer !== null){
+          clearInterval(this.statsTimer)
+        }
         break
       default: {
         let exhaustiveCheck: never = cmd

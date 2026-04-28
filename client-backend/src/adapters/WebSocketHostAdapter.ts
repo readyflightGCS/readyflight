@@ -1,10 +1,20 @@
 import type { IHostAdapter, ConnectionCommand, ConnectionMessage } from '@libs/connection/types'
+import type { ServerWebSocket } from 'bun'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type BunWS = any
+import { tryCatchS } from '@libs/util/try-catch'
+
+// The web socket host adapter is used to communicate with the host from the 
+// client backend. It's specifically used when on the web version as we can't
+// directly receive udp or serial (depending on browser)
+//
+// This class starts a websocket which any client frontend can connect to.
 
 export class WebSocketHostAdapter implements IHostAdapter {
-  private clients = new Set<BunWS>()
+
+  // Every client-frontend connected
+  private clients = new Set<ServerWebSocket>()
+
+  // when we recieve a message from client-frontend call this; gets set by connectionManager
   private onCommandHandler: ((cmd: ConnectionCommand) => void) | null = null
 
   constructor(port: number) {
@@ -18,6 +28,8 @@ export class WebSocketHostAdapter implements IHostAdapter {
         return new Response('MAVLink WebSocket relay')
       },
       websocket: {
+
+        // add and remove clients when they join
         open(ws) {
           adapter.clients.add(ws)
           console.log('[ws] client connected')
@@ -26,35 +38,28 @@ export class WebSocketHostAdapter implements IHostAdapter {
           adapter.clients.delete(ws)
           console.log('[ws] client disconnected')
         },
+
+        // on recieve message from client-frontend
         message(ws, raw) {
+          // convert the raw string to a ConnectionCommand (TODO, maybe use zod)
           if (typeof raw !== 'string') return
           let msg: ConnectionCommand
           try {
-            msg = JSON.parse(raw)
+            let msga = JSON.parse(raw)
+            if (msga.type === "sendData"){
+              let payload = msga.payload
+              let b64Payload = Uint8Array.fromBase64(payload)
+              msg = {...msga, payload: b64Payload}
+            }else{
+              msg = {...msga}
+            }
           } catch {
             return
           }
-          if (adapter.onCommandHandler === null) return
+          if (adapter.onCommandHandler === null || msg === undefined) return
 
-          switch (msg.type) {
-            case 'connect':
-            case 'disconnect':
-            case 'list':
-              adapter.onCommandHandler(msg)
-              break
-            case 'send':
-              if (msg.payload) {
-                adapter.onCommandHandler({
-                  type: 'send',
-                  payload: Uint8Array.fromBase64(msg.payload)
-                })
-              }
-              break
-            default: {
-              const _exhaustiveCheck: never = msg
-              return _exhaustiveCheck
-            }
-          }
+          // pass to the connectionManager to handle the Command
+          adapter.onCommandHandler(msg)
         }
       }
     })
@@ -62,15 +67,17 @@ export class WebSocketHostAdapter implements IHostAdapter {
     console.log(`[ws] listening on ${port}`)
   }
 
-  sendData(data: Uint8Array): void {
-    const payload = Buffer.from(data).toString('base64')
-    const msg = JSON.stringify({ type: 'data', payload })
-    this.clients.forEach((ws) => ws.send(msg))
-  }
-
   sendMessage(msg: ConnectionMessage): void {
-    const msgString = JSON.stringify(msg)
-    this.clients.forEach((ws) => ws.send(msgString))
+    let packet
+    if (msg.type === "sendData"){
+      packet = {...msg, payload: Buffer.from(msg.payload).toString('base64')}
+    }else{
+      packet = {...msg}
+    }
+    const msgString = JSON.stringify(packet)
+    this.clients.forEach((ws) => {
+      ws.send(msgString)
+    })
   }
 
   onCommand(handler: (cmd: ConnectionCommand) => void): void {

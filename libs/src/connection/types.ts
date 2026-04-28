@@ -19,12 +19,12 @@ export interface SerialTransportConfig {
 export type TransportConfig = UDPTransportConfig | SerialTransportConfig
 
 export interface ActiveConnection {
-  transport: ITransportAdapter
+  transport: ITransportAdapter | null
   status: ConnectionStats
 }
 
 export interface ConnectionStats {
-  type: TransportConfig["type"]
+  type: TransportConfig["type"] | null
   status: ConnectionStatus
   bytesPerSec: number
   lastReceivedAt: number | null
@@ -51,7 +51,6 @@ export interface ITransportAdapter {
 
 // api from the perspective of Connection Manager
 export interface IHostAdapter {
-  sendData(data: Uint8Array): void
   onCommand(handler: (msg: ConnectionCommand) => void): void
   sendMessage(msg: ConnectionMessage): void
 }
@@ -61,9 +60,9 @@ export type ConnectionCommand =
   | { type: 'connect', config: TransportConfig }
   | { type: 'disconnect' }
   | { type: 'list' }
-  | { type: 'send'; payload: Uint8Array }
+  | { type: 'sendData'; payload: Uint8Array }
 
 export type ConnectionMessage =
-  | { type: 'data', payload: Uint8Array }
+  | { type: 'sendData', payload: Uint8Array }
   | { type: 'status', stats: ConnectionStats }
   | { type: 'availableConnections', connections: AvailableConnection[] }

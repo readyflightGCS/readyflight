@@ -1,13 +1,6 @@
 import { ipcMain, type BrowserWindow } from 'electron'
-import type {
-  IHostAdapter,
-  Connection,
-  ConnectionStatus,
-  ConnectionStats,
-  ConnectionCommand,
-  ConnectionConfig,
-} from '@libs/connection/types'
-import { TransportConfig } from '@libs/connection/types.js'
+import type { IHostAdapter, ConnectionCommand, } from '@libs/connection/types'
+import { ConnectionMessage, TransportConfig } from '@libs/connection/types.js'
 
 export class ElectronIPCHostAdapter implements IHostAdapter {
   private onCommandHandler: ((cmd: ConnectionCommand) => void) | null = null
@@ -39,9 +32,8 @@ export class ElectronIPCHostAdapter implements IHostAdapter {
   }
 
   sendMessage(msg: ConnectionMessage): void {
-    console.log(msg.type)
     switch (msg.type) {
-      case "data":
+      case "sendData":
         this.getWindow()?.webContents.send('telemetry:message:data', msg)
         break
       case "status":
