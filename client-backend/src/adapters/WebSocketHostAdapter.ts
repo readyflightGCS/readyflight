@@ -36,7 +36,7 @@ export class WebSocketHostAdapter implements IHostAdapter {
         },
 
         // on recieve message from client-frontend
-        message(ws, raw) {
+        message(_, raw) {
           // convert the raw string to a ConnectionCommand (TODO, maybe use zod)
           if (typeof raw !== 'string') return
           let msg: ConnectionCommand

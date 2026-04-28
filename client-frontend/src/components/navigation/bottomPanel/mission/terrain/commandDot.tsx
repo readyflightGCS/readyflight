@@ -1,21 +1,39 @@
-import { ScatterProps } from "recharts";
+import { ScatterProps } from 'recharts'
 
-export default function CommandDot({ cx, cy, stroke, payload, fill, yAxis, onCmdClick }: ScatterProps & { payload: any, onCmdClick: (e: React.MouseEvent<SVGElement>, id: number) => void }) {
+export default function CommandDot({
+  cx,
+  cy,
+  stroke,
+  payload,
+  fill,
+  yAxis,
+  onCmdClick
+}: ScatterProps & {
+  payload: { commandHeight: number | undefined; selected: boolean; id: number | undefined }
+  onCmdClick: (e: React.MouseEvent<SVGElement>, id: number) => void
+}) {
+  if (
+    payload.commandHeight === undefined ||
+    yAxis === undefined ||
+    yAxis.y === undefined ||
+    yAxis.height === undefined
+  )
+    return null
 
-  if (payload.commandHeight === undefined || yAxis === undefined || yAxis.y === undefined || yAxis.height === undefined) return null
-
-  const markerRadius = 6; // Increased size for clickability
-  const yAxisBottom = Number(yAxis.y) + yAxis.height; // Bottom of the Y-axis plot area
-  const isSelected = payload.selected; // Get selected status
+  const markerRadius = 6 // Increased size for clickability
+  const yAxisBottom = Number(yAxis.y) + yAxis.height // Bottom of the Y-axis plot area
+  const isSelected = payload.selected // Get selected status
 
   const handleClick = (e: React.MouseEvent<SVGElement>) => {
     if (onCmdClick && payload.id !== undefined) {
-      onCmdClick(e, payload.id);
+      onCmdClick(e, payload.id)
     }
-  };
+  }
 
   return (
-    <g onMouseDown={(e) => handleClick(e)} style={{ cursor: 'pointer' }}> {/* Add onClick and cursor style */}
+    <g onMouseDown={(e) => handleClick(e)} style={{ cursor: 'pointer' }}>
+      {' '}
+      {/* Add onClick and cursor style */}
       {/* Vertical Line from point to X-axis */}
       <line
         x1={cx}
@@ -62,6 +80,5 @@ export default function CommandDot({ cx, cy, stroke, payload, fill, yAxis, onCmd
         </circle>
       )}
     </g>
-  );
-};
-
+  )
+}

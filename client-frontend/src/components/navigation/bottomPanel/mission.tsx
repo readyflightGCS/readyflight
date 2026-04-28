@@ -1,14 +1,14 @@
-import ParamEditor from "./mission/paramEdit"
-import { ReactNode } from "react"
-import { Separator } from "@/components/ui/separator"
-import HeightMap from "./mission/terrain/heightMap"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import ParamEditor from './mission/paramEdit'
+import { ReactNode } from 'react'
+import { Separator } from '@/components/ui/separator'
+import HeightMap from './mission/terrain/heightMap'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const tabs = [
-  { name: "Parameter", component: <ParamEditor /> },
-  { name: "Terrain", component: <HeightMap /> },
-  { name: "Mission Check", component: <div /> }
-] as const satisfies { name: string, component: ReactNode }[]
+  { name: 'Parameter', component: <ParamEditor /> },
+  { name: 'Terrain', component: <HeightMap /> },
+  { name: 'Mission Check', component: <div /> }
+] as const satisfies { name: string; component: ReactNode }[]
 
 export default function mission() {
   return (
@@ -27,10 +27,7 @@ export default function mission() {
             {tab.component}
           </TabsContent>
         ))}
-
       </Tabs>
-
     </div>
-
   )
 }

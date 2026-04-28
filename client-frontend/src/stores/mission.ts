@@ -8,7 +8,6 @@ import { CommandDescription, MissionCommand } from '@libs/commands/command'
 import { Dialect } from '@libs/mission/dialect'
 import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
 
-
 type Actions = {
   switchDialect: (dialect: Dialect<CommandDescription>) => void
   addCommand: (cmd: MissionCommand<CommandDescription>) => void
@@ -30,10 +29,10 @@ type State = {
 }
 
 export const useMission = create<State & Actions>((set, get) => ({
-  mission: new Mission<typeof mavCmdDescription[number]>(),
+  mission: new Mission<(typeof mavCmdDescription)[number]>(),
   dialect: ardupilot,
 
-  selectedSubMission: "Main",
+  selectedSubMission: 'Main',
   selectedCommandIDs: [],
   vehicle: defaultPlane,
 
@@ -58,20 +57,24 @@ export const useMission = create<State & Actions>((set, get) => ({
   deleteSubMission: (name) => {
     const temp = get().mission.clone()
     temp.removeSubMission(name)
-    set({ mission: temp, selectedSubMission: "Main" })
+    set({ mission: temp, selectedSubMission: 'Main' })
   },
   addSub: (name) => {
     if (get().selectedSubMission == name) return
 
-    let newWaypoints = get().mission.clone()
+    const newWaypoints = get().mission.clone()
     try {
-      newWaypoints.pushToMission(get().selectedSubMission, { type: "RF.Group", frame: 0, params: { name: name } })
+      newWaypoints.pushToMission(get().selectedSubMission, {
+        type: 'RF.Group',
+        frame: 0,
+        params: { name: name }
+      })
       set({ mission: newWaypoints })
-    } catch (err) {
+    } catch {
       return
     }
   },
   setSelectedCommandIDs: (n) => set({ selectedCommandIDs: n }),
   setSelectedSubMission: (name) => set({ selectedSubMission: name }),
-  setVehicle: (v) => set({ vehicle: v }),
+  setVehicle: (v) => set({ vehicle: v })
 }))

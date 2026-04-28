@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 /**
  * Combines and intelligently merges CSS class names.
@@ -31,7 +31,7 @@ import { twMerge } from "tailwind-merge"
  * <div className={cn("rounded", props.className)} />
  * ```
  */
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs))
 }
 
@@ -41,12 +41,11 @@ export function cn(...inputs: ClassValue[]) {
  * @param text Text content to download
  */
 export function downloadBlobAsFile(filename: string, data: Blob): void {
-  const link = document.createElement('a');
-  link.href = window.URL.createObjectURL(data);
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(link.href); // Clean up memory
+  const link = document.createElement('a')
+  link.href = window.URL.createObjectURL(data)
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  window.URL.revokeObjectURL(link.href) // Clean up memory
 }
-

@@ -1,8 +1,8 @@
-import { useMission } from "@/stores/mission"
-import { useVehicle } from "@/stores/vehicle"
-import { useConnections } from "@/stores/connections"
-import { useEffect, useRef } from "react"
-import type { ConnectionMessage } from "@libs/connection/types"
+import { useMission } from '@/stores/mission'
+import { useVehicle } from '@/stores/vehicle'
+import { useConnections } from '@/stores/connections'
+import { useEffect, useRef } from 'react'
+import type { ConnectionMessage } from '@libs/connection/types'
 
 const isElectron = (window as any).env?.isElectron === true
 
@@ -20,11 +20,11 @@ function arrayBufferToBase64(buf: ArrayBuffer): string {
 let isMounted = false
 
 export default function ConnectionHandler() {
-  const dialect = useMission(s => s.dialect)
-  const setVehicleState = useVehicle(s => s.setVehicleState)
-  const setConnection = useConnections(s => s.setConnection)
-  const setAvailableConnections = useConnections(s => s.setAvailableConnections)
-  const setCommandSender = useConnections(s => s.setCommandSender)
+  const dialect = useMission((s) => s.dialect)
+  const setVehicleState = useVehicle((s) => s.setVehicleState)
+  const setConnection = useConnections((s) => s.setConnection)
+  const setAvailableConnections = useConnections((s) => s.setAvailableConnections)
+  const setCommandSender = useConnections((s) => s.setCommandSender)
 
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeout = useRef<number | null>(null)
@@ -40,13 +40,12 @@ export default function ConnectionHandler() {
       const api = (window as Window & typeof globalThis).api.connection
 
       const sendPacket = (buf: ArrayBuffer) => {
-        api.sendCommand({type:"sendData", payload: new Uint8Array(buf) })
+        api.sendCommand({ type: 'sendData', payload: new Uint8Array(buf) })
       }
-
 
       setVehicleState({
         sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
-        sendPacket,
+        sendPacket
       })
 
       setCommandSender((cmd) => {
@@ -68,13 +67,13 @@ export default function ConnectionHandler() {
             break
           }
           default: {
-            let exhaustiveCheck: never = msg
+            const exhaustiveCheck: never = msg
             return exhaustiveCheck
           }
         }
       })
 
-      api.sendCommand({type: "list"})
+      api.sendCommand({ type: 'list' })
 
       return () => {
         offMessage()
@@ -85,15 +84,16 @@ export default function ConnectionHandler() {
 
     // WebSocket mode (web build)
     const connect = () => {
-
       const ws = new WebSocket('ws://localhost:9999')
 
       const sendPacket = (buf: ArrayBuffer) => {
         if (ws.readyState !== WebSocket.OPEN) return
-        ws.send(JSON.stringify({
-          type: 'sendData',
-          payload: arrayBufferToBase64(buf),
-        }))
+        ws.send(
+          JSON.stringify({
+            type: 'sendData',
+            payload: arrayBufferToBase64(buf)
+          })
+        )
       }
 
       ws.onopen = () => {
@@ -101,7 +101,7 @@ export default function ConnectionHandler() {
         reconnectDelay.current = 1000
         setVehicleState({
           sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
-          sendPacket,
+          sendPacket
         })
         setCommandSender((cmd) => {
           if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(cmd))
@@ -113,9 +113,13 @@ export default function ConnectionHandler() {
         let msg: ConnectionMessage
         let msga
 
-        try { msga = JSON.parse(e.data as string) } catch { return }
-        if (msga.type === "sendData") {
-          msg = {...msga, payload: base64ToArrayBuffer(msga.payload)}
+        try {
+          msga = JSON.parse(e.data as string)
+        } catch {
+          return
+        }
+        if (msga.type === 'sendData') {
+          msg = { ...msga, payload: base64ToArrayBuffer(msga.payload) }
         } else {
           msg = msga
         }
@@ -134,7 +138,7 @@ export default function ConnectionHandler() {
             break
           }
           default: {
-            let exhaustiveCheck: never = msg
+            const exhaustiveCheck: never = msg
             return exhaustiveCheck
           }
         }
@@ -168,7 +172,7 @@ export default function ConnectionHandler() {
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
       wsRef.current?.close()
     }
-  }, [dialect, setVehicleState, setConnection, setCommandSender])
+  }, [dialect, setVehicleState, setConnection, setCommandSender, setAvailableConnections])
 
   return null
 }

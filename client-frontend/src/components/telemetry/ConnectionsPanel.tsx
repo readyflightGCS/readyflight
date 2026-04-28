@@ -1,16 +1,21 @@
-import { useState, useCallback } from "react"
-import { useConnections } from "@/stores/connections"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from 'react'
+import { useConnections } from '@/stores/connections'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import type { UDPTransportConfig, SerialTransportConfig, ActiveConnection, ConnectionStats, ConnectionStatus } from "@libs/connection/types"
-import { Wifi, Usb, X, Plus, Circle } from "lucide-react"
+  SelectValue
+} from '@/components/ui/select'
+import type {
+  UDPTransportConfig,
+  SerialTransportConfig,
+  ConnectionStats,
+  ConnectionStatus
+} from '@libs/connection/types'
+import { Wifi, Usb, X, Circle } from 'lucide-react'
 
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 
@@ -28,7 +33,7 @@ function StatusDot({ status }: { status: ConnectionStatus }) {
     active: 'text-green-500',
     connecting: 'text-yellow-500',
     error: 'text-red-500',
-    disconnected: 'text-muted-foreground',
+    disconnected: 'text-muted-foreground'
   }
   return <Circle className={`size-2 fill-current ${colors[status]}`} />
 }
@@ -47,7 +52,7 @@ function formatAge(ts: number | null): string {
 }
 
 function ConnectionItem({ conn }: { conn: ConnectionStats }) {
-  const commandSender = useConnections(s => s.commandSender)
+  const commandSender = useConnections((s) => s.commandSender)
 
   const remove = () => commandSender?.({ type: 'disconnect' })
 
@@ -57,10 +62,15 @@ function ConnectionItem({ conn }: { conn: ConnectionStats }) {
         <StatusDot status={conn.status} />
         <span className="flex-1 truncate font-medium">{conn.type}</span>
         <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground flex items-center gap-1">
-          {conn.type === 'udp'
-            ? <><Wifi className="size-3" /> UDP</>
-            : <><Usb className="size-3" /> Serial</>
-          }
+          {conn.type === 'udp' ? (
+            <>
+              <Wifi className="size-3" /> UDP
+            </>
+          ) : (
+            <>
+              <Usb className="size-3" /> Serial
+            </>
+          )}
         </span>
         <button
           onClick={remove}
@@ -84,15 +94,13 @@ function ConnectionItem({ conn }: { conn: ConnectionStats }) {
 }
 
 function AddConnectionForm() {
-  const commandSender = useConnections(s => s.commandSender)
+  const commandSender = useConnections((s) => s.commandSender)
 
   const [transportType, setTransportType] = useState<TransportType>('udp')
   const [host, setHost] = useState('0.0.0.0')
   const [port, setPort] = useState('14550')
   const [serialPath, setSerialPath] = useState('')
   const [baudRate, setBaudRate] = useState('115200')
-  const [availablePorts, setAvailablePorts] = useState<string[]>([])
-  const [loadingPorts, setLoadingPorts] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
 
   const validate = (): boolean => {
@@ -119,7 +127,7 @@ function AddConnectionForm() {
       transport = {
         type: 'serial',
         path: serialPath.trim(),
-        baudRate: parseInt(baudRate, 10),
+        baudRate: parseInt(baudRate, 10)
       }
     }
     commandSender?.({ type: 'connect', config: transport })
@@ -130,14 +138,18 @@ function AddConnectionForm() {
       <p className="font-medium">Add Connection</p>
 
       <div className="flex gap-1">
-        {(['udp', 'serial'] as TransportType[]).map(t => (
+        {(['udp', 'serial'] as TransportType[]).map((t) => (
           <button
             key={t}
-            onClick={() => { setTransportType(t); setErrors({}); }}
-            className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${transportType === t
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
+            onClick={() => {
+              setTransportType(t)
+              setErrors({})
+            }}
+            className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${
+              transportType === t
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+            }`}
           >
             {t.toUpperCase()}
           </button>
@@ -150,7 +162,7 @@ function AddConnectionForm() {
             <label className="text-xs text-muted-foreground">Bind address</label>
             <Input
               value={host}
-              onChange={e => setHost(e.target.value)}
+              onChange={(e) => setHost(e.target.value)}
               placeholder="0.0.0.0"
               aria-invalid={!!errors.host}
             />
@@ -161,7 +173,7 @@ function AddConnectionForm() {
             <Input
               type="number"
               value={port}
-              onChange={e => setPort(e.target.value)}
+              onChange={(e) => setPort(e.target.value)}
               placeholder="14550"
               aria-invalid={!!errors.port}
             />
@@ -174,8 +186,8 @@ function AddConnectionForm() {
             <label className="text-xs text-muted-foreground">Serial port</label>
             <Input
               value={serialPath}
-              onChange={e => setSerialPath(e.target.value)}
-              placeholder={loadingPorts ? 'Loading…' : '/dev/ttyUSB0'}
+              onChange={(e) => setSerialPath(e.target.value)}
+              placeholder={'/dev/ttyUSB0'}
               aria-invalid={!!errors.path}
             />
             {errors.path && <span className="text-xs text-destructive">{errors.path}</span>}
@@ -187,8 +199,10 @@ function AddConnectionForm() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {BAUD_PRESETS.map(b => (
-                  <SelectItem key={b} value={String(b)}>{b.toLocaleString()}</SelectItem>
+                {BAUD_PRESETS.map((b) => (
+                  <SelectItem key={b} value={String(b)}>
+                    {b.toLocaleString()}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -198,14 +212,16 @@ function AddConnectionForm() {
       )}
 
       <div className="flex gap-2">
-        <Button size="sm" onClick={submit} className="flex-1">Connect</Button>
+        <Button size="sm" onClick={submit} className="flex-1">
+          Connect
+        </Button>
       </div>
     </div>
   )
 }
 
 export default function ConnectionsPanel() {
-  const connection = useConnections(s => s.connectionStats)
+  const connection = useConnections((s) => s.connectionStats)
 
   return (
     <div className="flex flex-col gap-2">
@@ -213,12 +229,7 @@ export default function ConnectionsPanel() {
         <h3 className="text-sm font-semibold">Connections</h3>
       </div>
 
-      {
-        connection.type !== null ?
-          <ConnectionItem conn={connection} /> :
-          <AddConnectionForm />
-      }
-
+      {connection.type !== null ? <ConnectionItem conn={connection} /> : <AddConnectionForm />}
     </div>
   )
 }

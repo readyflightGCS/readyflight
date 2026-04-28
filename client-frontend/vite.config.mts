@@ -1,4 +1,4 @@
-import path from "path"
+import path from 'path'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -10,18 +10,20 @@ export default defineConfig({
   resolve: {
     alias: {
       '@renderer': resolve('src'),
-      "@": path.resolve(__dirname, "./src"),
-      "@libs": path.resolve(__dirname, "../libs/src"),
-      "@ifrunistuttgart/node-mavlink": path.resolve(__dirname, "../libs/src/mavlink-browser-shim.ts")
+      '@': path.resolve(__dirname, './src'),
+      '@libs': path.resolve(__dirname, '../libs/src'),
+      '@ifrunistuttgart/node-mavlink': path.resolve(
+        __dirname,
+        '../libs/src/mavlink-browser-shim.ts'
+      )
     }
   },
   plugins: [
     react({
       babel: {
-        plugins: ['babel-plugin-react-compiler'],
+        plugins: ['babel-plugin-react-compiler']
       }
-    },
-    ),
+    }),
     tailwindcss()
   ],
   server: {

@@ -12,23 +12,23 @@ const initialState: VehicleState = {
   connected: false,
   lat: null,
   lon: null,
-  alt: null,         // MSL altitude in metres
+  alt: null, // MSL altitude in metres
   relativeAlt: null, // AGL altitude in metres
-  heading: null,     // degrees 0–360
-  roll: null,        // degrees
-  rollRate: null,        // degrees
-  pitch: null,       // degrees
-  pitchRate: null,       // degrees
-  yaw: null,         // degrees
-  yawRate: null,         // degrees
+  heading: null, // degrees 0–360
+  roll: null, // degrees
+  rollRate: null, // degrees
+  pitch: null, // degrees
+  pitchRate: null, // degrees
+  yaw: null, // degrees
+  yawRate: null, // degrees
   airspeed: null,
   throttle: null,
   climb: null,
-  batteryVoltage: null,   // volts
-  batteryCurrent: null,   // amps (-1 = not available)
+  batteryVoltage: null, // volts
+  batteryCurrent: null, // amps (-1 = not available)
   batteryRemaining: null, // percent 0–100, -1 = not available
   batteryConsumedmAh: null, // percent 0–100, -1 = not available
-  groundspeed: null,      // m/s
+  groundspeed: null, // m/s
   gpsSatellites: null,
   gpsFixType: null,
   windDirection: null,
@@ -55,10 +55,10 @@ const initialState: VehicleState = {
   missionSeq: null,
   missionTotal: null,
   sendMessage: null, // All readyflight commands will be passed through this
-  sendPacket: null, // For when your dialect requires access outside of sendMessage.
+  sendPacket: null // For when your dialect requires access outside of sendMessage.
 }
 
 export const useVehicle = create<VehicleState & Actions>((set) => ({
   ...initialState,
-  setVehicleState: (partial) => set(partial),
+  setVehicleState: (partial) => set(partial)
 }))

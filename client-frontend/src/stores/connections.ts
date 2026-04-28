@@ -1,5 +1,9 @@
 import { create } from 'zustand'
-import type { AvailableConnection, ConnectionCommand, ConnectionStats } from '@libs/connection/types'
+import type {
+  AvailableConnection,
+  ConnectionCommand,
+  ConnectionStats
+} from '@libs/connection/types'
 
 interface ConnectionsState {
   connectionStats: ConnectionStats
@@ -15,14 +19,13 @@ interface ConnectionsState {
 export const useConnections = create<ConnectionsState>((set) => ({
   connectionStats: {
     type: null,
-    status: "disconnected",
+    status: 'disconnected',
     bytesPerSec: 0,
     lastReceivedAt: null
   },
   commandSender: null,
 
   setConnection: (connectionStats) => set({ connectionStats }),
-
 
   setCommandSender: (fn) => set({ commandSender: fn }),
 
