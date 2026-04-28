@@ -6,14 +6,19 @@ interface ConnectionsState {
   // Wired by connectionHandler once the transport is ready
   commandSender: ((cmd: ConnectionCommand) => void) | null
 
-  setConnection: (connection: ConnectionStats | null) => void
+  setConnection: (connection: ConnectionStats) => void
   setCommandSender: (fn: ((cmd: ConnectionCommand) => void) | null) => void
   availableConnections: AvailableConnection[]
   setAvailableConnections: (connections: AvailableConnection[]) => void
 }
 
 export const useConnections = create<ConnectionsState>((set) => ({
-  connectionStats: null,
+  connectionStats: {
+    type: null,
+    status: "disconnected",
+    bytesPerSec: 0,
+    lastReceivedAt: null
+  },
   commandSender: null,
 
   setConnection: (connectionStats) => set({ connectionStats }),

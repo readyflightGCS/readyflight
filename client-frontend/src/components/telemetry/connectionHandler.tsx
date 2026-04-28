@@ -17,6 +17,8 @@ function arrayBufferToBase64(buf: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(buf)))
 }
 
+let isMounted = false
+
 export default function ConnectionHandler() {
   const dialect = useMission(s => s.dialect)
   const setVehicleState = useVehicle(s => s.setVehicleState)
@@ -29,7 +31,10 @@ export default function ConnectionHandler() {
   const reconnectDelay = useRef(1000)
 
   useEffect(() => {
-    let isMounted = true
+    if (!isMounted) {
+      isMounted = true
+      return
+    }
 
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
@@ -72,7 +77,6 @@ export default function ConnectionHandler() {
       api.sendCommand({type: "list"})
 
       return () => {
-        isMounted = false
         offMessage()
         setCommandSender(null)
         setVehicleState({ sendMessage: null, sendPacket: null })
@@ -81,10 +85,8 @@ export default function ConnectionHandler() {
 
     // WebSocket mode (web build)
     const connect = () => {
-      if (!isMounted) return
 
       const ws = new WebSocket('ws://localhost:9999')
-      wsRef.current = ws
 
       const sendPacket = (buf: ArrayBuffer) => {
         if (ws.readyState !== WebSocket.OPEN) return
@@ -95,7 +97,6 @@ export default function ConnectionHandler() {
       }
 
       ws.onopen = () => {
-        if (!isMounted) return
         console.log('[ws] connected to backend')
         reconnectDelay.current = 1000
         setVehicleState({
@@ -109,7 +110,6 @@ export default function ConnectionHandler() {
       }
 
       ws.onmessage = (e) => {
-        if (!isMounted) return
         let msg: ConnectionMessage
         let msga
 
@@ -155,10 +155,9 @@ export default function ConnectionHandler() {
     }
 
     const scheduleReconnect = () => {
-      if (!isMounted) return
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
       reconnectTimeout.current = window.setTimeout(() => {
-        reconnectDelay.current = Math.min(reconnectDelay.current * 2, 1)
+        reconnectDelay.current = Math.min(reconnectDelay.current * 2, 1000)
         connect()
       }, reconnectDelay.current)
     }
@@ -166,7 +165,6 @@ export default function ConnectionHandler() {
     connect()
 
     return () => {
-      isMounted = false
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
       wsRef.current?.close()
     }

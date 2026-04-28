@@ -214,7 +214,7 @@ export default function ConnectionsPanel() {
       </div>
 
       {
-        connection !== null ?
+        connection.type !== null ?
           <ConnectionItem conn={connection} /> :
           <AddConnectionForm />
       }
