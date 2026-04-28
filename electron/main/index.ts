@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../build/icon.png?asset'
 import { ConnectionManager } from '@libs/connection/ConnectionManager'
-import { ElectronIPCHostAdapter } from '@electron/adapters/ElectronIPCHostAdapter'
+import { ElectronIPCHostAdapter } from '@/electron/adapters/ElectronIPCHostAdapter'
 
 let mainWindow: BrowserWindow | null = null
 let connectionManager: ConnectionManager | null = null
@@ -22,7 +22,7 @@ function createWindow(): void {
   })
 
   // Electron devtools
-  //mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
     mainWindow!.show()

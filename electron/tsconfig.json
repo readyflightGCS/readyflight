@@ -7,7 +7,7 @@
     "types": ["electron-vite/node"],
     "paths": {
       "@libs/*": ["../libs/src/*.js"],
-      "@electron/*": ["./main/*.js"],
+      "@/electron/*": ["./main/*.js"],
     },
   },
   "references": [{ "path": "../libs" }],

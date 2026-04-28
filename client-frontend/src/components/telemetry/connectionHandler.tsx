@@ -27,7 +27,6 @@ export default function ConnectionHandler() {
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeout = useRef<number | null>(null)
   const reconnectDelay = useRef(1000)
-  const activeConnectionIdRef = useRef<string | null>(null)
 
   useEffect(() => {
     let isMounted = true
@@ -36,8 +35,6 @@ export default function ConnectionHandler() {
       const api = (window as Window & typeof globalThis).api.connection
 
       const sendPacket = (buf: ArrayBuffer) => {
-        const id = activeConnectionIdRef.current
-        if (!id) return
         api.sendCommand({type:"sendData", payload: new Uint8Array(buf) })
       }
 
@@ -67,6 +64,7 @@ export default function ConnectionHandler() {
           }
           default: {
             let exhaustiveCheck: never = msg
+            return exhaustiveCheck
           }
         }
       })
@@ -137,6 +135,7 @@ export default function ConnectionHandler() {
           }
           default: {
             let exhaustiveCheck: never = msg
+            return exhaustiveCheck
           }
         }
       }

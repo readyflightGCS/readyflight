@@ -14,7 +14,8 @@ export default defineConfig({
     },
     resolve: {
       alias: {
-        '@libs': path.resolve(__dirname, '../libs/src')
+        '@libs': path.resolve(__dirname, '../libs/src'),
+        '@/electron': path.resolve(__dirname, './main')
       }
     }
   },
@@ -27,7 +28,8 @@ export default defineConfig({
     },
     resolve: {
       alias: {
-        '@libs': path.resolve(__dirname, '../libs/src')
+        '@libs': path.resolve(__dirname, '../libs/src'),
+        '@/electron': path.resolve(__dirname, './main')
       }
     }
   },
@@ -43,6 +45,7 @@ export default defineConfig({
         '@renderer': resolve(__dirname, '../client-frontend/src'),
         '@': path.resolve(__dirname, '../client-frontend/src'),
         '@libs': path.resolve(__dirname, '../libs/src'),
+        '@/electron': path.resolve(__dirname, './main'),
         '@ifrunistuttgart/node-mavlink': path.resolve(
           __dirname,
           '../libs/src/mavlink-browser-shim.ts'
