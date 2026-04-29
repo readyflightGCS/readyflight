@@ -1,29 +1,23 @@
 import type { ITransportAdapter, SerialTransportConfig } from '@libs/connection/types'
+import { SerialPort } from 'serialport'
 
 type DataHandler = (data: Uint8Array) => void
 type ErrorHandler = (error: Error) => void
 type CloseHandler = () => void
 
-export class SerialTransportAdapter implements ITransportAdapter {
+export class SerialTransportAdapter implements ITransportAdapter<SerialTransportConfig> {
   private port: unknown = null
   private dataHandlers: DataHandler[] = []
   private errorHandlers: ErrorHandler[] = []
   private closeHandlers: CloseHandler[] = []
 
-  constructor(private config: SerialTransportConfig) { }
-
-  static async listPorts(): Promise<string[]> {
-    const ports = await SerialPort.list()
-    return ports.map((p: { path: string }) => p.path)
-  }
-
-  async start(): Promise<void> {
+  async start(config: SerialTransportConfig): Promise<void> {
     const sp = new SerialPort({
-      path: this.config.path,
-      baudRate: this.config.baudRate,
-      dataBits: this.config.dataBits ?? 8,
-      stopBits: this.config.stopBits ?? 1,
-      parity: this.config.parity ?? 'none',
+      path: config.path,
+      baudRate: config.baudRate,
+      dataBits: config.dataBits ?? 8,
+      stopBits: config.stopBits ?? 1,
+      parity: config.parity ?? 'none',
       autoOpen: false,
     })
     this.port = sp
@@ -45,7 +39,7 @@ export class SerialTransportAdapter implements ITransportAdapter {
       this.closeHandlers.forEach(h => h())
     })
 
-    console.log(`[serial] opened ${this.config.path} @ ${this.config.baudRate}`)
+    console.log(`[serial] opened ${config.path} @ ${config.baudRate}`)
   }
 
   async stop(): Promise<void> {
@@ -67,5 +61,18 @@ export class SerialTransportAdapter implements ITransportAdapter {
     if (event === 'data') this.dataHandlers.push(handler as DataHandler)
     else if (event === 'error') this.errorHandlers.push(handler as ErrorHandler)
     else if (event === 'close') this.closeHandlers.push(handler as CloseHandler)
+  }
+
+  async getAvailable() {
+    const ports = await SerialPort.list()
+    let res: SerialTransportConfig[] = ports.map((port) => {
+      return {
+        type: 'serial',
+        path: port.path as string,
+        baudRate: 115200,
+      }
+    })
+    return res
+
   }
 }

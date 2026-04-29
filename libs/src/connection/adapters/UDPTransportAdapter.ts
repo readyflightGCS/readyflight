@@ -12,18 +12,17 @@ type DataHandler = (data: Uint8Array) => void
 type ErrorHandler = (error: Error) => void
 type CloseHandler = () => void
 
-export class UDPTransportAdapter implements ITransportAdapter {
+export class UDPTransportAdapter implements ITransportAdapter<UDPTransportConfig> {
   private socket: Socket | null = null
   private vehicleAddr: { address: string; port: number } | null = null
   private dataHandlers: DataHandler[] = []
   private errorHandlers: ErrorHandler[] = []
   private closeHandlers: CloseHandler[] = []
 
-  constructor(private config: UDPTransportConfig) {
-    console.log("[udp] Loading new UDP handler")
+  constructor() {
   }
 
-  async start(): Promise<void> {
+  async start(config: UDPTransportConfig): Promise<void> {
     return new Promise((resolve, reject) => {
       const socket = createSocket('udp4')
       this.socket = socket
@@ -41,18 +40,18 @@ export class UDPTransportAdapter implements ITransportAdapter {
         this.closeHandlers.forEach(h => h())
       })
 
-      const bindAddr = this.config.bindAddress ?? '0.0.0.0'
-      socket.bind(this.config.port, bindAddr, () => {
-        if (isMulticast(this.config.host)) {
+      const bindAddr = config.bindAddress ?? '0.0.0.0'
+      socket.bind(config.port, bindAddr, () => {
+        if (isMulticast(config.host)) {
           try {
-            socket.addMembership(this.config.host, bindAddr === '0.0.0.0' ? undefined : bindAddr)
+            socket.addMembership(config.host, bindAddr === '0.0.0.0' ? undefined : bindAddr)
           } catch (err) {
             socket.close()
             reject(err)
             return
           }
         }
-        console.log(`[udp] bound on ${bindAddr}:${this.config.port}`)
+        console.log(`[udp] bound on ${bindAddr}:${config.port}`)
         resolve()
       })
     })
@@ -83,5 +82,16 @@ export class UDPTransportAdapter implements ITransportAdapter {
     if (event === 'data') this.dataHandlers.push(handler as DataHandler)
     else if (event === 'error') this.errorHandlers.push(handler as ErrorHandler)
     else if (event === 'close') this.closeHandlers.push(handler as CloseHandler)
+  }
+
+  async getAvailable() {
+    let res: UDPTransportConfig[] = [{
+      type: 'udp',
+      host: '0.0.0.0',
+      port: 14550,
+    }]
+    return new Promise<UDPTransportConfig[]>((resolve) => {
+      resolve(res)
+    })
   }
 }

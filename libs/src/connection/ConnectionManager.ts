@@ -1,21 +1,21 @@
 import { SerialTransportAdapter } from './adapters/SerialTransportAdapter.js'
 import { UDPTransportAdapter } from './adapters/UDPTransportAdapter.js'
-import type { IHostAdapter, ConnectionCommand, ActiveConnection, AvailableConnection, ITransportAdapter } from './types.js'
+import type { IHostAdapter, ConnectionCommand, ActiveConnection, TransportConfig } from './types.js'
 
 export class ConnectionManager {
   private hostAdapter: IHostAdapter
   private statsTimer: ReturnType<typeof setInterval> | null
   private connection: ActiveConnection
-  private availableConnections = [
+  private readonly transportAdapters = [
     {
-      name: "serialTransport",
+      name: "serial",
       label: "Serial",
-      factory: SerialTransportAdapter
+      t: new SerialTransportAdapter()
     },
     {
-      name: "udpTransport",
+      name: "udp",
       label: "UDP",
-      factory: UDPTransportAdapter
+      t: new UDPTransportAdapter()
     },
   ]
 
@@ -35,8 +35,8 @@ export class ConnectionManager {
     }
   }
 
-  destroy(){
-    if(this.connection.transport !== null){
+  destroy() {
+    if (this.connection.transport !== null) {
       this.connection.transport.stop()
     }
   }
@@ -50,34 +50,30 @@ export class ConnectionManager {
   }
 
 
-  private listAvailableConnections(): AvailableConnection[] {
-    return this.availableConnections.map((connectionType) => ({
-      type: connectionType.name,
-      label: connectionType.label,
+  private async listAvailableConnections(): Promise<TransportConfig[][]> {
+    return await Promise.all(this.transportAdapters.map(async (x) => {
+      return await x.t.getAvailable()
     }))
-
   }
 
   private handleCommand(cmd: ConnectionCommand): void {
     console.log(`[ConnMng] Got message ${cmd.type}`)
     switch (cmd.type) {
       case 'list':
-        this.hostAdapter.sendMessage({ type: "availableConnections", connections: this.listAvailableConnections() })
+        this.listAvailableConnections().then((res) => {
+          this.hostAdapter.sendMessage({ type: "availableConnections", connections: res })
+        })
         break
 
       case 'connect':
-        let t: ITransportAdapter | null = null
-        switch (cmd.config.type) {
-          case "udp":
-            t = new UDPTransportAdapter(cmd.config)
-            break
-          case "serial":
-            t = new SerialTransportAdapter(cmd.config)
-            break
-        }
-        if (t === null) return
+        console.log(cmd)
+        console.log(this.transportAdapters)
+        let transportAdapter = this.transportAdapters.find((x) => x.name === cmd.config.type)
+        console.log(transportAdapter)
+        if (transportAdapter === undefined) return
+        let transport = transportAdapter.t
         this.connection = {
-          transport: t,
+          transport: transport,
           status: {
             type: cmd.config.type,
             status: "active",
@@ -85,8 +81,8 @@ export class ConnectionManager {
             lastReceivedAt: null,
           }
         }
-        t.on("data", (a) => this.hostAdapter.sendMessage({type: "sendData", payload: a}))
-        t.start().then(() => {
+        transport.on("data", (a) => this.hostAdapter.sendMessage({ type: "sendData", payload: a }))
+        transport.start(cmd.config).then(() => {
           this.statsTimer = setInterval(() => this.updateStats(), 1000)
         })
         break
@@ -111,12 +107,13 @@ export class ConnectionManager {
           }
           this.hostAdapter.sendMessage({ type: "status", stats: this.connection.status })
         })
-        if (this.statsTimer !== null){
+        if (this.statsTimer !== null) {
           clearInterval(this.statsTimer)
         }
         break
       default: {
         let exhaustiveCheck: never = cmd
+        return exhaustiveCheck
       }
     }
   }

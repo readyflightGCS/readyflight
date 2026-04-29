@@ -134,6 +134,7 @@ export default function ConnectionHandler() {
             break
           }
           case 'availableConnections': {
+            console.log(msg.connections)
             setAvailableConnections(msg.connections)
             break
           }
