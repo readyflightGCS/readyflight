@@ -1,5 +1,4 @@
 import type { ITransportAdapter, SerialTransportConfig } from '@libs/connection/types'
-import { SerialPort } from 'serialport'
 
 type DataHandler = (data: Uint8Array) => void
 type ErrorHandler = (error: Error) => void
