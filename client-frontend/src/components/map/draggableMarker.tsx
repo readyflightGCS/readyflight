@@ -1,11 +1,24 @@
-import { useMemo, useRef } from "react"
-import { Marker } from "react-leaflet"
-import * as Leaflet from "leaflet"
-import { LatLng } from "@libs/world/latlng"
-import { circleOverlayIcon, createAnimatedIcon } from "./waypoint"
+import { useMemo, useRef } from 'react'
+import { Marker } from 'react-leaflet'
+import * as Leaflet from 'leaflet'
+import { LatLng } from '@libs/world/latlng'
+import { circleOverlayIcon, createAnimatedIcon } from './waypoint'
 
-export default function DraggableMarker({ text, position, active, onMove, onClick, onDoubleClick }: { text?: string, position: LatLng, active: boolean, onMove?: (lat: number, lng: number) => void, onClick?: () => void, onDoubleClick?: () => void }) {
-
+export default function DraggableMarker({
+  text,
+  position,
+  active,
+  onMove,
+  onClick,
+  onDoubleClick
+}: {
+  text?: string
+  position: LatLng
+  active: boolean
+  onMove?: (lat: number, lng: number) => void
+  onClick?: () => void
+  onDoubleClick?: () => void
+}) {
   const markerRef = useRef<Leaflet.Marker>(null)
 
   const eventHandlers = useMemo(
@@ -24,9 +37,9 @@ export default function DraggableMarker({ text, position, active, onMove, onClic
             onMove(newLocation.lat, newLocation.lng)
           }
         }
-      },
+      }
     }),
-    [onMove, onClick, onDoubleClick],
+    [onMove, onClick, onDoubleClick]
   )
 
   const textIcon = useMemo(() => {
@@ -37,10 +50,9 @@ export default function DraggableMarker({ text, position, active, onMove, onClic
       <div style="padding-left: 4px; padding-right:4px; font-weight: bold; width: fit-content; background: linear-gradient(0deg,rgba(41, 128, 202, 1) 0%, rgba(70, 151, 208, 1) 100%); text-align: center; color: white; border-radius: 4px; font-size: 12px;">${text}</div>
       </div>`,
       iconSize: [40, 20],
-      iconAnchor: [20, 34],
+      iconAnchor: [20, 34]
     })
   }, [text])
-
 
   return (
     <>
@@ -53,22 +65,17 @@ export default function DraggableMarker({ text, position, active, onMove, onClic
       />
 
       {text && textIcon && (
-        <Marker
-          position={position}
-          icon={textIcon}
-          interactive={false}
-          zIndexOffset={1000}
-        />
+        <Marker position={position} icon={textIcon} interactive={false} zIndexOffset={1000} />
       )}
 
-      {active ? <Marker
-        position={position}
-        interactive={false}
-        icon={circleOverlayIcon}
-        zIndexOffset={-1000}
-      />
-        : null}
+      {active ? (
+        <Marker
+          position={position}
+          interactive={false}
+          icon={circleOverlayIcon}
+          zIndexOffset={-1000}
+        />
+      ) : null}
     </>
   )
 }
-

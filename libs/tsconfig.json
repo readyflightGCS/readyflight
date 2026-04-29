@@ -6,12 +6,12 @@
     "declarationMap": true,
     "moduleResolution": "Bundler",
     "composite": true,
-    "baseUrl": ".",
     "paths": {
-      "@libs/*": ["./src/*"]
+      "@libs/*": ["./src/*"],
+      "@client-frontend/*": ["../client-frontend/src/*"]
     },
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM"],
   },
   "include": ["./src/**/*"]
 }

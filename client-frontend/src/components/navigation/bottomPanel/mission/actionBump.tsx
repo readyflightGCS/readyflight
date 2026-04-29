@@ -1,11 +1,15 @@
-import { cn } from "@/lib/utils"
-import { useMission } from "@/stores/mission"
-import { RFCommandDescription } from "@libs/commands/readyflightCommands"
-import { CommandDescription, MissionCommand } from "@libs/commands/command";
-import { coerceCommand } from "@libs/commands/helpers";
-import { Locate, PlaneLanding, PlaneTakeoff, PlugZap, MoreHorizontal, Route, LucideIcon } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { cn } from '@/lib/utils'
+import { useMission } from '@/stores/mission'
+import { RFCommandDescription } from '@libs/commands/readyflightCommands'
+import { CommandDescription, MissionCommand } from '@libs/commands/command'
+import { coerceCommand } from '@libs/commands/helpers'
+import { Locate, PlaneLanding, PlaneTakeoff, PlugZap, Route, LucideIcon } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 
 export default function MissionActionBump() {
   const { selectedSubMission, selectedCommandIDs, mission, setMission, dialect } = useMission()
@@ -18,8 +22,8 @@ export default function MissionActionBump() {
   }
 
   // Determine current command type if any
-  const selectedCommands = selectedIDs.map(id => curMission[id]).filter(x => x !== undefined)
-  const types: Set<string> = new Set();
+  const selectedCommands = selectedIDs.map((id) => curMission[id]).filter((x) => x !== undefined)
+  const types: Set<string> = new Set()
   selectedCommands.forEach((x) => {
     types.add(x.type)
   })
@@ -27,41 +31,46 @@ export default function MissionActionBump() {
   const isMultiType = types.size > 1
   const selectionCount = selectedIDs.length
 
-  function onChange(type: MissionCommand<CommandDescription>["type"]) {
+  function onChange(type: MissionCommand<CommandDescription>['type']) {
     if (selectedIDs.length === 0) return
 
     const newWPs = mission.clone()
-    newWPs.changeManyParams(selectedIDs, selectedSubMission, (cmd) => {
-      if (type === null) return cmd
-      return coerceCommand(cmd, type, dialect) as MissionCommand<CommandDescription>
-    }, true)
+    newWPs.changeManyParams(
+      selectedIDs,
+      selectedSubMission,
+      (cmd) => {
+        if (type === null) return cmd
+        return coerceCommand(cmd, type, dialect) as MissionCommand<CommandDescription>
+      },
+      true
+    )
     setMission(newWPs)
   }
 
   // --- Exhaustive Command Mapping ---
-  // We explicitly map EVERY RF command type (excluding Group) to an icon. 
+  // We explicitly map EVERY RF command type (excluding Group) to an icon.
   // We use TypeScript key enforcement to ensure that if a new command is added to RFCommandDescription,
   // this file will fail to compile until an icon is added.
-  type ButtonCommandType = Exclude<typeof RFCommandDescription[number]["type"], "RF.Group">
+  type ButtonCommandType = Exclude<(typeof RFCommandDescription)[number]['type'], 'RF.Group'>
 
   const icons: Record<ButtonCommandType, LucideIcon> = {
-    "RF.Waypoint": Locate,
-    "RF.Takeoff": PlaneTakeoff,
-    "RF.Land": PlaneLanding,
-    "RF.SetServo": PlugZap,
-    "RF.DubinsPath": Route,
+    'RF.Waypoint': Locate,
+    'RF.Takeoff': PlaneTakeoff,
+    'RF.Land': PlaneLanding,
+    'RF.SetServo': PlugZap,
+    'RF.DubinsPath': Route
   }
 
   const isDisabled = selectedIDs.length === 0
 
   // Determine label for the dialect selector
-  const isRFCommand = currentType && RFCommandDescription.some(cb => cb.type === currentType)
+  const isRFCommand = currentType && RFCommandDescription.some((cb) => cb.type === currentType)
   const isDialectCommand = currentType && !isRFCommand
 
   // Find label for dialect command if active
-  let dialectLabel = "Other"
+  let dialectLabel = 'Other'
   if (isDialectCommand) {
-    const cmdDesc = dialect.commandDescriptions.find(c => c.type === currentType)
+    const cmdDesc = dialect.commandDescriptions.find((c) => c.type === currentType)
     if (cmdDesc) dialectLabel = cmdDesc.label
   }
 
@@ -81,7 +90,7 @@ export default function MissionActionBump() {
       {/* Buttons Container - using flex-wrap to fit all content */}
       <div className="flex flex-1 gap-1 items-center flex-wrap">
         {RFCommandDescription.map((cmd) => {
-          if (cmd.type === "RF.Group") return null
+          if (cmd.type === 'RF.Group') return null
 
           const Icon = icons[cmd.type as ButtonCommandType]
           const isSelected = !isMultiType && currentType === cmd.type
@@ -92,12 +101,12 @@ export default function MissionActionBump() {
               disabled={isDisabled}
               title={cmd.label}
               className={cn(
-                "h-8 w-8 flex-shrink-0 flex items-center justify-center rounded transition-colors duration-100",
+                'h-8 w-8 flex-shrink-0 flex items-center justify-center rounded transition-colors duration-100',
                 isDisabled
-                  ? "opacity-30 cursor-not-allowed"
+                  ? 'opacity-30 cursor-not-allowed'
                   : isSelected
-                    ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? 'bg-primary text-primary-foreground shadow-sm hover:bg-primary'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               )}
               onClick={() => onChange(cmd.type)}
             >
@@ -111,12 +120,12 @@ export default function MissionActionBump() {
           <DropdownMenuTrigger disabled={isDisabled} asChild>
             <button
               className={cn(
-                "h-[32px] px-2 font-medium text-[10px] flex-shrink-0 flex items-center justify-center rounded transition-colors duration-100",
+                'h-[32px] px-2 font-medium text-[10px] flex-shrink-0 flex items-center justify-center rounded transition-colors duration-100',
                 isDisabled
-                  ? "opacity-30 cursor-not-allowed"
+                  ? 'opacity-30 cursor-not-allowed'
                   : isDialectCommand
-                    ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ? 'bg-primary text-primary-foreground shadow-sm hover:bg-primary'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               )}
               title="Other Commands"
             >
@@ -131,7 +140,6 @@ export default function MissionActionBump() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-
       </div>
     </div>
   )

@@ -1,19 +1,21 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "composite": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "types": ["electron-vite/node"],
     "paths": {
-      "@libs/*": ["../libs/src/*"]
+      "@libs/*": ["../libs/src/*.js"],
+      "@/electron/*": ["./main/*.js"],
     },
   },
+  "references": [{ "path": "../libs" }],
   "include": [
     "main/**/*",
     "preload/**/*",
     "vite.config.*", 
-    "../client-frontend/vite.config.mts"
+    "../client-frontend/vite.config.mts",
+    "../libs/src"
    ]
 }

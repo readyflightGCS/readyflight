@@ -1,10 +1,23 @@
-import { useMemo, useRef } from "react"
-import { Marker } from "react-leaflet"
-import * as Leaflet from "leaflet"
-import { LatLng } from "@libs/world/latlng"
+import { useMemo, useRef } from 'react'
+import { Marker } from 'react-leaflet'
+import * as Leaflet from 'leaflet'
+import { LatLng } from '@libs/world/latlng'
 
-export default function NonDestChip({ name, position, active, onClick, onDoubleClick, offset }: { name: string, position: LatLng, offset: number, active: boolean, onClick?: () => void, onDoubleClick?: () => void }) {
-
+export default function NonDestChip({
+  name,
+  position,
+  active,
+  onClick,
+  onDoubleClick,
+  offset
+}: {
+  name: string
+  position: LatLng
+  offset: number
+  active: boolean
+  onClick?: () => void
+  onDoubleClick?: () => void
+}) {
   const markerRef = useRef<Leaflet.Marker>(null)
 
   const eventHandlers = useMemo(
@@ -14,9 +27,9 @@ export default function NonDestChip({ name, position, active, onClick, onDoubleC
       },
       click() {
         if (onClick) onClick()
-      },
+      }
     }),
-    [onClick, onDoubleClick],
+    [onClick, onDoubleClick]
   )
 
   return (
@@ -42,26 +55,27 @@ export default function NonDestChip({ name, position, active, onClick, onDoubleC
         position: relative;
         z-index: 10;
         text-align: center;
-      ">${name.split(" ").map(x => x[0]).splice(1).join("")}</div>
-    `,
+      ">${name
+        .split(' ')
+        .map((x) => x[0])
+        .splice(1)
+        .join('')}</div>
+    `
         })}
-
       />
-      {
-        active ? <Marker
+      {active ? (
+        <Marker
           position={position}
           interactive={false}
           icon={Leaflet.divIcon({
-            className: "",
+            className: '',
             iconSize: [25, 25],
             iconAnchor: [12.5, 41 + (offset + 1) * 30],
             html: `<div class="animate-ping w-[25px] h-[25px] border-2 rounded-full"></div>`
-          })
-          }
-          zIndexOffset={- 1000}
+          })}
+          zIndexOffset={-1000}
         />
-          : null}
+      ) : null}
     </>
   )
 }
-

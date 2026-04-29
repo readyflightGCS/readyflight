@@ -29,6 +29,9 @@ import { MavModeFlag } from "./mavlink-assets/enums/mav-mode-flag"
 import { MavMissionType } from "./mavlink-assets/enums/mav-mission-type"
 import { makeCommand } from "@libs/commands/helpers"
 import { Mission } from "../mission"
+import { Heartbeat } from "./mavlink-assets/messages/heartbeat"
+import { useVehicle } from "@/stores/vehicle"
+import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -53,7 +56,7 @@ function resetUploadState() {
 }
 
 function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
-  const msg = new MissionItemInt()
+  const msg = new MissionItemInt(0, 0)
   msg.target_system = 1
   msg.target_component = 1
   msg.seq = seq
@@ -70,6 +73,9 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
   msg.z = item.param7                     // alt stays as float
   return msg
 }
+
+let heartbeatTimer = null
+let heartbeatTimeout = null
 
 export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   name: "mavlink-ardupilot",
@@ -142,7 +148,42 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     const msg = decodePacket(data)
     if (!msg) return
 
-    if (msg instanceof GlobalPositionInt) {
+    if (msg instanceof Heartbeat) {
+      if (heartbeatTimeout) {
+        clearTimeout(heartbeatTimeout);
+      }
+      heartbeatTimeout = setTimeout(() => {
+        console.log("No heartbeat, disconecting");
+        useVehicle.setState({ connected: false })
+        clearTimeout(heartbeatTimer)
+      }, 3000);
+      const connected = useVehicle.getState().connected
+      if (!connected) {
+        const cmd = new CommandLong(0, 0)
+        cmd.command = MavCmd.MAV_CMD_REQUEST_MESSAGE
+        cmd.param1 = 148
+        cmd.target_system = 1
+        cmd.target_component = 1
+        sendPacket(encodePacket(cmd))
+
+        const cmd2 = new RequestDataStream(0, 0)
+        cmd2.target_system = 1
+        cmd2.target_component = 1
+        cmd2.req_stream_id = 0
+        cmd2.start_stop = 1
+        cmd2.req_message_rate = 32
+        sendPacket(encodePacket(cmd2))
+
+
+
+        heartbeatTimer = setInterval(() => {
+          const cmd = new Heartbeat(0, 0)
+          sendPacket(encodePacket(cmd))
+        }, 1000)
+        useVehicle.setState({ connected: true })
+
+      }
+    } else if (msg instanceof GlobalPositionInt) {
       setVehicleState({
         alt: msg.alt / 1000,
         heading: msg.hdg / 100,
@@ -260,7 +301,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
 
   handleSendTelemetryMessage: (msg, sendPacket) => {
     if (msg.type === 'arm' || msg.type === 'disarm') {
-      const cmd = new CommandLong()
+      const cmd = new CommandLong(0, 0)
       cmd.target_system = 1
       cmd.target_component = 1
       cmd.command = MavCmd.MAV_CMD_COMPONENT_ARM_DISARM
@@ -277,7 +318,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     }
 
     if (msg.type === 'setMode') {
-      const cmd = new SetMode()
+      const cmd = new SetMode(0, 0)
       cmd.target_system = 1
       cmd.base_mode = MavModeFlag.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
       cmd.custom_mode = msg.mode
@@ -310,7 +351,7 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
 
     console.log(`[mavlink] Starting mission upload: ${pendingUpload.length} items`)
 
-    const countMsg = new MissionCount()
+    const countMsg = new MissionCount(0, 0)
     countMsg.target_system = 1
     countMsg.target_component = 1
     countMsg.count = pendingUpload.length

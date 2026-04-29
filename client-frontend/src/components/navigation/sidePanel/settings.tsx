@@ -1,15 +1,20 @@
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useThemeStore } from "@/stores/theme";
-import { Moon, Sun } from "lucide-react";
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { useThemeStore } from '@/stores/theme'
+import { Moon, Sun } from 'lucide-react'
+
+const isElectron = window.env?.isElectron === true
 
 export default function Settings() {
-  const { setTheme } = useThemeStore();
+  const { setTheme } = useThemeStore()
   return (
     <div>
-      <p>
-        I am settings :)
-      </p>
+      <p>I am settings :)</p>
 
       <div>
         Theme:
@@ -22,18 +27,13 @@ export default function Settings() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
-              System
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div >
+      </div>
+      <div>Running as {isElectron ? 'Electron' : 'Browser'}</div>
     </div>
   )
 }

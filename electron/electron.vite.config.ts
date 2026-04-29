@@ -1,8 +1,8 @@
 import { resolve } from 'path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { defineConfig } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import path from "path"
+import path from 'path'
 
 export default defineConfig({
   main: {
@@ -12,6 +12,12 @@ export default defineConfig({
         formats: ['cjs']
       }
     },
+    resolve: {
+      alias: {
+        '@libs': path.resolve(__dirname, '../libs/src'),
+        '@/electron': path.resolve(__dirname, './main')
+      }
+    }
   },
   preload: {
     build: {
@@ -20,12 +26,15 @@ export default defineConfig({
         formats: ['cjs']
       }
     },
+    resolve: {
+      alias: {
+        '@libs': path.resolve(__dirname, '../libs/src'),
+        '@/electron': path.resolve(__dirname, './main')
+      }
+    }
   },
   renderer: {
     root: resolve(__dirname, '../client-frontend'),
-    define: {
-      'import.meta.env.VITE_TARGET': JSON.stringify('electron')
-    },
     build: {
       rollupOptions: {
         input: resolve(__dirname, '../client-frontend/index.html')
@@ -34,15 +43,15 @@ export default defineConfig({
     resolve: {
       alias: {
         '@renderer': resolve(__dirname, '../client-frontend/src'),
-        "@": path.resolve(__dirname, "../client-frontend/src"),
-        "@libs": path.resolve(__dirname, "../libs/src"),
-        "@ifrunistuttgart/node-mavlink": path.resolve(__dirname, "../libs/src/mavlink-browser-shim.ts")
+        '@': path.resolve(__dirname, '../client-frontend/src'),
+        '@libs': path.resolve(__dirname, '../libs/src'),
+        '@/electron': path.resolve(__dirname, './main'),
+        '@ifrunistuttgart/node-mavlink': path.resolve(
+          __dirname,
+          '../libs/src/mavlink-browser-shim.ts'
+        )
       }
     },
-    plugins: [
-      react(),
-      tailwindcss()
-    ]
+    plugins: [react(), tailwindcss()]
   }
 })
-

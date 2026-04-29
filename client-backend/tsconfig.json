@@ -2,17 +2,16 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "nodenext",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "dist",
-    "baseUrl": ".",
     "paths": {
-      "@libs/*": ["../libs/src/*.js"]
+      "@libs/*": ["../libs/src/*.js"],
+      "@client-backend/*": ["./src/*.js"]
     }
   },
-  "references": [{ "path": "../libs/src" }],
+  "references": [{ "path": "../libs" }],
   "include": [
     "src/**/*",
     "../libs/src/"
