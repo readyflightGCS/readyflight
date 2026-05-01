@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { useVehicle } from "@/stores/vehicle"
-import { CopterMode } from "@libs/mission/ardupilot/mavlink-assets/enums/copter-mode";
 import { ArrowDown, ArrowUp, LucideAArrowUp, Minus } from "lucide-react";
 import { Airspeed, Altimeter, HeadingIndicator } from "react-typescript-flight-indicators"
 
