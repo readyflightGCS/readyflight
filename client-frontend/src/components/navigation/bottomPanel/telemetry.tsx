@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { useVehicle } from "@/stores/vehicle"
 import { CopterMode } from "@libs/mission/ardupilot/mavlink-assets/enums/copter-mode";
+import { GpsFixType } from "@libs/mission/ardupilot/mavlink-assets/enums/gps-fix-type";
 import { ArrowDown, ArrowUp, LucideAArrowUp, Minus } from "lucide-react";
 import { Airspeed, Altimeter, HeadingIndicator } from "react-typescript-flight-indicators"
 
@@ -86,7 +87,7 @@ export default function Telemetry() {
 
         <tr>
           <td className="p-1">GPS Fix Type</td>
-          <td className="p-1">{gpsfixtype}</td>
+          <td className={cn("p-1", gpsfixtype !== null ? gpsfixtype <= 1 ? "text-red-400" : gpsfixtype <= 3 ? "text-orange-400" : "text-green-400" : "text-red-400")}>{GpsFixType[gpsfixtype || 0]}</td>
           <td className="p-1">GPS Satellites</td>
           <td className="p-1">{gpssatellites}</td>
           <td className="p-1">GPS HDOP</td>
