@@ -79,10 +79,13 @@ export default function Telemetry() {
 
         <tr>
           <td className="p-1">Throttle</td>
-          <td colSpan={4}>
-            <progress value={throttle || 0} max={100}>{throttle}</progress>
+          <td colSpan={5}>
+            {/* <progress value={throttle || 0} max={100}>{throttle}</progress> */}
+
+            <div className="w-full bg-neutral-quaternary rounded-full">
+              <div className="bg-violet-600 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center" style={{ width: `${throttle}%` }}> {throttle}%</div>
+            </div>
           </td>
-          <td>{throttle}%</td>
         </tr>
 
         <tr>
