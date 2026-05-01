@@ -158,6 +158,14 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
         clearTimeout(heartbeatTimer)
       }, 3000);
       const connected = useVehicle.getState().connected
+
+      const isArmed = (msg.base_mode & MavModeFlag.MAV_MODE_FLAG_SAFETY_ARMED) !== 0;
+
+      setVehicleState({
+          mode: msg.custom_mode,
+          isArmed: isArmed
+        })
+
       if (!connected) {
         const cmd = new CommandLong(0, 0)
         cmd.command = MavCmd.MAV_CMD_REQUEST_MESSAGE
@@ -181,7 +189,6 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
           sendPacket(encodePacket(cmd))
         }, 1000)
         useVehicle.setState({ connected: true })
-
       }
     } else if (msg instanceof GlobalPositionInt) {
       setVehicleState({
@@ -205,13 +212,14 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
         gpsSatellites: msg.satellites_visible,
         gpsFixType: msg.fix_type,
         groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
+        hdop: msg.eph
       })
     } else if (msg instanceof BatteryStatus) {
       setVehicleState({
         batteryVoltage: msg.voltages / 1000,
         batteryCurrent: msg.current_battery,
-        batteryRemaining: msg.battery_remaining,
-        batteryConsumedmAh: msg.current_consumed
+        batteryRemaining: msg.time_remaining,
+        batteryConsumedmAh: msg.current_consumed,
       })
     } else if (msg instanceof VfrHud) {
       setVehicleState({
@@ -296,6 +304,8 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
         console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
       }
       resetUploadState()
+    } else {
+      console.log(msg);
     }
   },
 
