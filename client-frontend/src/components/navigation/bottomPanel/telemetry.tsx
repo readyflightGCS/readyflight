@@ -53,7 +53,7 @@ export default function Telemetry() {
     }
   }
 
-  return <div className="w-3xl">
+  return <div className="w-4xl flex justify-center">
       {/* //<Airspeed speed={airspeed || 0} showBox={false} /> */}
       {/* //<HeadingIndicator heading={heading || 0} showBox={false} /> */}
       {/* <Altimeter altitude={alt || 0} showBox={false}/> */}
