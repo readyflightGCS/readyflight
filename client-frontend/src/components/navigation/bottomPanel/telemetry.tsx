@@ -61,20 +61,20 @@ export default function Telemetry() {
       <table>
         <tr>
           <td className="p-1">Airspeed</td>
-          <td className="p-1">{Math.round(airspeed || 0)} m/s</td>
+          <td className="p-1">{airspeed !== null ? `${Math.round(airspeed)}m/s` : "-"}</td>
           <td className="p-1">Altitude</td>
-          <td className="p-1">{Math.round(alt || 0)}m</td>
+          <td className="p-1">{alt !== null ? `${Math.round(alt)}m/s` : "-"}</td>
           <td className="p-1">Heading</td>
-          <td className="p-1"><span className="inline">{Math.round(heading || 0)}&deg;</span><ArrowUp className="inline" style={{transform: `rotate(${Math.round(heading || 0)}deg)`, transition: `transform 0.5s ease`}}/></td>
+          <td className="p-1"><span className="inline">{heading !== null ? Math.round(heading) : "-"}&deg;</span><ArrowUp className="inline" style={{transform: `rotate(${Math.round(heading || 0)}deg)`, transition: `transform 0.5s ease`}}/></td>
         </tr>
 
         <tr>
           <td className="p-1">Groundspeed</td>
-          <td className="p-1">{Math.round(groundspeed || 0)} m/s</td>
+          <td className="p-1">{groundspeed !== null ? `${Math.round(groundspeed)}m/s` : "-"} </td>
           <td className="p-1">Batt Voltage</td>
-          <td className="p-1">{voltage || "Unknown"}v</td>
+          <td className="p-1">{voltage !== null ? `${Math.round(voltage)}v` : "-"}</td>
           <td className="p-1">Relative Alt</td>
-          <td className="p-1">{Math.round(weightedRelative || 0)}m</td>
+          <td className="p-1">{weightedRelative !== null ? `${Math.round(weightedRelative)}m` : "-"}</td>
         </tr>
 
         <tr>
@@ -92,14 +92,14 @@ export default function Telemetry() {
           <td className="p-1">GPS Fix Type</td>
           <td className={cn("p-1", gpsfixtype !== null ? gpsfixtype <= 1 ? "text-red-400" : gpsfixtype <= 3 ? "text-orange-400" : "text-green-400" : "text-red-400")}>{GpsFixType[gpsfixtype || 0]}</td>
           <td className="p-1">GPS Satellites</td>
-          <td className="p-1">{gpssatellites}</td>
+          <td className="p-1">{alt !== null ? Math.round(alt) : "-"}</td>
           <td className="p-1">GPS HDOP</td>
-          <td className="p-1">{hdop}</td>
+          <td className="p-1">{hdop !== null ? `${Math.round(hdop)}m` : "-"}</td>
         </tr>
 
         <tr>
           <td className="p-1">Battery remaining</td>
-          <td className="p-1">{batteryremaining}</td>
+          <td className="p-1">{batteryremaining !== null ? `${batteryremaining}s` : "-"}</td>
           <td className="p-1">Vehicle Mode</td>
           <td className="p-1">{CopterMode[mode || 0]}</td>
           <td className="p-1">Armed State:</td>
@@ -108,7 +108,7 @@ export default function Telemetry() {
 
         <tr>
           <td className="p-1">Climb</td>
-          <td className="p-1"><span className="inline">{ climb?.toFixed(2) || 0 }</span> {arrowName}</td>
+          <td className="p-1"><span className="inline">{climb !== null ? `${climb.toFixed(2)}m/s` : "-"}</span> {arrowName}</td>
         </tr>
       </table>
   </div>
