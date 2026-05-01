@@ -15,7 +15,7 @@ import type {
   ConnectionStats,
   ConnectionStatus
 } from '@libs/connection/types'
-import { Wifi, Usb, X, Circle } from 'lucide-react'
+import { Wifi, Usb, X, Circle, RefreshCw } from 'lucide-react'
 
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 
@@ -95,6 +95,10 @@ function ConnectionItem({ conn }: { conn: ConnectionStats }) {
 
 function AddConnectionForm() {
   const commandSender = useConnections((s) => s.commandSender)
+  const availableConnections = useConnections((s) => s.availableConnections)
+  const serialPorts = availableConnections.filter(
+    (c): c is SerialTransportConfig => c.type === 'serial'
+  )
 
   const [transportType, setTransportType] = useState<TransportType>('udp')
   const [host, setHost] = useState('0.0.0.0')
@@ -183,13 +187,37 @@ function AddConnectionForm() {
       ) : (
         <>
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-muted-foreground">Serial port</label>
-            <Input
-              value={serialPath}
-              onChange={(e) => setSerialPath(e.target.value)}
-              placeholder={'/dev/ttyUSB0'}
-              aria-invalid={!!errors.path}
-            />
+            <div className="flex items-center justify-between">
+              <label className="text-xs text-muted-foreground">Serial port</label>
+              <button
+                onClick={() => commandSender?.({ type: 'list' })}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Refresh ports"
+              >
+                <RefreshCw className="size-3" />
+              </button>
+            </div>
+            {serialPorts.length > 0 ? (
+              <Select value={serialPath} onValueChange={setSerialPath}>
+                <SelectTrigger className="w-full" aria-invalid={!!errors.path}>
+                  <SelectValue placeholder="Select a port" />
+                </SelectTrigger>
+                <SelectContent>
+                  {serialPorts.map((p) => (
+                    <SelectItem key={p.path} value={p.path}>
+                      {p.path}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input
+                value={serialPath}
+                onChange={(e) => setSerialPath(e.target.value)}
+                placeholder="/dev/ttyUSB0"
+                aria-invalid={!!errors.path}
+              />
+            )}
             {errors.path && <span className="text-xs text-destructive">{errors.path}</span>}
           </div>
           <div className="flex flex-col gap-1">

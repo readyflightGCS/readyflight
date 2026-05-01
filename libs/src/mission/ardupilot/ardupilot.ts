@@ -32,14 +32,18 @@ import { Mission } from "../mission"
 import { Heartbeat } from "./mavlink-assets/messages/heartbeat"
 import { useVehicle } from "@/stores/vehicle"
 import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
+import { MavLinkStreamParser } from "./mavlink-stream-parser"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
-// Stored at module scope so that handleTelemetryMessage (called on every
-// incoming frame) can respond to MISSION_REQUEST/MISSION_REQUEST_INT without
-// any extra wiring in the connection handler.
+// Stored at module scope so that processFrame (called on every incoming frame)
+// can respond to MISSION_REQUEST/MISSION_REQUEST_INT without any extra wiring.
 // ---------------------------------------------------------------------------
 let pendingUpload: MavCommand[] | null = null
+
+// Byte-stream framer shared across all transports. Works transparently for
+// UDP (each datagram is already a complete frame) and serial (arbitrary chunks).
+const streamParser = new MavLinkStreamParser()
 
 // Deduplication for React StrictMode / brief double-connection window.
 // Two WebSocket connections can race on the same MISSION_REQUEST packet (the
@@ -76,6 +80,162 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
 
 let heartbeatTimer = null
 let heartbeatTimeout = null
+
+function processFrame(
+  data: ArrayBuffer,
+  setVehicleState: (state: Partial<import("@libs/vehicle/state").VehicleState>) => void,
+  sendPacket: (buf: ArrayBuffer) => void
+): void {
+  const msg = decodePacket(data)
+  if (!msg) return
+
+  if (msg instanceof Heartbeat) {
+    if (heartbeatTimeout) {
+      clearTimeout(heartbeatTimeout)
+    }
+    heartbeatTimeout = setTimeout(() => {
+      console.log("No heartbeat, disconecting")
+      useVehicle.setState({ connected: false })
+      clearTimeout(heartbeatTimer)
+    }, 3000)
+    const connected = useVehicle.getState().connected
+    if (!connected) {
+      const cmd = new CommandLong(0, 0)
+      cmd.command = MavCmd.MAV_CMD_REQUEST_MESSAGE
+      cmd.param1 = 148
+      cmd.target_system = 1
+      cmd.target_component = 1
+      sendPacket(encodePacket(cmd))
+
+      const cmd2 = new RequestDataStream(0, 0)
+      cmd2.target_system = 1
+      cmd2.target_component = 1
+      cmd2.req_stream_id = 0
+      cmd2.start_stop = 1
+      cmd2.req_message_rate = 32
+      sendPacket(encodePacket(cmd2))
+
+      heartbeatTimer = setInterval(() => {
+        const cmd = new Heartbeat(0, 0)
+        sendPacket(encodePacket(cmd))
+      }, 1000)
+      useVehicle.setState({ connected: true })
+    }
+  } else if (msg instanceof GlobalPositionInt) {
+    setVehicleState({
+      alt: msg.alt / 1000,
+      heading: msg.hdg / 100,
+      lat: msg.lat / 10000000,
+      lon: msg.lon / 10000000,
+      relativeAlt: msg.relative_alt / 100
+    })
+  } else if (msg instanceof Attitude) {
+    setVehicleState({
+      roll: rad2deg(msg.roll),
+      pitch: rad2deg(msg.pitch),
+      yaw: rad2deg(msg.yaw),
+      pitchRate: msg.pitchspeed,
+      rollRate: msg.rollspeed,
+      yawRate: msg.yawspeed
+    })
+  } else if (msg instanceof GpsRawInt) {
+    setVehicleState({
+      gpsSatellites: msg.satellites_visible,
+      gpsFixType: msg.fix_type,
+      groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
+    })
+  } else if (msg instanceof BatteryStatus) {
+    setVehicleState({
+      batteryVoltage: msg.voltages / 1000,
+      batteryCurrent: msg.current_battery,
+      batteryRemaining: msg.battery_remaining,
+      batteryConsumedmAh: msg.current_consumed
+    })
+  } else if (msg instanceof VfrHud) {
+    setVehicleState({
+      airspeed: msg.airspeed,
+      climb: msg.climb,
+      groundspeed: msg.groundspeed,
+      throttle: msg.throttle
+    })
+  } else if (msg instanceof Wind) {
+    setVehicleState({
+      windDirection: msg.direction,
+      windHSpeed: msg.speed,
+      windZSpeed: msg.speed_z
+    })
+  } else if (msg instanceof AoaSsa) {
+    setVehicleState({
+      AOA: msg.AOA,
+      SSA: msg.SSA
+    })
+  } else if (msg instanceof MissionCurrent) {
+    setVehicleState({
+      missionId: msg.mission_id,
+      missionSeq: msg.seq,
+      missionMode: msg.mission_mode,
+      missionState: msg.mission_state,
+      missionTotal: msg.total
+    })
+  } else if (msg instanceof NavControllerOutput) {
+    setVehicleState({
+      altError: msg.alt_error,
+      aspdError: msg.aspd_error,
+      navBearing: msg.nav_bearing,
+      navPitch: msg.nav_pitch,
+      navRoll: msg.nav_roll,
+      targetBearing: msg.target_bearing,
+      wpDist: msg.wp_dist,
+      xtrackError: msg.xtrack_error
+    })
+  } else if (msg instanceof EkfStatusReport) {
+    setVehicleState({
+      airspeedVariance: msg.airspeed_variance,
+      compassVariance: msg.compass_variance,
+      posHorizVariance: msg.pos_horiz_variance,
+      posVertVariance: msg.pos_vert_variance,
+      velocityVariance: msg.velocity_variance
+    })
+  } else if (msg instanceof Statustext) {
+    console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
+
+    // ------------------------------------------------------------------
+    // Mission upload handshake — respond to both legacy MISSION_REQUEST
+    // and the preferred MISSION_REQUEST_INT with MISSION_ITEM_INT.
+    // Modern ArduPilot (4.x) always expects MISSION_ITEM_INT and will log
+    // a warning if it receives the float MISSION_ITEM variant.
+    // ------------------------------------------------------------------
+  } else if (msg instanceof MissionRequest || msg instanceof MissionRequestInt) {
+    if (!pendingUpload) return
+
+    const seq = msg.seq
+    const item = pendingUpload[seq]
+    if (!item) {
+      console.warn(`[mavlink] request for unknown seq ${seq} (upload has ${pendingUpload.length} items)`)
+      return
+    }
+
+    // Deduplicate: suppress the same seq if it arrives again within DEDUP_MS.
+    // This handles the React-StrictMode / double-connection case where the
+    // backend broadcasts one MISSION_REQUEST to two WebSocket clients and
+    // both would otherwise respond, causing INVALID_SEQUENCE on the vehicle.
+    const now = Date.now()
+    if (seq === dedupSeq && now - dedupTime < DEDUP_MS) return
+    dedupSeq = seq
+    dedupTime = now
+
+    console.log(`[mavlink] Sending MISSION_ITEM_INT seq=${seq}`)
+    sendPacket(encodePacket(buildMissionItemInt(item, seq)))
+
+  } else if (msg instanceof MissionAck) {
+    if (msg.type === 0 /* MAV_MISSION_ACCEPTED */) {
+      console.log('[mavlink] Mission upload accepted')
+    } else {
+      console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
+    }
+    resetUploadState()
+  }
+}
 
 export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   name: "mavlink-ardupilot",
@@ -145,157 +305,8 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   },
 
   handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
-    const msg = decodePacket(data)
-    if (!msg) return
-
-    if (msg instanceof Heartbeat) {
-      if (heartbeatTimeout) {
-        clearTimeout(heartbeatTimeout);
-      }
-      heartbeatTimeout = setTimeout(() => {
-        console.log("No heartbeat, disconecting");
-        useVehicle.setState({ connected: false })
-        clearTimeout(heartbeatTimer)
-      }, 3000);
-      const connected = useVehicle.getState().connected
-      if (!connected) {
-        const cmd = new CommandLong(0, 0)
-        cmd.command = MavCmd.MAV_CMD_REQUEST_MESSAGE
-        cmd.param1 = 148
-        cmd.target_system = 1
-        cmd.target_component = 1
-        sendPacket(encodePacket(cmd))
-
-        const cmd2 = new RequestDataStream(0, 0)
-        cmd2.target_system = 1
-        cmd2.target_component = 1
-        cmd2.req_stream_id = 0
-        cmd2.start_stop = 1
-        cmd2.req_message_rate = 32
-        sendPacket(encodePacket(cmd2))
-
-
-
-        heartbeatTimer = setInterval(() => {
-          const cmd = new Heartbeat(0, 0)
-          sendPacket(encodePacket(cmd))
-        }, 1000)
-        useVehicle.setState({ connected: true })
-
-      }
-    } else if (msg instanceof GlobalPositionInt) {
-      setVehicleState({
-        alt: msg.alt / 1000,
-        heading: msg.hdg / 100,
-        lat: msg.lat / 10000000,
-        lon: msg.lon / 10000000,
-        relativeAlt: msg.relative_alt / 100
-      })
-    } else if (msg instanceof Attitude) {
-      setVehicleState({
-        roll: rad2deg(msg.roll),
-        pitch: rad2deg(msg.pitch),
-        yaw: rad2deg(msg.yaw),
-        pitchRate: msg.pitchspeed,
-        rollRate: msg.rollspeed,
-        yawRate: msg.yawspeed
-      })
-    } else if (msg instanceof GpsRawInt) {
-      setVehicleState({
-        gpsSatellites: msg.satellites_visible,
-        gpsFixType: msg.fix_type,
-        groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
-      })
-    } else if (msg instanceof BatteryStatus) {
-      setVehicleState({
-        batteryVoltage: msg.voltages / 1000,
-        batteryCurrent: msg.current_battery,
-        batteryRemaining: msg.battery_remaining,
-        batteryConsumedmAh: msg.current_consumed
-      })
-    } else if (msg instanceof VfrHud) {
-      setVehicleState({
-        airspeed: msg.airspeed,
-        climb: msg.climb,
-        groundspeed: msg.groundspeed,
-        throttle: msg.throttle
-      })
-    } else if (msg instanceof Wind) {
-      setVehicleState({
-        windDirection: msg.direction,
-        windHSpeed: msg.speed,
-        windZSpeed: msg.speed_z
-      })
-    } else if (msg instanceof AoaSsa) {
-      setVehicleState({
-        AOA: msg.AOA,
-        SSA: msg.SSA
-      })
-    } else if (msg instanceof MissionCurrent) {
-      setVehicleState({
-        missionId: msg.mission_id,
-        missionSeq: msg.seq,
-        missionMode: msg.mission_mode,
-        missionState: msg.mission_state,
-        missionTotal: msg.total
-      })
-    } else if (msg instanceof NavControllerOutput) {
-      setVehicleState({
-        altError: msg.alt_error,
-        aspdError: msg.aspd_error,
-        navBearing: msg.nav_bearing,
-        navPitch: msg.nav_pitch,
-        navRoll: msg.nav_roll,
-        targetBearing: msg.target_bearing,
-        wpDist: msg.wp_dist,
-        xtrackError: msg.xtrack_error
-      })
-    } else if (msg instanceof EkfStatusReport) {
-      setVehicleState({
-        airspeedVariance: msg.airspeed_variance,
-        compassVariance: msg.compass_variance,
-        posHorizVariance: msg.pos_horiz_variance,
-        posVertVariance: msg.pos_vert_variance,
-        velocityVariance: msg.velocity_variance
-      })
-    } else if (msg instanceof Statustext) {
-      console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
-
-      // ------------------------------------------------------------------
-      // Mission upload handshake — respond to both legacy MISSION_REQUEST
-      // and the preferred MISSION_REQUEST_INT with MISSION_ITEM_INT.
-      // Modern ArduPilot (4.x) always expects MISSION_ITEM_INT and will log
-      // a warning if it receives the float MISSION_ITEM variant.
-      // ------------------------------------------------------------------
-    } else if (msg instanceof MissionRequest || msg instanceof MissionRequestInt) {
-      if (!pendingUpload) return
-
-      const seq = msg.seq
-      const item = pendingUpload[seq]
-      if (!item) {
-        console.warn(`[mavlink] request for unknown seq ${seq} (upload has ${pendingUpload.length} items)`)
-        return
-      }
-
-      // Deduplicate: suppress the same seq if it arrives again within DEDUP_MS.
-      // This handles the React-StrictMode / double-connection case where the
-      // backend broadcasts one MISSION_REQUEST to two WebSocket clients and
-      // both would otherwise respond, causing INVALID_SEQUENCE on the vehicle.
-      const now = Date.now()
-      if (seq === dedupSeq && now - dedupTime < DEDUP_MS) return
-      dedupSeq = seq
-      dedupTime = now
-
-      console.log(`[mavlink] Sending MISSION_ITEM_INT seq=${seq}`)
-      sendPacket(encodePacket(buildMissionItemInt(item, seq)))
-
-    } else if (msg instanceof MissionAck) {
-      if (msg.type === 0 /* MAV_MISSION_ACCEPTED */) {
-        console.log('[mavlink] Mission upload accepted')
-      } else {
-        console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
-      }
-      resetUploadState()
+    for (const frame of streamParser.feed(data)) {
+      processFrame(frame, setVehicleState, sendPacket)
     }
   },
 

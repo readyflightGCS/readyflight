@@ -6,11 +6,16 @@ import type { ConnectionMessage } from '@libs/connection/types'
 
 const isElectron = (window as any).env?.isElectron === true
 
-function base64ToArrayBuffer(b64: string): ArrayBuffer {
-  const raw = atob(b64)
-  const bytes = new Uint8Array(raw.length)
-  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
-  return bytes.buffer
+function base64ToUint8Array(b64: string): Uint8Array {
+  const binary = atob(b64)
+  const len = binary.length
+  const bytes = new Uint8Array(len)
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+
+  return bytes
 }
 
 function arrayBufferToBase64(buf: ArrayBuffer): string {
@@ -63,7 +68,7 @@ export default function ConnectionHandler() {
             break
           }
           case 'availableConnections': {
-            setAvailableConnections(msg.connections)
+            setAvailableConnections(msg.connections.flat())
             break
           }
           default: {
@@ -119,7 +124,9 @@ export default function ConnectionHandler() {
           return
         }
         if (msga.type === 'sendData') {
-          msg = { ...msga, payload: base64ToArrayBuffer(msga.payload) }
+          msg = {
+            ...msga, payload: base64ToUint8Array(msga.payload)
+          }
         } else {
           msg = msga
         }
@@ -134,8 +141,7 @@ export default function ConnectionHandler() {
             break
           }
           case 'availableConnections': {
-            console.log(msg.connections)
-            setAvailableConnections(msg.connections)
+            setAvailableConnections(msg.connections.flat())
             break
           }
           default: {
