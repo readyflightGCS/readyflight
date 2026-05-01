@@ -83,7 +83,7 @@ export default function Telemetry() {
             {/* <progress value={throttle || 0} max={100}>{throttle}</progress> */}
 
             <div className="w-full bg-neutral-quaternary rounded-full">
-              <div className="bg-violet-600 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center" style={{ width: `${throttle}%` }}> {throttle}%</div>
+              <div className="bg-violet-600 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center" style={{ width: `${throttle}%`, transition: `width 1s linear` }}> {throttle}%</div>
             </div>
           </td>
         </tr>
