@@ -64,7 +64,7 @@ export default function Telemetry() {
           <td className="p-1">Altitude</td>
           <td className="p-1">{Math.round(alt || 0)}m</td>
           <td className="p-1">Heading</td>
-          <td className="p-1">{Math.round(heading || 0)}&deg;</td>
+          <td className="p-1"><span className="inline">{Math.round(heading || 0)}&deg;</span><ArrowUp className="inline" style={{transform: `rotate(${Math.round(heading || 0)}deg)`, transition: `transform 0.5s ease`}}/></td>
         </tr>
 
         <tr>
