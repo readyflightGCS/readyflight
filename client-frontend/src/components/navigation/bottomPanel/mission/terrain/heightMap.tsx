@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import TerrainChart from './chart'
 import { Button } from '@/components/ui/button'
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { LatLng, LatLngAlt } from '@libs/world/latlng'
 import { useThrottle } from '@uidotdev/usehooks'
 import { filterLatLngAltCmds, getCommandLocationAlt } from '@libs/commands/helpers'

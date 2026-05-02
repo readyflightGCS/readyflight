@@ -1,7 +1,7 @@
 import type { LeafletMouseEvent } from 'leaflet'
 
-import { useEditor } from '@/stores/configurator'
-import { useMission } from '@/stores/mission'
+import { useEditor } from '@libs/stores/configurator'
+import { useMission } from '@libs/stores/mission'
 import { RFCommand } from '@libs/commands/command'
 
 export function useMapClickHandler() {

@@ -1,6 +1,6 @@
-import { useMission } from '@/stores/mission'
-import { useVehicle } from '@/stores/vehicle'
-import { useConnections } from '@/stores/connections'
+import { useMission } from '@libs/stores/mission'
+import { useVehicle } from '@libs/stores/vehicle'
+import { useConnections } from '@libs/stores/connections'
 import { useEffect, useRef } from 'react'
 import type { ConnectionMessage } from '@libs/connection/types'
 

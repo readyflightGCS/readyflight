@@ -1,8 +1,8 @@
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { filterLatLngCmds, getCommandLocation } from '@libs/commands/helpers'
 import { LayerGroup, Polygon } from 'react-leaflet'
 import DraggableMarker from '../draggableMarker'
-import { useRFMap } from '@/stores/map'
+import { useRFMap } from '@libs/stores/map'
 
 const fenceOptions = { color: 'red', fillOpacity: 0.1 }
 

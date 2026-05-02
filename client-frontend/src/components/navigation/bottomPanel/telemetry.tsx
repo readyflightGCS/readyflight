@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { useVehicle } from '@/stores/vehicle'
+import { useVehicle } from '@libs/stores/vehicle'
 import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 import { GpsFixType } from '@libs/mission/ardupilot/mavlink-assets/enums/gps-fix-type'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'

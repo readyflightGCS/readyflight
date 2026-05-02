@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, Route, Trash2 } from 'lucide-react'
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import ListItem from '@/components/ui/listItem'
 import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 import { getCommandLabel } from '@libs/commands/helpers'

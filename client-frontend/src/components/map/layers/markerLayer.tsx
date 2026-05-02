@@ -1,9 +1,9 @@
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { filterLatLngCmds, getCommandLocation } from '@libs/commands/helpers'
 import { LayerGroup } from 'react-leaflet'
 import DraggableMarker from '../draggableMarker'
 import GeofenceMarker from '../geofenceMarker'
-import { useRFMap } from '@/stores/map'
+import { useRFMap } from '@libs/stores/map'
 
 export default function MarkerLayer() {
   const { mission, setMission, selectedSubMission, dialect } = useMission()

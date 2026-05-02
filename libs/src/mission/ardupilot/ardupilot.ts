@@ -30,7 +30,7 @@ import { MavMissionType } from "./mavlink-assets/enums/mav-mission-type"
 import { makeCommand } from "@libs/commands/helpers"
 import { Mission } from "../mission"
 import { Heartbeat } from "./mavlink-assets/messages/heartbeat"
-import { useVehicle } from "@client-frontend/stores/vehicle"
+import { useVehicle } from "@libs/stores/vehicle"
 import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 import { MavLinkStreamParser } from "./mavlink-stream-parser"
 

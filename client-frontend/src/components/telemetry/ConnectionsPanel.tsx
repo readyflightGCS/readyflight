@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useConnections } from '@/stores/connections'
+import { useConnections } from '@libs/stores/connections'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {

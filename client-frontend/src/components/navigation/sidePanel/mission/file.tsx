@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Pencil } from 'lucide-react'
-import { useMission } from '@/stores/mission'
-import { useVehicle } from '@/stores/vehicle'
+import { useMission } from '@libs/stores/mission'
+import { useVehicle } from '@libs/stores/vehicle'
 
 export default function MissionFile() {
   const dialect = useMission((s) => s.dialect)

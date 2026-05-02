@@ -1,4 +1,4 @@
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { filterLatLngCmds, getCommandLocation } from '@libs/commands/helpers'
 import { avgLatLng } from '@libs/world/latlng'
 import {

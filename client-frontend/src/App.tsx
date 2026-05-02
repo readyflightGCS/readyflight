@@ -2,7 +2,7 @@ import Map from './components/map/map'
 import SideBar from '@/components/navigation/sidebar'
 import SidePanel from './components/navigation/sidePanel/sidePanel'
 import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
-import { useEditor } from '@/stores/configurator'
+import { useEditor } from '@libs/stores/configurator'
 import ConnectionHandler from './components/telemetry/connectionHandler'
 
 export default function App(): React.JSX.Element {

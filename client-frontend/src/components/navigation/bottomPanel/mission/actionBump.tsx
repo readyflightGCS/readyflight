@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { RFCommandDescription } from '@libs/commands/readyflightCommands'
 import { CommandDescription, MissionCommand } from '@libs/commands/command'
 import { coerceCommand } from '@libs/commands/helpers'

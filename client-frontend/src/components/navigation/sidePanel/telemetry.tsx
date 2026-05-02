@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { useVehicle } from '@/stores/vehicle'
+import { useVehicle } from '@libs/stores/vehicle'
 import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 import ConnectionsPanel from '@/components/telemetry/ConnectionsPanel'
 import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'

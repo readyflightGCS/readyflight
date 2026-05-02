@@ -3,7 +3,7 @@ import MissionFile from './file'
 import MissionDialog from '@/components/dialogs/mission/settings'
 import SidePanelSection from '@/components/ui/sidePanelSection'
 import SubMissionList from './subMissionList'
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 
 export default function Mission() {
   const selectedSubMission = useMission((s) => s.selectedSubMission)

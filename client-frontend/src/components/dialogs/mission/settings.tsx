@@ -1,4 +1,4 @@
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,

@@ -1,4 +1,4 @@
-import { useEditor } from '@/stores/configurator'
+import { useEditor } from '@libs/stores/configurator'
 import Settings from './settings'
 import Telemetry from './telemetry'
 import Mission from './mission'
