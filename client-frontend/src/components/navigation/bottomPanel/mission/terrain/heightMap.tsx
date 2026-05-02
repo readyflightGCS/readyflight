@@ -78,7 +78,7 @@ export default function HeightMap() {
   const totalDistance = waypointCumulativeDistances[waypointCumulativeDistances.length - 1]
 
   // Generate interpolated path using the extracted function
-  locations = generateInterpolatedPath(wpsLocs, totalDistance)
+  locations = generateInterpolatedPath(wpsLocs, totalDistance || 0)
 
   // Calculate terrain distances (cumulative distances along the fetched terrain path)
   const currentTerrainDistances = calculateCumulativeDistances(terrainData)

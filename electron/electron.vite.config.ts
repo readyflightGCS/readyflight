@@ -13,10 +13,7 @@ export default defineConfig({
       },
       rollupOptions: {
         // Keep native modules out of the bundle so Electron can load their .node binaries
-        external: [
-          'serialport',
-          '@serialport/bindings-cpp'
-        ]
+        external: ['serialport', '@serialport/bindings-cpp']
       }
     },
     resolve: {

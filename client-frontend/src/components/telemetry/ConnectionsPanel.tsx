@@ -213,7 +213,10 @@ function AddConnectionForm() {
               </SelectTrigger>
               <SelectContent>
                 {BAUD_PRESETS.map((b) => (
-                  <SelectItem key={b} value={String(b)}> {b}</SelectItem>
+                  <SelectItem key={b} value={String(b)}>
+                    {' '}
+                    {b}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

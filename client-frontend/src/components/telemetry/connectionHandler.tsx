@@ -4,6 +4,7 @@ import { useConnections } from '@/stores/connections'
 import { useEffect, useRef } from 'react'
 import type { ConnectionMessage } from '@libs/connection/types'
 
+//@ts-ignore - This is to make electron happy
 const isElectron = (window as any).env?.isElectron === true
 
 function base64ToUint8Array(b64: string): Uint8Array {
@@ -33,7 +34,7 @@ export default function ConnectionHandler() {
   const reconnectTimeout = useRef<number | null>(null)
 
   useEffect(() => {
-    console.log("called")
+    console.log('called')
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
 
