@@ -39,19 +39,20 @@ export class WebSocketHostAdapter implements IHostAdapter {
 
       // on recieve message from client-frontend
       ws.on('message', (data) => {
+        let data_str = ''
         // convert the raw string to a ConnectionCommand (TODO, maybe use zod)
         if (typeof data !== 'string') {
-          data = data.toString()
+          data_str = data.toString()
         }
 
         let msg: ConnectionCommand
 
         try {
-          const parsed = JSON.parse(data)
+          const parsed = JSON.parse(data_str)
           if (parsed.type === 'sendData') {
             msg = {
               ...parsed,
-              payload: fromBase64(parsed.payload),
+              payload: fromBase64(parsed.payload)
             }
           } else {
             msg = { ...parsed }

@@ -68,7 +68,6 @@ export class SerialTransportAdapter implements ITransportAdapter<SerialTransport
     const parser = new FixedChunkParser(30)
     sp.pipe(parser)
     parser.on('data', (packet: Buffer) => {
-      console.log(packet)
       this.dataHandlers.forEach(h => h(new Uint8Array(packet)))
     })
 

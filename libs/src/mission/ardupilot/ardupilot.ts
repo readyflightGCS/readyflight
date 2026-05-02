@@ -78,8 +78,8 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
   return msg
 }
 
-let heartbeatTimer = null
-let heartbeatTimeout = null
+let heartbeatTimer: ReturnType<typeof setTimeout> | null = null
+let heartbeatTimeout: ReturnType<typeof setInterval> | null = null
 
 function processFrame(
   data: ArrayBuffer,
@@ -96,7 +96,9 @@ function processFrame(
     heartbeatTimeout = setTimeout(() => {
       console.log("No heartbeat, disconecting")
       useVehicle.setState({ connected: false })
-      clearTimeout(heartbeatTimer)
+      if (heartbeatTimer !== null) {
+        clearTimeout(heartbeatTimer)
+      }
     }, 3000)
     const connected = useVehicle.getState().connected
     if (!connected) {

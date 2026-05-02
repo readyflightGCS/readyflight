@@ -125,7 +125,8 @@ export default function ConnectionHandler() {
         }
         if (msga.type === 'sendData') {
           msg = {
-            ...msga, payload: base64ToUint8Array(msga.payload)
+            ...msga,
+            payload: base64ToUint8Array(msga.payload)
           }
         } else {
           msg = msga
