@@ -53,17 +53,25 @@ export default function HeightMap() {
   const wps = mission.flatten(selectedSubMission)
   const wpsLocs = wps.map((x) => getCommandLocationAlt(x, dialect)).filter((x) => x !== undefined)
 
-  let locations: LatLng[] = []
-
   // Get new terrain data throttled
   useEffect(() => {
-    if (wps.length < 2) return
+    const throttledWps = throttledValue.flatten(selectedSubMission)
+    const throttledWpsLocs = throttledWps
+      .map((x) => getCommandLocationAlt(x, dialect))
+      .filter((x) => x !== undefined)
+
+    if (throttledWpsLocs.length < 2) return
+
+    const waypointCumulativeDistances = calculateCumulativeDistances(throttledWpsLocs)
+    const totalDistance = waypointCumulativeDistances[waypointCumulativeDistances.length - 1] ?? 0
+    const locations: LatLng[] = generateInterpolatedPath(throttledWpsLocs, totalDistance)
+
     getTerrain(locations).then((data) => {
       if (data) {
         setTerrainData(data)
       }
     })
-  }, [throttledValue])
+  }, [dialect, selectedSubMission, throttledValue])
 
   if (wps.length < 2) {
     return (
@@ -75,10 +83,6 @@ export default function HeightMap() {
 
   // Calculate cumulative distances using the extracted function
   const waypointCumulativeDistances = calculateCumulativeDistances(wpsLocs)
-  const totalDistance = waypointCumulativeDistances[waypointCumulativeDistances.length - 1]
-
-  // Generate interpolated path using the extracted function
-  locations = generateInterpolatedPath(wpsLocs, totalDistance || 0)
 
   // Calculate terrain distances (cumulative distances along the fetched terrain path)
   const currentTerrainDistances = calculateCumulativeDistances(terrainData)

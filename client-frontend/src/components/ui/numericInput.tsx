@@ -24,9 +24,7 @@ export default function NumericInput({
   const [startValue, setStartValue] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    setInternalValue(externalValue)
-  }, [externalValue])
+  const displayValue = externalValue ?? internalValue
 
   const handleMouseUp = useCallback(() => {
     if (isDragging) {
@@ -75,7 +73,7 @@ export default function NumericInput({
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true)
     setStartPos({ x: e.clientX, y: e.clientY })
-    setStartValue(internalValue || 0)
+    setStartValue(displayValue || 0)
     document.body.style.cursor = 'move'
   }
 
@@ -93,7 +91,7 @@ export default function NumericInput({
   }
 
   const handleBlur = () => {
-    if (internalValue === null) {
+    if (displayValue === null) {
       const defaultValue = 0
       setInternalValue(defaultValue)
       onChange?.({
@@ -109,9 +107,9 @@ export default function NumericInput({
     <div className="relative inline-block">
       <input
         ref={inputRef}
-        type={internalValue === null ? 'text' : 'number'}
+        type={displayValue === null ? 'text' : 'number'}
         name={name}
-        value={internalValue === null ? '--' : internalValue}
+        value={displayValue === null ? '--' : displayValue}
         onChange={handleInputChange}
         onMouseDown={handleMouseDown}
         onBlur={handleBlur}
@@ -120,7 +118,7 @@ export default function NumericInput({
         className={cn(
           `bg-card rounded-lg pl-2 border-2 cursor-move text-black text-sm h-8`,
           className,
-          internalValue === null ? 'text-center' : ''
+          displayValue === null ? 'text-center' : ''
         )}
       />
       {isDragging && <div className="fixed inset-0 z-50 cursor-move" />}

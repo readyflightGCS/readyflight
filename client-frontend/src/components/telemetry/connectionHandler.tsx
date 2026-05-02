@@ -4,8 +4,8 @@ import { useConnections } from '@/stores/connections'
 import { useEffect, useRef } from 'react'
 import type { ConnectionMessage } from '@libs/connection/types'
 
-//@ts-ignore - This is to make electron happy
-const isElectron = (window as any).env?.isElectron === true
+const isElectron =
+  (window as unknown as { env?: { isElectron?: boolean } }).env?.isElectron === true
 
 function base64ToUint8Array(b64: string): Uint8Array {
   const binary = atob(b64)
@@ -84,6 +84,7 @@ export default function ConnectionHandler() {
     // WebSocket mode (web build)
     const connect = () => {
       const ws = new WebSocket('ws://localhost:9999')
+      wsRef.current = ws
 
       const sendPacket = (buf: ArrayBuffer) => {
         if (ws.readyState !== WebSocket.OPEN) return
@@ -174,7 +175,9 @@ export default function ConnectionHandler() {
 
     return () => {
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
-      wsRef.current?.close()
+      const ws = wsRef.current
+      wsRef.current = null
+      ws?.close()
     }
   }, [dialect, setVehicleState, setConnection, setCommandSender, setAvailableConnections])
 
