@@ -131,7 +131,7 @@ export default function Telemetry() {
                   : 'text-red-400'
               )}
             >
-              {GpsFixType[gpsfixtype || 0]}
+              {gpsfixtype !== null ? GpsFixType[gpsfixtype].replace(/GPS_FIX_TYPE_/, "") : "Unknown"}
             </td>
             <td className="p-1">GPS Satellites</td>
             <td className="p-1">{alt !== null ? Math.round(alt) : '-'}</td>
