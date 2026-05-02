@@ -75,7 +75,7 @@ export default function Telemetry() {
             <td className="p-1">Airspeed</td>
             <td className="p-1">{airspeed !== null ? `${Math.round(airspeed)}m/s` : '-'}</td>
             <td className="p-1">Altitude</td>
-            <td className="p-1">{alt !== null ? `${Math.round(alt)}m/s` : '-'}</td>
+            <td className="p-1">{alt !== null ? `${Math.round(alt)}m` : '-'}</td>
             <td className="p-1">Heading</td>
             <td className="p-1">
               <span className="inline">{heading !== null ? Math.round(heading) : '-'}&deg;</span>
