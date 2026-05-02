@@ -3,6 +3,7 @@ import Settings from './settings'
 import Telemetry from './telemetry'
 import Mission from './mission'
 import MissionActionBump from './mission/actionBump'
+import TelemetryActionBump from './telemetry/actionBump'
 export default function BottomPanel() {
   const currentTab = useEditor((state) => state.currentTab)
 
@@ -17,7 +18,7 @@ export default function BottomPanel() {
                 <svg height="32" width="43">
                   <path d=" M 43 0 C 27 0, 16 32, 0 32 L 43 32 Z " fill="var(--background)" />
                 </svg>
-                <div className="h-[32px] bg-card px-2 flex items-center">
+                <div className="h-[32px] bg-background px-2 flex items-center">
                   <MissionActionBump />
                 </div>
                 <svg height="32" width="43">
@@ -26,7 +27,21 @@ export default function BottomPanel() {
               </div>
             )
           }
-          case 'Telemetry':
+          case 'Telemetry':{
+            return (
+              <div className="flex justify-center">
+                <svg height="32" width="43">
+                  <path d=" M 43 0 C 27 0, 16 32, 0 32 L 43 32 Z " fill="var(--background)" />
+                </svg>
+                <div className="h-[32px] bg-background px-2 flex items-center">
+                  <TelemetryActionBump />
+                </div>
+                <svg height="32" width="43">
+                  <path d="M 0 0 C 16 0, 27 32, 43 32 L 0 32 Z " fill="var(--background)" />
+                </svg>
+              </div>
+            )
+          }
           case 'Settings': {
             return null
           }
