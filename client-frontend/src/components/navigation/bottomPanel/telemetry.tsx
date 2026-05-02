@@ -28,7 +28,6 @@ export default function Telemetry() {
     v.throttle,
     v.relativeAlt,
     v.gpsFixType,
-    v.gpsSatellites,
     v.hdop,
     v.batteryRemaining,
     v.mode,
