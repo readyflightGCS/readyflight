@@ -52,7 +52,7 @@ export default function Telemetry() {
   let arrowName
 
   if (climb) {
-    const roundedClimb = Math.round(climb)
+    const roundedClimb = parseFloat(climb.toFixed(2))
 
     if (roundedClimb === 0) {
       arrowName = <Minus className="inline" />
