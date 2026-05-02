@@ -31,9 +31,9 @@ export default function ConnectionHandler() {
 
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeout = useRef<number | null>(null)
-  const reconnectDelay = useRef(1000)
 
   useEffect(() => {
+    console.log("called")
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
 
@@ -96,7 +96,6 @@ export default function ConnectionHandler() {
 
       ws.onopen = () => {
         console.log('[ws] connected to backend')
-        reconnectDelay.current = 1000
         setVehicleState({
           sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
           sendPacket
@@ -150,21 +149,24 @@ export default function ConnectionHandler() {
         scheduleReconnect()
         setCommandSender(null)
         setVehicleState({ sendMessage: null, sendPacket: null })
+        setAvailableConnections([])
       }
 
       ws.onerror = () => {
         ws.close()
+        console.log('[ws] error; reconnecting …')
+        scheduleReconnect()
         setCommandSender(null)
         setVehicleState({ sendMessage: null, sendPacket: null })
+        setAvailableConnections([])
       }
     }
 
     const scheduleReconnect = () => {
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
       reconnectTimeout.current = window.setTimeout(() => {
-        reconnectDelay.current = Math.min(reconnectDelay.current * 2, 1000)
         connect()
-      }, reconnectDelay.current)
+      }, 1000)
     }
 
     connect()

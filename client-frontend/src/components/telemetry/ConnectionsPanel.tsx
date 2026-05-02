@@ -16,10 +16,11 @@ import type {
   ConnectionStatus
 } from '@libs/connection/types'
 import { Wifi, Usb, X, Circle, RefreshCw } from 'lucide-react'
+import SidePanelSection from '../ui/sidePanelSection'
+import { Tabs, TabsContent } from '@radix-ui/react-tabs'
+import { TabsList, TabsTrigger } from '../ui/tabs'
 
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
-
-type TransportType = 'udp' | 'serial'
 
 interface FormErrors {
   host?: string
@@ -51,13 +52,13 @@ function formatAge(ts: number | null): string {
   return `${Math.floor(s / 60)}m ago`
 }
 
-function ConnectionItem({ conn }: { conn: ConnectionStats }) {
+function ActiveConnection({ conn }: { conn: ConnectionStats }) {
   const commandSender = useConnections((s) => s.commandSender)
 
   const remove = () => commandSender?.({ type: 'disconnect' })
 
   return (
-    <div className="flex flex-col gap-1 rounded-md border bg-background p-2 text-sm">
+    <SidePanelSection>
       <div className="flex items-center gap-2">
         <StatusDot status={conn.status} />
         <span className="flex-1 truncate font-medium">{conn.type}</span>
@@ -89,7 +90,7 @@ function ConnectionItem({ conn }: { conn: ConnectionStats }) {
           </>
         )}
       </div>
-    </div>
+    </SidePanelSection>
   )
 }
 
@@ -100,7 +101,7 @@ function AddConnectionForm() {
     (c): c is SerialTransportConfig => c.type === 'serial'
   )
 
-  const [transportType, setTransportType] = useState<TransportType>('udp')
+  const [transportType, setTransportType] = useState('udp')
   const [host, setHost] = useState('0.0.0.0')
   const [port, setPort] = useState('14550')
   const [serialPath, setSerialPath] = useState('')
@@ -138,30 +139,15 @@ function AddConnectionForm() {
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border bg-background p-2 text-sm">
+    <>
       <p className="font-medium">Add Connection</p>
 
-      <div className="flex gap-1">
-        {(['udp', 'serial'] as TransportType[]).map((t) => (
-          <button
-            key={t}
-            onClick={() => {
-              setTransportType(t)
-              setErrors({})
-            }}
-            className={`flex-1 rounded py-1 text-xs font-medium transition-colors ${
-              transportType === t
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
-            }`}
-          >
-            {t.toUpperCase()}
-          </button>
-        ))}
-      </div>
-
-      {transportType === 'udp' ? (
-        <>
+      <Tabs value={transportType} onValueChange={setTransportType}>
+        <TabsList className="w-full">
+          <TabsTrigger value="udp">UDP</TabsTrigger>
+          <TabsTrigger value="serial">Serial</TabsTrigger>
+        </TabsList>
+        <TabsContent value="udp">
           <div className="flex flex-col gap-1">
             <label className="text-xs text-muted-foreground">Bind address</label>
             <Input
@@ -183,9 +169,8 @@ function AddConnectionForm() {
             />
             {errors.port && <span className="text-xs text-destructive">{errors.port}</span>}
           </div>
-        </>
-      ) : (
-        <>
+        </TabsContent>
+        <TabsContent value="serial">
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <label className="text-xs text-muted-foreground">Serial port</label>
@@ -228,36 +213,39 @@ function AddConnectionForm() {
               </SelectTrigger>
               <SelectContent>
                 {BAUD_PRESETS.map((b) => (
-                  <SelectItem key={b} value={String(b)}>
-                    {b.toLocaleString()}
-                  </SelectItem>
+                  <SelectItem key={b} value={String(b)}> {b}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {errors.baudRate && <span className="text-xs text-destructive">{errors.baudRate}</span>}
           </div>
-        </>
-      )}
-
+        </TabsContent>
+      </Tabs>
       <div className="flex gap-2">
         <Button size="sm" onClick={submit} className="flex-1">
           Connect
         </Button>
       </div>
-    </div>
+    </>
   )
 }
 
 export default function ConnectionsPanel() {
   const connection = useConnections((s) => s.connectionStats)
+  const availableConnections = useConnections((s) => s.availableConnections)
+
+  if (availableConnections.length === 0) {
+    return (
+      <SidePanelSection>
+        <div className="h-full text-center font-medium">No Available Connections</div>
+        <div className="h-full text-center text-xs">Backend not connected, retrying...</div>
+      </SidePanelSection>
+    )
+  }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Connections</h3>
-      </div>
-
-      {connection.type !== null ? <ConnectionItem conn={connection} /> : <AddConnectionForm />}
-    </div>
+    <SidePanelSection>
+      {connection.type === null ? <AddConnectionForm /> : <ActiveConnection conn={connection} />}
+    </SidePanelSection>
   )
 }
