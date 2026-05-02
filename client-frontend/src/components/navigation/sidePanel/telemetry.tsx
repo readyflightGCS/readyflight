@@ -2,14 +2,13 @@ import { Button } from '@/components/ui/button'
 import { useVehicle } from '@/stores/vehicle'
 import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 import ConnectionsPanel from '@/components/telemetry/ConnectionsPanel'
+import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
+import { BicepsFlexed } from 'lucide-react'
 
 export default function Telemetry() {
-  const [connected, alt, lat, lon, heading, sendMessage] = useVehicle((v) => [
+  const [connected, isArmed, sendMessage] = useVehicle((v) => [
     v.connected,
-    v.alt,
-    v.lat,
-    v.lon,
-    v.heading,
+    v.isArmed,
     v.sendMessage
   ])
   return (
@@ -18,21 +17,17 @@ export default function Telemetry() {
 
       <div className="flex flex-col gap-1">
         <div>{connected ? 'UAV Connected' : 'UAV Not Connected'}</div>
-        <div>Altitude {alt}</div>
-        <div>Latitude {lat}</div>
-        <div>Longitude {lon}</div>
-        <div>Heading {heading}</div>
       </div>
 
       <div className="flex flex-col gap-1">
-        <Button onClick={() => sendMessage?.({ type: 'arm' })}>Arm</Button>
-        <Button onClick={() => sendMessage?.({ type: 'disarm' })}>Disarm</Button>
+        <Button disabled={isArmed !== null ? isArmed ? true : false: false} className={isArmed !== null ? isArmed? "text-red-400" : "" : ""} onClick={() => sendMessage?.({ type: 'arm' })}><BicepsFlexed/> Arm</Button>
+        <Button disabled={isArmed !== null ? isArmed ? false : true: false} className={isArmed !== null ? isArmed? "" : "text-green-400" : ""} onClick={() => sendMessage?.({ type: 'disarm' })}>Disarm</Button>
         <Button
           onClick={() => sendMessage?.({ type: 'setMode', mode: PlaneMode.PLANE_MODE_GUIDED })}
         >
           Guided
         </Button>
-        <Button onClick={() => sendMessage?.({ type: 'setMode', mode: PlaneMode.PLANE_MODE_AUTO })}>
+        <Button onClick={() => sendMessage?.({ type: 'setMode', mode: CopterMode.COPTER_MODE_AUTO })}>
           Auto
         </Button>
         <Button

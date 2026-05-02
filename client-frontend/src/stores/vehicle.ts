@@ -10,6 +10,8 @@ type Actions = {
 
 const initialState: VehicleState = {
   connected: false,
+  mode: null,
+  isArmed: null,
   lat: null,
   lon: null,
   alt: null, // MSL altitude in metres
@@ -31,6 +33,7 @@ const initialState: VehicleState = {
   groundspeed: null, // m/s
   gpsSatellites: null,
   gpsFixType: null,
+  hdop: null,
   windDirection: null,
   windHSpeed: null,
   windZSpeed: null,

@@ -91,16 +91,22 @@ function processFrame(
 
   if (msg instanceof Heartbeat) {
     if (heartbeatTimeout) {
-      clearTimeout(heartbeatTimeout)
+      clearTimeout(heartbeatTimeout);
     }
     heartbeatTimeout = setTimeout(() => {
-      console.log("No heartbeat, disconecting")
+      console.log("No heartbeat, disconecting");
       useVehicle.setState({ connected: false })
-      if (heartbeatTimer !== null) {
-        clearTimeout(heartbeatTimer)
-      }
-    }, 3000)
+      clearTimeout(heartbeatTimer)
+    }, 3000);
     const connected = useVehicle.getState().connected
+
+    const isArmed = (msg.base_mode & MavModeFlag.MAV_MODE_FLAG_SAFETY_ARMED) !== 0;
+
+    setVehicleState({
+      mode: msg.custom_mode,
+      isArmed: isArmed
+    })
+
     if (!connected) {
       const cmd = new CommandLong(0, 0)
       cmd.command = MavCmd.MAV_CMD_REQUEST_MESSAGE
@@ -116,6 +122,8 @@ function processFrame(
       cmd2.start_stop = 1
       cmd2.req_message_rate = 32
       sendPacket(encodePacket(cmd2))
+
+
 
       heartbeatTimer = setInterval(() => {
         const cmd = new Heartbeat(0, 0)
@@ -145,13 +153,14 @@ function processFrame(
       gpsSatellites: msg.satellites_visible,
       gpsFixType: msg.fix_type,
       groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
+      hdop: msg.eph
     })
   } else if (msg instanceof BatteryStatus) {
     setVehicleState({
       batteryVoltage: msg.voltages / 1000,
       batteryCurrent: msg.current_battery,
-      batteryRemaining: msg.battery_remaining,
-      batteryConsumedmAh: msg.current_consumed
+      batteryRemaining: msg.time_remaining,
+      batteryConsumedmAh: msg.current_consumed,
     })
   } else if (msg instanceof VfrHud) {
     setVehicleState({
@@ -236,6 +245,8 @@ function processFrame(
       console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
     }
     resetUploadState()
+  } else {
+    console.log(msg);
   }
 }
 
