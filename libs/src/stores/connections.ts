@@ -1,9 +1,5 @@
 import { create } from 'zustand'
-import type {
-  ConnectionCommand,
-  ConnectionStats,
-  TransportConfig
-} from '@libs/connection/types'
+import type { ConnectionCommand, ConnectionStats, TransportConfig } from '@libs/connection/types'
 
 interface ConnectionsState {
   connectionStats: ConnectionStats

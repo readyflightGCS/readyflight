@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { useVehicle } from '@/stores/vehicle'
+import { useVehicle } from '@libs/stores/vehicle'
 import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 import ConnectionsPanel from '@/components/telemetry/ConnectionsPanel'
 import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
@@ -20,14 +20,28 @@ export default function Telemetry() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <Button disabled={isArmed !== null ? isArmed ? true : false: false} className={isArmed !== null ? isArmed? "text-red-400" : "" : ""} onClick={() => sendMessage?.({ type: 'arm' })}><BicepsFlexed/> Arm</Button>
-        <Button disabled={isArmed !== null ? isArmed ? false : true: false} className={isArmed !== null ? isArmed? "" : "text-green-400" : ""} onClick={() => sendMessage?.({ type: 'disarm' })}>Disarm</Button>
+        <Button
+          disabled={isArmed !== null ? (isArmed ? true : false) : false}
+          className={isArmed !== null ? (isArmed ? 'text-red-400' : '') : ''}
+          onClick={() => sendMessage?.({ type: 'arm' })}
+        >
+          <BicepsFlexed /> Arm
+        </Button>
+        <Button
+          disabled={isArmed !== null ? (isArmed ? false : true) : false}
+          className={isArmed !== null ? (isArmed ? '' : 'text-green-400') : ''}
+          onClick={() => sendMessage?.({ type: 'disarm' })}
+        >
+          Disarm
+        </Button>
         <Button
           onClick={() => sendMessage?.({ type: 'setMode', mode: PlaneMode.PLANE_MODE_GUIDED })}
         >
           Guided
         </Button>
-        <Button onClick={() => sendMessage?.({ type: 'setMode', mode: CopterMode.COPTER_MODE_AUTO })}>
+        <Button
+          onClick={() => sendMessage?.({ type: 'setMode', mode: CopterMode.COPTER_MODE_AUTO })}
+        >
           Auto
         </Button>
         <Button

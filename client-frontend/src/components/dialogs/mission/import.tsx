@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { Separator } from '@/components/ui/separator'
 import { useState } from 'react'
 import { LoaderCircle } from 'lucide-react'

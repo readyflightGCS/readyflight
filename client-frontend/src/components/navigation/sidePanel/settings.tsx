@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { useThemeStore } from '@/stores/theme'
+import { useThemeStore } from '@libs/stores/theme'
 import { Moon, Sun } from 'lucide-react'
 
 const isElectron = window.env?.isElectron === true

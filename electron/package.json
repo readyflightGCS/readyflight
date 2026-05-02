@@ -8,19 +8,21 @@
   "scripts": {
     "dev": "electron-vite dev -c electron.vite.config.ts",
     "build": "electron-vite build -c electron.vite.config.ts",
+    "rebuild:native": "electron-rebuild -f -w serialport",
     "preview": "electron-vite preview -c electron.vite.config.ts",
-    "build:unpack": "bun run build && electron-builder --config electron-builder.yml --dir",
-    "build:win": "bun run build && electron-builder --config electron-builder.yml --win",
-    "build:mac": "bun run build && electron-builder --config electron-builder.yml --mac",
-    "build:linux": "bun run build && electron-builder --config electron-builder.yml --linux"
+    "build:unpack": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --dir",
+    "build:win": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --win",
+    "build:mac": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --mac",
+    "build:linux": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --linux"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
-    "@electron-toolkit/utils": "^4.0.0",
     "@electron-toolkit/tsconfig": "^2.0.0",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@electron/rebuild": "^4.0.4",
     "electron-updater": "^6.6.2",
     "electron-vite": "^4.0.1",
-    "serialport": "^12.0.0"
+    "serialport": "^13.0.0"
   },
   "devDependencies": {
     "electron": "38.2.2",
@@ -32,4 +34,3 @@
     "@vitejs/plugin-react": "^5.0.4"
   }
 }
-

@@ -18,15 +18,25 @@ export default function NumericInput({
   min = -Infinity,
   max = Infinity
 }: NumericInputProps) {
-  const [internalValue, setInternalValue] = useState<number | null>(externalValue)
+  const [textValue, setTextValue] = useState<string>(
+    externalValue === null ? '' : String(externalValue)
+  )
   const [isDragging, setIsDragging] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [startPos, setStartPos] = useState({ x: 0, y: 0 })
   const [startValue, setStartValue] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // Keep the editable buffer in sync with the external value when the user
+  // isn't actively editing/dragging. Do it asynchronously to avoid the
+  // "setState-in-effect" lint that warns about cascading renders.
   useEffect(() => {
-    setInternalValue(externalValue)
-  }, [externalValue])
+    if (isEditing || isDragging) return
+    const id = window.setTimeout(() => {
+      setTextValue(externalValue === null ? '' : String(externalValue))
+    }, 0)
+    return () => window.clearTimeout(id)
+  }, [externalValue, isDragging, isEditing])
 
   const handleMouseUp = useCallback(() => {
     if (isDragging) {
@@ -34,6 +44,15 @@ export default function NumericInput({
       document.body.style.cursor = 'default'
     }
   }, [isDragging])
+
+  const clamp = useCallback(
+    (n: number) => {
+      const lo = min ?? -Infinity
+      const hi = max ?? Infinity
+      return Math.min(Math.max(lo, n), hi)
+    },
+    [min, max]
+  )
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
@@ -45,12 +64,8 @@ export default function NumericInput({
 
       const currentValue = startValue || 0
 
-      const newValue = Math.min(
-        Math.max(min !== null ? min : -Infinity, currentValue + Math.round(delta / 2)),
-        max !== null ? max : Infinity
-      )
-
-      setInternalValue(newValue)
+      const newValue = clamp(currentValue + Math.round(delta / 2))
+      setTextValue(String(newValue))
       onChange?.({
         target: {
           name: name,
@@ -58,7 +73,7 @@ export default function NumericInput({
         }
       })
     },
-    [isDragging, startPos, startValue, min, max, name, onChange]
+    [isDragging, startPos, startValue, clamp, name, onChange]
   )
 
   useEffect(() => {
@@ -75,52 +90,63 @@ export default function NumericInput({
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true)
     setStartPos({ x: e.clientX, y: e.clientY })
-    setStartValue(internalValue || 0)
+    const parsed = Number(textValue)
+    setStartValue(Number.isFinite(parsed) ? parsed : 0)
     document.body.style.cursor = 'move'
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value === '' ? null : Number(e.target.value)
-    setInternalValue(newValue)
-    if (newValue !== null) {
-      onChange?.({
-        target: {
-          name,
-          value: Math.max(0, newValue)
-        }
-      })
+    const nextText = e.target.value
+    setTextValue(nextText)
+
+    // While blank, the internal value should be zero.
+    if (nextText.trim() === '') {
+      onChange?.({ target: { name, value: 0 } })
+      return
     }
+
+    const parsed = Number(nextText)
+    if (!Number.isFinite(parsed)) return
+    onChange?.({ target: { name, value: clamp(parsed) } })
   }
 
   const handleBlur = () => {
-    if (internalValue === null) {
-      const defaultValue = 0
-      setInternalValue(defaultValue)
-      onChange?.({
-        target: {
-          name,
-          value: defaultValue
-        }
-      })
+    setIsEditing(false)
+    if (textValue.trim() === '') {
+      setTextValue('0')
+      onChange?.({ target: { name, value: 0 } })
+      return
     }
+
+    const parsed = Number(textValue)
+    if (!Number.isFinite(parsed)) {
+      setTextValue('0')
+      onChange?.({ target: { name, value: 0 } })
+      return
+    }
+
+    const clamped = clamp(parsed)
+    setTextValue(String(clamped))
+    onChange?.({ target: { name, value: clamped } })
   }
 
   return (
     <div className="relative inline-block">
       <input
         ref={inputRef}
-        type={internalValue === null ? 'text' : 'number'}
+        type="text"
+        inputMode="numeric"
         name={name}
-        value={internalValue === null ? '--' : internalValue}
+        value={textValue}
         onChange={handleInputChange}
         onMouseDown={handleMouseDown}
+        onFocus={() => setIsEditing(true)}
         onBlur={handleBlur}
-        min={min || -Infinity}
-        max={max || Infinity}
+        placeholder="--"
         className={cn(
           `bg-card rounded-lg pl-2 border-2 cursor-move text-black text-sm h-8`,
           className,
-          internalValue === null ? 'text-center' : ''
+          textValue.trim() === '' ? 'text-center' : ''
         )}
       />
       {isDragging && <div className="fixed inset-0 z-50 cursor-move" />}

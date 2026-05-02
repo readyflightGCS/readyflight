@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { downloadBlobAsFile } from '@/lib/utils'
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { useState } from 'react'
 
 export default function ExportMission() {

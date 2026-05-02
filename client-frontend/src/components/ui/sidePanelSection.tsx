@@ -12,7 +12,7 @@ export default function SidePanelSection({
 }) {
   return (
     <div className={cn('bg-muted p-2 rounded-lg flex flex-col gap-2', className)}>
-      {title ?? <h3>{title}</h3>}
+      {title !== undefined ? <h3>{title}</h3> : null}
       {children}
     </div>
   )

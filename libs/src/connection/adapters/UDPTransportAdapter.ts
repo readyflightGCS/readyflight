@@ -19,9 +19,6 @@ export class UDPTransportAdapter implements ITransportAdapter<UDPTransportConfig
   private errorHandlers: ErrorHandler[] = []
   private closeHandlers: CloseHandler[] = []
 
-  constructor() {
-  }
-
   async start(config: UDPTransportConfig): Promise<void> {
     return new Promise((resolve, reject) => {
       const socket = createSocket('udp4')

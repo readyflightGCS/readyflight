@@ -1,4 +1,41 @@
 import type { ITransportAdapter, SerialTransportConfig } from '@libs/connection/types'
+import { SerialPort } from 'serialport'
+
+import { Transform, TransformCallback } from 'stream'
+
+export class FixedChunkParser extends Transform {
+  private buffer: Buffer = Buffer.alloc(0)
+  private readonly chunkSize: number
+
+  constructor(chunkSize: number = 30) {
+    super()
+    this.chunkSize = chunkSize
+  }
+
+  _transform(chunk: Buffer, _encoding: BufferEncoding, callback: TransformCallback) {
+    // Append incoming data
+    this.buffer = Buffer.concat([this.buffer, chunk])
+
+    // While we have enough data, emit chunks
+    while (this.buffer.length >= this.chunkSize) {
+      const packet = this.buffer.subarray(0, this.chunkSize)
+      this.push(packet)
+
+      // Remove emitted bytes
+      this.buffer = this.buffer.subarray(this.chunkSize)
+    }
+
+    callback()
+  }
+
+  _flush(callback: TransformCallback) {
+    // Optional: emit remaining data (or discard)
+    if (this.buffer.length > 0) {
+      this.push(this.buffer)
+    }
+    callback()
+  }
+}
 
 type DataHandler = (data: Uint8Array) => void
 type ErrorHandler = (error: Error) => void
@@ -28,14 +65,10 @@ export class SerialTransportAdapter implements ITransportAdapter<SerialTransport
       })
     })
 
-    sp.on('data', (data: Buffer) => {
-      this.dataHandlers.forEach(h => h(new Uint8Array(data.buffer, data.byteOffset, data.byteLength)))
-    })
-    sp.on('error', (err: Error) => {
-      this.errorHandlers.forEach(h => h(err))
-    })
-    sp.on('close', () => {
-      this.closeHandlers.forEach(h => h())
+    const parser = new FixedChunkParser(30)
+    sp.pipe(parser)
+    parser.on('data', (packet: Buffer) => {
+      this.dataHandlers.forEach(h => h(new Uint8Array(packet)))
     })
 
     console.log(`[serial] opened ${config.path} @ ${config.baudRate}`)
@@ -64,14 +97,11 @@ export class SerialTransportAdapter implements ITransportAdapter<SerialTransport
 
   async getAvailable() {
     const ports = await SerialPort.list()
-    let res: SerialTransportConfig[] = ports.map((port) => {
-      return {
-        type: 'serial',
-        path: port.path as string,
-        baudRate: 115200,
-      }
-    })
+    const res: SerialTransportConfig[] = ports.map((port) => ({
+      type: 'serial',
+      path: port.path as string,
+      baudRate: 115200,
+    }))
     return res
-
   }
 }

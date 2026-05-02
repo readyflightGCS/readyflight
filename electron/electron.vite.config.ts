@@ -10,6 +10,10 @@ export default defineConfig({
       lib: {
         entry: resolve(__dirname, 'main/index.ts'),
         formats: ['cjs']
+      },
+      rollupOptions: {
+        // Keep native modules out of the bundle so Electron can load their .node binaries
+        external: ['serialport', '@serialport/bindings-cpp']
       }
     },
     resolve: {

@@ -1,10 +1,10 @@
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { avgLatLng, LatLng } from '@libs/world/latlng'
 import { LayerGroup, Polyline } from 'react-leaflet'
 import InsertBtn from '../insertButton'
 import CommandMarker from '../commandMarker'
 import { getCommandLocation } from '@libs/commands/helpers'
-import { useVehicle } from '@/stores/vehicle'
+import { useVehicle } from '@libs/stores/vehicle'
 import DraggableMarker from '../draggableMarker'
 
 const limeOptions = { color: 'lime' }

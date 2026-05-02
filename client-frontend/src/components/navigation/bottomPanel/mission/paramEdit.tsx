@@ -1,4 +1,4 @@
-import { useMission } from '@/stores/mission'
+import { useMission } from '@libs/stores/mission'
 import { CommandDescription, MissionCommand } from '@libs/commands/command'
 import { getCommandDescription } from '@libs/commands/helpers'
 import { LatLngEditor } from './LatLngEditor'

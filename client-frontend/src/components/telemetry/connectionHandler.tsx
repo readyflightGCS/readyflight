@@ -1,23 +1,27 @@
-import { useMission } from '@/stores/mission'
-import { useVehicle } from '@/stores/vehicle'
-import { useConnections } from '@/stores/connections'
+import { useMission } from '@libs/stores/mission'
+import { useVehicle } from '@libs/stores/vehicle'
+import { useConnections } from '@libs/stores/connections'
 import { useEffect, useRef } from 'react'
 import type { ConnectionMessage } from '@libs/connection/types'
 
-const isElectron = (window as any).env?.isElectron === true
+const isElectron =
+  (window as unknown as { env?: { isElectron?: boolean } }).env?.isElectron === true
 
-function base64ToArrayBuffer(b64: string): ArrayBuffer {
-  const raw = atob(b64)
-  const bytes = new Uint8Array(raw.length)
-  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
-  return bytes.buffer
+function base64ToUint8Array(b64: string): Uint8Array {
+  const binary = atob(b64)
+  const len = binary.length
+  const bytes = new Uint8Array(len)
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i)
+  }
+
+  return bytes
 }
 
 function arrayBufferToBase64(buf: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(buf)))
 }
-
-let isMounted = false
 
 export default function ConnectionHandler() {
   const dialect = useMission((s) => s.dialect)
@@ -28,14 +32,9 @@ export default function ConnectionHandler() {
 
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeout = useRef<number | null>(null)
-  const reconnectDelay = useRef(1000)
 
   useEffect(() => {
-    if (!isMounted) {
-      isMounted = true
-      return
-    }
-
+    console.log('called')
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
 
@@ -63,7 +62,7 @@ export default function ConnectionHandler() {
             break
           }
           case 'availableConnections': {
-            setAvailableConnections(msg.connections)
+            setAvailableConnections(msg.connections.flat())
             break
           }
           default: {
@@ -85,6 +84,7 @@ export default function ConnectionHandler() {
     // WebSocket mode (web build)
     const connect = () => {
       const ws = new WebSocket('ws://localhost:9999')
+      wsRef.current = ws
 
       const sendPacket = (buf: ArrayBuffer) => {
         if (ws.readyState !== WebSocket.OPEN) return
@@ -98,7 +98,6 @@ export default function ConnectionHandler() {
 
       ws.onopen = () => {
         console.log('[ws] connected to backend')
-        reconnectDelay.current = 1000
         setVehicleState({
           sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
           sendPacket
@@ -119,7 +118,10 @@ export default function ConnectionHandler() {
           return
         }
         if (msga.type === 'sendData') {
-          msg = { ...msga, payload: base64ToArrayBuffer(msga.payload) }
+          msg = {
+            ...msga,
+            payload: base64ToUint8Array(msga.payload)
+          }
         } else {
           msg = msga
         }
@@ -134,8 +136,7 @@ export default function ConnectionHandler() {
             break
           }
           case 'availableConnections': {
-            console.log(msg.connections)
-            setAvailableConnections(msg.connections)
+            setAvailableConnections(msg.connections.flat())
             break
           }
           default: {
@@ -150,28 +151,33 @@ export default function ConnectionHandler() {
         scheduleReconnect()
         setCommandSender(null)
         setVehicleState({ sendMessage: null, sendPacket: null })
+        setAvailableConnections([])
       }
 
       ws.onerror = () => {
         ws.close()
+        console.log('[ws] error; reconnecting …')
+        scheduleReconnect()
         setCommandSender(null)
         setVehicleState({ sendMessage: null, sendPacket: null })
+        setAvailableConnections([])
       }
     }
 
     const scheduleReconnect = () => {
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
       reconnectTimeout.current = window.setTimeout(() => {
-        reconnectDelay.current = Math.min(reconnectDelay.current * 2, 1000)
         connect()
-      }, reconnectDelay.current)
+      }, 1000)
     }
 
     connect()
 
     return () => {
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
-      wsRef.current?.close()
+      const ws = wsRef.current
+      wsRef.current = null
+      ws?.close()
     }
   }, [dialect, setVehicleState, setConnection, setCommandSender, setAvailableConnections])
 

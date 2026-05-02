@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "../dist/libs",
-    "rootDir": "src",
+    "rootDir": "../",
     "declaration": true,
     "declarationMap": true,
     "moduleResolution": "Bundler",
@@ -13,5 +13,5 @@
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "../client-frontend/src/**/*"]
 }

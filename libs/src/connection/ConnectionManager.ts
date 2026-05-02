@@ -66,10 +66,7 @@ export class ConnectionManager {
         break
 
       case 'connect':
-        console.log(cmd)
-        console.log(this.transportAdapters)
         let transportAdapter = this.transportAdapters.find((x) => x.name === cmd.config.type)
-        console.log(transportAdapter)
         if (transportAdapter === undefined) return
         let transport = transportAdapter.t
         this.connection = {
