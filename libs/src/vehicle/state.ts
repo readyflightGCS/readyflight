@@ -2,6 +2,8 @@ import { VehicleCommand } from "./commands"
 
 export type VehicleState = {
   connected: boolean
+  mode: number | null
+  isArmed: boolean | null
   lat: number | null
   lon: number | null
   alt: number | null         // MSL altitude in metres
@@ -23,6 +25,7 @@ export type VehicleState = {
   groundspeed: number | null      // m/s
   gpsSatellites: number | null
   gpsFixType: number | null
+  hdop: number | null
   windDirection: number | null
   windHSpeed: number | null
   windZSpeed: number | null

@@ -33,7 +33,9 @@
     "build:linux": "cd electron && bun run build:linux",
     "build:sim": "cd sim && docker build --platform linux/amd64 -t readyflight-sim .",
     "start:sim:plane": "docker run -it --rm --platform linux/amd64 -p 14550:14550 -p 5760:5760 --network=host readyflight-sim python3 Tools/autotest/sim_vehicle.py -v ArduPlane --out=udp:127.0.0.1:14550",
-    "start:sim:copter": "docker run -it --rm --platform linux/amd64 -p 14550:14550 -p 5760:5760 --network=host readyflight-sim python3 Tools/autotest/sim_vehicle.py -v ArduCopter --out=udp:127.0.0.1:14550"
+    "start:sim:copter": "docker run -it --rm --platform linux/amd64 -p 14550:14550 -p 5760:5760 --network=host readyflight-sim python3 Tools/autotest/sim_vehicle.py -v ArduCopter --out=udp:127.0.0.1:14550",
+    "start:sim:plane:win": "docker run -it --rm --platform linux/amd64 -p 14550:14550 -p 5760:5760 readyflight-sim python3 Tools/autotest/sim_vehicle.py -v ArduPlane --out=host.docker.internal:14550",
+    "start:sim:copter:win": "docker run -it --rm --platform linux/amd64 -p 14550:14550 -p 5760:5760 readyflight-sim python3 Tools/autotest/sim_vehicle.py -v ArduCopter --out=host.docker.internal:14550"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^3.0.0",
@@ -45,5 +47,9 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "react-flight-indicators": "^1.0.1",
+    "react-typescript-flight-indicators": "^1.0.4"
   }
 }
