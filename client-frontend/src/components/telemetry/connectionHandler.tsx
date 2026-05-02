@@ -22,8 +22,6 @@ function arrayBufferToBase64(buf: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(buf)))
 }
 
-let isMounted = false
-
 export default function ConnectionHandler() {
   const dialect = useMission((s) => s.dialect)
   const setVehicleState = useVehicle((s) => s.setVehicleState)
@@ -36,11 +34,6 @@ export default function ConnectionHandler() {
   const reconnectDelay = useRef(1000)
 
   useEffect(() => {
-    if (!isMounted) {
-      isMounted = true
-      return
-    }
-
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
 

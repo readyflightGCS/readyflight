@@ -12,6 +12,7 @@ files:
   - 'out/**/*'
 asarUnpack:
   - resources/**
+  - '**/*.node'
 win:
   executableName: readyflight
 nsis:
