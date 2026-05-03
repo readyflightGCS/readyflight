@@ -5,14 +5,12 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { execSync } from 'child_process'
 
-const gitVersion = execSync('git describe --tags --dirty')
-  .toString()
-  .trim()
+const gitVersion = execSync('git describe --tags --dirty').toString().trim()
 
 // Web-only Vite config; Electron uses electron.vite.config.ts
 export default defineConfig({
   define: {
-    __GIT_VERSION__: JSON.stringify(gitVersion),
+    __GIT_VERSION__: JSON.stringify(gitVersion)
   },
   root: '.',
   resolve: {
@@ -36,12 +34,9 @@ export default defineConfig({
     {
       name: 'html-transform',
       transformIndexHtml(html) {
-        return html.replace(
-          '%RF_VERSION%',
-          gitVersion
-        )
-      },
-    },
+        return html.replace('%RF_VERSION%', gitVersion)
+      }
+    }
   ],
   server: {
     port: 5173

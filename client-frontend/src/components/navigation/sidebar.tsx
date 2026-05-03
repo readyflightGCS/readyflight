@@ -6,9 +6,9 @@ const tabs: {
   name: ConfiguratorTab
   Icon: LucideIcon
 }[] = [
-    { name: 'Telemetry', Icon: Satellite },
-    { name: 'Mission', Icon: MapPin }
-  ]
+  { name: 'Telemetry', Icon: Satellite },
+  { name: 'Mission', Icon: MapPin }
+]
 
 export default function SideBar() {
   const currentTab = useEditor((state) => state.currentTab)

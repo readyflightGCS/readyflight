@@ -18,14 +18,10 @@ export default function BottomPanel() {
           {(() => {
             switch (currentTab) {
               case 'Mission': {
-                return (
-                  <MissionActionBump />
-                )
+                return <MissionActionBump />
               }
-              case 'Telemetry':{
-                return (
-                  <TelemetryActionBump />
-                )
+              case 'Telemetry': {
+                return <TelemetryActionBump />
               }
               case 'Settings': {
                 return null

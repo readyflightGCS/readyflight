@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils'
 import { useVehicle } from '@libs/stores/vehicle'
-import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 import { GpsFixType } from '@libs/mission/ardupilot/mavlink-assets/enums/gps-fix-type'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
@@ -70,7 +69,7 @@ export default function Telemetry() {
       {/* //<HeadingIndicator heading={heading || 0} showBox={false} /> */}
       {/* <Altimeter altitude={alt || 0} showBox={false}/> */}
 
-      <table className='table-fixed w-full'>
+      <table className="table-fixed w-full">
         <tbody>
           <tr>
             <td className="p-1">Airspeed</td>
@@ -79,7 +78,9 @@ export default function Telemetry() {
             <td className="p-1">{alt !== null ? `${Math.round(alt)}m` : '-'}</td>
             <td className="p-1">Heading</td>
             <td className="p-1">
-              <span className="inline-block w-10 text-center">{heading !== null ? Math.round(heading) : '-'}&deg;</span>
+              <span className="inline-block w-10 text-center">
+                {heading !== null ? Math.round(heading) : '-'}&deg;
+              </span>
               <ArrowUp
                 className="inline-block w-4 h-4"
                 style={{
@@ -132,7 +133,9 @@ export default function Telemetry() {
                   : 'text-red-400'
               )}
             >
-              {gpsfixtype !== null ? GpsFixType[gpsfixtype].replace(/GPS_FIX_TYPE_/, "") : "Unknown"}
+              {gpsfixtype !== null
+                ? GpsFixType[gpsfixtype].replace(/GPS_FIX_TYPE_/, '')
+                : 'Unknown'}
             </td>
             <td className="p-1">GPS Satellites</td>
             <td className="p-1">{alt !== null ? Math.round(alt) : '-'}</td>

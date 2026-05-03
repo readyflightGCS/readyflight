@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import { useVehicle } from '@libs/stores/vehicle'
 import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 import ConnectionsPanel from '@/components/telemetry/ConnectionsPanel'
-import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 import { BicepsFlexed } from 'lucide-react'
 
 export default function Telemetry() {
@@ -39,9 +38,7 @@ export default function Telemetry() {
         >
           Guided
         </Button>
-        <Button
-          onClick={() => sendMessage?.({ type: 'setMode', mode: PlaneMode.PLANE_MODE_AUTO })}
-        >
+        <Button onClick={() => sendMessage?.({ type: 'setMode', mode: PlaneMode.PLANE_MODE_AUTO })}>
           Auto
         </Button>
         <Button
