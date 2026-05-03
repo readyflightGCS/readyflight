@@ -61,7 +61,7 @@ export default function TelemetryActionBump() {
     }
 
     return (
-        <div className="flex flex-1 gap-1 items-center flex-wrape">
+        <div className="flex flex-1 gap-1 items-center flex-wrap">
             Vehicle: {isArmed !== null ? isArmed ? <p className="text-red-400">Armed</p> : <p className="text-green-400">Disarmed</p> : <p className="text-blue-400">Unknown State</p> }
             <div className="h-[20px] w-[1px] bg-border shrink-0" />
             Mode: {vehicleMode !== null ? PlaneMode[vehicleMode].replace(/^.*?_MODE_/, "").toLowerCase() : "-"} {vehicleModeIcon}

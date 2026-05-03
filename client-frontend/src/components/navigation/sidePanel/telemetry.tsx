@@ -40,7 +40,7 @@ export default function Telemetry() {
           Guided
         </Button>
         <Button
-          onClick={() => sendMessage?.({ type: 'setMode', mode: CopterMode.COPTER_MODE_AUTO })}
+          onClick={() => sendMessage?.({ type: 'setMode', mode: PlaneMode.PLANE_MODE_AUTO })}
         >
           Auto
         </Button>
