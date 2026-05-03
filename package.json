@@ -23,7 +23,7 @@
     "dev:electron": "cd electron && bun run dev",
     "dev:web": "cd client-frontend && bun run dev",
     "dev:backend": "cd client-backend && bun run dev",
-    "docs:website": "cd docs && bun run dev:website",
+    "docs:website": "cd website && bun run dev:website",
     "start": "cd electron && bun run preview",
     "build": "cd electron && bun run build",
     "build:web": "cd client-frontend && bun run build",

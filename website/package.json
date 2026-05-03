@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev:website": "bun run website/index.ts"
+    "dev:website": "bun run index.ts"
   },
   "dependencies": {},
   "devDependencies": {}
