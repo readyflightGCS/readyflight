@@ -6,29 +6,19 @@
 }
 
 body {
-    min-height: 100vh;
+    height: 100vh;
+    width: 100%;
     margin: 0;
     padding: 0;
-    position: relative;
-    overflow: hidden;
     background: linear-gradient(var(--slash-angle), var(--bg-color-left) 0 45%, var(--bg-color-right) 55% 100%);
+    overflow:hidden;
 }
 
 .main{
     display: flex;
     flex-direction: row;
-    min-height: 100vh;
-}
-
-body::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    animation: slide 8s linear infinite;
-    pointer-events: none;
+    padding-top: 8rem;
+    align-items: center;
 }
 
 @keyframes slide {
@@ -48,6 +38,8 @@ article {
     flex-direction: column;
     justify-content: center;
     font-size: 15pt;
+    max-width: 58rem;
+    line-height: 1.45;
 }
 
 h1 {
@@ -76,7 +68,7 @@ a {
     animation: 0.5s ease-in-out flyIn;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1200px) {
     article {
         padding: 1.5rem;
         font-size: 13pt;
@@ -86,12 +78,34 @@ a {
         background-size: 150px;
     }
 
-    body {
+    .main{
         flex-direction: column;
+        min-height: auto;
+        padding-top: 6rem;
+        padding-bottom: 2rem;
     }
 
     h1 {
         font-size: 3em;
+    }
+
+    nav{
+        padding: 0 1rem;
+        height: 6rem;
+    }
+
+    .logo{
+        width: 4.25rem;
+        height: 4.25rem;
+        border-radius: 10px;
+    }
+
+    .nav-actions{
+        gap: 1.25rem;
+    }
+
+    .nav-link{
+        height: 4.5rem;
     }
 }
 
@@ -99,12 +113,12 @@ nav{
     width: 100%;
     background-color: oklch(0.129 0.042 264.695);
     height: 8rem;
-    position: fixed;
     display: flex;
     align-items: center;
     color: white;
     justify-content: space-between;
     padding: 0 2rem 0 2rem;
+    z-index: 10;
 }
 
 .logo{
@@ -116,4 +130,19 @@ nav{
 .nav-actions{
     display: flex;
     gap: 3rem;
+}
+
+.nav-link{
+    height: 6rem;
+    display: inline-flex;
+    align-items: center;
+    color: hsl(0 0% 98%);
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.nav-link:hover{
+    color: var(--bg-arrow-color);
+    text-decoration: underline;
 }
