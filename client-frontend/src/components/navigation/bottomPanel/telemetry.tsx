@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils'
 import { useVehicle } from '@libs/stores/vehicle'
-import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 import { GpsFixType } from '@libs/mission/ardupilot/mavlink-assets/enums/gps-fix-type'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
+import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 
 export default function Telemetry() {
   const [
@@ -52,14 +52,14 @@ export default function Telemetry() {
   let arrowName
 
   if (climb) {
-    const roundedClimb = Math.round(climb)
+    const roundedClimb = parseFloat(climb.toFixed(2))
 
     if (roundedClimb === 0) {
-      arrowName = <Minus className="inline" />
+      arrowName = <Minus className="inline w-4 h-4" />
     } else if (roundedClimb > 0) {
-      arrowName = <ArrowUp className="inline" />
+      arrowName = <ArrowUp className="inline w-4 h-4" />
     } else {
-      arrowName = <ArrowDown className="inline" />
+      arrowName = <ArrowDown className="inline w-4 h-4" />
     }
   }
 
@@ -69,18 +69,20 @@ export default function Telemetry() {
       {/* //<HeadingIndicator heading={heading || 0} showBox={false} /> */}
       {/* <Altimeter altitude={alt || 0} showBox={false}/> */}
 
-      <table>
+      <table className="table-fixed w-full">
         <tbody>
           <tr>
             <td className="p-1">Airspeed</td>
             <td className="p-1">{airspeed !== null ? `${Math.round(airspeed)}m/s` : '-'}</td>
             <td className="p-1">Altitude</td>
-            <td className="p-1">{alt !== null ? `${Math.round(alt)}m/s` : '-'}</td>
+            <td className="p-1">{alt !== null ? `${Math.round(alt)}m` : '-'}</td>
             <td className="p-1">Heading</td>
             <td className="p-1">
-              <span className="inline">{heading !== null ? Math.round(heading) : '-'}&deg;</span>
+              <span className="inline-block w-10 text-center">
+                {heading !== null ? Math.round(heading) : '-'}&deg;
+              </span>
               <ArrowUp
-                className="inline"
+                className="inline-block w-4 h-4"
                 style={{
                   transform: `rotate(${Math.round(heading || 0)}deg)`,
                   transition: `transform 0.5s ease`
@@ -107,7 +109,7 @@ export default function Telemetry() {
 
               <div className="w-full bg-neutral-quaternary rounded-full">
                 <div
-                  className="bg-violet-600 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center"
+                  className="bg-blue-900 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center"
                   style={{ width: `${throttle}%`, transition: `width 1s linear` }}
                 >
                   {' '}
@@ -131,7 +133,9 @@ export default function Telemetry() {
                   : 'text-red-400'
               )}
             >
-              {GpsFixType[gpsfixtype || 0]}
+              {gpsfixtype !== null
+                ? GpsFixType[gpsfixtype].replace(/GPS_FIX_TYPE_/, '')
+                : 'Unknown'}
             </td>
             <td className="p-1">GPS Satellites</td>
             <td className="p-1">{alt !== null ? Math.round(alt) : '-'}</td>
@@ -143,7 +147,7 @@ export default function Telemetry() {
             <td className="p-1">Battery remaining</td>
             <td className="p-1">{batteryremaining !== null ? `${batteryremaining}s` : '-'}</td>
             <td className="p-1">Vehicle Mode</td>
-            <td className="p-1">{CopterMode[mode || 0]}</td>
+            <td className="p-1">{PlaneMode[mode || 0]}</td>
             <td className="p-1">Armed State:</td>
             <td className={cn('p-1', isarmed ? 'text-red-400' : 'text-green-400')}>
               {isarmedText}

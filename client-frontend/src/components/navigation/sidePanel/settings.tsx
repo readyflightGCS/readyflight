@@ -34,9 +34,11 @@ export default function Settings() {
               <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </SidePanelSection >
+        </SidePanelSection>
       </div>
-      <div className="text-xs">{isElectron ? 'Electron' : 'Browser'} | v{__GIT_VERSION__}</div>
-    </div >
+      <div className="text-xs">
+        {isElectron ? 'Electron' : 'Browser'} | v{__GIT_VERSION__}
+      </div>
+    </div>
   )
 }
