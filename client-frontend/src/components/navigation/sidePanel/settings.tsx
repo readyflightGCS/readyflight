@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import SidePanelSection from '@/components/ui/sidePanelSection'
 import { useThemeStore } from '@libs/stores/theme'
 import { Moon, Sun } from 'lucide-react'
 
@@ -13,27 +14,29 @@ const isElectron = window.env?.isElectron === true
 export default function Settings() {
   const { setTheme } = useThemeStore()
   return (
-    <div>
-      <p>I am settings :)</p>
-
+    <div className="flex flex-col h-full justify-between">
       <div>
-        Theme:
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="icon">
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <h2>Settings</h2>
+
+        <SidePanelSection>
+          Theme:
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon">
+                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <span className="sr-only">Toggle theme</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidePanelSection >
       </div>
-      <div>Running as {isElectron ? 'Electron' : 'Browser'}</div>
-    </div>
+      <div className="text-xs">{isElectron ? 'Electron' : 'Browser'} | v{__GIT_VERSION__}</div>
+    </div >
   )
 }

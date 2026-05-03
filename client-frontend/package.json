@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "GIT_VERSION=$(git describe --tags --dirty) vite",
     "build": "vite build",
     "preview": "vite preview --host",
     "lint": "eslint --cache .",
