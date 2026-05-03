@@ -31,11 +31,11 @@
 
 @media (max-width: 800px) {
     .app {
-        transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg) scale(0.7);
+        transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg) scale(0.6);
     }
 
     .app:hover {
-        transform: scale(0.72) translateY(-10pt) perspective(1400px) rotate3d(0, 1, -0.3, -8deg);
+        transform: scale(0.62) translateY(-10pt) perspective(1400px) rotate3d(0, 1, -0.3, -8deg);
     }
 }
 
