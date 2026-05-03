@@ -3,7 +3,7 @@
   "homepage": "https://github.com/readyflight/readyflight",
   "private": true,
   "main": "./out/main/index.cjs",
-  "version": "0.0.1",
+  "version": "00.00.00",
   "type": "module",
   "scripts": {
     "dev": "electron-vite dev -c electron.vite.config.ts",

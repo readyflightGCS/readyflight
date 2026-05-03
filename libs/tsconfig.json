@@ -6,9 +6,10 @@
     "declarationMap": true,
     "moduleResolution": "Bundler",
     "composite": true,
+    "jsx": "react-jsx",
     "paths": {
       "@libs/*": ["./src/*"],
-      "@client-frontend/*": ["../client-frontend/src/*"]
+      "@/*": ["../client-frontend/src/*"]
     },
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
