@@ -3,6 +3,11 @@ import { defineConfig } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { execSync } from 'child_process'
+
+const gitVersion = execSync('git describe --tags --dirty')
+  .toString()
+  .trim()
 
 export default defineConfig({
   main: {
@@ -38,6 +43,9 @@ export default defineConfig({
     }
   },
   renderer: {
+    define: {
+      __GIT_VERSION__: JSON.stringify(gitVersion),
+    },
     root: resolve(__dirname, '../client-frontend'),
     build: {
       rollupOptions: {
@@ -56,6 +64,15 @@ export default defineConfig({
         )
       }
     },
-    plugins: [react(), tailwindcss()]
+    plugins: [react(), tailwindcss(), {
+      name: 'html-transform',
+      transformIndexHtml(html) {
+        return html.replace(
+          '%RF_VERSION%',
+          gitVersion
+        )
+      },
+    },
+    ]
   }
 })

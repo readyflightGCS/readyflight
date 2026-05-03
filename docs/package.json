@@ -1,11 +1,6 @@
 {
-  "name": "@readyflight/docs-website",
+  "name": "@readyflight/docs",
   "private": true,
-  "version": "0.0.1",
-  "type": "module",
-  "scripts": {
-    "dev:website": "bun run website/index.ts"
-  },
   "dependencies": {},
   "devDependencies": {}
 }
