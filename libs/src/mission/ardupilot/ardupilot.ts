@@ -341,6 +341,22 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       return
     }
 
+    if (msg.type === 'launch') {
+      const cmd = new CommandLong(0, 0)
+      cmd.target_system = 1
+      cmd.target_component = 1
+      cmd.command = MavCmd.MAV_CMD_NAV_TAKEOFF
+      cmd.param1 = 0
+      cmd.param2 = 0
+      cmd.param3 = 0
+      cmd.param4 = 0
+      cmd.param5 = 0
+      cmd.param6 = 0
+      cmd.param7 = msg.height || 10
+
+      sendPacket(encodePacket(cmd))
+    }
+
     if (msg.type === 'setMode') {
       const cmd = new SetMode(0, 0)
       cmd.target_system = 1
