@@ -3,7 +3,7 @@ import { avgLatLng } from '@libs/world/latlng'
 import { LayerGroup, Polyline } from 'react-leaflet'
 import InsertBtn from '../insertButton'
 import CommandMarker from '../commandMarker'
-import { getCommandLocation } from '@libs/commands/helpers'
+import { getCommandLocation, getCommandLocationAlt } from '@libs/commands/helpers'
 import { useVehicle } from '@libs/stores/vehicle'
 import DraggableMarker from '../draggableMarker'
 import { useEditor } from '@libs/stores/configurator'
@@ -73,12 +73,12 @@ export default function ActiveLayer() {
   const mainLine = mission.mainLine(selectedSubMission)
 
   // handle insert at specific id
-  function handleInsert(id: number, lat: number, lng: number) {
+  function handleInsert(id: number, lat: number, lng: number, altitude: number) {
     const a = mission.clone()
     a.insert(id, selectedSubMission, {
       type: 'RF.Waypoint',
       frame: 0,
-      params: { latitude: lat, longitude: lng, altitude: 100 }
+      params: { latitude: lat, longitude: lng, altitude }
     })
     setMission(a)
   }
@@ -93,12 +93,16 @@ export default function ActiveLayer() {
     const aPos = getCommandLocation(mainLine[i].cmd, dialect)
     const bPos = getCommandLocation(mainLine[i + 1].cmd, dialect)
     const avg = avgLatLng([aPos, bPos])
+    const prevAlt = getCommandLocationAlt(mainLine[i].cmd, dialect)?.alt
+    const nextAlt = getCommandLocationAlt(mainLine[i + 1].cmd, dialect)?.alt
+    const altitude =
+      typeof prevAlt === 'number' && typeof nextAlt === 'number' ? (prevAlt + nextAlt) / 2 : 100
     insertBtns.push(
       <InsertBtn
         key={a++}
         lat={avg.lat}
         lng={avg.lng}
-        onClick={() => handleInsert(mainLine[i + 1].id, avg.lat, avg.lng)}
+        onClick={() => handleInsert(mainLine[i + 1].id, avg.lat, avg.lng, altitude)}
       />
     )
     lineSegments.push(<Polyline key={a++} pathOptions={limeOptions} positions={[aPos, bPos]} />)
