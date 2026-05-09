@@ -35,7 +35,7 @@ export default function ActiveLayer() {
     a.insert(id, selectedSubMission, {
       type: 'RF.Waypoint',
       frame: 0,
-      params: { latitude: lat, longitude: lng, altitude: 10 }
+      params: { latitude: lat, longitude: lng, altitude: 100 }
     })
     setMission(a)
   }
