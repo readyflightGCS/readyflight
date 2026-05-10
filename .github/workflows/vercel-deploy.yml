@@ -21,6 +21,9 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+      - name: Generate version
+        run: echo "APP_VERSION=$(git describe --tags --dirty)" >> $GITHUB_ENV
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v42.2.0
         with:
