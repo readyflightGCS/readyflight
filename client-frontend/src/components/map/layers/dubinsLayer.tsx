@@ -1,4 +1,4 @@
-import { Circle, LayerGroup, Polyline } from "react-leaflet";
+import { CircleMarker, LayerGroup, Polyline } from "react-leaflet";
 import { ReactNode } from "react";
 import { useMission } from "@libs/stores/mission";
 import Arc from "../arc";
@@ -41,6 +41,7 @@ export default function DubinsLayer() {
       dubinsPoints.push({ pos: g2l(reference, getCommandLocation(prevCmd, dialect)), bounds: {}, radius: 0, heading: 0, tunable: false, passbyRadius: 0 })
     }
     dubinsPoints = dubinsPoints.concat(curCmd.params.points.map((point) => {
+      markers.push(<CircleMarker radius={8} center={[point.lat, point.lng]} pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 1 }} />)
       return { pos: g2l(reference, { lat: point.lat, lng: point.lng }), bounds: {}, radius: point.radius, heading: point.heading, tunable: true, passbyRadius: 0 }
     }))
 
@@ -52,7 +53,6 @@ export default function DubinsLayer() {
     let path = dubinsBetweenDubins(dubinsPoints)
     const localisedPath = path.map((x) => localiseDubinsPath(x, reference))
     localisedPath.map((c, _) => {
-      console.log(localisedPath)
       lines.push(<Arc key={key++} curve={c.turnA} pathOptions={curveOptions} />)
       lines.push(<Polyline key={key++} pathOptions={straightOptions} positions={[c.straight.start, c.straight.end]} />)
       lines.push(<Arc key={key++} curve={c.turnB} pathOptions={curveOptions} />)

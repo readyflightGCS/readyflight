@@ -1,8 +1,9 @@
 import { useMission } from '@libs/stores/mission'
-import { CommandDescription, MissionCommand } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { getCommandDescription } from '@libs/commands/helpers'
 import { LatLngEditor } from './LatLngEditor'
 import Parameter from './parameter'
+import DubinsEditor from './dubinsEditor'
 
 export default function ParamEditor() {
   const selectedSubMission = useMission((s) => s.selectedSubMission)
@@ -39,9 +40,15 @@ export default function ParamEditor() {
     )
   }
 
+  if (selected.filter((x) => x.type === "RF.DubinsPath").length >= 1) {
+    return (
+      <DubinsEditor />
+    )
+  }
+
   // we want to take the intersection of parameters for all command types selected
   function findCommonParamsForTypes(
-    cmdTypes: Set<MissionCommand<CommandDescription>['type']>
+    cmdTypes: Set<MissionCommand<DialectCommandDescription>['type']>
   ): string[] {
     const a = Array.from(cmdTypes)
 
@@ -52,7 +59,7 @@ export default function ParamEditor() {
     // get initial parameter names from the first command selected
     let params = new Set(
       getCommandDescription(a[0], dialect)
-        .parameters.map((x: CommandDescription['parameters'][number]) => x?.label?.toLowerCase())
+        .parameters.map((x: DialectCommandDescription['parameters'][number]) => x?.label?.toLowerCase())
         .filter((x) => x !== undefined)
     )
 
@@ -60,7 +67,7 @@ export default function ParamEditor() {
     for (let i = 1; i < a.length; i++) {
       const nextParams = new Set(
         getCommandDescription(a[i], dialect)
-          .parameters.map((x: CommandDescription['parameters'][number]) => x?.label?.toLowerCase())
+          .parameters.map((x: DialectCommandDescription['parameters'][number]) => x?.label?.toLowerCase())
           .filter((x) => x !== undefined)
       )
 
