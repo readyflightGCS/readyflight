@@ -332,9 +332,9 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     "RF.Waypoint": true,
   },
 
-  handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
+  handleTelemetryMessage: (data, sendPacket) => {
     for (const frame of streamParser.feed(data)) {
-      processFrame(frame, setVehicleState, sendPacket)
+      processFrame(frame, sendPacket)
     }
   },
 

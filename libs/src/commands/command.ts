@@ -1,4 +1,3 @@
-import { LatLngAlt } from "@libs/world/latlng"
 import { RFCommandDescription } from "./readyflightCommands"
 
 type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
@@ -11,20 +10,7 @@ type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
 // The shape of the definition of a command, when we want to add new dialects,
 // their commands should conform to this description
 
-
-/**
- * Describes the structure and metadata of a command.
- * @typedef {Object} CommandDescription
- * @property {string} type - The type identifier of the command.
- * @property {number} value - The numeric value associated with the command.
- * @property {string} label - A human-readable label for the command.
- * @property {string} description - A detailed description of what the command does.
- * @property {boolean} hasLocation - Indicates whether the command has a location associated with it.
- * @property {boolean} isDestination - Indicates whether the command represents a destination.
- * @property {CommandParameterUnion[]} parameters - An array of parameter types that the command can accept.
- */
-export type CommandDescription = {
-  type: string
+export type CommandDescriptionProperties = {
   value: number
   label: string
   description: string
@@ -33,6 +19,10 @@ export type CommandDescription = {
   // parameters types that it can accept.
   parameters: (CommandParameterUnion)[]
 }
+
+export type DialectCommandDescription = { type: `D.${string}` } & CommandDescriptionProperties
+export type ReadyflightCommandDescription = { type: `RF.${string}` } & CommandDescriptionProperties
+
 
 /**
  * Describes a numeric command parameter with validation and configuration options.
@@ -120,7 +110,7 @@ type ParameterTypeToValueType<T extends CommandParameterUnion> =
 // This is the definition for the parameters, it basically grabs all of the 
 // parameters from the Command definition and puts the lowercase label against 
 // the type of the parameter. For instance {name: string, altitude: number ..}
-export type DialectCommandParams<CD extends CommandDescription> = {
+export type CommandParams<CD extends CommandDescriptionProperties> = {
   [K in CD["parameters"][number]as
   Lowercase<K["label"]> extends string
   ? Lowercase<K["label"]>
@@ -128,19 +118,23 @@ export type DialectCommandParams<CD extends CommandDescription> = {
   ]: ParameterTypeToValueType<K>
 }
 
-export type DialectCommand<CD extends CommandDescription> =
-  CD extends CommandDescription ?
-  {
-    type: CD["type"]
-    frame: number
-    params: Expand<DialectCommandParams<CD>>
-  } : never
+export type DialectCommand<CD extends DialectCommandDescription> = {
+  type: CD["type"]
+  frame: number
+  params: CommandParams<CD>
+}
 
-export type RFCommand = DialectCommand<typeof RFCommandDescription[number]>
+export type RFCommand =
+  { [C in typeof RFCommandDescription[number]as C["type"]]: {
+    type: C["type"]
+    frame: number
+    params: CommandParams<C>
+  } }[typeof RFCommandDescription[number]["type"]]
+
 
 // Type alias for cleaner code - represents any command that can be in a mission
-export type MissionCommand<CD extends CommandDescription> =
-  RFCommand | (DialectCommand<CD> & { type: `D.${string}` })
+export type MissionCommand<CD extends DialectCommandDescription> =
+  RFCommand | DialectCommand<CD>
 
 // Just a sanity check to make sure params type is working correctly
 // let a: MissionCommand<CommandDescription> = { type: "RF.Waypoint", frame: 0, params: {} }

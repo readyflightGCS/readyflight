@@ -1,8 +1,8 @@
 import { Dialect } from "@libs/mission/dialect";
-import { CommandDescription, CommandParameterUnion, DialectCommandParams, MissionCommand, RFCommand } from "./command";
-import { RFCommandDescription } from "./readyflightCommands";
+import { CommandParameterUnion, CommandParams, DialectCommandDescription, MissionCommand } from "./command";
 import { objectKeys } from "@libs/util/types";
 import { LatLng, LatLngAlt } from "@libs/world/latlng";
+import { RFCommandDescription } from "./readyflightCommands";
 
 
 /**
@@ -12,7 +12,7 @@ import { LatLng, LatLngAlt } from "@libs/world/latlng";
  * @returns The label or name of the command
  * @todo possibly replace the readyflight ones with a better way of getting the label (probably from the command description) and just make an exception for Group
  */
-export function getCommandLabel(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>) {
+export function getCommandLabel(cmd: MissionCommand<DialectCommandDescription>, dialect: Dialect<DialectCommandDescription>) {
   switch (cmd.type) {
     case "RF.Waypoint": return "Waypoint"
     case "RF.DubinsPath": return "Dubins Path"
@@ -35,7 +35,7 @@ export function getCommandLabel(cmd: MissionCommand<CommandDescription>, dialect
  * @param dialect - The dialect to use for custom command location resolution
  * @returns The latitude/longitude coordinates if the command has a location, null otherwise
  */
-export function getCommandLocation(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>): LatLng | null {
+export function getCommandLocation(cmd: MissionCommand<DialectCommandDescription>, dialect: Dialect<DialectCommandDescription>): LatLng | null {
   switch (cmd.type) {
     case "RF.Waypoint": return { lat: cmd.params.latitude, lng: cmd.params.longitude }
     case "RF.DubinsPath": return null
@@ -62,7 +62,7 @@ export function getCommandLocation(cmd: MissionCommand<CommandDescription>, dial
  * location data. For command types without location data (DubinsPath, SetServo, Group) or custom
  * dialect-specific commands, it returns null or delegates to the dialect's implementation.
  */
-export function getCommandLocationAlt(cmd: MissionCommand<CommandDescription>, dialect: Dialect<CommandDescription>): LatLngAlt {
+export function getCommandLocationAlt(cmd: MissionCommand<DialectCommandDescription>, dialect: Dialect<DialectCommandDescription>): LatLngAlt | null {
   switch (cmd.type) {
     case "RF.Waypoint": return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
     case "RF.DubinsPath": return null
@@ -84,7 +84,7 @@ export function getCommandLocationAlt(cmd: MissionCommand<CommandDescription>, d
  * @param dialect - The dialect containing command descriptions.
  * @returns The command description matching the given type, or `undefined` if not found.
  */
-export function getCommandDescription(cmdType: MissionCommand<CommandDescription>["type"], dialect: Dialect<CommandDescription>) {
+export function getCommandDescription(cmdType: MissionCommand<DialectCommandDescription>["type"], dialect: Dialect<DialectCommandDescription>) {
   if (cmdType.startsWith("RF.")) {
     return RFCommandDescription.find(x => x.type == cmdType)
   } else {
@@ -98,18 +98,26 @@ export function getCommandDescription(cmdType: MissionCommand<CommandDescription
  * @param {T} type - The name of the target command type
  * @returns {ICommand<T>} Returns a default Command of type T, or with carried over parameters from cmd
  */
-export function coerceCommand<T extends CommandDescription>(cmd: MissionCommand<CommandDescription>, type: MissionCommand<T>["type"], dialect: Dialect<T>): MissionCommand<T> {
+export function coerceCommand<T extends DialectCommandDescription>(cmd: MissionCommand<T>, type: MissionCommand<T>["type"], dialect: Dialect<T>): MissionCommand<T> {
   const newCmd = makeCommand(type, {}, dialect)
+  //@ts-ignore
   const oldParams = new Set(objectKeys(cmd.params))
 
+  if (newCmd.type === "RF.DubinsPath") {
+    let pos = getCommandLocationAlt(cmd, dialect)
+    //@ts-ignore
+    return makeCommand("RF.DubinsPath", { points: [pos] }, dialect)
+  }
+
   // similar parameter names
+  //@ts-ignore
   const same = Array.from(objectKeys(newCmd.params)).filter(x => oldParams.has(x))
 
-  const params: { [K in keyof DialectCommandParams<T>]?: number } = {}
+  const params: Partial<CommandParams<T>> = {}
   same.forEach((paramName) => {
     const value = cmd.params[paramName as keyof typeof cmd.params]
     if (typeof value === 'number') {
-      params[paramName as keyof DialectCommandParams<T>] = value
+      params[paramName as keyof CommandParams<T>] = value
     }
   })
 
@@ -122,11 +130,12 @@ export function coerceCommand<T extends CommandDescription>(cmd: MissionCommand<
  * @param {[K in keyof CommandParams<T>]?: number} params - An object containing key/value params for the command
  * @returns {ICommand<T>} The new command
  */
-export function makeCommand<T extends CommandDescription>(
+export function makeCommand<T extends DialectCommandDescription>(
   type: MissionCommand<T>["type"],
-  params: { [K in keyof DialectCommandParams<T>]?: number },
+  params: Partial<CommandParams<T>>,
   dialect: Dialect<T>
 ): MissionCommand<T> {
+
   const newParams: Record<string, CommandParameterUnion["default"]> = {}
   let cmd: T | typeof RFCommandDescription[number] | undefined = undefined
   if (RFCommandDescription.find(cmd => cmd.type === type)) {
@@ -143,15 +152,15 @@ export function makeCommand<T extends CommandDescription>(
     if (param === null) { return }
     const paramKey = param.label.toLowerCase()
     if (paramKey in params) {
-      newParams[paramKey] = params[paramKey as keyof typeof params] ?? 0
+      newParams[paramKey] = params[paramKey] ?? 0
     } else {
       newParams[paramKey] = param.default ?? 0
     }
   })
 
-  const params2 = newParams as DialectCommandParams<T>
+  const params2 = newParams as CommandParams<T>
 
-  //@ts-ignore
+  // @ts-ignore
   return {
     type: cmd.type,
     frame: 0,
@@ -165,7 +174,7 @@ export function makeCommand<T extends CommandDescription>(
  * @param dialect - The dialect used to interpret command descriptions
  * @returns Filtered array containing only commands that have a valid latitude/longitude location
  */
-export function filterLatLngCmds(cmds: MissionCommand<CommandDescription>[], dialect: Dialect<CommandDescription>) {
+export function filterLatLngCmds(cmds: MissionCommand<DialectCommandDescription>[], dialect: Dialect<DialectCommandDescription>) {
   return cmds.filter(x => getCommandLocation(x, dialect) !== null)
 }
 
@@ -175,6 +184,6 @@ export function filterLatLngCmds(cmds: MissionCommand<CommandDescription>[], dia
  * @param dialect - The dialect used to interpret command descriptions
  * @returns Array of mission commands that have a valid location and altitude
  */
-export function filterLatLngAltCmds(cmds: MissionCommand<CommandDescription>[], dialect: Dialect<CommandDescription>) {
+export function filterLatLngAltCmds(cmds: MissionCommand<DialectCommandDescription>[], dialect: Dialect<DialectCommandDescription>) {
   return cmds.filter(x => getCommandLocationAlt(x, dialect) !== null)
 }

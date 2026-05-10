@@ -1,5 +1,5 @@
 import { useMission } from '@libs/stores/mission'
-import { avgLatLng, LatLng } from '@libs/world/latlng'
+import { avgLatLng } from '@libs/world/latlng'
 import { LayerGroup, Polyline } from 'react-leaflet'
 import InsertBtn from '../insertButton'
 import CommandMarker from '../commandMarker'
@@ -23,6 +23,7 @@ export default function ActiveLayer() {
   const v = useVehicle()
 
   let a = 0
+  console.log(mission)
 
   if (noshow.includes(selectedSubMission)) return null
 
@@ -42,11 +43,14 @@ export default function ActiveLayer() {
 
   // create a button between each latlng command
   const insertBtns = []
+  const lineSegments = []
   for (let i = 0; i < mainLine.length - 1; i++) {
-    const avg = avgLatLng([
-      getCommandLocation(mainLine[i].cmd, dialect),
-      getCommandLocation(mainLine[i + 1].cmd, dialect)
-    ]) as LatLng
+    if (mainLine[i].cmd.type == 'RF.DubinsPath' || mainLine[i + 1].cmd.type == 'RF.DubinsPath') {
+      continue
+    }
+    const aPos = getCommandLocation(mainLine[i].cmd, dialect)
+    const bPos = getCommandLocation(mainLine[i + 1].cmd, dialect)
+    const avg = avgLatLng([aPos, bPos])
     insertBtns.push(
       <InsertBtn
         key={a++}
@@ -55,6 +59,7 @@ export default function ActiveLayer() {
         onClick={() => handleInsert(mainLine[i + 1].id, avg.lat, avg.lng)}
       />
     )
+    lineSegments.push(<Polyline key={a++} pathOptions={limeOptions} positions={[aPos, bPos]} />)
   }
 
   function onMove(lat: number, lng: number, id: number) {
@@ -97,6 +102,9 @@ export default function ActiveLayer() {
   return (
     <LayerGroup>
       {mainLine.map((command) => {
+        if (command.cmd.type == 'RF.DubinsPath') {
+          return
+        }
         const position = getCommandLocation(command.cmd, dialect)
         const isActive = (() => {
           const x = mission.findNthPosition(selectedSubMission, command.id)
@@ -117,11 +125,8 @@ export default function ActiveLayer() {
       })}
       <DraggableMarker position={{ lat: v.lat, lng: v.lon }} active={false} />
 
-      <Polyline
-        pathOptions={limeOptions}
-        positions={mainLine.map((x) => getCommandLocation(x.cmd, dialect))}
-      />
       {insertBtns}
+      {lineSegments}
     </LayerGroup>
   )
 }

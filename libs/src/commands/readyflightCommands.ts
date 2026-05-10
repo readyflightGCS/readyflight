@@ -1,4 +1,4 @@
-import { CommandDescription } from "./command"
+import { ReadyflightCommandDescription } from "./command"
 
 /**
  * Array of ReadyFlight command descriptions defining the structure and metadata for various mission commands.
@@ -246,4 +246,4 @@ export const RFCommandDescription = [{
     options: [],
   }],
 }
-] as const satisfies CommandDescription[]
+] as const satisfies ReadyflightCommandDescription[]

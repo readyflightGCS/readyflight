@@ -13,7 +13,7 @@
  * const flattened = mission.flatten("Main");
  * ```
  */
-import { CommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
+import { DialectCommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
 import { LatLng } from "@libs/world/latlng";
 import { Dialect } from "./dialect";
 import { getCommandLocation } from "@libs/commands/helpers";
@@ -31,7 +31,7 @@ type GroupCommand = Extract<RFCommand, { type: "RF.Group" }>
  * Represents a mission
  * @extends CommandDescription
  */
-export class Mission<CD extends CommandDescription> {
+export class Mission<CD extends DialectCommandDescription> {
 
   public missionID: string
 
@@ -480,7 +480,7 @@ export type MainLine = MainLineItem[]
  * @property {number} id - The unique identifier for this mission line item.
  * @property {MissionCommand<CommandDescription>[]} other - An array of additional or alternative mission commands associated with this line item.
  */
-export type MainLineItem = { cmd: MissionCommand<CommandDescription>, id: number, other: MissionCommand<CommandDescription>[] }
+export type MainLineItem = { cmd: MissionCommand<DialectCommandDescription>, id: number, other: MissionCommand<DialectCommandDescription>[] }
 
 /**
  * Converts an array of commands into a mainline representation.
@@ -488,10 +488,17 @@ export type MainLineItem = { cmd: MissionCommand<CommandDescription>, id: number
  * @param commands - Array of commands to convert
  * @returns An array of MainLineItem objects representing the mainline structure
  */
-export function convertToMainLine(commands: Exclude<MissionCommand<CommandDescription>, GroupCommand>[], dialect: Dialect<CommandDescription>) {
+export function convertToMainLine(commands: Exclude<MissionCommand<DialectCommandDescription>, GroupCommand>[], dialect: Dialect<DialectCommandDescription>) {
   const mainLine: MainLine = []
 
   commands.forEach((cmd, id) => {
+
+    // Dubins Paths are handled differently
+    if (cmd.type == "RF.DubinsPath") {
+      mainLine.push({ cmd: cmd, id, other: [] })
+      return
+    }
+
     let loc = getCommandLocation(cmd, dialect)
     if (loc !== null) {
       mainLine.push({ cmd: cmd, id, other: [] })

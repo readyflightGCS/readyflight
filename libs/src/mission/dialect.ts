@@ -1,6 +1,6 @@
 import { Mission } from "./mission"
 import { LatLng, LatLngAlt } from "@libs/world/latlng"
-import { CommandDescription, DialectCommand, RFCommand } from "@libs/commands/command"
+import { DialectCommand, DialectCommandDescription, MissionCommand, RFCommand } from "@libs/commands/command"
 import { Result } from "@libs/util/try-catch"
 import { Vehicle } from "@libs/vehicle/types"
 import { VehicleState } from "@libs/vehicle/state"
@@ -14,7 +14,7 @@ import { VehicleCommand } from "@libs/vehicle/commands"
  * @template CD - The command description type supported by this dialect.
  */
 
-export type Dialect<CD extends CommandDescription> = {
+export type Dialect<CD extends DialectCommandDescription> = {
   /**
    * Human readable name of the dialect
    */
@@ -46,7 +46,7 @@ export type Dialect<CD extends CommandDescription> = {
    * @param command - The dialect command
    * @returns A LatLng or null if the command has no location
    */
-  getCommandLocation: (command: DialectCommand<CD>) => (LatLng | null)
+  getCommandLocation: (command: MissionCommand<CD>) => (LatLng | null)
 
   /**
    * Retrieves the geographic location including altitude associated with a command,
@@ -55,7 +55,7 @@ export type Dialect<CD extends CommandDescription> = {
    * @param command - The dialect command
    * @returns A LatLngAlt or null if the command has no altitude data
    */
-  getCommandLocationAlt: (command: DialectCommand<CD>) => (LatLngAlt | null)
+  getCommandLocationAlt: (command: MissionCommand<CD>) => (LatLngAlt | null)
 
   /**
    * Produces a human readable label for a command
@@ -81,7 +81,6 @@ export type Dialect<CD extends CommandDescription> = {
   /** Called for every incoming binary frame. sendPacket may be used to send immediate responses (e.g. during mission upload handshake). */
   handleTelemetryMessage: (
     message: Uint8Array<ArrayBufferLike>,
-    setVehicleState: (state: Partial<VehicleState>) => void,
     sendPacket: (buf: ArrayBuffer) => void
   ) => void
 
