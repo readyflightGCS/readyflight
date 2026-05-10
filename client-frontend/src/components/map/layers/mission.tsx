@@ -23,8 +23,6 @@ export default function ActiveLayer() {
   const v = useVehicle()
 
   let a = 0
-  console.log(mission)
-
   if (noshow.includes(selectedSubMission)) return null
 
   // store each destination in an array, with non destinations in other (to be stacked as they act in the same location)

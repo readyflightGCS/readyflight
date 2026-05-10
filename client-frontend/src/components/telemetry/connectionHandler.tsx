@@ -34,7 +34,6 @@ export default function ConnectionHandler() {
   const reconnectTimeout = useRef<number | null>(null)
 
   useEffect(() => {
-    console.log('called')
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
 

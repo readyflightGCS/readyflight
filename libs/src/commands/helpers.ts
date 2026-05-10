@@ -106,7 +106,7 @@ export function coerceCommand<T extends DialectCommandDescription>(cmd: MissionC
   if (newCmd.type === "RF.DubinsPath") {
     let pos = getCommandLocationAlt(cmd, dialect)
     //@ts-ignore
-    return makeCommand("RF.DubinsPath", { points: [pos] }, dialect)
+    return makeCommand("RF.DubinsPath", { points: [{ lat: pos.lat, lng: pos.lng, heading: 0, tunable: true, radius: 100 },] }, dialect)
   }
 
   // similar parameter names

@@ -97,7 +97,14 @@ export class Mission<CD extends DialectCommandDescription> {
    *
    * @returns {LatLng} The reference point as a LatLng object.
    */
-  getReferencePoint(): LatLng {
+  getReferencePoint(dialect: Dialect<CD>): LatLng {
+    const main = this.collection.get("Main")
+    for (const point of main) {
+      const pos = getCommandLocation(point, dialect)
+      if (pos !== null) {
+        return pos
+      }
+    }
     return this.referencePoint
   }
 
