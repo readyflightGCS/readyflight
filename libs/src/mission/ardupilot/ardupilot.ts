@@ -94,7 +94,9 @@ function flushPatch() {
   }
   requestAnimationFrame(flushPatch)
 }
-requestAnimationFrame(flushPatch)
+if (typeof requestAnimationFrame !== "undefined") {
+  requestAnimationFrame(flushPatch)
+}
 
 function processFrame(
   data: ArrayBuffer,
