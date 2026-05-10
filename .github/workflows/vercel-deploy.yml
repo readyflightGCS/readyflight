@@ -33,5 +33,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-args: >
             ${{ github.event_name == 'push' && '--prod' || '' }}
+            --build-env APP_VERSION=${{ env.APP_VERSION }}
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
