@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { execSync } from 'child_process'
 
-const gitVersion = execSync('git describe --tags --dirty')
+const gitVersion = JSON.stringify(process.env.APP_VERSION) || execSync('git describe --tags --dirty')
   .toString()
   .trim()
 

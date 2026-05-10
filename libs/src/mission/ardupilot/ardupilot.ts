@@ -33,6 +33,7 @@ import { Heartbeat } from "./mavlink-assets/messages/heartbeat"
 import { useVehicle } from "@libs/stores/vehicle"
 import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 import { MavLinkStreamParser } from "./mavlink-stream-parser"
+import { VehicleState } from "@libs/vehicle/state"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -81,9 +82,24 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
 let heartbeatTimer: ReturnType<typeof setTimeout> | null = null
 let heartbeatTimeout: ReturnType<typeof setInterval> | null = null
 
+// The telemetry messages come in to quickly to use setState every message
+// We will group the state updates here and "flush" the update to state
+let pendingPatch: Partial<VehicleState> = {}
+
+// apply patches the useVehicle state on animation request frame ~60fps
+function flushPatch() {
+  if (Object.keys(pendingPatch).length > 0) {
+    useVehicle.setState(pendingPatch)
+    pendingPatch = {}
+  }
+  requestAnimationFrame(flushPatch)
+}
+if (typeof requestAnimationFrame !== "undefined") {
+  requestAnimationFrame(flushPatch)
+}
+
 function processFrame(
   data: ArrayBuffer,
-  setVehicleState: (state: Partial<import("@libs/vehicle/state").VehicleState>) => void,
   sendPacket: (buf: ArrayBuffer) => void
 ): void {
   const msg = decodePacket(data)
@@ -95,14 +111,14 @@ function processFrame(
     }
     heartbeatTimeout = setTimeout(() => {
       console.log("No heartbeat, disconecting");
-      useVehicle.setState({ connected: false })
+      Object.assign(pendingPatch, { connected: false })
       clearTimeout(heartbeatTimer)
     }, 3000);
     const connected = useVehicle.getState().connected
 
     const isArmed = (msg.base_mode & MavModeFlag.MAV_MODE_FLAG_SAFETY_ARMED) !== 0;
 
-    setVehicleState({
+    Object.assign(pendingPatch, {
       mode: msg.custom_mode,
       isArmed: isArmed
     })
@@ -132,7 +148,7 @@ function processFrame(
       useVehicle.setState({ connected: true })
     }
   } else if (msg instanceof GlobalPositionInt) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       alt: msg.alt / 1000,
       heading: msg.hdg / 100,
       lat: msg.lat / 10000000,
@@ -140,7 +156,7 @@ function processFrame(
       relativeAlt: msg.relative_alt / 100
     })
   } else if (msg instanceof Attitude) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       roll: rad2deg(msg.roll),
       pitch: rad2deg(msg.pitch),
       yaw: rad2deg(msg.yaw),
@@ -149,39 +165,39 @@ function processFrame(
       yawRate: msg.yawspeed
     })
   } else if (msg instanceof GpsRawInt) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       gpsSatellites: msg.satellites_visible,
       gpsFixType: msg.fix_type,
       groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
       hdop: msg.eph
     })
   } else if (msg instanceof BatteryStatus) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       batteryVoltage: msg.voltages / 1000,
       batteryCurrent: msg.current_battery,
       batteryRemaining: msg.time_remaining,
       batteryConsumedmAh: msg.current_consumed,
     })
   } else if (msg instanceof VfrHud) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       airspeed: msg.airspeed,
       climb: msg.climb,
       groundspeed: msg.groundspeed,
       throttle: msg.throttle
     })
   } else if (msg instanceof Wind) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       windDirection: msg.direction,
       windHSpeed: msg.speed,
       windZSpeed: msg.speed_z
     })
   } else if (msg instanceof AoaSsa) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       AOA: msg.AOA,
       SSA: msg.SSA
     })
   } else if (msg instanceof MissionCurrent) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       missionId: msg.mission_id,
       missionSeq: msg.seq,
       missionMode: msg.mission_mode,
@@ -189,7 +205,7 @@ function processFrame(
       missionTotal: msg.total
     })
   } else if (msg instanceof NavControllerOutput) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       altError: msg.alt_error,
       aspdError: msg.aspd_error,
       navBearing: msg.nav_bearing,
@@ -200,7 +216,7 @@ function processFrame(
       xtrackError: msg.xtrack_error
     })
   } else if (msg instanceof EkfStatusReport) {
-    setVehicleState({
+    Object.assign(pendingPatch, {
       airspeedVariance: msg.airspeed_variance,
       compassVariance: msg.compass_variance,
       posHorizVariance: msg.pos_horiz_variance,
@@ -246,7 +262,6 @@ function processFrame(
     }
     resetUploadState()
   } else {
-    console.log(msg);
   }
 }
 
