@@ -54,6 +54,8 @@ export default function DraggableMarker({
     })
   }, [text])
 
+  const markerIcon = useMemo(() => createAnimatedIcon(active), [active])
+
   return (
     <>
       <Marker
@@ -61,7 +63,7 @@ export default function DraggableMarker({
         eventHandlers={eventHandlers}
         position={position}
         ref={markerRef}
-        icon={createAnimatedIcon(active)}
+        icon={markerIcon}
       />
 
       {text && textIcon && (
