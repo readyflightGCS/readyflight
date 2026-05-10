@@ -82,7 +82,8 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
 let heartbeatTimer: ReturnType<typeof setTimeout> | null = null
 let heartbeatTimeout: ReturnType<typeof setInterval> | null = null
 
-// we need to batch updates
+// The telemetry messages come in to quickly to use setState every message
+// We will group the state updates here and "flush" the update to state
 let pendingPatch: Partial<VehicleState> = {}
 
 // apply patches the useVehicle state on animation request frame ~60fps
@@ -97,7 +98,6 @@ requestAnimationFrame(flushPatch)
 
 function processFrame(
   data: ArrayBuffer,
-  setVehicleState: (state: Partial<import("@libs/vehicle/state").VehicleState>) => void,
   sendPacket: (buf: ArrayBuffer) => void
 ): void {
   const msg = decodePacket(data)
