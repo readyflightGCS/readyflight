@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "readyflight",
@@ -69,11 +70,12 @@
       },
     },
     "docs": {
-      "name": "@readyflight/docs",
+      "name": "@readyflight/docs-website",
+      "version": "0.0.1",
     },
     "electron": {
       "name": "@readyflight/electron",
-      "version": "0.0.1",
+      "version": "0.0.0",
       "dependencies": {
         "@electron-toolkit/preload": "^3.0.2",
         "@electron-toolkit/tsconfig": "^2.0.0",
@@ -375,7 +377,7 @@
 
     "@readyflight/client-frontend": ["@readyflight/client-frontend@workspace:client-frontend"],
 
-    "@readyflight/docs": ["@readyflight/docs@workspace:docs"],
+    "@readyflight/docs-website": ["@readyflight/docs-website@workspace:docs"],
 
     "@readyflight/electron": ["@readyflight/electron@workspace:electron"],
 
