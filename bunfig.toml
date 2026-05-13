@@ -7,3 +7,6 @@ members = [
   "electron",
   "docs"
 ]
+
+[install]
+linker = "hoisted"
