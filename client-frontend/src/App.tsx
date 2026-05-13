@@ -4,7 +4,7 @@ import SidePanel from './components/navigation/sidePanel/sidePanel'
 import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
 import { useEditor } from '@libs/stores/configurator'
 import ConnectionHandler from './components/telemetry/connectionHandler'
-import { Toaster } from 'sonner'
+import { Toaster } from './components/ui/sonner'
 
 export default function App(): React.JSX.Element {
   const isSidePanelOpen = useEditor((state) => state.sidePanelOpen)
@@ -42,7 +42,7 @@ export default function App(): React.JSX.Element {
             // error: "bg-red-500", // Style specific types
           },
         }}
-        />
+      />
     </div>
   )
 }
