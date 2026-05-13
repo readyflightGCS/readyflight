@@ -5,6 +5,7 @@ import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 import { cva } from 'class-variance-authority'
+import { Button } from '@/components/ui/button'
 
 export default function TelemetryTable() {
   const [
@@ -107,15 +108,11 @@ export default function TelemetryTable() {
           </tr>
 
           <tr>
-            <td className="p-1">Battery remaining</td>
-            <BatteryRemaining/>
+
             <td className="p-1">Vehicle Mode</td>
             <VehicleMode/>
             <td className="p-1">Armed State:</td>
             <ArmedStatus/>
-          </tr>
-
-          <tr>
             <td className="p-1">Climb</td>
             <Climb/>
           </tr>
@@ -175,7 +172,7 @@ function GroundSpeed() {
 function BattVoltage() {
   const voltage = useVehicle((v) => v.batteryVoltage)
 
-  return (<td className="p-1">{voltage !== null ? `${Math.round(voltage)}v` : '-'}</td>)
+  return (<td className="p-1">{voltage !== null ? `${voltage.toFixed(2)}v` : '-'}</td>)
 }
 
 function RelativeAlt() {
@@ -195,11 +192,39 @@ function RelativeAlt() {
 function Throttle() {
   const throttle = useVehicle((v) => v.throttle)
 
+  if (throttle != null) {
+    if (throttle === 0) {
+      return (
+        <td colSpan={5}>
+          <div className="w-full bg-neutral-quaternary rounded-full">
+            <span className='text-white'>
+              {throttle}%
+            </span>
+          </div>
+        </td>
+      )
+    } else {
+      return (
+        <td colSpan={5}>
+          <div className="w-full bg-neutral-quaternary rounded-full">
+            <div
+              className="bg-blue-900 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center"
+              style={{ width: `${throttle}%`, transition: `width 1s linear` }}
+            >
+              {' '}
+              {throttle}%
+            </div>
+          </div>
+        </td>
+      )
+    }
+  }
+
   return (
     <td colSpan={5}>
       <div className="w-full bg-neutral-quaternary rounded-full">
         <div
-          className="bg-blue-900 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center"
+          className="bg-blue-900 text-xs font-medium text-foreground text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center"
           style={{ width: `${throttle}%`, transition: `width 1s linear` }}
         >
           {' '}
@@ -240,7 +265,7 @@ function GpsSatellites() {
 
 function GpsHdop() {
   const hdop = useVehicle((v) => v.hdop)
-  return <td className="p-1">{hdop !== null ? `${Math.round(hdop)}m` : '-'}</td>
+  return <td className="p-1">{hdop !== null ? `${hdop/100}` : '-'}</td>
 }
 
 function BatteryRemaining() {

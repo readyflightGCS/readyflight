@@ -4,6 +4,7 @@ import SidePanel from './components/navigation/sidePanel/sidePanel'
 import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
 import { useEditor } from '@libs/stores/configurator'
 import ConnectionHandler from './components/telemetry/connectionHandler'
+import { Toaster } from 'sonner'
 
 export default function App(): React.JSX.Element {
   const isSidePanelOpen = useEditor((state) => state.sidePanelOpen)
@@ -25,6 +26,23 @@ export default function App(): React.JSX.Element {
         <Map />
       </div>
       <ConnectionHandler />
+      {/* <Toaster position="top-right"/> */}
+
+      <Toaster
+        position="top-right"
+
+        toastOptions={{
+          classNames: {
+            toast: "bg-background text-foreground border-border",
+            title: "text-foreground",
+            description: "text-muted-foreground",
+            actionButton: "bg-primary text-primary-foreground",
+            cancelButton: "bg-muted text-muted-foreground",
+            info: 'bg-blue-400'
+            // error: "bg-red-500", // Style specific types
+          },
+        }}
+        />
     </div>
   )
 }

@@ -6,7 +6,7 @@ export function ResponsiveIndicator({
   children: (size: number) => ReactNode
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const [size, setSize] = useState(100)
+  const [size, setSize] = useState(115)
 
   useEffect(() => {
     if (!ref.current) return

@@ -34,6 +34,8 @@ import { useVehicle } from "@libs/stores/vehicle"
 import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 import { MavLinkStreamParser } from "./mavlink-stream-parser"
 import { VehicleState } from "@libs/vehicle/state"
+import { toast } from "sonner"
+
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -104,6 +106,8 @@ function processFrame(
   if (!msg) return
 
   if (msg instanceof Heartbeat) {
+    console.log("HB")
+
     if (heartbeatTimeout) {
       clearTimeout(heartbeatTimeout);
     }
@@ -223,6 +227,29 @@ function processFrame(
     })
   } else if (msg instanceof Statustext) {
     console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
+
+    // toast(`Status Text`, {
+    //   description: `Severity: ${msg.severity}\nMessage: ${msg.text}`
+    // })
+
+    switch (msg.severity) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+        toast.error(`SHIT`, { description: `${msg.text}` })
+        break
+      
+      case 4:
+      case 5:
+        toast.warning(`ALMOST SHIT`, { description: `${msg.text}` })
+        break
+
+      case 6:
+      case 7:
+        toast.info(`PROBABLY FINE`, { description: `${msg.text}` })
+        break
+    }
 
     // ------------------------------------------------------------------
     // Mission upload handshake — respond to both legacy MISSION_REQUEST

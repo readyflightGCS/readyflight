@@ -4,13 +4,14 @@ import { useVehicle } from '@libs/stores/vehicle'
 import { ResponsiveIndicator } from './responsiveIndicator'
 
 export default function TelemetryIndicators() {
-  const [airspeed, heading, pitch, roll, relativeAltitude, climb] = useVehicle((v) => [
+  const [airspeed, heading, pitch, roll, relativeAltitude, climb, ssa] = useVehicle((v) => [
     v.airspeed,
     v.heading,
     v.pitch,
     v.roll,
     v.relativeAlt,
-    v.climb
+    v.climb,
+    v.SSA
   ])
 
   return (
@@ -69,7 +70,7 @@ export default function TelemetryIndicators() {
         <ResponsiveIndicator>
             {(size) => (
             <TurnCoordinator
-                turn={roll || 0}
+                turn={ssa || 0}
                 size={size}
                 showBox={false}
             />

@@ -144,7 +144,7 @@ export default function NumericInput({
         onBlur={handleBlur}
         placeholder="--"
         className={cn(
-          `bg-card rounded-lg pl-2 border-2 cursor-move text-black text-sm h-8`,
+          `bg-card rounded-lg pl-2 border-2 cursor-move text-foreground text-sm h-8`,
           className,
           textValue.trim() === '' ? 'text-center' : ''
         )}
