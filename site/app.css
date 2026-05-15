@@ -7,12 +7,12 @@
 
 .app-container {
     display: flex;
-    flex-direction: column;
     justify-content: center;
+    width: 100%;
 }
 
 .app {
-    margin: 3em;
+    margin: 1rem;
     transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg);
     background: #ddd;
     width: 500pt;
@@ -31,11 +31,11 @@
 
 @media (max-width: 800px) {
     .app {
-        transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg) scale(0.6);
+        transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg) scale(0.8);
     }
 
     .app:hover {
-        transform: scale(0.62) translateY(-10pt) perspective(1400px) rotate3d(0, 1, -0.3, -8deg);
+        transform: none;
     }
 }
 
