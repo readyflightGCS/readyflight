@@ -1,5 +1,5 @@
 import { Dialect } from "@libs/mission/dialect";
-import { CommandParameterUnion, CommandParams, DialectCommandDescription, MissionCommand } from "./command";
+import { CommandParameterUnion, CommandParams, DialectCommandDescription, MissionCommand, RFCommand } from "./command";
 import { objectKeys } from "@libs/util/types";
 import { LatLng, LatLngAlt } from "@libs/world/latlng";
 import { RFCommandDescription } from "./readyflightCommands";
@@ -103,12 +103,6 @@ export function coerceCommand<T extends DialectCommandDescription>(cmd: MissionC
   //@ts-ignore
   const oldParams = new Set(objectKeys(cmd.params))
 
-  if (newCmd.type === "RF.DubinsPath") {
-    let pos = getCommandLocationAlt(cmd, dialect)
-    //@ts-ignore
-    return makeCommand("RF.DubinsPath", { points: [{ lat: pos.lat, lng: pos.lng, heading: 0, tunable: true, radius: 100 },] }, dialect)
-  }
-
   // similar parameter names
   //@ts-ignore
   const same = Array.from(objectKeys(newCmd.params)).filter(x => oldParams.has(x))
@@ -120,6 +114,18 @@ export function coerceCommand<T extends DialectCommandDescription>(cmd: MissionC
       params[paramName as keyof CommandParams<T>] = value
     }
   })
+
+  // if converting to landing, make altitude 0 
+  if (type === "RF.Land") {
+    // @ts-ignore
+    params.altitude = 0;
+  }
+
+  // if converting to landing, make altitude 0 
+  if (type === "RF.Land") {
+    // @ts-ignore
+    params.altitude = 10;
+  }
 
   return makeCommand(type, params, dialect)
 }
@@ -165,6 +171,19 @@ export function makeCommand<T extends DialectCommandDescription>(
     type: cmd.type,
     frame: 0,
     params: params2,
+  }
+}
+
+export function getRFCommandLocation(cmd: RFCommand) {
+  switch (cmd.type) {
+    case "RF.DubinsPath":
+    case "RF.Waypoint":
+    case "RF.Takeoff":
+    case "RF.Land":
+      return { lat: cmd.params.latitude, lng: cmd.params.longitude }
+    case "RF.SetServo":
+    case "RF.Group":
+      return undefined
   }
 }
 

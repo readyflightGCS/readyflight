@@ -3,7 +3,6 @@ import { LatLng, LatLngAlt } from "@libs/world/latlng"
 import { DialectCommand, DialectCommandDescription, MissionCommand, RFCommand } from "@libs/commands/command"
 import { Result } from "@libs/util/try-catch"
 import { Vehicle } from "@libs/vehicle/types"
-import { VehicleState } from "@libs/vehicle/state"
 import { VehicleCommand } from "@libs/vehicle/commands"
 
 /**

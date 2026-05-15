@@ -70,32 +70,16 @@ export type CommandParameterDescriptionS = {
   options: string[]
 }
 
-/**
- * Describes a command parameter of type latitude/longitude/altitude array.
- * @typedef {Object} CommandParameterDescriptionDubins
- * @property {string} parameterType - The parameter type identifier, must be "dubinsParameters"
- * @property {string} label - A short label for this parameter
- * @property {string} description - A detailed description of what this parameter does
- * @property {LatLngAlt[]} default - The default value as an array of latitude/longitude/altitude coordinates
- */
-export type CommandParameterDescriptionDubins = {
-  parameterType: "dubinsParameters"
-  label: string
-  description: string
-  default: { lat: number, lng: number, alt: number, heading: number, radius: number }[]
-}
 
 // remember to add any new types to this union
 export type CommandParameterUnion =
   CommandParameterDescriptionS |
-  CommandParameterDescriptionN |
-  CommandParameterDescriptionDubins
+  CommandParameterDescriptionN
 
 // and remember to add it to this thing. TODO maybe derive this somehow
 type ParameterTypeToValueType<T extends CommandParameterUnion> =
   T extends { parameterType: "number" } ? number :
   T extends { parameterType: "string" } ? string :
-  T extends { parameterType: "dubinsParameters" } ? { lat: number, lng: number, alt: number, heading: number, radius: number }[] :
   never
 
 

@@ -1,14 +1,12 @@
-import { CircleMarker, LayerGroup, Polyline } from "react-leaflet";
+import { Circle, LayerGroup, Polyline } from "react-leaflet";
 import { ReactNode } from "react";
 import { useMission } from "@libs/stores/mission";
+import { dubinsBetweenDubins, localiseDubinsPath, splitDubinsRuns, waypointToDubins } from "@libs/dubins/dubinWaypoints";
 import Arc from "../arc";
-import { dubinsBetweenDubins, localiseDubinsPath } from "@libs/dubins/dubinWaypoints";
-import { getCommandLocation } from "@libs/commands/helpers";
-import { dubinsPoint } from "@libs/dubins/types";
-import { g2l } from "@libs/world/conversion";
+import { getRFCommandLocation } from "@libs/commands/helpers";
 
 const curveOptions = { color: '#ff0000' }
-const straightOptions = { color: '#ffa500' }
+const straightOptions = { color: '#bb0000' }
 const noshow = ["Markers", "Geofence"]
 
 export default function DubinsLayer() {
@@ -29,33 +27,21 @@ export default function DubinsLayer() {
   let passByCircles: ReactNode[] = []
 
   let key = 0
-
-  for (let i = 0; i < mainLine.length - 1; i++) {
-    const curCmd = mainLine[i].cmd
-    if (curCmd.type !== "RF.DubinsPath") {
-      continue
-    }
-    let dubinsPoints: dubinsPoint[] = []
-    if (i > 0) {
-      const prevCmd = mainLine[i - 1].cmd
-      dubinsPoints.push({ pos: g2l(reference, getCommandLocation(prevCmd, dialect)), bounds: {}, radius: 0, heading: 0, tunable: false, passbyRadius: 0 })
-    }
-    dubinsPoints = dubinsPoints.concat(curCmd.params.points.map((point) => {
-      markers.push(<CircleMarker radius={8} center={[point.lat, point.lng]} pathOptions={{ color: 'red', fillColor: 'red', fillOpacity: 1 }} />)
-      return { pos: g2l(reference, { lat: point.lat, lng: point.lng }), bounds: {}, radius: point.radius, heading: point.heading, tunable: true, passbyRadius: 0 }
-    }))
-
-    if (i < mainLine.length - 1) {
-      const nextCmd = mainLine[i + 1].cmd
-      dubinsPoints.push({ pos: g2l(reference, getCommandLocation(nextCmd, dialect)), bounds: {}, radius: 0, heading: 0, tunable: false, passbyRadius: 0 })
-    }
-
+  let dubinsSections = splitDubinsRuns(mainLine)
+  console.log(dubinsSections)
+  for (const section of dubinsSections) {
+    section.run.map((x, i) => {
+      if (i != 0 && x.cmd.type === "RF.DubinsPath" && i < section.run.length - 1 && x.cmd.params.gap > 0)
+        passByCircles.push(<Circle center={getRFCommandLocation(x.cmd)} radius={x.cmd.params.gap} key={key++} />)
+    })
+    let dubinsPoints = section.run.map((x) => waypointToDubins(x.cmd, reference, dialect))
     let path = dubinsBetweenDubins(dubinsPoints)
+    console.log(dubinsPoints)
     const localisedPath = path.map((x) => localiseDubinsPath(x, reference))
     localisedPath.map((c, _) => {
       lines.push(<Arc key={key++} curve={c.turnA} pathOptions={curveOptions} />)
       lines.push(<Polyline key={key++} pathOptions={straightOptions} positions={[c.straight.start, c.straight.end]} />)
-      lines.push(<Arc key={key++} curve={c.turnB} pathOptions={curveOptions} />)
+      lines.push(<Arc key={key++} curve={c.turnB} pathOptions={straightOptions} />)
     })
   }
 

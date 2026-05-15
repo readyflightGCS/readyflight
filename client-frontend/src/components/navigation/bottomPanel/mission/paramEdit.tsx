@@ -3,7 +3,6 @@ import { DialectCommandDescription, MissionCommand } from '@libs/commands/comman
 import { getCommandDescription } from '@libs/commands/helpers'
 import { LatLngEditor } from './LatLngEditor'
 import Parameter from './parameter'
-import DubinsEditor from './dubinsEditor'
 
 export default function ParamEditor() {
   const selectedSubMission = useMission((s) => s.selectedSubMission)
@@ -37,12 +36,6 @@ export default function ParamEditor() {
       <div className="h-full w-full text-center content-center">
         Select or place a waypoint to begin
       </div>
-    )
-  }
-
-  if (selected.filter((x) => x.type === "RF.DubinsPath").length >= 1) {
-    return (
-      <DubinsEditor />
     )
   }
 
