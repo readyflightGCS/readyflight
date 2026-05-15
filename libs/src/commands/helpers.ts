@@ -37,14 +37,14 @@ export function getCommandLabel(cmd: MissionCommand<DialectCommandDescription>, 
  */
 export function getCommandLocation(cmd: MissionCommand<DialectCommandDescription>, dialect: Dialect<DialectCommandDescription>): LatLng | null {
   switch (cmd.type) {
-    case "RF.Waypoint": return { lat: cmd.params.latitude, lng: cmd.params.longitude }
-    case "RF.DubinsPath": return null
-    case "RF.Land": return { lat: cmd.params.latitude, lng: cmd.params.longitude }
-    case "RF.Takeoff": return { lat: cmd.params.latitude, lng: cmd.params.longitude }
+    case "RF.Waypoint":
+    case "RF.DubinsPath":
+    case "RF.Land":
+    case "RF.Takeoff":
+      return { lat: cmd.params.latitude, lng: cmd.params.longitude }
     case "RF.SetServo": return null
     case "RF.Group": return null
     default: {
-      let exhaustiveCheck: `D.${string}` = cmd.type
       return dialect.getCommandLocation(cmd)
     }
   }
@@ -171,19 +171,6 @@ export function makeCommand<T extends DialectCommandDescription>(
     type: cmd.type,
     frame: 0,
     params: params2,
-  }
-}
-
-export function getRFCommandLocation(cmd: RFCommand) {
-  switch (cmd.type) {
-    case "RF.DubinsPath":
-    case "RF.Waypoint":
-    case "RF.Takeoff":
-    case "RF.Land":
-      return { lat: cmd.params.latitude, lng: cmd.params.longitude }
-    case "RF.SetServo":
-    case "RF.Group":
-      return undefined
   }
 }
 

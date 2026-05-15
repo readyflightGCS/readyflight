@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 import { useMission } from "@libs/stores/mission";
 import { dubinsBetweenDubins, localiseDubinsPath, splitDubinsRuns, waypointToDubins } from "@libs/dubins/dubinWaypoints";
 import Arc from "../arc";
-import { getRFCommandLocation } from "@libs/commands/helpers";
+import { getCommandLocation } from "@libs/commands/helpers";
 
 const curveOptions = { color: '#ff0000' }
 const straightOptions = { color: '#bb0000' }
@@ -28,15 +28,13 @@ export default function DubinsLayer() {
 
   let key = 0
   let dubinsSections = splitDubinsRuns(mainLine)
-  console.log(dubinsSections)
   for (const section of dubinsSections) {
     section.run.map((x, i) => {
       if (i != 0 && x.cmd.type === "RF.DubinsPath" && i < section.run.length - 1 && x.cmd.params.gap > 0)
-        passByCircles.push(<Circle center={getRFCommandLocation(x.cmd)} radius={x.cmd.params.gap} key={key++} />)
+        passByCircles.push(<Circle center={getCommandLocation(x.cmd, dialect)} radius={x.cmd.params.gap} key={key++} />)
     })
     let dubinsPoints = section.run.map((x) => waypointToDubins(x.cmd, reference, dialect))
     let path = dubinsBetweenDubins(dubinsPoints)
-    console.log(dubinsPoints)
     const localisedPath = path.map((x) => localiseDubinsPath(x, reference))
     localisedPath.map((c, _) => {
       lines.push(<Arc key={key++} curve={c.turnA} pathOptions={curveOptions} />)

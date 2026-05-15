@@ -9,7 +9,7 @@ import { deg2rad, modf, offset } from "@libs/math/geometry";
 import { Plane } from "@libs/vehicle/types";
 import { DialectCommand, DialectCommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
 import { Dialect } from "@libs/mission/dialect";
-import { getRFCommandLocation } from "@libs/commands/helpers";
+import { getCommandLocation } from "@libs/commands/helpers";
 
 /*
  * find all the sections of a waypoint list which require a dubins path between
@@ -106,7 +106,6 @@ export function dubinsBetweenDubins(wps: dubinsPoint[]): DubinsPath<XY>[] {
       bdir = crossProduct(a.pos, b.pos, wps[i + 2].pos) > 0 ? 1 : -1
     }
 
-    console.log(a)
     let offsetA = offset(a.pos, a.passbyRadius * adir, deg2rad(a.heading + 90))
     let offsetB = offset(b.pos, b.passbyRadius * bdir, deg2rad(b.heading + 90))
     const res = DubinsBetweenDiffRad(offsetA, offsetB, deg2rad(a.heading), deg2rad(b.heading), a.radius, b.radius)
@@ -191,12 +190,7 @@ export function applyBounds(params: number[], bounds: bound[]): void {
  * @returns {dubinsPoint} The dubins point
  */
 export function waypointToDubins(cmd: MissionCommand<DialectCommandDescription>, reference: LatLng, dialect: Dialect<DialectCommandDescription>): dubinsPoint {
-  let location: LatLng;
-  if (cmd.type.startsWith("RF.")) {
-    location = getRFCommandLocation(cmd as RFCommand)
-  } else {
-    location = dialect.getCommandLocation(cmd as DialectCommand<DialectCommandDescription>)
-  }
+  let location = getCommandLocation(cmd, dialect)
   if (cmd.type === "RF.DubinsPath") {
     return { pos: g2l(reference, location), bounds: {}, radius: cmd.params.radius, heading: cmd.params.heading, tunable: true, passbyRadius: cmd.params.gap }
   } else {

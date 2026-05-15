@@ -100,9 +100,6 @@ export default function ActiveLayer() {
   return (
     <LayerGroup>
       {mainLine.map((command) => {
-        if (command.cmd.type == 'RF.DubinsPath') {
-          return
-        }
         const position = getCommandLocation(command.cmd, dialect)
         const isActive = (() => {
           const x = mission.findNthPosition(selectedSubMission, command.id)
