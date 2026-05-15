@@ -10,7 +10,7 @@
     "client-frontend",
     "client-backend",
     "electron",
-    "docs",
+    "site",
     "libs"
   ],
   "scripts": {
