@@ -1,13 +1,18 @@
-import { Circle, LayerGroup, Polyline } from "react-leaflet";
-import { ReactNode } from "react";
-import { useMission } from "@libs/stores/mission";
-import { dubinsBetweenDubins, localiseDubinsPath, splitDubinsRuns, waypointToDubins } from "@libs/dubins/dubinWaypoints";
-import Arc from "../arc";
-import { getCommandLocation } from "@libs/commands/helpers";
+import { Circle, LayerGroup, Polyline } from 'react-leaflet'
+import { ReactNode } from 'react'
+import { useMission } from '@libs/stores/mission'
+import {
+  dubinsBetweenDubins,
+  localiseDubinsPath,
+  splitDubinsRuns,
+  waypointToDubins
+} from '@libs/dubins/dubinWaypoints'
+import Arc from '../arc'
+import { getCommandLocation } from '@libs/commands/helpers'
 
 const curveOptions = { color: '#ff0000' }
 const straightOptions = { color: '#bb0000' }
-const noshow = ["Markers", "Geofence"]
+const noshow = ['Markers', 'Geofence']
 
 export default function DubinsLayer() {
   const { mission, selectedSubMission, dialect } = useMission()
@@ -22,27 +27,43 @@ export default function DubinsLayer() {
   if (activeWPs.length < 2) {
     return
   }
-  let markers: ReactNode[] = []
-  let lines: ReactNode[] = []
-  let passByCircles: ReactNode[] = []
+  const markers: ReactNode[] = []
+  const lines: ReactNode[] = []
+  const passByCircles: ReactNode[] = []
 
   let key = 0
-  let dubinsSections = splitDubinsRuns(mainLine)
+  const dubinsSections = splitDubinsRuns(mainLine)
   for (const section of dubinsSections) {
     section.run.map((x, i) => {
-      if (i != 0 && x.cmd.type === "RF.DubinsPath" && i < section.run.length - 1 && x.cmd.params.gap > 0)
-        passByCircles.push(<Circle center={getCommandLocation(x.cmd, dialect)} radius={x.cmd.params.gap} key={key++} />)
+      if (
+        i != 0 &&
+        x.cmd.type === 'RF.DubinsPath' &&
+        i < section.run.length - 1 &&
+        x.cmd.params.gap > 0
+      )
+        passByCircles.push(
+          <Circle
+            center={getCommandLocation(x.cmd, dialect)}
+            radius={x.cmd.params.gap}
+            key={key++}
+          />
+        )
     })
-    let dubinsPoints = section.run.map((x) => waypointToDubins(x.cmd, reference, dialect))
-    let path = dubinsBetweenDubins(dubinsPoints)
+    const dubinsPoints = section.run.map((x) => waypointToDubins(x.cmd, reference, dialect))
+    const path = dubinsBetweenDubins(dubinsPoints)
     const localisedPath = path.map((x) => localiseDubinsPath(x, reference))
-    localisedPath.map((c, _) => {
+    localisedPath.map((c) => {
       lines.push(<Arc key={key++} curve={c.turnA} pathOptions={curveOptions} />)
-      lines.push(<Polyline key={key++} pathOptions={straightOptions} positions={[c.straight.start, c.straight.end]} />)
+      lines.push(
+        <Polyline
+          key={key++}
+          pathOptions={straightOptions}
+          positions={[c.straight.start, c.straight.end]}
+        />
+      )
       lines.push(<Arc key={key++} curve={c.turnB} pathOptions={straightOptions} />)
     })
   }
-
 
   return (
     <LayerGroup>
@@ -51,5 +72,4 @@ export default function DubinsLayer() {
       {passByCircles}
     </LayerGroup>
   )
-
 }

@@ -2,6 +2,7 @@ import { useMission } from '@libs/stores/mission'
 import { Button } from '@/components/ui/button'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import CommandItem from './commandItem'
+import { getCommandLocation } from '@libs/commands/helpers'
 
 export default function CommandList() {
   const setSelectedSubMission = useMission((s) => s.setSelectedSubMission)
@@ -11,7 +12,6 @@ export default function CommandList() {
   const dialect = useMission((s) => s.dialect)
   const setMission = useMission((s) => s.setMission)
   const selectedSubMission = useMission((s) => s.selectedSubMission)
-  const setTool = useMission((s) => s.setTool)
 
   const curMission = mission.get(selectedSubMission)
 
@@ -19,7 +19,6 @@ export default function CommandList() {
 
   const hasLanding = missions.includes('Landing')
   const hasTakeoff = missions.includes('Takeoff')
-
 
   function handleGroup() {
     // get name for mission
@@ -52,7 +51,6 @@ export default function CommandList() {
     setMission(temp)
   }
 
-
   function createTakeoff() {
     const a = mission.clone()
     a.addSubMission('Takeoff', [])
@@ -73,20 +71,42 @@ export default function CommandList() {
     setTool('Land')
   }
 
-  let missionWithDubinsGroups: ({
-    type: "cmd",
-    cmd: MissionCommand<DialectCommandDescription>
-  } | {
-    type: "dubins",
-    cmds: MissionCommand<DialectCommandDescription>
-  })[] = []
+  const missionWithDubinsGroups: (
+    | {
+        type: 'cmd'
+        cmd: MissionCommand<DialectCommandDescription>
+      }
+    | {
+        type: 'dubins'
+        cmds: MissionCommand<DialectCommandDescription>[]
+      }
+  )[] = []
 
+  let curDubinsPath = []
   for (let i = 0; i < curMission.length; i++) {
-    missionWithDubinsGroups.push({ type: "cmd", cmd: curMission[i] })
+    if (curMission[i].type === 'RF.DubinsPath') {
+      curDubinsPath.push(curMission[i])
+      continue
+    }
+    if (getCommandLocation(curMission[i], dialect)) {
+      if (curDubinsPath.length > 0) {
+        missionWithDubinsGroups.push({ type: 'dubins', cmds: curDubinsPath })
+        curDubinsPath = []
+      }
+      missionWithDubinsGroups.push({ type: 'cmd', cmd: curMission[i] })
+      continue
+    }
+    if (curDubinsPath.length > 0) {
+      curDubinsPath.push(curMission[i])
+      continue
+    }
+    missionWithDubinsGroups.push({ type: 'cmd', cmd: curMission[i] })
   }
 
+  let cmdId = 0
+
   return (
-    <div className="flex-grow overflow-auto select-none">
+    <div className="min-h-0 overflow-y-auto ">
       {!hasTakeoff && selectedSubMission == 'Main' ? (
         <div className="px-2 py-1">
           <Button
@@ -99,9 +119,19 @@ export default function CommandList() {
         </div>
       ) : null}
 
-      {curMission.map((node, i) => (
-        <CommandItem key={i} command={node} />
-      ))}
+      {missionWithDubinsGroups.map((node, i) => {
+        if (node.type === 'cmd') {
+          return <CommandItem id={cmdId++} key={i} command={node.cmd} />
+        } else {
+          return (
+            <div key={i} className="ml-10 pl-3 border-l-2 border-gray-300">
+              {node.cmds.map((cmd, j) => (
+                <CommandItem id={cmdId++} key={j} command={cmd} />
+              ))}
+            </div>
+          )
+        }
+      })}
       {selectedCommandIDs.length > 1 ? (
         <div className="w-full flex justify-center">
           <Button variant="active" onMouseDown={handleGroup} className="text-center p-1 m-1 w-44">

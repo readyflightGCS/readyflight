@@ -52,7 +52,9 @@ export default function ParamEditor() {
     // get initial parameter names from the first command selected
     let params = new Set(
       getCommandDescription(a[0], dialect)
-        .parameters.map((x: DialectCommandDescription['parameters'][number]) => x?.label?.toLowerCase())
+        .parameters.map((x: DialectCommandDescription['parameters'][number]) =>
+          x?.label?.toLowerCase()
+        )
         .filter((x) => x !== undefined)
     )
 
@@ -60,7 +62,9 @@ export default function ParamEditor() {
     for (let i = 1; i < a.length; i++) {
       const nextParams = new Set(
         getCommandDescription(a[i], dialect)
-          .parameters.map((x: DialectCommandDescription['parameters'][number]) => x?.label?.toLowerCase())
+          .parameters.map((x: DialectCommandDescription['parameters'][number]) =>
+            x?.label?.toLowerCase()
+          )
           .filter((x) => x !== undefined)
       )
 

@@ -1,13 +1,20 @@
-import ListItem from "@/components/ui/listItem"
+import ListItem from '@/components/ui/listItem'
 import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, Route, Trash2 } from 'lucide-react'
-import { DialectCommandDescription, MissionCommand } from "@libs/commands/command"
-import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { getCommandLabel } from '@libs/commands/helpers'
-import { useState } from "react"
-import { useMission } from "@libs/stores/mission"
+import { useMission } from '@libs/stores/mission'
+import { useEditor } from '@libs/stores/configurator'
 
-export default function CommandItem({ command }: { command: MissionCommand<DialectCommandDescription> }) {
-  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null)
+export default function CommandItem({
+  command,
+  id
+}: {
+  command: MissionCommand<DialectCommandDescription>
+  id: number
+}) {
+  const lastSelectedCommandIndex = useEditor((s) => s.lastSelectedCommandIndex)
+  const setLastSelectedCommandIndex = useEditor((s) => s.setLastSelectedCommandIndex)
   const setSelectedSubMission = useMission((s) => s.setSelectedSubMission)
   const mission = useMission((s) => s.mission)
   const setSelectedCommandIDs = useMission((s) => s.setSelectedCommandIDs)
@@ -17,7 +24,6 @@ export default function CommandItem({ command }: { command: MissionCommand<Diale
   const selectedSubMission = useMission((s) => s.selectedSubMission)
 
   const curMission = mission.get(selectedSubMission)
-
 
   function moveUp(i: number) {
     const temp = mission.clone()
@@ -47,15 +53,16 @@ export default function CommandItem({ command }: { command: MissionCommand<Diale
   }
 
   function handleClick(id: number, e: React.MouseEvent<HTMLDivElement>) {
-    if (e.shiftKey && lastSelectedIndex !== null) {
-      const range = [lastSelectedIndex, id].sort((a, b) => a - b)
+    console.log(id)
+    if (e.shiftKey && lastSelectedCommandIndex !== null) {
+      const range = [lastSelectedCommandIndex, id].sort((a, b) => a - b)
       const newSelection = []
       for (let i = range[0]; i <= range[1]; i++) newSelection.push(i)
       setSelectedCommandIDs(newSelection)
     } else {
       setSelectedCommandIDs([id])
-      setLastSelectedIndex(id)
     }
+    setLastSelectedCommandIndex(id)
   }
 
   function onDelete(id: number) {
@@ -91,32 +98,64 @@ export default function CommandItem({ command }: { command: MissionCommand<Diale
     setSelectedSubMission(name)
     setSelectedCommandIDs([])
   }
+
+  function handleGroup() {
+    // get name for mission
+    let name: string | null = null
+    name = prompt('enter name')
+    if (name == null) return
+
+    // remove all selected
+    const newCmds = curMission.filter((_, id) => selectedCommandIDs.includes(id))
+
+    // get the nodes for sub mission
+    const subMissionCmds = curMission.filter((_, id) => !selectedCommandIDs.includes(id))
+
+    // if _ at the start of the name, don't add to the main mission
+    if (name.charAt(0) != '_') {
+      subMissionCmds.splice(Math.min(...selectedCommandIDs), 0, {
+        type: 'RF.Group',
+        frame: 0,
+        params: { name: name }
+      })
+      setSelectedCommandIDs([Math.min(...selectedCommandIDs)])
+    } else {
+      setSelectedCommandIDs([])
+    }
+
+    // update the actual waypoints
+    const temp = mission.clone()
+    temp.set(selectedSubMission, subMissionCmds)
+    temp.set(name, newCmds)
+    setMission(temp)
+  }
+
   if (command.type == 'RF.Group') {
     return (
       <ListItem
         icon={<Route />}
-        name={getCommandLabel(node, dialect)}
-        onClick={(e) => handleClick(i, e)}
-        selected={selectedCommandIDs.includes(i)}
+        name={getCommandLabel(command, dialect)}
+        onClick={(e) => handleClick(id, e)}
+        selected={selectedCommandIDs.includes(id)}
         menuItems={
           <>
             <DropdownMenuItem
-              onClick={() => goToSubMission(node.params.name as string)}
+              onClick={() => goToSubMission(command.params.name as string)}
               className="gap-2"
             >
               <ArrowDownNarrowWide className="h-4 w-4" />
               <span>Go To Mission</span>
             </DropdownMenuItem>
 
-            {i > 0 ? (
-              <DropdownMenuItem onClick={() => moveUp(i)} className="gap-2">
+            {id > 0 ? (
+              <DropdownMenuItem onClick={() => moveUp(id)} className="gap-2">
                 <MoveUp className="h-4 w-4" />
                 <span>Move Up</span>
               </DropdownMenuItem>
             ) : null}
 
-            {i < curMission.length - 1 ? (
-              <DropdownMenuItem onClick={() => moveDown(i)} className="gap-2">
+            {id < curMission.length - 1 ? (
+              <DropdownMenuItem onClick={() => moveDown(id)} className="gap-2">
                 <MoveDown className="h-4 w-4" />
                 <span>Move Down</span>
               </DropdownMenuItem>
@@ -129,13 +168,13 @@ export default function CommandItem({ command }: { command: MissionCommand<Diale
               </DropdownMenuItem>
             ) : null}
 
-            <DropdownMenuItem onClick={() => ungroup(i)} className="gap-2">
+            <DropdownMenuItem onClick={() => ungroup(id)} className="gap-2">
               <Route className="h-4 w-4" />
               <span>Ungroup</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              onClick={() => onDelete(i)}
+              onClick={() => onDelete(id)}
               className="gap-2 text-red-500 hover:text-red-500"
             >
               <Trash2 className="h-4 w-4" />
@@ -158,11 +197,10 @@ export default function CommandItem({ command }: { command: MissionCommand<Diale
   } else {
     return (
       <ListItem
-        name={getCommandLabel(node, dialect)}
+        name={getCommandLabel(command, dialect)}
         icon={<Locate />}
-        key={i}
-        selected={selectedCommandIDs.includes(i)}
-        onClick={(e) => handleClick(i, e)}
+        selected={selectedCommandIDs.includes(id)}
+        onClick={(e) => handleClick(id, e)}
         className="justify-start"
         menuItems={
           <>
@@ -173,22 +211,22 @@ export default function CommandItem({ command }: { command: MissionCommand<Diale
               </DropdownMenuItem>
             ) : null}
 
-            {i > 0 ? (
-              <DropdownMenuItem onClick={() => moveUp(i)} className="gap-2">
-                <MoveUp className="h-4 w-4" />
+            {id > 0 ? (
+              <DropdownMenuItem onClick={() => moveUp(id)} className="gap-2">
+                <MoveUp className="h-4 w-4 " />
                 <span>Move Up</span>
               </DropdownMenuItem>
             ) : null}
 
-            {i < curMission.length - 1 ? (
-              <DropdownMenuItem onClick={() => moveDown(i)} className="gap-2">
+            {id < curMission.length - 1 ? (
+              <DropdownMenuItem onClick={() => moveDown(id)} className="gap-2">
                 <MoveDown className="h-4 w-4" />
                 <span>Move Down</span>
               </DropdownMenuItem>
             ) : null}
 
             <DropdownMenuItem
-              onClick={() => onDelete(i)}
+              onClick={() => onDelete(id)}
               className="gap-2 text-red-500 hover:text-red-500"
             >
               <Trash2 className="h-4 w-4" />
@@ -210,4 +248,3 @@ export default function CommandItem({ command }: { command: MissionCommand<Diale
     )
   }
 }
-

@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { execSync } from 'child_process'
 
 const gitVersion =
-  JSON.stringify(process.env.APP_VERSION) || execSync('git describe --tags --dirty')
+  process.env.APP_VERSION || execSync('git describe --tags --dirty').toString().trim()
 
 // Web-only Vite config; Electron uses electron.vite.config.ts
 export default defineConfig({
