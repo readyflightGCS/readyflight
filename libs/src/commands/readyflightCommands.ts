@@ -1,4 +1,4 @@
-import { CommandDescription } from "./command"
+import { ReadyflightCommandDescription } from "./command"
 
 /**
  * Array of ReadyFlight command descriptions defining the structure and metadata for various mission commands.
@@ -32,11 +32,66 @@ export const RFCommandDescription = [{
   hasLocation: false,
   isDestination: false,
   parameters: [{
-    parameterType: "dubinsParameters",
-    label: "Points",
-    description: "The lat lng alt points of the path",
-    default: []
-  }]
+    parameterType: "number",
+    label: "Latitude",
+    description: "Latitude",
+    units: "",
+    minValue: null,
+    maxValue: null,
+    increment: null,
+    default: null,
+    options: [],
+  }, {
+    parameterType: "number",
+    label: "Longitude",
+    description: "Longitude",
+    units: "",
+    minValue: null,
+    maxValue: null,
+    increment: null,
+    default: null,
+    options: [],
+  }, {
+    parameterType: "number",
+    label: "Altitude",
+    description: "Altitude",
+    units: "m",
+    minValue: null,
+    maxValue: null,
+    increment: null,
+    default: 1000,
+    options: [],
+  }, {
+    parameterType: "number",
+    label: "Radius",
+    description: "Radius",
+    units: "",
+    minValue: 0,
+    maxValue: null,
+    increment: null,
+    default: 50,
+    options: [],
+  }, {
+    parameterType: "number",
+    label: "Gap",
+    description: "Longitude",
+    units: "",
+    minValue: 0,
+    maxValue: null,
+    increment: null,
+    default: 0,
+    options: [],
+  }, {
+    parameterType: "number",
+    label: "Heading",
+    description: "heading",
+    units: "",
+    minValue: 0,
+    maxValue: 360,
+    increment: null,
+    default: 0,
+    options: [],
+  }],
 }, {
   type: "RF.Group",
   label: "Group",
@@ -246,4 +301,4 @@ export const RFCommandDescription = [{
     options: [],
   }],
 }
-] as const satisfies CommandDescription[]
+] as const satisfies ReadyflightCommandDescription[]

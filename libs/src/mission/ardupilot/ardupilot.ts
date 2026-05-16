@@ -34,6 +34,7 @@ import { useVehicle } from "@libs/stores/vehicle"
 import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 import { MavLinkStreamParser } from "./mavlink-stream-parser"
 import { VehicleState } from "@libs/vehicle/state"
+import { objectKeys } from "@libs/util/types"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -332,9 +333,9 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     "RF.Waypoint": true,
   },
 
-  handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
+  handleTelemetryMessage: (data, sendPacket) => {
     for (const frame of streamParser.feed(data)) {
-      processFrame(frame, setVehicleState, sendPacket)
+      processFrame(frame, sendPacket)
     }
   },
 

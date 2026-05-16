@@ -9,13 +9,13 @@ export default function Mission() {
   const selectedSubMission = useMission((s) => s.selectedSubMission)
 
   return (
-    <div className="flex flex-col gap-2 h-full">
+    <div className="h-full flex flex-col gap-2 h-full">
       <SidePanelSection title="File">
         <MissionDialog />
         <MissionFile />
       </SidePanelSection>
 
-      <SidePanelSection title={selectedSubMission} className="flex-grow">
+      <SidePanelSection title={selectedSubMission} className="flex-grow min-h-0">
         <CommandList />
       </SidePanelSection>
 

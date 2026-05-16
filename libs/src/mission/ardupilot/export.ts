@@ -1,5 +1,5 @@
 
-import { DialectCommand, DialectCommandParams, RFCommand } from "@libs/commands/command";
+import { CommandParams, DialectCommand, RFCommand } from "@libs/commands/command";
 import { Mission } from "../mission";
 import { mavCmdDescription } from "./commands";
 import { dubinsBetweenDubins, localiseDubinsPath } from "@libs/dubins/dubinWaypoints";
@@ -10,6 +10,7 @@ import { LatLng } from "@libs/world/latlng";
 import { Result } from "@libs/util/try-catch";
 import { makeCommand } from "@libs/commands/helpers";
 import { ardupilot } from "./ardupilot";
+import { Dialect } from "../dialect";
 
 export function convertArdupilot(mission: Mission<typeof mavCmdDescription[number]>): DialectCommand<typeof mavCmdDescription[number]>[] {
     const flattened = mission.flatten("Main");
@@ -30,7 +31,7 @@ export function convertArdupilot(mission: Mission<typeof mavCmdDescription[numbe
 }
 
 // Helper to create basic Mavlink command
-function createMavCmd<CMD extends typeof mavCmdDescription[number]>(type: CMD["type"], params: DialectCommandParams<CMD>): DialectCommand<CMD> {
+function createMavCmd<CMD extends typeof mavCmdDescription[number]>(type: CMD["type"], params: CommandParams<CMD>): DialectCommand<CMD> {
     // Find the command definition to ensure we are creating a valid command
     // This is a bit dynamic/loose, ideally would use type guards or specific creators
     // But for now we trust the type string matches one of mavCmdDescription

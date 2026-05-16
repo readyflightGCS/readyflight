@@ -14,14 +14,14 @@ import {
   getTerrainElevationAtPoint
 } from '@libs/world/terrain'
 import NumericInput from '@/components/ui/numericInput'
-import { CommandDescription, MissionCommand } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { Mission } from '@libs/mission/mission'
 
 // Helper function to get selected commands (keeping this here as it's UI-specific)
 function getSelectedCommands(
   selectedWPs: number[],
-  mission: MissionCommand<CommandDescription>[],
-  waypoints: Mission<CommandDescription>
+  mission: MissionCommand<DialectCommandDescription>[],
+  waypoints: Mission<DialectCommandDescription>
 ) {
   const selectedNodes =
     selectedWPs.length == 0 ? mission : mission.filter((_, i) => selectedWPs.includes(i))
