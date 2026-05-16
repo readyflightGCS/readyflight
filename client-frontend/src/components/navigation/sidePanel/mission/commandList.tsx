@@ -73,13 +73,13 @@ export default function CommandList() {
 
   const missionWithDubinsGroups: (
     | {
-        type: 'cmd'
-        cmd: MissionCommand<DialectCommandDescription>
-      }
+      type: 'cmd'
+      cmd: MissionCommand<DialectCommandDescription>
+    }
     | {
-        type: 'dubins'
-        cmds: MissionCommand<DialectCommandDescription>[]
-      }
+      type: 'dubins'
+      cmds: MissionCommand<DialectCommandDescription>[]
+    }
   )[] = []
 
   let curDubinsPath = []
@@ -102,13 +102,17 @@ export default function CommandList() {
     }
     missionWithDubinsGroups.push({ type: 'cmd', cmd: curMission[i] })
   }
+  if (curDubinsPath.length > 0) {
+    missionWithDubinsGroups.push({ type: 'dubins', cmds: curDubinsPath })
+    curDubinsPath = []
+  }
 
   let cmdId = 0
 
   return (
     <div className="min-h-0 overflow-y-auto ">
       {!hasTakeoff && selectedSubMission == 'Main' ? (
-        <div className="px-2 py-1">
+        <div className="py-2">
           <Button
             name="Add Takeoff"
             onClick={createTakeoff}
@@ -124,10 +128,16 @@ export default function CommandList() {
           return <CommandItem id={cmdId++} key={i} command={node.cmd} />
         } else {
           return (
-            <div key={i} className="ml-10 pl-3 border-l-2 border-gray-300">
-              {node.cmds.map((cmd, j) => (
-                <CommandItem id={cmdId++} key={j} command={cmd} />
-              ))}
+            <div key={i} className="pl-2">
+              <div className="relative pl-2">
+                <div className="absolute left-0 top-1 bottom-1 w-[2px] bg-red-500 rounded-full" />
+
+                <div>
+                  {node.cmds.map((cmd, j) => (
+                    <CommandItem id={cmdId++} key={j} command={cmd} />
+                  ))}
+                </div>
+              </div>
             </div>
           )
         }
@@ -141,7 +151,7 @@ export default function CommandList() {
       ) : null}
 
       {!hasLanding && selectedSubMission == 'Main' ? (
-        <div className="px-2 py-1">
+        <div className="py-2">
           <Button onClick={createLanding} className="w-full my-2 mx-0 h-12">
             Add Landing
           </Button>

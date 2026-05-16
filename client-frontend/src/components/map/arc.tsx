@@ -1,9 +1,9 @@
 import { Polyline } from 'react-leaflet'
-import { latLng, LatLngExpression, PathOptions } from 'leaflet'
 import { worldOffset } from '@libs/world/distance'
-import { Curve } from '@libs/dubins/types'
-import { LatLng } from '@libs/world/latlng'
-import { rad2deg } from '@libs/math/geometry'
+import { interpolateLinear, rad2deg } from '@libs/math/geometry'
+import type { LatLngExpression, PathOptions } from 'leaflet'
+import type { Curve } from '@libs/dubins/types'
+import type { LatLng } from '@libs/world/latlng'
 
 export default function Arc({
   curve,
@@ -12,23 +12,12 @@ export default function Arc({
   curve: Curve<LatLng>
   pathOptions?: PathOptions
 }) {
+
   const points: LatLngExpression[] = []
+  const steps = Math.abs(curve.theta) * 10
 
-  if (curve.theta < 0) {
-    for (let i = 0; i > curve.theta; i -= 0.1) {
-      const a = worldOffset(curve.center, curve.radius, rad2deg(curve.start + i))
-      points.push(latLng(a.lat, a.lng))
-    }
-    const a = worldOffset(curve.center, curve.radius, rad2deg(curve.start + curve.theta))
-    points.push(latLng(a.lat, a.lng))
-  } else {
-    for (let i = 0; i < curve.theta; i += 0.1) {
-      const a = worldOffset(curve.center, curve.radius, rad2deg(curve.start + i))
-      points.push(latLng(a.lat, a.lng))
-    }
-    const a = worldOffset(curve.center, curve.radius, rad2deg(curve.start + curve.theta))
-    points.push(latLng(a.lat, a.lng))
+  for (let i = 0; i < steps; i++) {
+    points.push(worldOffset(curve.center, curve.radius, rad2deg(interpolateLinear(curve.start, curve.start + curve.theta, i / steps))))
   }
-
   return <Polyline pathOptions={pathOptions} positions={points} />
 }

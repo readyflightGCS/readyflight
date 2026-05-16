@@ -6,6 +6,7 @@ import CommandMarker from '../commandMarker'
 import { getCommandLocation } from '@libs/commands/helpers'
 import { useVehicle } from '@libs/stores/vehicle'
 import DraggableMarker from '../draggableMarker'
+import { useEditor } from '@libs/stores/configurator'
 
 const limeOptions = { color: 'lime' }
 const noshow = ['Markers', 'Geofence']
@@ -21,6 +22,7 @@ export default function ActiveLayer() {
     selectedCommandIDs
   } = useMission()
   const v = useVehicle()
+  const setLastSelectedCommandIndex = useEditor(s => s.setLastSelectedCommandIndex)
 
   let a = 0
   if (noshow.includes(selectedSubMission)) return null
@@ -82,6 +84,7 @@ export default function ActiveLayer() {
     if (!a) return
     setSelectedSubMission(a[0])
     setSelectedCommandIDs([a[1]])
+    setLastSelectedCommandIndex(a[1])
   }
 
   // handle when marker is double clicked

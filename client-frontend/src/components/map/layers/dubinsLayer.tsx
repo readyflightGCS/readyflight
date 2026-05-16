@@ -15,7 +15,11 @@ const straightOptions = { color: '#bb0000' }
 const noshow = ['Markers', 'Geofence']
 
 export default function DubinsLayer() {
-  const { mission, selectedSubMission, dialect } = useMission()
+  const mission = useMission(s => s.mission)
+  const selectedSubMission = useMission(s => s.selectedSubMission)
+  const dialect = useMission(s => s.dialect)
+
+  // return early if we are on Markers or Geofence
   if (noshow.includes(selectedSubMission)) return null
 
   // get reference waypoint
@@ -24,9 +28,11 @@ export default function DubinsLayer() {
   const activeWPs = mission.flatten(selectedSubMission)
   const mainLine = mission.mainLine(dialect, selectedSubMission)
 
+  // we need at least two commands for dubins path
   if (activeWPs.length < 2) {
     return
   }
+
   const markers: ReactNode[] = []
   const lines: ReactNode[] = []
   const passByCircles: ReactNode[] = []
@@ -34,6 +40,8 @@ export default function DubinsLayer() {
   let key = 0
   const dubinsSections = splitDubinsRuns(mainLine)
   for (const section of dubinsSections) {
+
+    // add pass by circles
     section.run.map((x, i) => {
       if (
         i != 0 &&
@@ -49,11 +57,16 @@ export default function DubinsLayer() {
           />
         )
     })
+
+    // generate dubins path
     const dubinsPoints = section.run.map((x) => waypointToDubins(x.cmd, reference, dialect))
     const path = dubinsBetweenDubins(dubinsPoints)
     const localisedPath = path.map((x) => localiseDubinsPath(x, reference))
+
     localisedPath.map((c) => {
+      // curve
       lines.push(<Arc key={key++} curve={c.turnA} pathOptions={curveOptions} />)
+      // straight
       lines.push(
         <Polyline
           key={key++}
@@ -61,6 +74,7 @@ export default function DubinsLayer() {
           positions={[c.straight.start, c.straight.end]}
         />
       )
+      // curve
       lines.push(<Arc key={key++} curve={c.turnB} pathOptions={straightOptions} />)
     })
   }
