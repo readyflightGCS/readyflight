@@ -88,7 +88,7 @@ export default function CommandList() {
       curDubinsPath.push(curMission[i])
       continue
     }
-    if (getCommandLocation(curMission[i], dialect)) {
+    if (getCommandLocation(curMission[i], dialect) || curMission[i].type === "RF.Group") {
       if (curDubinsPath.length > 0) {
         missionWithDubinsGroups.push({ type: 'dubins', cmds: curDubinsPath })
         curDubinsPath = []

@@ -1,5 +1,5 @@
 import ListItem from '@/components/ui/listItem'
-import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, Route, Trash2 } from 'lucide-react'
+import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, PlaneLanding, PlaneTakeoff, PlugZap, Route, Spline, Trash2 } from 'lucide-react'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { getCommandLabel } from '@libs/commands/helpers'
@@ -130,10 +130,23 @@ export default function CommandItem({
     setMission(temp)
   }
 
+  const icons = {
+    'RF.Waypoint': <Locate />,
+    'RF.Takeoff': <PlaneTakeoff />,
+    'RF.Land': <PlaneLanding />,
+    'RF.SetServo': <PlugZap />,
+    'RF.DubinsPath': <Spline />
+  }
+
+  let icon = <Locate />
+  if (command.type in icons) {
+    icon = icons[command.type]
+  }
+
   if (command.type == 'RF.Group') {
     return (
       <ListItem
-        icon={<Route />}
+        icon={icon}
         name={getCommandLabel(command, dialect)}
         onClick={(e) => handleClick(id, e)}
         selected={selectedCommandIDs.includes(id)}
@@ -195,10 +208,11 @@ export default function CommandItem({
       />
     )
   } else {
+
     return (
       <ListItem
         name={getCommandLabel(command, dialect)}
-        icon={<Locate />}
+        icon={icon}
         selected={selectedCommandIDs.includes(id)}
         onClick={(e) => handleClick(id, e)}
         className="justify-start"
