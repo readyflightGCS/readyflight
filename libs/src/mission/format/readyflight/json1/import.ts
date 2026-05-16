@@ -1,10 +1,11 @@
-import { CommandDescription, MissionCommand } from "@libs/commands/command";
+import { DialectCommandDescription, MissionCommand } from "@libs/commands/command";
 import { Mission } from "@libs/mission/mission";
 import { Result, tryCatch } from "@libs/util/try-catch";
 import { Vehicle } from "@libs/vehicle/types";
 import { RFJSON1Schema } from "./schema";
+import { ardupilot } from "@libs/mission/ardupilot/ardupilot";
 
-export async function importRFJSON1(blob: Blob): Promise<Result<{ mission: Mission<CommandDescription>, vehicle: Vehicle }>> {
+export async function importRFJSON1(blob: Blob): Promise<Result<{ mission: Mission<DialectCommandDescription>, vehicle: Vehicle }>> {
 
   let fileText = await tryCatch(blob.text())
   if (fileText.error !== null) {
@@ -34,10 +35,12 @@ export async function importRFJSON1(blob: Blob): Promise<Result<{ mission: Missi
     error: null,
     data: {
       vehicle: missionObj.data.vehicle,
-      mission: new Mission(missionObj.data.explicitReferencePoint, new Map(missionObj.data.mission.map(x => {
-        // A bit hacky; We don't currently validate each individual command
-        return [x.name, x.commands as MissionCommand<CommandDescription>[]]
-      })))
+      mission: new Mission(ardupilot,
+        // @ts-ignore
+        new Map(missionObj.data.mission.map(x => {
+          return [x.name, x.commands as MissionCommand<DialectCommandDescription>[]]
+        }))
+      )
     }
   }
 

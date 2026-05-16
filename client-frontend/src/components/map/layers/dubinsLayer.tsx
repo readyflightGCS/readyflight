@@ -15,9 +15,9 @@ const straightOptions = { color: '#bb0000' }
 const noshow = ['Markers', 'Geofence']
 
 export default function DubinsLayer() {
-  const mission = useMission(s => s.mission)
-  const selectedSubMission = useMission(s => s.selectedSubMission)
-  const dialect = useMission(s => s.dialect)
+  const mission = useMission((s) => s.mission)
+  const selectedSubMission = useMission((s) => s.selectedSubMission)
+  const dialect = useMission((s) => s.dialect)
 
   // return early if we are on Markers or Geofence
   if (noshow.includes(selectedSubMission)) return null
@@ -40,7 +40,6 @@ export default function DubinsLayer() {
   let key = 0
   const dubinsSections = splitDubinsRuns(mainLine)
   for (const section of dubinsSections) {
-
     // add pass by circles
     section.run.map((x, i) => {
       if (

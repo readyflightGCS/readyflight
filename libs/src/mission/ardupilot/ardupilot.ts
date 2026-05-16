@@ -34,6 +34,7 @@ import { useVehicle } from "@libs/stores/vehicle"
 import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 import { MavLinkStreamParser } from "./mavlink-stream-parser"
 import { VehicleState } from "@libs/vehicle/state"
+import { objectKeys } from "@libs/util/types"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.

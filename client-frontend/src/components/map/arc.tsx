@@ -12,12 +12,17 @@ export default function Arc({
   curve: Curve<LatLng>
   pathOptions?: PathOptions
 }) {
-
   const points: LatLngExpression[] = []
   const steps = Math.abs(curve.theta) * 10
 
   for (let i = 0; i < steps; i++) {
-    points.push(worldOffset(curve.center, curve.radius, rad2deg(interpolateLinear(curve.start, curve.start + curve.theta, i / steps))))
+    points.push(
+      worldOffset(
+        curve.center,
+        curve.radius,
+        rad2deg(interpolateLinear(curve.start, curve.start + curve.theta, i / steps))
+      )
+    )
   }
   return <Polyline pathOptions={pathOptions} positions={points} />
 }

@@ -22,7 +22,7 @@ export default function ActiveLayer() {
     selectedCommandIDs
   } = useMission()
   const v = useVehicle()
-  const setLastSelectedCommandIndex = useEditor(s => s.setLastSelectedCommandIndex)
+  const setLastSelectedCommandIndex = useEditor((s) => s.setLastSelectedCommandIndex)
 
   let a = 0
   if (noshow.includes(selectedSubMission)) return null

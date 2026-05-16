@@ -1,5 +1,16 @@
 import ListItem from '@/components/ui/listItem'
-import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, PlaneLanding, PlaneTakeoff, PlugZap, Route, Spline, Trash2 } from 'lucide-react'
+import {
+  ArrowDownNarrowWide,
+  Locate,
+  MoveDown,
+  MoveUp,
+  PlaneLanding,
+  PlaneTakeoff,
+  PlugZap,
+  Route,
+  Spline,
+  Trash2
+} from 'lucide-react'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { getCommandLabel } from '@libs/commands/helpers'
@@ -208,7 +219,6 @@ export default function CommandItem({
       />
     )
   } else {
-
     return (
       <ListItem
         name={getCommandLabel(command, dialect)}

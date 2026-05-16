@@ -7,7 +7,7 @@ import { g2l, l2g } from "@libs/world/conversion";
 import { crossProduct } from "@libs/math/vector";
 import { deg2rad, modf, offset } from "@libs/math/geometry";
 import { Plane } from "@libs/vehicle/types";
-import { DialectCommand, DialectCommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
+import { DialectCommandDescription, MissionCommand } from "@libs/commands/command";
 import { Dialect } from "@libs/mission/dialect";
 import { getCommandLocation } from "@libs/commands/helpers";
 

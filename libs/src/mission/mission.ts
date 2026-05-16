@@ -45,16 +45,7 @@ export class Mission<CD extends DialectCommandDescription> {
    */
   private collection: Map<string, MissionCommand<CD>[]>
 
-  /**
-   * The geographic reference point for the mission.
-   * Used as the origin for relative positioning and calculations.
-   * 
-   * @remarks
-   * This point is typically set during mission initialization and remains constant throughout the mission.
-   *
-   * @see LatLng
-   */
-  private referencePoint: LatLng
+  private dialect: Dialect<CD>
 
   /**
    * Returns the collection associated with the current instance.
@@ -73,7 +64,7 @@ export class Mission<CD extends DialectCommandDescription> {
    * 
    * If `collection` is not provided, the constructor initializes the collection with default keys: "Main", "Geofence", and "Markers", each mapped to an empty array.
    */
-  constructor(referencePoint: LatLng = { lat: 0, lng: 0 }, collection?: Map<string, MissionCommand<CD>[]>) {
+  constructor(dialect: Dialect<CD>, collection?: Map<string, MissionCommand<CD>[]>) {
     if (collection) {
       let newMap = new Map()
       for (let key of Array.from(collection.keys())) {
@@ -89,7 +80,7 @@ export class Mission<CD extends DialectCommandDescription> {
       this.collection.set("Markers", [])
     }
     this.missionID = crypto.randomUUID()
-    this.referencePoint = referencePoint
+    this.dialect = dialect
   }
 
   /**
@@ -97,15 +88,15 @@ export class Mission<CD extends DialectCommandDescription> {
    *
    * @returns {LatLng} The reference point as a LatLng object.
    */
-  getReferencePoint(dialect: Dialect<CD>): LatLng {
+  getReferencePoint(): LatLng {
     const main = this.collection.get("Main")
     for (const point of main) {
-      const pos = getCommandLocation(point, dialect)
+      const pos = getCommandLocation(point, this.dialect)
       if (pos !== null) {
         return pos
       }
     }
-    return this.referencePoint
+    return { lat: 0, lng: 0 }
   }
 
   /**
@@ -168,7 +159,7 @@ export class Mission<CD extends DialectCommandDescription> {
    * @returns A new Mission instance with the same reference point and collection.
    */
   clone() {
-    return new Mission(this.referencePoint, this.collection)
+    return new Mission(this.collection)
   }
 
   /**
