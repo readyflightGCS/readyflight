@@ -6,8 +6,7 @@ import path from 'path'
 import { execSync } from 'child_process'
 
 const gitVersion =
-  JSON.stringify(process.env.APP_VERSION) ||
-  execSync('git describe --tags --dirty').toString().trim()
+  process.env.APP_VERSION || execSync('git describe --tags --dirty').toString().trim()
 
 export default defineConfig({
   main: {

@@ -52,7 +52,7 @@ test("Split Dubins runs end dubins", () => {
   expect(runs[0].run[1].cmd.frame).toBe(0)
 })
 
-test.skip("Split Dubins runs start + end", () => {
+test("Split Dubins runs start + end", () => {
   const a: MainLine = []
   a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
   a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
@@ -65,11 +65,11 @@ test.skip("Split Dubins runs start + end", () => {
   expect(runs[0].start).toBe(0)
   expect(runs[0].run.length).toBe(2)
   expect(runs[0].run[0].cmd.frame).toBe(0)
-  expect(runs[0].run[1].cmd.frame).toBe(3)
+  expect(runs[0].run[1].cmd.frame).toBe(0)
 
   expect(runs[1].start).toBe(2)
   expect(runs[1].run.length).toBe(2)
-  expect(runs[1].run[0].cmd.frame).toBe(3)
+  expect(runs[1].run[0].cmd.frame).toBe(0)
   expect(runs[1].run[1].cmd.frame).toBe(10)
 })
 

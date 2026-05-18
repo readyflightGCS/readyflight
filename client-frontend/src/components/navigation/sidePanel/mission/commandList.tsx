@@ -1,10 +1,9 @@
-import { useState } from 'react'
-import { ArrowDownNarrowWide, Locate, MoveDown, MoveUp, Route, Trash2 } from 'lucide-react'
 import { useMission } from '@libs/stores/mission'
-import ListItem from '@/components/ui/listItem'
-import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
-import { getCommandLabel } from '@libs/commands/helpers'
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
+import CommandItem from './commandItem'
+import { getCommandLocation } from '@libs/commands/helpers'
 
 export default function CommandList() {
   const setSelectedSubMission = useMission((s) => s.setSelectedSubMission)
@@ -14,8 +13,6 @@ export default function CommandList() {
   const dialect = useMission((s) => s.dialect)
   const setMission = useMission((s) => s.setMission)
   const selectedSubMission = useMission((s) => s.selectedSubMission)
-  const setTool = useMission((s) => s.setTool)
-  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null)
 
   const curMission = mission.get(selectedSubMission)
 
@@ -23,52 +20,6 @@ export default function CommandList() {
 
   const hasLanding = missions.includes('Landing')
   const hasTakeoff = missions.includes('Takeoff')
-
-  function handleClick(id: number, e: React.MouseEvent<HTMLDivElement>) {
-    if (e.shiftKey && lastSelectedIndex !== null) {
-      const range = [lastSelectedIndex, id].sort((a, b) => a - b)
-      const newSelection = []
-      for (let i = range[0]; i <= range[1]; i++) newSelection.push(i)
-      setSelectedCommandIDs(newSelection)
-    } else {
-      setSelectedCommandIDs([id])
-      setLastSelectedIndex(id)
-    }
-  }
-
-  function onDelete(id: number) {
-    const temp = mission.clone()
-    const wp = mission.get(selectedSubMission)[id]
-    if (wp.type == 'RF.Group' && ['Landing', 'Takeoff'].includes(wp.params.name as string)) {
-      temp.removeSubMission(wp.params.name as string)
-    }
-    temp.pop(selectedSubMission, id)
-    setMission(temp)
-    setSelectedCommandIDs([])
-  }
-
-  // delete all selected waypoints
-  function onDeleteSelected() {
-    const temp = mission.clone()
-    const minID = Math.min(...selectedCommandIDs)
-    const maxID = Math.max(...selectedCommandIDs)
-
-    const nodes = [...mission.get(selectedSubMission)]
-    for (const node of nodes) {
-      if (node.type == 'RF.Group' && ['Landing', 'Takeoff'].includes(node.params.name as string)) {
-        temp.removeSubMission(node.params.name as string)
-      }
-    }
-    nodes.splice(minID, maxID - minID + 1)
-    temp.set(selectedSubMission, nodes)
-    setMission(temp)
-    setSelectedCommandIDs([])
-  }
-
-  function goToSubMission(name: string) {
-    setSelectedSubMission(name)
-    setSelectedCommandIDs([])
-  }
 
   function handleGroup() {
     // get name for mission
@@ -101,18 +52,6 @@ export default function CommandList() {
     setMission(temp)
   }
 
-  // ungroup the waypoint group in place in the mission, leaving the sub mission itself alone
-  function ungroup(i: number) {
-    if (curMission[i].type != 'RF.Group') return
-    const subMission = mission.get(curMission[i].params.name as string)
-    const mainMission = mission.get(selectedSubMission)
-    // Remove the collection node and insert the sub mission commands
-    mainMission.splice(i, 1, ...subMission)
-    const temp = mission.clone()
-    temp.set(selectedSubMission, mainMission)
-    setMission(temp)
-  }
-
   function createTakeoff() {
     const a = mission.clone()
     a.addSubMission('Takeoff', [])
@@ -133,173 +72,94 @@ export default function CommandList() {
     setTool('Land')
   }
 
-  function moveUp(i: number) {
-    const temp = mission.clone()
-    const cur = temp.get(selectedSubMission)[i]
-    temp.get(selectedSubMission).splice(i, 1)
-    temp.get(selectedSubMission).splice(i - 1, 0, cur)
-    setMission(temp)
+  const missionWithDubinsGroups: (
+    | {
+        type: 'cmd'
+        cmd: MissionCommand<DialectCommandDescription>
+      }
+    | {
+        type: 'dubins'
+        cmds: MissionCommand<DialectCommandDescription>[]
+      }
+  )[] = []
+
+  let curDubinsPath = []
+  for (let i = 0; i < curMission.length; i++) {
+    if (curMission[i].type === 'RF.DubinsPath') {
+      curDubinsPath.push(curMission[i])
+      continue
+    }
+    if (getCommandLocation(curMission[i], dialect) || curMission[i].type === 'RF.Group') {
+      if (curDubinsPath.length > 0) {
+        missionWithDubinsGroups.push({ type: 'dubins', cmds: curDubinsPath })
+        curDubinsPath = []
+      }
+      missionWithDubinsGroups.push({ type: 'cmd', cmd: curMission[i] })
+      continue
+    }
+    if (curDubinsPath.length > 0) {
+      curDubinsPath.push(curMission[i])
+      continue
+    }
+    missionWithDubinsGroups.push({ type: 'cmd', cmd: curMission[i] })
+  }
+  if (curDubinsPath.length > 0) {
+    missionWithDubinsGroups.push({ type: 'dubins', cmds: curDubinsPath })
+    curDubinsPath = []
   }
 
-  function moveDown(i: number) {
-    const temp = mission.clone()
-    const cur = temp.get(selectedSubMission)[i]
-    temp.get(selectedSubMission).splice(i, 1)
-    temp.get(selectedSubMission).splice(i + 1, 0, cur)
-    setMission(temp)
-  }
+  let cmdId = 0
 
   return (
-    <div className="flex-grow overflow-auto select-none">
-      {!hasTakeoff && selectedSubMission == 'Main' ? (
-        <div className="px-2 py-1">
-          <Button
-            name="Add Takeoff"
-            onClick={createTakeoff}
-            className="text-center w-full my-2 mx-0 h-12"
-          >
-            Add Takeoff
-          </Button>
-        </div>
-      ) : null}
+    <div className="min-h-0">
+      <ScrollArea className="h-full">
+        {!hasTakeoff && selectedSubMission == 'Main' ? (
+          <div className="py-2">
+            <Button
+              name="Add Takeoff"
+              onClick={createTakeoff}
+              className="text-center w-full my-2 mx-0 h-12"
+            >
+              Add Takeoff
+            </Button>
+          </div>
+        ) : null}
 
-      {curMission.map((node, i) => {
-        if (node.type == 'RF.Group') {
-          return (
-            <ListItem
-              key={i}
-              icon={<Route />}
-              name={getCommandLabel(node, dialect)}
-              onClick={(e) => handleClick(i, e)}
-              selected={selectedCommandIDs.includes(i)}
-              menuItems={
-                <>
-                  <DropdownMenuItem
-                    onClick={() => goToSubMission(node.params.name as string)}
-                    className="gap-2"
-                  >
-                    <ArrowDownNarrowWide className="h-4 w-4" />
-                    <span>Go To Mission</span>
-                  </DropdownMenuItem>
+        {missionWithDubinsGroups.map((node, i) => {
+          if (node.type === 'cmd') {
+            return <CommandItem id={cmdId++} key={i} command={node.cmd} />
+          } else {
+            return (
+              <div key={i} className="pl-2">
+                <div className="relative pl-2">
+                  <div className="absolute left-0 top-1 bottom-1 w-[2px] bg-red-500 rounded-full" />
 
-                  {i > 0 ? (
-                    <DropdownMenuItem onClick={() => moveUp(i)} className="gap-2">
-                      <MoveUp className="h-4 w-4" />
-                      <span>Move Up</span>
-                    </DropdownMenuItem>
-                  ) : null}
+                  <div>
+                    {node.cmds.map((cmd, j) => (
+                      <CommandItem id={cmdId++} key={j} command={cmd} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )
+          }
+        })}
+        {selectedCommandIDs.length > 1 ? (
+          <div className="w-full flex justify-center">
+            <Button variant="active" onMouseDown={handleGroup} className="text-center p-1 m-1 w-44">
+              Group {selectedCommandIDs.length} waypoints
+            </Button>
+          </div>
+        ) : null}
 
-                  {i < curMission.length - 1 ? (
-                    <DropdownMenuItem onClick={() => moveDown(i)} className="gap-2">
-                      <MoveDown className="h-4 w-4" />
-                      <span>Move Down</span>
-                    </DropdownMenuItem>
-                  ) : null}
-
-                  {selectedCommandIDs.length > 1 ? (
-                    <DropdownMenuItem onClick={() => handleGroup()} className="gap-2">
-                      <Route className="h-4 w-4" />
-                      <span>Group ({selectedCommandIDs.length})</span>
-                    </DropdownMenuItem>
-                  ) : null}
-
-                  <DropdownMenuItem onClick={() => ungroup(i)} className="gap-2">
-                    <Route className="h-4 w-4" />
-                    <span>Ungroup</span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => onDelete(i)}
-                    className="gap-2 text-red-500 hover:text-red-500"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
-
-                  {selectedCommandIDs.length > 1 ? (
-                    <DropdownMenuItem
-                      onClick={() => onDeleteSelected()}
-                      className="gap-2 text-red-500 hover:text-red-500"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span>Delete ({selectedCommandIDs.length})</span>
-                    </DropdownMenuItem>
-                  ) : null}
-                </>
-              }
-            />
-          )
-        } else {
-          return (
-            <ListItem
-              name={getCommandLabel(node, dialect)}
-              icon={<Locate />}
-              key={i}
-              selected={selectedCommandIDs.includes(i)}
-              onClick={(e) => handleClick(i, e)}
-              className="justify-start"
-              menuItems={
-                <>
-                  {selectedCommandIDs.length > 1 ? (
-                    <DropdownMenuItem onClick={() => handleGroup()} className="gap-2">
-                      <Route className="h-4 w-4" />
-                      <span>Group ({selectedCommandIDs.length})</span>
-                    </DropdownMenuItem>
-                  ) : null}
-
-                  {i > 0 ? (
-                    <DropdownMenuItem onClick={() => moveUp(i)} className="gap-2">
-                      <MoveUp className="h-4 w-4" />
-                      <span>Move Up</span>
-                    </DropdownMenuItem>
-                  ) : null}
-
-                  {i < curMission.length - 1 ? (
-                    <DropdownMenuItem onClick={() => moveDown(i)} className="gap-2">
-                      <MoveDown className="h-4 w-4" />
-                      <span>Move Down</span>
-                    </DropdownMenuItem>
-                  ) : null}
-
-                  <DropdownMenuItem
-                    onClick={() => onDelete(i)}
-                    className="gap-2 text-red-500 hover:text-red-500"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
-
-                  {selectedCommandIDs.length > 1 ? (
-                    <DropdownMenuItem
-                      onClick={() => onDeleteSelected()}
-                      className="gap-2 text-red-500 hover:text-red-500"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span>Delete ({selectedCommandIDs.length})</span>
-                    </DropdownMenuItem>
-                  ) : null}
-                </>
-              }
-            />
-          )
-        }
-      })}
-
-      {selectedCommandIDs.length > 1 ? (
-        <div className="w-full flex justify-center">
-          <Button variant="active" onMouseDown={handleGroup} className="text-center p-1 m-1 w-44">
-            Group {selectedCommandIDs.length} waypoints
-          </Button>
-        </div>
-      ) : null}
-
-      {!hasLanding && selectedSubMission == 'Main' ? (
-        <div className="px-2 py-1">
-          <Button onClick={createLanding} className="w-full my-2 mx-0 h-12">
-            Add Landing
-          </Button>
-        </div>
-      ) : null}
+        {!hasLanding && selectedSubMission == 'Main' ? (
+          <div className="py-2">
+            <Button onClick={createLanding} className="w-full my-2 mx-0 h-12">
+              Add Landing
+            </Button>
+          </div>
+        ) : null}
+      </ScrollArea>
     </div>
   )
 }

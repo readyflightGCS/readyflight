@@ -17,7 +17,7 @@
     "lint:backend": "cd client-backend && bun run eslint --fix",
     "lint:frontend": "cd client-frontend && bun run eslint --fix",
     "lint:electron": "cd electron && bun run eslint --fix",
-    "lint:libs": "cd client-frontend && bun run eslint",
+    "lint:libs": "cd client-frontend && bun run eslint --fix",
     "lint": "bun run lint:backend && bun run lint:electron && bun run lint:frontend",
     "dev": "cd electron && bun run dev",
     "dev:electron": "cd electron && bun run dev",

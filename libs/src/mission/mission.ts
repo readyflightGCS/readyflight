@@ -13,7 +13,7 @@
  * const flattened = mission.flatten("Main");
  * ```
  */
-import { CommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
+import { DialectCommandDescription, MissionCommand, RFCommand } from "@libs/commands/command";
 import { LatLng } from "@libs/world/latlng";
 import { Dialect } from "./dialect";
 import { getCommandLocation } from "@libs/commands/helpers";
@@ -31,7 +31,7 @@ type GroupCommand = Extract<RFCommand, { type: "RF.Group" }>
  * Represents a mission
  * @extends CommandDescription
  */
-export class Mission<CD extends CommandDescription> {
+export class Mission<CD extends DialectCommandDescription> {
 
   public missionID: string
 
@@ -45,16 +45,7 @@ export class Mission<CD extends CommandDescription> {
    */
   private collection: Map<string, MissionCommand<CD>[]>
 
-  /**
-   * The geographic reference point for the mission.
-   * Used as the origin for relative positioning and calculations.
-   * 
-   * @remarks
-   * This point is typically set during mission initialization and remains constant throughout the mission.
-   *
-   * @see LatLng
-   */
-  private referencePoint: LatLng
+  private dialect: Dialect<CD>
 
   /**
    * Returns the collection associated with the current instance.
@@ -73,7 +64,7 @@ export class Mission<CD extends CommandDescription> {
    * 
    * If `collection` is not provided, the constructor initializes the collection with default keys: "Main", "Geofence", and "Markers", each mapped to an empty array.
    */
-  constructor(referencePoint: LatLng = { lat: 0, lng: 0 }, collection?: Map<string, MissionCommand<CD>[]>) {
+  constructor(dialect: Dialect<CD>, collection?: Map<string, MissionCommand<CD>[]>) {
     if (collection) {
       let newMap = new Map()
       for (let key of Array.from(collection.keys())) {
@@ -89,7 +80,7 @@ export class Mission<CD extends CommandDescription> {
       this.collection.set("Markers", [])
     }
     this.missionID = crypto.randomUUID()
-    this.referencePoint = referencePoint
+    this.dialect = dialect
   }
 
   /**
@@ -98,7 +89,14 @@ export class Mission<CD extends CommandDescription> {
    * @returns {LatLng} The reference point as a LatLng object.
    */
   getReferencePoint(): LatLng {
-    return this.referencePoint
+    const main = this.collection.get("Main")
+    for (const point of main) {
+      const pos = getCommandLocation(point, this.dialect)
+      if (pos !== null) {
+        return pos
+      }
+    }
+    return { lat: 0, lng: 0 }
   }
 
   /**
@@ -161,7 +159,7 @@ export class Mission<CD extends CommandDescription> {
    * @returns A new Mission instance with the same reference point and collection.
    */
   clone() {
-    return new Mission(this.referencePoint, this.collection)
+    return new Mission(this.dialect, this.collection)
   }
 
   /**
@@ -480,7 +478,7 @@ export type MainLine = MainLineItem[]
  * @property {number} id - The unique identifier for this mission line item.
  * @property {MissionCommand<CommandDescription>[]} other - An array of additional or alternative mission commands associated with this line item.
  */
-export type MainLineItem = { cmd: MissionCommand<CommandDescription>, id: number, other: MissionCommand<CommandDescription>[] }
+export type MainLineItem = { cmd: MissionCommand<DialectCommandDescription>, id: number, other: MissionCommand<DialectCommandDescription>[] }
 
 /**
  * Converts an array of commands into a mainline representation.
@@ -488,10 +486,17 @@ export type MainLineItem = { cmd: MissionCommand<CommandDescription>, id: number
  * @param commands - Array of commands to convert
  * @returns An array of MainLineItem objects representing the mainline structure
  */
-export function convertToMainLine(commands: Exclude<MissionCommand<CommandDescription>, GroupCommand>[], dialect: Dialect<CommandDescription>) {
+export function convertToMainLine(commands: Exclude<MissionCommand<DialectCommandDescription>, GroupCommand>[], dialect: Dialect<DialectCommandDescription>) {
   const mainLine: MainLine = []
 
   commands.forEach((cmd, id) => {
+
+    // Dubins Paths are handled differently
+    if (cmd.type == "RF.DubinsPath") {
+      mainLine.push({ cmd: cmd, id, other: [] })
+      return
+    }
+
     let loc = getCommandLocation(cmd, dialect)
     if (loc !== null) {
       mainLine.push({ cmd: cmd, id, other: [] })
