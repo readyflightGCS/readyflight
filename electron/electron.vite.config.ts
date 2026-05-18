@@ -5,9 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { execSync } from 'child_process'
 
-const gitVersion = JSON.stringify(process.env.APP_VERSION) || execSync('git describe --tags --dirty')
-  .toString()
-  .trim()
+const gitVersion =
+  JSON.stringify(process.env.APP_VERSION) ||
+  execSync('git describe --tags --dirty').toString().trim()
 
 export default defineConfig({
   main: {
@@ -44,7 +44,7 @@ export default defineConfig({
   },
   renderer: {
     define: {
-      __GIT_VERSION__: JSON.stringify(gitVersion),
+      __GIT_VERSION__: JSON.stringify(gitVersion)
     },
     root: resolve(__dirname, '../client-frontend'),
     build: {
@@ -64,15 +64,15 @@ export default defineConfig({
         )
       }
     },
-    plugins: [react(), tailwindcss(), {
-      name: 'html-transform',
-      transformIndexHtml(html) {
-        return html.replace(
-          '%RF_VERSION%',
-          gitVersion
-        )
-      },
-    },
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'html-transform',
+        transformIndexHtml(html) {
+          return html.replace('%RF_VERSION%', gitVersion)
+        }
+      }
     ]
   }
 })

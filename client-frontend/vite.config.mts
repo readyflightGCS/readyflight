@@ -5,7 +5,9 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { execSync } from 'child_process'
 
-const gitVersion = JSON.stringify(process.env.APP_VERSION) || execSync('git describe --tags --dirty')
+const gitVersion =
+  JSON.stringify(process.env.APP_VERSION) || execSync('git describe --tags --dirty')
+const useReactScan = process.env.REACT_SCAN
 
 // Web-only Vite config; Electron uses electron.vite.config.ts
 export default defineConfig({
@@ -34,7 +36,16 @@ export default defineConfig({
     {
       name: 'html-transform',
       transformIndexHtml(html) {
-        return html.replace('%RF_VERSION%', gitVersion)
+        let a = html.replace('%RF_VERSION%', gitVersion)
+        if (useReactScan === 'true') {
+          a = a.replace(
+            '%REACTSCAN%',
+            `<script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js"></script>`
+          )
+        } else {
+          a = a.replace('%REACTSCAN%', ``)
+        }
+        return a
       }
     }
   ],
