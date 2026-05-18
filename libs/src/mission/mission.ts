@@ -159,7 +159,7 @@ export class Mission<CD extends DialectCommandDescription> {
    * @returns A new Mission instance with the same reference point and collection.
    */
   clone() {
-    return new Mission(this.collection)
+    return new Mission(this.dialect, this.collection)
   }
 
   /**
