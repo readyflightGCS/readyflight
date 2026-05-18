@@ -1,6 +1,6 @@
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import ListItem from '@/components/ui/listItem'
 import { useMission } from '@libs/stores/mission'
-import { DropdownMenuItem } from '@radix-ui/react-dropdown-menu'
 import {
   CornerLeftUp,
   Fence,
@@ -44,7 +44,7 @@ export default function SubMissionList() {
     if (a) deleteSubMission(missionName)
   }
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col">
       {subMissionInfo.map((subMission, id) => {
         const canAdd = !noAddNames.includes(subMission.name)
 

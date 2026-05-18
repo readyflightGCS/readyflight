@@ -29,7 +29,7 @@ export default function SideBar() {
       <Item
         name={'Settings'}
         Icon={Cog}
-        active={currentTab == 'Settings'}
+        active={currentTab === 'Settings'}
         onClick={() => setTab('Settings')}
       />
     </div>

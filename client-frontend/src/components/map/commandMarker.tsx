@@ -114,7 +114,6 @@ export default function CommandMarker({
         active={active}
         onClick={() => onClick(command.id)}
         onDoubleClick={() => {
-          console.log('bruh')
           onDoubleClick(command.id)
         }}
       />

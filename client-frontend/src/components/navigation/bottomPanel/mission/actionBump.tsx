@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils'
 import { useMission } from '@libs/stores/mission'
 import { RFCommandDescription } from '@libs/commands/readyflightCommands'
-import { CommandDescription, MissionCommand } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { coerceCommand } from '@libs/commands/helpers'
-import { Locate, PlaneLanding, PlaneTakeoff, PlugZap, Route, LucideIcon } from 'lucide-react'
+import { Locate, PlaneLanding, PlaneTakeoff, PlugZap, LucideIcon, Spline } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +31,7 @@ export default function MissionActionBump() {
   const isMultiType = types.size > 1
   const selectionCount = selectedIDs.length
 
-  function onChange(type: MissionCommand<CommandDescription>['type']) {
+  function onChange(type: MissionCommand<DialectCommandDescription>['type']) {
     if (selectedIDs.length === 0) return
 
     const newWPs = mission.clone()
@@ -40,7 +40,7 @@ export default function MissionActionBump() {
       selectedSubMission,
       (cmd) => {
         if (type === null) return cmd
-        return coerceCommand(cmd, type, dialect) as MissionCommand<CommandDescription>
+        return coerceCommand(cmd, type, dialect) as MissionCommand<DialectCommandDescription>
       },
       true
     )
@@ -58,7 +58,7 @@ export default function MissionActionBump() {
     'RF.Takeoff': PlaneTakeoff,
     'RF.Land': PlaneLanding,
     'RF.SetServo': PlugZap,
-    'RF.DubinsPath': Route
+    'RF.DubinsPath': Spline
   }
 
   const isDisabled = selectedIDs.length === 0
