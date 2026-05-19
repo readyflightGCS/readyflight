@@ -225,9 +225,6 @@ function processFrame(
       velocityVariance: msg.velocity_variance
     })
   } else if (msg instanceof Statustext) {
-    console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
-    console.log(getSeverityName(msg.severity));
-
     switch (msg.severity) {
       case 0:
       case 1:
