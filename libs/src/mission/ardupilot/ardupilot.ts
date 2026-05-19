@@ -275,8 +275,10 @@ function processFrame(
   } else if (msg instanceof MissionAck) {
     if (msg.type === 0 /* MAV_MISSION_ACCEPTED */) {
       console.log('[mavlink] Mission upload accepted')
+      toast.success('Mission Upload Accepted', { description: 'The vehicle has accepted your mission upload' })
     } else {
       console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
+      toast.error('Mission Upload Failed', { description: `The upload has failed with the following result: ${msg.type}` })
     }
     resetUploadState()
   } else {
