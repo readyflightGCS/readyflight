@@ -107,8 +107,6 @@ function processFrame(
   if (!msg) return
 
   if (msg instanceof Heartbeat) {
-    console.log("HB")
-
     if (heartbeatTimeout) {
       clearTimeout(heartbeatTimeout);
     }
