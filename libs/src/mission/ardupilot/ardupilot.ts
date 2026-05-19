@@ -35,6 +35,7 @@ import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream
 import { MavLinkStreamParser } from "./mavlink-stream-parser"
 import { VehicleState } from "@libs/vehicle/state"
 import { toast } from "sonner"
+import { getSeverityName } from "./mavlink-assets/enums/mav-message-severity"
 
 
 // ---------------------------------------------------------------------------
@@ -227,27 +228,24 @@ function processFrame(
     })
   } else if (msg instanceof Statustext) {
     console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
-
-    // toast(`Status Text`, {
-    //   description: `Severity: ${msg.severity}\nMessage: ${msg.text}`
-    // })
+    console.log(getSeverityName(msg.severity));
 
     switch (msg.severity) {
       case 0:
       case 1:
       case 2:
       case 3:
-        toast.error(`SHIT`, { description: `${msg.text}` })
+        toast.error(getSeverityName(msg.severity), { description: `${msg.text}` })
         break
       
       case 4:
       case 5:
-        toast.warning(`ALMOST SHIT`, { description: `${msg.text}` })
+        toast.warning(getSeverityName(msg.severity), { description: `${msg.text}` })
         break
 
       case 6:
       case 7:
-        toast.info(`PROBABLY FINE`, { description: `${msg.text}` })
+        toast.info(getSeverityName(msg.severity), { description: `${msg.text}` })
         break
     }
 
