@@ -1,13 +1,14 @@
 import { cn } from '@/lib/utils'
 import { ConfiguratorTab, useEditor } from '@libs/stores/configurator'
-import { Cog, LucideIcon, MapPin, Satellite } from 'lucide-react'
+import { Cog, LucideIcon, MapPin, Satellite, Plane } from 'lucide-react'
 
 const tabs: {
   name: ConfiguratorTab
   Icon: LucideIcon
 }[] = [
   { name: 'Telemetry', Icon: Satellite },
-  { name: 'Mission', Icon: MapPin }
+  { name: 'Mission', Icon: MapPin },
+  { name: 'Vehicle', Icon: Plane }
 ]
 
 export default function SideBar() {

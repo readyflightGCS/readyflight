@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export const ConfiguratorTabs = ['Telemetry', 'Mission', 'Settings'] as const
+export const ConfiguratorTabs = ['Telemetry', 'Mission', 'Settings', 'Vehicle'] as const
 
 export type ConfiguratorTab = (typeof ConfiguratorTabs)[number]
 
