@@ -14,5 +14,5 @@
     "target": "ESNext",
     "lib": ["ESNext", "DOM"],
   },
-  "include": ["./src/**/*", "../client-frontend/src/**/*"]
+  "include": ["./src/**/*"]
 }

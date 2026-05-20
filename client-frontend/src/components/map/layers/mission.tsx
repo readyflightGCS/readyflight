@@ -11,6 +11,37 @@ import { useEditor } from '@libs/stores/configurator'
 const limeOptions = { color: 'lime' }
 const noshow = ['Markers', 'Geofence']
 
+import { useMap } from 'react-leaflet'
+import { LatLngExpression } from 'leaflet'
+
+type Props = {
+  position: LatLngExpression
+  heading: number
+  lengthPx?: number
+}
+
+export function HeadingLine({ position, heading, lengthPx = 25 }: Props) {
+  const map = useMap()
+
+  const start = map.latLngToLayerPoint(position)
+
+  const rad = (heading * Math.PI) / 180
+
+  const dx = lengthPx * Math.sin(rad)
+  const dy = -lengthPx * Math.cos(rad)
+
+  const endPoint = {
+    x: start.x + dx,
+    y: start.y + dy
+  }
+
+  const endLatLng = map.layerPointToLatLng([endPoint.x, endPoint.y])
+
+  const line = [position, endLatLng] as LatLngExpression[]
+
+  return <Polyline positions={line} pathOptions={{ color: 'red' }} />
+}
+
 export default function ActiveLayer() {
   const {
     setSelectedSubMission,
@@ -121,7 +152,9 @@ export default function ActiveLayer() {
           />
         )
       })}
+
       <DraggableMarker position={{ lat: v.lat, lng: v.lon }} active={false} />
+      <HeadingLine position={[v.lat || 0, v.lon || 0]} heading={v.heading} />
 
       {insertBtns}
       {lineSegments}

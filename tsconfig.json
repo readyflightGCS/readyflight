@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./client-frontend" },
+    { "path": "./libs" },
+    { "path": "./electron" },
+    { "path": "./client-backend" }
+  ]
+}
