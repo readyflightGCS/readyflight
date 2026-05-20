@@ -63,12 +63,12 @@ $ REACT_SCAN=true bun run dev
 
 Windows Terminal
 ```
-$ set REACT_SCAN=true && bun run dev
+set REACT_SCAN=true && bun run dev
 ```
 
 Windows Powershell
 ```powershell
-$ $env:REACT_SCAN="true"; bun run dev
+$env:REACT_SCAN="true"; bun run dev
 ```
 
 
