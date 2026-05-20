@@ -17,8 +17,7 @@ import type {
 } from '@libs/connection/types'
 import { Wifi, Usb, X, Circle, RefreshCw } from 'lucide-react'
 import SidePanelSection from '../ui/sidePanelSection'
-import { Tabs, TabsContent } from '@radix-ui/react-tabs'
-import { TabsList, TabsTrigger } from '../ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 

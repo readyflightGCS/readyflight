@@ -1,11 +1,12 @@
 import { useMission } from '@libs/stores/mission'
-import { avgLatLng, LatLng } from '@libs/world/latlng'
+import { avgLatLng } from '@libs/world/latlng'
 import { LayerGroup, Polyline } from 'react-leaflet'
 import InsertBtn from '../insertButton'
 import CommandMarker from '../commandMarker'
 import { getCommandLocation } from '@libs/commands/helpers'
 import { useVehicle } from '@libs/stores/vehicle'
 import DraggableMarker from '../draggableMarker'
+import { useEditor } from '@libs/stores/configurator'
 
 const limeOptions = { color: 'lime' }
 const noshow = ['Markers', 'Geofence']
@@ -56,9 +57,9 @@ export default function ActiveLayer() {
     selectedCommandIDs
   } = useMission()
   const v = useVehicle()
+  const setLastSelectedCommandIndex = useEditor((s) => s.setLastSelectedCommandIndex)
 
   let a = 0
-
   if (noshow.includes(selectedSubMission)) return null
 
   // store each destination in an array, with non destinations in other (to be stacked as they act in the same location)
@@ -77,11 +78,14 @@ export default function ActiveLayer() {
 
   // create a button between each latlng command
   const insertBtns = []
+  const lineSegments = []
   for (let i = 0; i < mainLine.length - 1; i++) {
-    const avg = avgLatLng([
-      getCommandLocation(mainLine[i].cmd, dialect),
-      getCommandLocation(mainLine[i + 1].cmd, dialect)
-    ]) as LatLng
+    if (mainLine[i].cmd.type == 'RF.DubinsPath' || mainLine[i + 1].cmd.type == 'RF.DubinsPath') {
+      continue
+    }
+    const aPos = getCommandLocation(mainLine[i].cmd, dialect)
+    const bPos = getCommandLocation(mainLine[i + 1].cmd, dialect)
+    const avg = avgLatLng([aPos, bPos])
     insertBtns.push(
       <InsertBtn
         key={a++}
@@ -90,6 +94,7 @@ export default function ActiveLayer() {
         onClick={() => handleInsert(mainLine[i + 1].id, avg.lat, avg.lng)}
       />
     )
+    lineSegments.push(<Polyline key={a++} pathOptions={limeOptions} positions={[aPos, bPos]} />)
   }
 
   function onMove(lat: number, lng: number, id: number) {
@@ -114,6 +119,7 @@ export default function ActiveLayer() {
     if (!a) return
     setSelectedSubMission(a[0])
     setSelectedCommandIDs([a[1]])
+    setLastSelectedCommandIndex(a[1])
   }
 
   // handle when marker is double clicked
@@ -154,11 +160,8 @@ export default function ActiveLayer() {
       <DraggableMarker position={{ lat: v.lat, lng: v.lon }} active={false}/>
       <HeadingLine position={[v.lat || 0, v.lon || 0]} heading={v.heading}/>
 
-      <Polyline
-        pathOptions={limeOptions}
-        positions={mainLine.map((x) => getCommandLocation(x.cmd, dialect))}
-      />
       {insertBtns}
+      {lineSegments}
     </LayerGroup>
   )
 }

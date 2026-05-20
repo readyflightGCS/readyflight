@@ -3,9 +3,11 @@ import { ReactNode } from 'react'
 import { Separator } from '@/components/ui/separator'
 import HeightMap from './mission/terrain/heightMap'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Optimise } from './mission/optimise'
 
 const tabs = [
   { name: 'Parameter', component: <ParamEditor /> },
+  { name: 'Optimise', component: <Optimise /> },
   { name: 'Terrain', component: <HeightMap /> },
   { name: 'Mission Check', component: <div /> }
 ] as const satisfies { name: string; component: ReactNode }[]

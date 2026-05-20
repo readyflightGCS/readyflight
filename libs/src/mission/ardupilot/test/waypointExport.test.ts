@@ -5,8 +5,7 @@ import { ardupilot } from "../ardupilot";
 import { makeCommand } from "@libs/commands/helpers";
 
 test(".waypoints export uses QGC WPL 110 and includes reference waypoint + mission waypoint", async () => {
-  const reference = { lat: 10.1, lng: 20.2 };
-  const mission = new Mission<typeof ardupilot.commandDescriptions[number]>(reference);
+  const mission = new Mission<typeof ardupilot.commandDescriptions[number]>(ardupilot);
   mission.pushToMission("Main", makeCommand("RF.Waypoint", { latitude: 10.11, longitude: 20.02, altitude: 123 }, ardupilot))
 
   const exported = exportQGCWaypoints(mission);
@@ -27,8 +26,8 @@ test(".waypoints export uses QGC WPL 110 and includes reference waypoint + missi
   expect(refCols[5]).toBe("0"); // MAV_CMD_NAV_WAYPOINT
   expect(refCols[6]).toBe("0"); // MAV_CMD_NAV_WAYPOINT
   expect(refCols[7]).toBe("0"); // MAV_CMD_NAV_WAYPOINT
-  expect(refCols[8]).toBe(String(reference.lat)); // param5 (lat)
-  expect(refCols[9]).toBe(String(reference.lng)); // param6 (lng)
+  expect(refCols[8]).toBe(String("10.11")); // param5 (lat)
+  expect(refCols[9]).toBe(String("20.02")); // param6 (lng)
   expect(refCols[11]).toBe("1"); // autocontinue
 
   const wpCols = lines[2].split("\t");
@@ -42,8 +41,7 @@ test(".waypoints export uses QGC WPL 110 and includes reference waypoint + missi
 });
 
 test(".waypoints exports various types correctly", async () => {
-  const reference = { lat: 10.1, lng: 20.2 };
-  const mission = new Mission<typeof ardupilot.commandDescriptions[number]>(reference);
+  const mission = new Mission<typeof ardupilot.commandDescriptions[number]>(ardupilot);
   mission.pushToMission("Main", makeCommand("D.MAV_CMD_NAV_TAKEOFF", { latitude: 10.11, longitude: 21.02, altitude: 123 }, ardupilot))
   mission.pushToMission("Main", makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 10.11, longitude: 20.02, altitude: 123 }, ardupilot))
   mission.pushToMission("Main", makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 11.11, longitude: 20.02, altitude: 123 }, ardupilot))
@@ -53,6 +51,7 @@ test(".waypoints exports various types correctly", async () => {
 
   const exported = exportQGCWaypoints(mission);
   expect(exported.error).toBeNull();
+  console.log(exported)
 
   const text = await exported.data!.text();
   const lines = text.trimEnd().split("\n");

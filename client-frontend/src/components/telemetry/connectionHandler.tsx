@@ -34,7 +34,6 @@ export default function ConnectionHandler() {
   const reconnectTimeout = useRef<number | null>(null)
 
   useEffect(() => {
-    console.log('called')
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
 
@@ -54,7 +53,7 @@ export default function ConnectionHandler() {
       const offMessage = api.onMessage((msg) => {
         switch (msg.type) {
           case 'sendData': {
-            dialect.handleTelemetryMessage(msg.payload, setVehicleState, sendPacket)
+            dialect.handleTelemetryMessage(msg.payload, sendPacket)
             break
           }
           case 'status': {
@@ -128,7 +127,7 @@ export default function ConnectionHandler() {
 
         switch (msg.type) {
           case 'sendData': {
-            dialect.handleTelemetryMessage(msg.payload, setVehicleState, sendPacket)
+            dialect.handleTelemetryMessage(msg.payload, sendPacket)
             break
           }
           case 'status': {

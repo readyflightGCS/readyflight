@@ -36,7 +36,7 @@ import { MavLinkStreamParser } from "./mavlink-stream-parser"
 import { VehicleState } from "@libs/vehicle/state"
 import { toast } from "sonner"
 import { getSeverityName } from "./mavlink-assets/enums/mav-message-severity"
-
+import { objectKeys } from "@libs/util/types"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -85,7 +85,8 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
 let heartbeatTimer: ReturnType<typeof setTimeout> | null = null
 let heartbeatTimeout: ReturnType<typeof setInterval> | null = null
 
-// we need to batch updates
+// The telemetry messages come in to quickly to use setState every message
+// We will group the state updates here and "flush" the update to state
 let pendingPatch: Partial<VehicleState> = {}
 
 // apply patches the useVehicle state on animation request frame ~60fps
@@ -96,11 +97,12 @@ function flushPatch() {
   }
   requestAnimationFrame(flushPatch)
 }
-requestAnimationFrame(flushPatch)
+if (typeof requestAnimationFrame !== "undefined") {
+  requestAnimationFrame(flushPatch)
+}
 
 function processFrame(
   data: ArrayBuffer,
-  setVehicleState: (state: Partial<import("@libs/vehicle/state").VehicleState>) => void,
   sendPacket: (buf: ArrayBuffer) => void
 ): void {
   const msg = decodePacket(data)
@@ -232,7 +234,7 @@ function processFrame(
       case 3:
         toast.error(getSeverityName(msg.severity), { description: `${msg.text}` })
         break
-      
+
       case 4:
       case 5:
         toast.warning(getSeverityName(msg.severity), { description: `${msg.text}` })
@@ -352,9 +354,9 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     "RF.Waypoint": true,
   },
 
-  handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
+  handleTelemetryMessage: (data, sendPacket) => {
     for (const frame of streamParser.feed(data)) {
-      processFrame(frame, setVehicleState, sendPacket)
+      processFrame(frame, sendPacket)
     }
   },
 
