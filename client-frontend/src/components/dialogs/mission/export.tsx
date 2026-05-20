@@ -42,14 +42,14 @@ export default function ExportMission() {
   return (
     <div>
       <Separator />
-      <h2>Export</h2>
+      <h2 className="text-foreground">Export</h2>
       <div className="w-full flex flex-col gap-2">
-        <label>
+        <label className="text-foreground">
           File Name
           <Input value={fileName} onChange={(e) => setFileName(e.target.value)} />
         </label>
 
-        <label>
+        <label className="text-foreground">
           File Format
           <Select value={fileFormat} onValueChange={setFileFormat}>
             <SelectTrigger>
@@ -67,7 +67,7 @@ export default function ExportMission() {
           </Select>
         </label>
 
-        <Button onClick={onExport} variant="green">
+        <Button className="text-foreground"onClick={onExport} variant="green">
           Export
         </Button>
       </div>
