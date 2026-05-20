@@ -4,7 +4,6 @@ import TelemetryTable from './telemetry/telemetryTable'
 import TelemetryIndicators from './telemetry/telemetryIndicators'
 import TelemetryMixed from './telemetry/telemetryMixed'
 
-
 const tabs = [
   { name: 'Table', component: <TelemetryTable /> },
   { name: 'Indicators', component: <TelemetryIndicators /> },
@@ -17,11 +16,7 @@ export default function Telemetry() {
       <Tabs defaultValue={tabs[0].name} className="flex-row">
         <TabsList className="flex flex-col h-fit w-40">
           {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.name}
-              value={tab.name}
-              className="w-[100%] justify-start"
-            >
+            <TabsTrigger key={tab.name} value={tab.name} className="w-[100%] justify-start">
               {tab.name}
             </TabsTrigger>
           ))}

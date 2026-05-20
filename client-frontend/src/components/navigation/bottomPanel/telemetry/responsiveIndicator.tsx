@@ -1,10 +1,6 @@
 import { useRef, useState, useEffect, ReactNode } from 'react'
 
-export function ResponsiveIndicator({
-  children
-}: {
-  children: (size: number) => ReactNode
-}) {
+export function ResponsiveIndicator({ children }: { children: (size: number) => ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const [size, setSize] = useState(115)
 

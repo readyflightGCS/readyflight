@@ -1,5 +1,3 @@
 export default function Vehicle() {
-    return (
-        <p>Hello</p>
-    )
+  return <p>Hello</p>
 }

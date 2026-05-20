@@ -1,21 +1,18 @@
 import { Button } from '@/components/ui/button'
 import { useVehicle } from '@libs/stores/vehicle'
-import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 import ConnectionsPanel from '@/components/telemetry/ConnectionsPanel'
 import { BicepsFlexed } from 'lucide-react'
 import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 
 export default function Telemetry() {
-  const [sendMessage] = useVehicle((v) => [
-    v.sendMessage
-  ])
+  const [sendMessage] = useVehicle((v) => [v.sendMessage])
   return (
     <div className="flex flex-col gap-3">
       <ConnectionsPanel />
 
       <div className="flex flex-col gap-1">
         {/* <div>{connected ? 'UAV Connected' : 'UAV Not Connected'}</div> */}
-        <UavConnectedIndicator/>
+        <UavConnectedIndicator />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -34,14 +31,16 @@ export default function Telemetry() {
           Disarm
         </Button> */}
 
-        <ArmButton/>
-        <DisarmButton/>
+        <ArmButton />
+        <DisarmButton />
         <Button
           onClick={() => sendMessage?.({ type: 'setMode', mode: CopterMode.COPTER_MODE_GUIDED })}
         >
           Guided
         </Button>
-        <Button onClick={() => sendMessage?.({ type: 'setMode', mode: CopterMode.COPTER_MODE_AUTO })}>
+        <Button
+          onClick={() => sendMessage?.({ type: 'setMode', mode: CopterMode.COPTER_MODE_AUTO })}
+        >
           Auto
         </Button>
         <Button
@@ -54,12 +53,8 @@ export default function Telemetry() {
         >
           Land
         </Button>
-        
-        <Button
-          onClick={() => sendMessage?.({ type: 'launch', height: 10 })}
-        >
-          Takeoff
-        </Button>
+
+        <Button onClick={() => sendMessage?.({ type: 'launch', height: 10 })}>Takeoff</Button>
       </div>
     </div>
   )
@@ -76,13 +71,13 @@ function ArmButton() {
 
   return (
     <>
-        <Button
-          disabled={isArmed !== null ? (isArmed ? true : false) : false}
-          className={isArmed !== null ? (isArmed ? 'text-red-400' : '') : ''}
-          onClick={() => sendMessage?.({ type: 'arm' })}
-        >
-          <BicepsFlexed /> Arm
-        </Button>
+      <Button
+        disabled={isArmed !== null ? (isArmed ? true : false) : false}
+        className={isArmed !== null ? (isArmed ? 'text-red-400' : '') : ''}
+        onClick={() => sendMessage?.({ type: 'arm' })}
+      >
+        <BicepsFlexed /> Arm
+      </Button>
     </>
   )
 }
@@ -92,13 +87,13 @@ function DisarmButton() {
 
   return (
     <>
-        <Button
-          disabled={isArmed !== null ? (isArmed ? false : true) : false}
-          className={isArmed !== null ? (isArmed ? '' : 'text-green-400') : ''}
-          onClick={() => sendMessage?.({ type: 'disarm' })}
-        >
-          Disarm
-        </Button>
+      <Button
+        disabled={isArmed !== null ? (isArmed ? false : true) : false}
+        className={isArmed !== null ? (isArmed ? '' : 'text-green-400') : ''}
+        onClick={() => sendMessage?.({ type: 'disarm' })}
+      >
+        Disarm
+      </Button>
     </>
   )
 }

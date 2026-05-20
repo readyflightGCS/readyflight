@@ -14,11 +14,9 @@ import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-
 export default function TelemetryActionBump() {
   return (
     <div className="flex flex-1 gap-1 items-center flex-wrap">
-      Vehicle:{' '}
-      <VehicleArmedStatusIndicator/>
+      Vehicle: <VehicleArmedStatusIndicator />
       <div className="h-[20px] w-[1px] bg-border shrink-0" />
-      Mode:{' '}
-      <VehicleModeIndicators/>
+      Mode: <VehicleModeIndicators />
     </div>
   )
 }
@@ -90,10 +88,8 @@ function VehicleModeIndicators() {
 
   return (
     <>
-      {vehicleMode !== null
-        ? CopterMode[vehicleMode].replace(/^.*?_MODE_/, '').toLowerCase()
-        : '-'}{' '}
-      {vehicleModeIcon}      
+      {vehicleMode !== null ? CopterMode[vehicleMode].replace(/^.*?_MODE_/, '').toLowerCase() : '-'}{' '}
+      {vehicleModeIcon}
     </>
   )
 }

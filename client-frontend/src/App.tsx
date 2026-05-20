@@ -30,17 +30,16 @@ export default function App(): React.JSX.Element {
 
       <Toaster
         position="top-right"
-
         toastOptions={{
           classNames: {
-            toast: "bg-background text-foreground border-border",
-            title: "text-foreground",
-            description: "text-muted-foreground",
-            actionButton: "bg-primary text-primary-foreground",
-            cancelButton: "bg-muted text-muted-foreground",
+            toast: 'bg-background text-foreground border-border',
+            title: 'text-foreground',
+            description: 'text-muted-foreground',
+            actionButton: 'bg-primary text-primary-foreground',
+            cancelButton: 'bg-muted text-muted-foreground',
             info: 'bg-blue-400'
             // error: "bg-red-500", // Style specific types
-          },
+          }
         }}
       />
     </div>

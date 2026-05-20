@@ -2,119 +2,54 @@ import { cn } from '@/lib/utils'
 import { useVehicle } from '@libs/stores/vehicle'
 import { GpsFixType } from '@libs/mission/ardupilot/mavlink-assets/enums/gps-fix-type'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
-import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
 import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
-import { cva } from 'class-variance-authority'
-import { Button } from '@/components/ui/button'
 
 export default function TelemetryTable() {
-  const [
-    alt,
-    airspeed,
-    heading,
-    groundspeed,
-    voltage,
-    throttle,
-    relativealt,
-    gpsfixtype,
-    gpssatellites,
-    hdop,
-    batteryremaining,
-    mode,
-    isarmed,
-    climb
-  // ] = useVehicle((v) => [
-  //   v.alt,
-  //   v.airspeed,
-  //   v.heading,
-  //   v.groundspeed,
-  //   v.batteryVoltage,
-  //   v.throttle,
-  //   v.relativeAlt,
-  //   v.gpsFixType,
-  //   v.gpsSatellites,
-  //   v.hdop,
-  //   v.batteryRemaining,
-  //   v.mode,
-  //   v.isArmed,
-  //   v.climb
-  // ])
-  ] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-
-  const weightedRelative = (relativealt || 0.1) / 10
-
-  let isarmedText = ''
-
-  if (isarmed !== null) {
-    if (isarmed) {
-      isarmedText = 'Armed'
-    } else {
-      isarmedText = 'Disarmed'
-    }
-  } else {
-    isarmedText = 'May be armed'
-  }
-
-  let arrowName
-
-  if (climb) {
-    const roundedClimb = parseFloat(climb.toFixed(2))
-
-    if (roundedClimb === 0) {
-      arrowName = <Minus className="inline w-4 h-4" />
-    } else if (roundedClimb > 0) {
-      arrowName = <ArrowUp className="inline w-4 h-4" />
-    } else {
-      arrowName = <ArrowDown className="inline w-4 h-4" />
-    }
-  }
-
   return (
     <div className="overflow-x-auto max-w-full">
       <table className="table-fixed w-full">
         <tbody>
           <tr>
             <td className="p-1">Airspeed</td>
-            <Airspeed/>
+            <Airspeed />
 
             <td className="p-1">Altitude</td>
-            <Altitude/>
+            <Altitude />
 
             <td className="p-1">Heading</td>
-            <Heading/>
+            <Heading />
           </tr>
 
           <tr>
             <td className="p-1">Groundspeed</td>
-            <GroundSpeed/>
+            <GroundSpeed />
             <td className="p-1">Batt Voltage</td>
-            <BattVoltage/>
+            <BattVoltage />
             <td className="p-1">Relative Alt</td>
-            <RelativeAlt/>
+            <RelativeAlt />
           </tr>
 
           <tr>
             <td className="p-1">Throttle</td>
-            <Throttle/>
+            <Throttle />
           </tr>
 
           <tr>
             <td className="p-1">GPS Fix Type</td>
-            <GpsFix/>
+            <GpsFix />
             <td className="p-1">GPS Satellites</td>
-            <GpsSatellites/>
+            <GpsSatellites />
             <td className="p-1">GPS HDOP</td>
-            <GpsHdop/>
+            <GpsHdop />
           </tr>
 
           <tr>
-
             <td className="p-1">Vehicle Mode</td>
-            <VehicleMode/>
+            <VehicleMode />
             <td className="p-1">Armed State:</td>
-            <ArmedStatus/>
+            <ArmedStatus />
             <td className="p-1">Climb</td>
-            <Climb/>
+            <Climb />
           </tr>
         </tbody>
       </table>
@@ -123,7 +58,7 @@ export default function TelemetryTable() {
 }
 
 function Airspeed() {
-  const airspeedValue = useVehicle((v) => v.airspeed);
+  const airspeedValue = useVehicle((v) => v.airspeed)
 
   return (
     <>
@@ -157,7 +92,7 @@ function Heading() {
             transform: `rotate(${Math.round(heading || 0)}deg)`,
             transition: `transform 0.5s ease`
           }}
-          />
+        />
       </td>
     </>
   )
@@ -166,13 +101,13 @@ function Heading() {
 function GroundSpeed() {
   const groundSpeed = useVehicle((v) => v.groundspeed)
 
-  return (<td className="p-1">{groundSpeed !== null ? `${Math.round(groundSpeed)}m/s` : '-'} </td>)
+  return <td className="p-1">{groundSpeed !== null ? `${Math.round(groundSpeed)}m/s` : '-'} </td>
 }
 
 function BattVoltage() {
   const voltage = useVehicle((v) => v.batteryVoltage)
 
-  return (<td className="p-1">{voltage !== null ? `${voltage.toFixed(2)}v` : '-'}</td>)
+  return <td className="p-1">{voltage !== null ? `${voltage.toFixed(2)}v` : '-'}</td>
 }
 
 function RelativeAlt() {
@@ -183,7 +118,7 @@ function RelativeAlt() {
     <>
       <td className="p-1">
         {weightedRelative !== null ? `${Math.round(weightedRelative)}m` : '-'}
-        <ClimbArrow/>
+        <ClimbArrow />
       </td>
     </>
   )
@@ -197,9 +132,7 @@ function Throttle() {
       return (
         <td colSpan={5}>
           <div className="w-full bg-neutral-quaternary rounded-full">
-            <span className='text-white'>
-              {throttle}%
-            </span>
+            <span className="text-white">{throttle}%</span>
           </div>
         </td>
       )
@@ -251,9 +184,7 @@ function GpsFix() {
           : 'text-red-400'
       )}
     >
-      {gpsFixType !== null
-        ? GpsFixType[gpsFixType].replace(/GPS_FIX_TYPE_/, '')
-        : 'Unknown'}
+      {gpsFixType !== null ? GpsFixType[gpsFixType].replace(/GPS_FIX_TYPE_/, '') : 'Unknown'}
     </td>
   )
 }
@@ -265,24 +196,18 @@ function GpsSatellites() {
 
 function GpsHdop() {
   const hdop = useVehicle((v) => v.hdop)
-  return <td className="p-1">{hdop !== null ? `${hdop/100}` : '-'}</td>
+  return <td className="p-1">{hdop !== null ? `${hdop / 100}` : '-'}</td>
 }
 
-function BatteryRemaining() {
-  const batteryRemaining = useVehicle((v) => v.batteryRemaining)
-  return <td className="p-1">{batteryRemaining !== null ? `${batteryRemaining}s` : '-'}</td>
-}
+// function BatteryRemaining() {
+//     const batteryRemaining = useVehicle((v) => v.batteryRemaining)
+//     return <td className="p-1">{batteryRemaining !== null ? `${batteryRemaining}s` : '-'}</td>
+//}
 
 function VehicleMode() {
   const mode = useVehicle((v) => v.mode)
 
-  return (
-    <td className="p-1">
-        {mode !== null
-        ? CopterMode[mode].replace(/^.*?_MODE_/, '')
-        : ''}
-    </td>
-  )
+  return <td className="p-1">{mode !== null ? CopterMode[mode].replace(/^.*?_MODE_/, '') : ''}</td>
 }
 
 function ArmedStatus() {
@@ -300,11 +225,7 @@ function ArmedStatus() {
     isArmedText = 'May be armed'
   }
 
-  return (
-    <td className={cn('p-1', isArmed ? 'text-red-400' : 'text-green-400')}>
-      {isArmedText}
-    </td>
-  )
+  return <td className={cn('p-1', isArmed ? 'text-red-400' : 'text-green-400')}>{isArmedText}</td>
 }
 
 function Climb() {
@@ -313,7 +234,7 @@ function Climb() {
   return (
     <td className="p-1">
       <span className="inline">{climb !== null ? `${climb.toFixed(2)}m/s` : '-'}</span>{' '}
-      <ClimbArrow/>
+      <ClimbArrow />
     </td>
   )
 }
@@ -322,14 +243,14 @@ function ClimbArrow() {
   const climb = useVehicle((v) => v.climb)
 
   if (climb) {
-  const roundedClimb = parseFloat(climb.toFixed(2))
+    const roundedClimb = parseFloat(climb.toFixed(2))
 
-  if (roundedClimb === 0) {
-    return <Minus className="inline w-4 h-4" />
-  } else if (roundedClimb > 0) {
-    return <ArrowUp className="inline w-4 h-4" />
-  } else {
-    return <ArrowDown className="inline w-4 h-4" />
-  }
+    if (roundedClimb === 0) {
+      return <Minus className="inline w-4 h-4" />
+    } else if (roundedClimb > 0) {
+      return <ArrowUp className="inline w-4 h-4" />
+    } else {
+      return <ArrowDown className="inline w-4 h-4" />
+    }
   }
 }
