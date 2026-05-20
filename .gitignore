@@ -7,3 +7,4 @@ out
 .vercel
 .env*.local
 tsconfig.tsbuildinfo
+.vscode/

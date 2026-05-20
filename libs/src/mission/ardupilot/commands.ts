@@ -1,4 +1,4 @@
-import { CommandDescription } from "@libs/commands/command";
+import { DialectCommandDescription } from "@libs/commands/command";
 
 /**
  * Comprehensive array of MAVLink command descriptions for ArduPilot missions.
@@ -2067,4 +2067,4 @@ export const mavCmdDescription = [{
     default: null,
     options: [],
   }, null, null, null],
-}] as const satisfies CommandDescription[]
+}] as const satisfies DialectCommandDescription[]

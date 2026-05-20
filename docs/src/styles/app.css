@@ -7,8 +7,8 @@
 
 .app-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    width: 100%;
 }
 
 .app {
@@ -36,7 +36,7 @@
     }
 
     .app:hover {
-        transform: none;
+        transform: scale(0.62) translateY(-10pt) perspective(1400px) rotate3d(0, 1, -0.3, -8deg);
     }
 }
 

@@ -3,6 +3,7 @@ import Settings from './settings'
 import Telemetry from './telemetry'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Mission from './mission/mission'
+import Vehicle from './vehicle'
 export default function SidePanel() {
   const currentTab = useEditor((state) => state.currentTab)
   const sidePanelOpen = useEditor((state) => state.sidePanelOpen)
@@ -22,6 +23,9 @@ export default function SidePanel() {
               }
               case 'Settings': {
                 return <Settings />
+              }
+              case 'Vehicle': {
+                return <Vehicle />
               }
               default: {
                 const _exhaustiveCheck: never = currentTab

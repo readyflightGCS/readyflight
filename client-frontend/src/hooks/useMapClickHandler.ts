@@ -11,6 +11,7 @@ export function useMapClickHandler() {
   const mission = useMission((s) => s.mission)
   const selectedSubMission = useMission((s) => s.selectedSubMission)
   const setSelectedCommandIDs = useMission((s) => s.setSelectedCommandIDs)
+  const lastSelectedCommandIndex = useEditor((s) => s.setLastSelectedCommandIndex)
 
   return (e: LeafletMouseEvent) => {
     switch (currentTab) {
@@ -29,6 +30,7 @@ export function useMapClickHandler() {
         a.pushToMission(selectedSubMission, cmd)
         setMission(a)
         setSelectedCommandIDs([newIndex])
+        lastSelectedCommandIndex(newIndex)
         break
       }
 
