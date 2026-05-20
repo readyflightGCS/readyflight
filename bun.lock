@@ -72,7 +72,7 @@
       },
     },
     "docs": {
-      "name": "docs",
+      "name": "@readyflight/docs-website",
       "version": "0.0.1",
       "dependencies": {
         "@astrojs/starlight": "^0.39.2",
