@@ -49,6 +49,28 @@ $ bun run dev:web
 $ bun run dev:backend
 ```
 
+### Flags
+
+Enable react-scan by prefixing a command with `REACT_SCAN=true`
+
+> [!WARNING]
+> This relys on an external script (React Scan)[https://react-scan.com/] and won't work offline
+
+Unix like system
+```bash
+$ REACT_SCAN=true bun run dev
+```
+
+Windows Terminal
+```
+set REACT_SCAN=true && bun run dev
+```
+
+Windows Powershell
+```powershell
+$env:REACT_SCAN="true"; bun run dev
+```
+
 
 ### Build
 To create distribution builds, run the following commands
