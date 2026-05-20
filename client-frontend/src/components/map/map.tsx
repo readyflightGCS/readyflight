@@ -21,7 +21,7 @@ function Map(): React.JSX.Element {
     <MapContainer className="absolute inset-0 z-10" center={[55.95, -3.183333]} zoom={13}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <CreateHandler />
       <MissionLayer />

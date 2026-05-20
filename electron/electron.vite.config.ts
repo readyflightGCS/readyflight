@@ -7,6 +7,7 @@ import { execSync } from 'child_process'
 
 const gitVersion =
   process.env.APP_VERSION || execSync('git describe --tags --dirty').toString().trim()
+const useReactScan = process.env.REACT_SCAN
 
 export default defineConfig({
   main: {
@@ -69,7 +70,16 @@ export default defineConfig({
       {
         name: 'html-transform',
         transformIndexHtml(html) {
-          return html.replace('%RF_VERSION%', gitVersion)
+          let a = html.replace('%RF_VERSION%', gitVersion)
+          if (useReactScan === 'true') {
+            a = a.replace(
+              '%REACTSCAN%',
+              `<script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js"></script>`
+            )
+          } else {
+            a = a.replace('%REACTSCAN%', ``)
+          }
+          return a
         }
       }
     ]
