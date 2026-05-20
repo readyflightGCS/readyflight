@@ -5,7 +5,8 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { execSync } from 'child_process'
 
-const gitVersion = process.env.APP_VERSION || execSync('git describe --tags --dirty').toString().trim()
+const gitVersion =
+  process.env.APP_VERSION || execSync('git describe --tags --dirty').toString().trim()
 const useReactScan = process.env.REACT_SCAN
 
 // Web-only Vite config; Electron uses electron.vite.config.ts
