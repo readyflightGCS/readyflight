@@ -34,6 +34,9 @@ import { useVehicle } from "@libs/stores/vehicle"
 import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
 import { MavLinkStreamParser } from "./mavlink-stream-parser"
 import { VehicleState } from "@libs/vehicle/state"
+import { toast } from "sonner"
+import { getSeverityName } from "./mavlink-assets/enums/mav-message-severity"
+import { objectKeys } from "@libs/util/types"
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -224,7 +227,24 @@ function processFrame(
       velocityVariance: msg.velocity_variance
     })
   } else if (msg instanceof Statustext) {
-    console.log(`[mavlink] STATUSTEXT [sev=${msg.severity}] ${msg.text}`)
+    switch (msg.severity) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+        toast.error(getSeverityName(msg.severity), { description: `${msg.text}` })
+        break
+
+      case 4:
+      case 5:
+        toast.warning(getSeverityName(msg.severity), { description: `${msg.text}` })
+        break
+
+      case 6:
+      case 7:
+        toast.info(getSeverityName(msg.severity), { description: `${msg.text}` })
+        break
+    }
 
     // ------------------------------------------------------------------
     // Mission upload handshake — respond to both legacy MISSION_REQUEST
@@ -257,8 +277,10 @@ function processFrame(
   } else if (msg instanceof MissionAck) {
     if (msg.type === 0 /* MAV_MISSION_ACCEPTED */) {
       console.log('[mavlink] Mission upload accepted')
+      toast.success('Mission Upload Accepted', { description: 'The vehicle has accepted your mission upload' })
     } else {
       console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
+      toast.error('Mission Upload Failed', { description: `The upload has failed with the following result: ${msg.type}` })
     }
     resetUploadState()
   } else {
@@ -332,9 +354,9 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     "RF.Waypoint": true,
   },
 
-  handleTelemetryMessage: (data, setVehicleState, sendPacket) => {
+  handleTelemetryMessage: (data, sendPacket) => {
     for (const frame of streamParser.feed(data)) {
-      processFrame(frame, setVehicleState, sendPacket)
+      processFrame(frame, sendPacket)
     }
   },
 
@@ -354,6 +376,22 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
       cmd.param7 = 0
       sendPacket(encodePacket(cmd))
       return
+    }
+
+    if (msg.type === 'launch') {
+      const cmd = new CommandLong(0, 0)
+      cmd.target_system = 1
+      cmd.target_component = 1
+      cmd.command = MavCmd.MAV_CMD_NAV_TAKEOFF
+      cmd.param1 = 0
+      cmd.param2 = 0
+      cmd.param3 = 0
+      cmd.param4 = 0
+      cmd.param5 = 0
+      cmd.param6 = 0
+      cmd.param7 = msg.height || 10
+
+      sendPacket(encodePacket(cmd))
     }
 
     if (msg.type === 'setMode') {

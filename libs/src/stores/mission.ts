@@ -4,16 +4,16 @@ import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
 import { Mission } from '@libs/mission/mission'
 import { Vehicle } from '@libs/vehicle/types'
 import { defaultPlane } from '@libs/vehicle/defaults'
-import { CommandDescription, MissionCommand } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { Dialect } from '@libs/mission/dialect'
 import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
 
 type Actions = {
-  switchDialect: (dialect: Dialect<CommandDescription>) => void
-  addCommand: (cmd: MissionCommand<CommandDescription>) => void
+  switchDialect: (dialect: Dialect<DialectCommandDescription>) => void
+  addCommand: (cmd: MissionCommand<DialectCommandDescription>) => void
   setSelectedSubMission: (name: string) => void
   setSelectedCommandIDs: (n: number[]) => void
-  setMission: (m: Mission<CommandDescription>) => void
+  setMission: (m: Mission<DialectCommandDescription>) => void
   setVehicle: (v: Vehicle) => void
   clearSubMission: (name: string) => void
   deleteSubMission: (name: string) => void
@@ -21,8 +21,8 @@ type Actions = {
 }
 
 type State = {
-  mission: Mission<CommandDescription>
-  dialect: Dialect<CommandDescription>
+  mission: Mission<DialectCommandDescription>
+  dialect: Dialect<DialectCommandDescription>
   selectedSubMission: string
   vehicle: Vehicle
   selectedCommandIDs: number[]

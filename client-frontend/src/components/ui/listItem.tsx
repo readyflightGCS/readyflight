@@ -22,13 +22,13 @@ export default function ListItem({
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   return (
-    <div className="">
+    <div className="py-[2px]">
       <Button
         variant={selected ? 'active' : 'default'}
         className={cn('w-full m-0 p-0 h-auto flex', className)}
       >
-        <div className="flex-grow text-start flex items-center py-2 px-3" onClick={onClick}>
-          <span className="inline m-1">{icon}</span>
+        <div className="flex-grow text-start flex items-center py-2 px-2" onClick={onClick}>
+          <span className="inline px-1">{icon}</span>
           <span className="inline-block">{name}</span>
         </div>
         <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>

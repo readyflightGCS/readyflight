@@ -1,11 +1,11 @@
-import { CommandDescription } from "@libs/commands/command";
 import { Mission } from "@libs/mission/mission";
 import { Vehicle } from "@libs/vehicle/types";
 import { RFJSON1 } from "./schema";
 import { Dialect } from "@libs/mission/dialect";
 import { Result } from "@libs/util/try-catch";
+import { DialectCommandDescription } from "@libs/commands/command";
 
-export function exportRFJSON1<CD extends CommandDescription>(mission: Mission<CD>, vehicle: Vehicle, dialect: Dialect<CD>): Result<Blob> {
+export function exportRFJSON1<CD extends DialectCommandDescription>(mission: Mission<CD>, vehicle: Vehicle, dialect: Dialect<CD>): Result<Blob> {
   let missionObj: RFJSON1 = {
     RFVersion: "Readyflight:00.00.00", // TODO replace with git derived string
     missionID: mission.missionID,

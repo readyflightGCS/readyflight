@@ -121,3 +121,11 @@ export function isPointInPolygon(polygon: XY[], point: XY) {
 
   return inside;
 }
+
+/* 
+ * Linearly interpolate a to b by percentage c
+ * c should be between 0 and 1
+ */
+export function interpolateLinear(a: number, b: number, c: number) {
+  return a + (b - a) * c
+}

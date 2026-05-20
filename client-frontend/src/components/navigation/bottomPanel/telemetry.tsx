@@ -1,168 +1,35 @@
-import { cn } from '@/lib/utils'
-import { useVehicle } from '@libs/stores/vehicle'
-import { GpsFixType } from '@libs/mission/ardupilot/mavlink-assets/enums/gps-fix-type'
-import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
-import { PlaneMode } from '@libs/mission/ardupilot/mavlink-assets/enums/plane-mode'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Separator } from '@/components/ui/separator'
+import TelemetryTable from './telemetry/telemetryTable'
+import TelemetryIndicators from './telemetry/telemetryIndicators'
+import TelemetryMixed from './telemetry/telemetryMixed'
+
+const tabs = [
+  { name: 'Table', component: <TelemetryTable /> },
+  { name: 'Indicators', component: <TelemetryIndicators /> },
+  { name: 'Mixed', component: <TelemetryMixed /> }
+] as const
 
 export default function Telemetry() {
-  const [
-    alt,
-    airspeed,
-    heading,
-    groundspeed,
-    voltage,
-    throttle,
-    relativealt,
-    gpsfixtype,
-    hdop,
-    batteryremaining,
-    mode,
-    isarmed,
-    climb
-  ] = useVehicle((v) => [
-    v.alt,
-    v.airspeed,
-    v.heading,
-    v.groundspeed,
-    v.batteryVoltage,
-    v.throttle,
-    v.relativeAlt,
-    v.gpsFixType,
-    v.hdop,
-    v.batteryRemaining,
-    v.mode,
-    v.isArmed,
-    v.climb
-  ])
-
-  const weightedRelative = (relativealt || 0.1) / 10
-
-  let isarmedText = ''
-
-  if (isarmed !== null) {
-    if (isarmed) {
-      isarmedText = 'Armed'
-    } else {
-      isarmedText = 'Disarmed'
-    }
-  } else {
-    isarmedText = 'May be armed'
-  }
-
-  let arrowName
-
-  if (climb) {
-    const roundedClimb = parseFloat(climb.toFixed(2))
-
-    if (roundedClimb === 0) {
-      arrowName = <Minus className="inline w-4 h-4" />
-    } else if (roundedClimb > 0) {
-      arrowName = <ArrowUp className="inline w-4 h-4" />
-    } else {
-      arrowName = <ArrowDown className="inline w-4 h-4" />
-    }
-  }
-
   return (
-    <div className="w-4xl flex justify-center">
-      {/* //<Airspeed speed={airspeed || 0} showBox={false} /> */}
-      {/* //<HeadingIndicator heading={heading || 0} showBox={false} /> */}
-      {/* <Altimeter altitude={alt || 0} showBox={false}/> */}
+    <div className="w-200">
+      <Tabs defaultValue={tabs[0].name} className="flex-row">
+        <TabsList className="flex flex-col h-fit w-40">
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.name} value={tab.name} className="w-[100%] justify-start">
+              {tab.name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
 
-      <table className="table-fixed w-full">
-        <tbody>
-          <tr>
-            <td className="p-1">Airspeed</td>
-            <td className="p-1">{airspeed !== null ? `${Math.round(airspeed)}m/s` : '-'}</td>
-            <td className="p-1">Altitude</td>
-            <td className="p-1">{alt !== null ? `${Math.round(alt)}m` : '-'}</td>
-            <td className="p-1">Heading</td>
-            <td className="p-1">
-              <span className="inline-block w-10 text-center">
-                {heading !== null ? Math.round(heading) : '-'}&deg;
-              </span>
-              <ArrowUp
-                className="inline-block w-4 h-4"
-                style={{
-                  transform: `rotate(${Math.round(heading || 0)}deg)`,
-                  transition: `transform 0.5s ease`
-                }}
-              />
-            </td>
-          </tr>
+        <Separator orientation="vertical" />
 
-          <tr>
-            <td className="p-1">Groundspeed</td>
-            <td className="p-1">{groundspeed !== null ? `${Math.round(groundspeed)}m/s` : '-'} </td>
-            <td className="p-1">Batt Voltage</td>
-            <td className="p-1">{voltage !== null ? `${Math.round(voltage)}v` : '-'}</td>
-            <td className="p-1">Relative Alt</td>
-            <td className="p-1">
-              {weightedRelative !== null ? `${Math.round(weightedRelative)}m` : '-'}
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-1">Throttle</td>
-            <td colSpan={5}>
-              {/* <progress value={throttle || 0} max={100}>{throttle}</progress> */}
-
-              <div className="w-full bg-neutral-quaternary rounded-full">
-                <div
-                  className="bg-blue-900 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full h-4 flex items-center justify-center"
-                  style={{ width: `${throttle}%`, transition: `width 1s linear` }}
-                >
-                  {' '}
-                  {throttle}%
-                </div>
-              </div>
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-1">GPS Fix Type</td>
-            <td
-              className={cn(
-                'p-1',
-                gpsfixtype !== null
-                  ? gpsfixtype <= 1
-                    ? 'text-red-400'
-                    : gpsfixtype <= 3
-                      ? 'text-orange-400'
-                      : 'text-green-400'
-                  : 'text-red-400'
-              )}
-            >
-              {gpsfixtype !== null
-                ? GpsFixType[gpsfixtype].replace(/GPS_FIX_TYPE_/, '')
-                : 'Unknown'}
-            </td>
-            <td className="p-1">GPS Satellites</td>
-            <td className="p-1">{alt !== null ? Math.round(alt) : '-'}</td>
-            <td className="p-1">GPS HDOP</td>
-            <td className="p-1">{hdop !== null ? `${Math.round(hdop)}m` : '-'}</td>
-          </tr>
-
-          <tr>
-            <td className="p-1">Battery remaining</td>
-            <td className="p-1">{batteryremaining !== null ? `${batteryremaining}s` : '-'}</td>
-            <td className="p-1">Vehicle Mode</td>
-            <td className="p-1">{PlaneMode[mode || 0]}</td>
-            <td className="p-1">Armed State:</td>
-            <td className={cn('p-1', isarmed ? 'text-red-400' : 'text-green-400')}>
-              {isarmedText}
-            </td>
-          </tr>
-
-          <tr>
-            <td className="p-1">Climb</td>
-            <td className="p-1">
-              <span className="inline">{climb !== null ? `${climb.toFixed(2)}m/s` : '-'}</span>{' '}
-              {arrowName}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        {tabs.map((tab) => (
+          <TabsContent key={tab.name} value={tab.name}>
+            {tab.component}
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   )
 }

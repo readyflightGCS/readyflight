@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Marker } from 'react-leaflet'
-// @ts-ignore - Janks up because leaflet breaks if its in react
 import L from 'leaflet'
 import { LatLng } from '@libs/world/latlng'
 
