@@ -1,0 +1,128 @@
+---
+import './src/styles/global.css'
+import './src/styles/landing.css'
+
+import { Icon } from '@astrojs/starlight/components'
+import App from '../components/App.astro'
+
+const title = 'ReadyFlight'
+const tagline = 'The modern, cross-platform ground station'
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={tagline} />
+  </head>
+  <body class="bg-gray-900">
+    <nav aria-label="Global" class="flex items-center justify-between p-4 lg:px-8">
+      <div class="flex lg:flex-1">
+        <a href="#" class="-m-1.5 p-1.5">
+          <span class="sr-only">ReadyFlight</span>
+          <img
+            src="https://readyflight.app/ReadyflightLogoSquare.png"
+            alt=""
+            class="h-12 rounded-md w-auto"
+          />
+        </a>
+      </div>
+      <div class="lg:flex lg:flex-1 lg:justify-end">
+        <a href="/getting-started" class="text-sm/6 px-4 font-semibold text-white no-underline"
+          ><Icon size="1.5rem" class="align-middle" name="open-book" /></a
+        >
+        <a href="https://github.com/readyflightGCS/readyflight" class="text-sm/6 px-4 font-semibold text-white no-underline"
+          ><Icon size="1.5rem" class="align-middle" name="github" /></a
+        >
+      </div>
+    </nav>
+    <main class="landing-page">
+      <section class="flex justify-center relative mt-24">
+        <div class="absolute inset-10 flex justify-center">
+          <div
+            class="h-52 w-[52rem] rounded-xl blur-3xl opacity-40 bg-linear-to-r from-blue-800 via-blue-500 via-50% to-emerald-700"
+          >
+          </div>
+        </div>
+        <div class="relative z-10 max-w-3xl text-center">
+          <h1 class="mb-8 text-5xl font-normal text-gray-300 lg:text-7xl">
+            {title}
+          </h1>
+          <p class="text-2xl text-gray-300">
+            {tagline}
+          </p>
+          <div class="mt-4 mb-4 flex items-center justify-center gap-x-6">
+            <a
+              href="/getting-started"
+              class="rounded-md bg-blue-600 px-3.5 py-2.5 text-md font-semibold text-white no-underline shadow-xs hover:bg-blue-500"
+            >
+              <Icon size="1rem" class="align-middle" name="open-book" /> Read the docs
+            </a>
+            <a href="https://github.com/readyflightGCS/readyflight" class="text-md/6 font-semibold text-white no-underline hover:text-shadow-md">
+              <Icon size="1rem" class="align-middle" name="github" /> View on GitHub
+            </a>
+          </div>
+          <span class="inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 inset-ring inset-ring-yellow-400/20">Alpha v00.00.01</span>
+        </div>
+      </section> 
+
+      <section class="overflow-hidden bg-gray-900 py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+          <div
+            class="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-12 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2"
+          >
+            <div class="lg:pr-8 order-2 lg:order-1">
+              <div class="max-w-xl">
+                <p class="mt-3 mb-0 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+                  Always ready.
+                </p>
+                <dl class="mt-6 space-y-8 text-base leading-7 text-gray-400">
+                  <div class="relative pl-9">
+                    <dt class="inline text-lg font-semibold text-white">
+                      <Icon size="1rem" class="absolute top-1 left-1 size-5 align-middle" name="seti:pipeline" />
+                      Plan ahead
+                    </dt>
+                    <dd class="inline">
+                        <br>Plan missions with reusable components
+                    </dd>
+                  </div>
+                  <div class="relative pl-9">
+                    <dt class="inline text-lg font-semibold text-white">
+                      <Icon size="1rem" class="absolute top-1 left-1 size-5 align-middle" name="clock" />
+                      Real-time updates
+                    </dt>
+                    <dd class="inline">
+                        <br>View telemetry and mission progress in real time
+                    </dd>
+                  </div>
+                  <div class="relative pl-9">
+                    <dt class="inline text-lg font-semibold text-white">
+                      <Icon size="1rem" class="absolute top-1 left-1 size-5 align-middle" name="setting" />
+                      Ultimate configuration
+                    </dt>
+                    <dd class="inline">
+                      <br>Configure your UAV with mix-and-match parameter blocks
+                    </dd>
+                  </div>
+                  <div class="relative pl-9">
+                    <dt class="inline text-lg font-semibold text-white">
+                      <Icon size="1rem" class="absolute top-1 left-1 size-5 align-middle" name="rocket" />
+                      Simulations and tests
+                    </dt>
+                    <dd class="inline">
+                        <br>Run software in the loop simulations and tests
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+            <div class="relative order-1 lg:order-2">
+              <App/>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

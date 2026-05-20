@@ -13,7 +13,7 @@
 
 .app {
     margin: 3em;
-    transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg);
+    transform: perspective(1400px) rotate3d(0, 1, -0.3, -10deg);
     background: #ddd;
     width: 500pt;
     height: 350pt;
@@ -31,7 +31,8 @@
 
 @media (max-width: 800px) {
     .app {
-        transform: perspective(1000px) rotate3d(0, 1, -0.3, -10deg) scale(0.6);
+        margin: 0.75rem;
+        transform: none;
     }
 
     .app:hover {
