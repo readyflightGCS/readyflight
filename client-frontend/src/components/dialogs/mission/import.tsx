@@ -58,7 +58,7 @@ export default function ImportMission() {
   return (
     <div>
       <Separator />
-      <h2>Import</h2>
+      <h2 className="text-foreground">Import</h2>
       <input
         type="file"
         accept=".json, .waypoints"
@@ -66,7 +66,7 @@ export default function ImportMission() {
         className="hidden"
         onChange={handleFileChange}
       />
-      <Button variant="green" onClick={() => document.getElementById('importFileInput')?.click()}>
+      <Button className="text-foreground" variant="green" onClick={() => document.getElementById('importFileInput')?.click()}>
         {loading ? <LoaderCircle className="animate-spin" /> : <span>Import</span>}
       </Button>
     </div>

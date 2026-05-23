@@ -32,13 +32,13 @@ export default function MissionDialog() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Mission Settings</DialogTitle>
+          <DialogTitle className="text-foreground">Mission Settings</DialogTitle>
         </DialogHeader>
 
         <div>
-          <h2>Mission Dialect</h2>
+          <h2 className="text-foreground">Mission Dialect</h2>
           <Select value="Mavlink">
-            <SelectTrigger>
+            <SelectTrigger className="text-foreground">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -50,7 +50,7 @@ export default function MissionDialog() {
         <Separator />
 
         <div>
-          <h2>Mission Vehicle</h2>
+          <h2 className="text-foreground">Mission Vehicle</h2>
           <Tabs value={vehicle.type}>
             <TabsList>
               <TabsTrigger value="Plane" onClick={() => setVehicle(defaultPlane)}>
@@ -66,11 +66,11 @@ export default function MissionDialog() {
                 <>
                   <div className="grid grid-cols-2 justify-middle py-4">
                     <label className="flex-col flex w-40 justify-self-center">
-                      <span>Cruise Airspeed</span>
+                      <span className="text-foreground">Cruise Airspeed</span>
                       <NumericInput
                         name="Airspeed"
                         value={vehicle.cruiseAirspeed}
-                        className="w-40"
+                        className="w-40 text-foreground"
                         onChange={(x) =>
                           setVehicle(
                             vehicle.type !== 'Plane'
@@ -81,11 +81,11 @@ export default function MissionDialog() {
                       />
                     </label>
                     <label className="flex-col flex w-40 justify-self-center">
-                      <span>Max Bank Angle</span>
+                      <span className="text-foreground">Max Bank Angle</span>
                       <NumericInput
                         name="Max Bank"
                         value={vehicle.maxBank}
-                        className="w-40"
+                        className="w-40 text-foreground"
                         onChange={(x) =>
                           setVehicle(
                             vehicle.type != 'Plane'
@@ -96,12 +96,12 @@ export default function MissionDialog() {
                       />
                     </label>
                     <label className="flex-col flex w-40 justify-self-center">
-                      <span>Energy Constant (wh/km)</span>
+                      <span className="text-foreground">Energy Constant (wh/km)</span>
                       <NumericInput
                         name="Energy Constant"
                         min={0}
                         value={vehicle.energyConstant}
-                        className="w-40"
+                        className="w-40 text-foreground"
                         onChange={(x) =>
                           setVehicle(
                             vehicle.type != 'Plane'
@@ -113,7 +113,7 @@ export default function MissionDialog() {
                     </label>
                   </div>
                   <div>
-                    <span>
+                    <span className="text-foreground">
                       Minimum turning radius:{' '}
                       {getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed).toFixed(1)}m
                     </span>
@@ -123,7 +123,7 @@ export default function MissionDialog() {
             </TabsContent>
 
             <TabsContent value="Copter">
-              <div>Coming Soon</div>
+              <div className="text-foreground">Coming Soon</div>
             </TabsContent>
           </Tabs>
         </div>
