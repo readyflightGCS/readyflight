@@ -70,9 +70,7 @@ export const geneticOptimise: optimisationAlgorithm = (initialGuess, bounds, fn)
       newpop.push({ vals, fitness: fn(vals) });
     }
 
-    //console.assert(newpop.length == popsize)
     population = newpop
-    //console.log(bestpop.fitness)
 
   }
   const end = performance.now()

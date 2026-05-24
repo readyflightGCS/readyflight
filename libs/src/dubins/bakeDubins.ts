@@ -81,13 +81,10 @@ export function bakeDubins(
 
     let evaluate = createEvaluate(dubinsPoints, optimisationFunction)
     startingFitness += evaluate(startingParams)
-    console.log(startingFitness)
 
     let result = optimisationmethod(startingParams, bounds, evaluate) // 2041
-    console.log(result)
     applyBounds(result.finalVals, bounds)
     endingFitness += evaluate(result.finalVals)
-    console.log("fitness: ", result.fitness, "  took: ", result.time)
 
     setTunableParameter(section.run, result.finalVals)
     // Apply the updated command parameters back onto the cloned waypoint tree.

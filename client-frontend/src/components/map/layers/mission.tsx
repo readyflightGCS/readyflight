@@ -120,7 +120,6 @@ export default function ActiveLayer() {
 
   // handle when marker is double clicked
   function handleDoubleClick(id: number) {
-    console.log('Deleting')
     const temp = mission.clone()
     const wp = mission.get(selectedSubMission)[id]
     if (wp.type == 'RF.Group' && ['Landing', 'Takeoff'].includes(wp.params.name as string)) {

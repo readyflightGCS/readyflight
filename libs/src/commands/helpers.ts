@@ -64,10 +64,11 @@ export function getCommandLocation(cmd: MissionCommand<DialectCommandDescription
  */
 export function getCommandLocationAlt(cmd: MissionCommand<DialectCommandDescription>, dialect: Dialect<DialectCommandDescription>): LatLngAlt | null {
   switch (cmd.type) {
-    case "RF.Waypoint": return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
-    case "RF.DubinsPath": return null
-    case "RF.Land": return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
-    case "RF.Takeoff": return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
+    case "RF.Waypoint":
+    case "RF.DubinsPath":
+    case "RF.Land":
+    case "RF.Takeoff":
+      return { lat: cmd.params.latitude, lng: cmd.params.longitude, alt: cmd.params.altitude }
     case "RF.SetServo": return null
     case "RF.Group": return null
     default: {

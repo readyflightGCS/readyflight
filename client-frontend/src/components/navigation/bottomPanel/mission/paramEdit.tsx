@@ -50,9 +50,10 @@ export default function ParamEditor() {
     }
 
     // get initial parameter names from the first command selected
+    let a = getCommandDescription(cmdTypes[0], dialect).parameters
     let commonCmdParams = new Set(
       getCommandDescription(cmdTypes[0], dialect)
-        .parameters.filter(paramDesc => paramDesc.parameterType === "number").map(paramDesc =>
+        .parameters.filter(paramDesc => paramDesc?.parameterType === "number").map(paramDesc =>
           paramDesc.label.toLowerCase()
         )
         .filter((x) => x !== undefined)
@@ -62,7 +63,7 @@ export default function ParamEditor() {
     for (let i = 1; i < cmdTypes.length; i++) {
       const nextParams = new Set(
         getCommandDescription(cmdTypes[i], dialect)
-          .parameters.filter(paramDesc => paramDesc.parameterType === "number").map(paramDesc =>
+          .parameters.filter(paramDesc => paramDesc?.parameterType === "number").map(paramDesc =>
             paramDesc.label.toLowerCase()
           )
           .filter((x) => x !== undefined)
@@ -75,7 +76,7 @@ export default function ParamEditor() {
 
 
     return getCommandDescription(cmdTypes[0], dialect)
-      .parameters.filter(x => x.parameterType === "number" && commonCmdParams.has(x.label.toLowerCase())).map((x) => ({
+      .parameters.filter(x => x?.parameterType === "number" && commonCmdParams.has(x.label.toLowerCase())).map((x) => ({
         name: x?.label?.toLowerCase(),
         min: x.minValue,
         max: x.maxValue,

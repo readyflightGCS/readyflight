@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import CommandItem from './commandItem'
 import { getCommandLocation } from '@libs/commands/helpers'
+import { useEditor } from '@libs/stores/configurator'
 
 export default function CommandList() {
   const setSelectedSubMission = useMission((s) => s.setSelectedSubMission)
@@ -13,6 +14,7 @@ export default function CommandList() {
   const dialect = useMission((s) => s.dialect)
   const setMission = useMission((s) => s.setMission)
   const selectedSubMission = useMission((s) => s.selectedSubMission)
+  const setTool = useEditor(s => s.setTool)
 
   const curMission = mission.get(selectedSubMission)
 
@@ -53,13 +55,8 @@ export default function CommandList() {
   }
 
   function createTakeoff() {
-    const a = mission.clone()
-    a.addSubMission('Takeoff', [])
-    a.insert(0, 'Main', { type: 'RF.Group', frame: 0, params: { name: 'Takeoff' } })
-    setMission(a)
-    setSelectedSubMission('Takeoff')
     setSelectedCommandIDs([])
-    setTool('Takeoff')
+    setTool('takeoff')
   }
 
   function createLanding() {
@@ -69,18 +66,18 @@ export default function CommandList() {
     setMission(a)
     setSelectedSubMission('Landing')
     setSelectedCommandIDs([])
-    setTool('Land')
+    setTool('land')
   }
 
   const missionWithDubinsGroups: (
     | {
-        type: 'cmd'
-        cmd: MissionCommand<DialectCommandDescription>
-      }
+      type: 'cmd'
+      cmd: MissionCommand<DialectCommandDescription>
+    }
     | {
-        type: 'dubins'
-        cmds: MissionCommand<DialectCommandDescription>[]
-      }
+      type: 'dubins'
+      cmds: MissionCommand<DialectCommandDescription>[]
+    }
   )[] = []
 
   let curDubinsPath = []

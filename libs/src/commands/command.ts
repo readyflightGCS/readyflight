@@ -74,7 +74,7 @@ export type CommandParameterDescriptionS = {
 // remember to add any new types to this union
 export type CommandParameterUnion =
   CommandParameterDescriptionS |
-  CommandParameterDescriptionN
+  CommandParameterDescriptionN | null
 
 // and remember to add it to this thing. TODO maybe derive this somehow
 type ParameterTypeToValueType<T extends CommandParameterUnion> =
