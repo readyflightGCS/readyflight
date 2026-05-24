@@ -41,42 +41,51 @@ export default function ParamEditor() {
 
   // we want to take the intersection of parameters for all command types selected
   function findCommonParamsForTypes(
-    cmdTypes: Set<MissionCommand<DialectCommandDescription>['type']>
-  ): string[] {
-    const a = Array.from(cmdTypes)
+    cmdTypesSet: Set<MissionCommand<DialectCommandDescription>['type']>
+  ) {
+    const cmdTypes = Array.from(cmdTypesSet)
 
-    if (a.length == 0) {
+    if (cmdTypes.length == 0) {
       return []
     }
 
     // get initial parameter names from the first command selected
-    let params = new Set(
-      getCommandDescription(a[0], dialect)
-        .parameters.map((x: DialectCommandDescription['parameters'][number]) =>
-          x?.label?.toLowerCase()
+    let commonCmdParams = new Set(
+      getCommandDescription(cmdTypes[0], dialect)
+        .parameters.filter(paramDesc => paramDesc.parameterType === "number").map(paramDesc =>
+          paramDesc.label.toLowerCase()
         )
         .filter((x) => x !== undefined)
     )
 
     // loop over the rest and find the intersection of all
-    for (let i = 1; i < a.length; i++) {
+    for (let i = 1; i < cmdTypes.length; i++) {
       const nextParams = new Set(
-        getCommandDescription(a[i], dialect)
-          .parameters.map((x: DialectCommandDescription['parameters'][number]) =>
-            x?.label?.toLowerCase()
+        getCommandDescription(cmdTypes[i], dialect)
+          .parameters.filter(paramDesc => paramDesc.parameterType === "number").map(paramDesc =>
+            paramDesc.label.toLowerCase()
           )
           .filter((x) => x !== undefined)
       )
 
       // take the intersection
-      params = new Set(Array.from(params).filter((i) => nextParams.has(i)))
+      commonCmdParams = new Set(Array.from(nextParams).filter((i) => nextParams.has(i)))
     }
 
-    return Array.from(params)
+
+
+    return getCommandDescription(cmdTypes[0], dialect)
+      .parameters.filter(x => x.parameterType === "number" && commonCmdParams.has(x.label.toLowerCase())).map((x) => ({
+        name: x?.label?.toLowerCase(),
+        min: x.minValue,
+        max: x.maxValue,
+        step: x.increment
+      })
+      )
   }
 
   const selectedCommandTypes = new Set(selected.map((x) => x.type))
-  const params = findCommonParamsForTypes(selectedCommandTypes)
+  const params: { name: string, min: number | null, max: number | null, step: number | null }[] = findCommonParamsForTypes(selectedCommandTypes)
 
   // as we want to be able to edit the parameters of several commands at once,
   // we need to compare all commands with the same parameter to see if they are
@@ -86,20 +95,20 @@ export default function ParamEditor() {
 
   const parameterValues = {}
 
-  for (const key of params) {
-    const values = selected.map((obj) => obj.params[key])
+  for (const param of params) {
+    const values = selected.map((obj) => obj.params[param.name])
     const allSame = values.every((val) => val === values[0])
 
-    parameterValues[key] = allSame ? values[0] : null
+    parameterValues[param.name] = allSame ? values[0] : null
   }
 
-  function onParameterValueChange(event: { target: { name: string; value: number } }) {
+  function onParameterValueChange(event: { target: { name: string; value: number, delta: number } }) {
     const tmp = mission.clone()
     tmp.changeManyParams(
       selectedCommandIDs.length === 0 ? curMission.map((_, i) => i) : selectedCommandIDs,
       selectedSubMission,
       (cmd) => {
-        cmd.params[event.target.name] = event.target.value
+        cmd.params[event.target.name] += event.target.delta
         return cmd
       },
       true
@@ -111,15 +120,15 @@ export default function ParamEditor() {
     <div className="flex-1 flex flex-wrap overflow-y-auto">
       {Array.from(params).map((x, i) => {
         // latitude and longitude are handled by the LatLng editor
-        if (['longitude', 'latitude'].includes(x)) {
-          return
-        }
         return (
           <Parameter
             key={i}
-            name={x}
-            value={parameterValues[x]}
+            name={x.name}
+            value={parameterValues[x.name]}
             onChange={onParameterValueChange}
+            min={x.min}
+            max={x.max}
+            step={x.step}
           />
         )
       })}

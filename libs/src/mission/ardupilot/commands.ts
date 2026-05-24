@@ -113,7 +113,7 @@ export const mavCmdDescription = [{
     units: "",
     minValue: null,
     maxValue: null,
-    increment: null,
+    increment: 0.000001,
     default: null,
     options: [],
   }, {
@@ -123,7 +123,7 @@ export const mavCmdDescription = [{
     units: "",
     minValue: null,
     maxValue: null,
-    increment: null,
+    increment: 0.000001,
     default: null,
     options: [],
   }, {
