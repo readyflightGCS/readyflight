@@ -116,19 +116,19 @@ export function LatLngEditor() {
     <>
       <div className="p-2">
         <label>
-          <span className="ml-[4px]"></span>
-          <div className="border-2 border-input rounded-lg w-40 overflow-hidden flex">
+          <span className="block">Move Commands</span>
+          <div className="border-2 border-input rounded-lg w-40 h-8 overflow-hidden flex text-sm">
             <button
               onMouseDown={move}
-              className="h-[21px] flex-grow bg-muted flex items-center justify-evenly"
+              className="flex-grow bg-muted flex items-center justify-evenly h-full cursor-pointer"
             >
               <LocateFixed className="h-5 w-5 inline" />
               Move
             </button>
-            <span className="w-[2px] bg-input h-[100%] h-[21px]" />
+            <span className="w-[2px] bg-border h-[100%] h-full" />
             <button
               onMouseDown={place}
-              className="h-[21px] flex-grow bg-muted flex items-center justify-evenly"
+              className="flex-grow bg-muted flex items-center justify-evenly h-full cursor-pointer"
             >
               <MousePointerClick className="w-5 h-5 inline" />
               Place
@@ -140,22 +140,22 @@ export function LatLngEditor() {
       {selectedCommandIDs.length == 0 || selectedCommandIDs.length > 1 ? (
         <div className="p-2">
           <label>
-            <span className="ml-[4px]"></span>
-            <div className="border-2 border-input rounded-lg w-40 flex overflow-hidden">
+            <span className="block">Rotate Commands</span>
+            <div className="border-2 border-input rounded-lg w-40 h-8 flex overflow-hidden">
               <button
                 onMouseDown={() => rotateDeg(5)}
-                className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
+                className="h-full aspect-square flex items-center justify-center bg-muted cursor-pointer"
               >
                 <RotateCcw className="h-5 w-5 inline" />
               </button>
-              <span className="w-[2px] bg-input h-[100%] h-[21px]" />
-              <button onMouseDown={rotate} className="flex-grow text-center bg-muted">
+              <span className="w-[2px] bg-input h-full bg-border" />
+              <button onMouseDown={rotate} className="flex-grow text-center text-sm bg-muted cursor-pointer">
                 Rotate
               </button>
-              <span className="w-[2px] bg-input h-[100%] h-[21px]" />
+              <span className="w-[2px] bg-input h-full bg-border" />
               <button
                 onMouseDown={() => rotateDeg(-5)}
-                className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
+                className="h-full aspect-square flex items-center justify-center bg-muted cursor-pointer"
               >
                 <RotateCw className="h-5 w-5 inline" />
               </button>
