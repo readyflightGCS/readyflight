@@ -1,8 +1,11 @@
-import { optimisationAlgorithm } from "./types"
+import { optimisationAlgorithm } from './types'
 
 export const particleOptimise: optimisationAlgorithm = (initialGuess, bounds, fn) => {
   const start = performance.now()
-  console.assert(initialGuess.length == bounds.length, `Params are different length to bounds, ${initialGuess.length} ${bounds.length}`)
+  console.assert(
+    initialGuess.length == bounds.length,
+    `Params are different length to bounds, ${initialGuess.length} ${bounds.length}`
+  )
 
   const dims = initialGuess.length
   const popsize = dims * 20
@@ -14,16 +17,19 @@ export const particleOptimise: optimisationAlgorithm = (initialGuess, bounds, fn
 
   const improvementThreshold = 1e-6
 
-  let local_best_position: number[][] = []
-  let local_best_value: number[] = []
+  const local_best_position: number[][] = []
+  const local_best_value: number[] = []
   let global_best_position = [...initialGuess]
   let global_best_value = fn(global_best_position)
-  let previous_global_best: number[] = []
+  const previous_global_best: number[] = []
   //console.log("Starting fitness: ", global_best_value)
 
   // intialise population
   for (let i = 0; i < popsize; i++) {
-    const particle_pos = Array.from({ length: dims }, (_, j) => initialGuess[j] + (Math.random() - 0.5 * 0.1))
+    const particle_pos = Array.from(
+      { length: dims },
+      (_, j) => initialGuess[j] + (Math.random() - 0.5 * 0.1)
+    )
     const particle_vel = Array.from({ length: dims }, () => Math.random() - 0.5)
     population[i] = particle_pos
     velocities[i] = particle_vel
@@ -36,14 +42,16 @@ export const particleOptimise: optimisationAlgorithm = (initialGuess, bounds, fn
       previous_global_best.shift()
     }
     previous_global_best.push(global_best_value)
-    if (previous_global_best.length == 5 && (previous_global_best[0] - previous_global_best[4]) < improvementThreshold) {
+    if (
+      previous_global_best.length == 5 &&
+      previous_global_best[0] - previous_global_best[4] < improvementThreshold
+    ) {
       // break;
     }
 
-
     // update global and local best positions and values
     for (let p = 0; p < popsize; p++) {
-      let current_fitness = fn(population[p])
+      const current_fitness = fn(population[p])
       if (current_fitness < local_best_value[p]) {
         local_best_value[p] = current_fitness
         local_best_position[p] = [...population[p]]
@@ -54,24 +62,29 @@ export const particleOptimise: optimisationAlgorithm = (initialGuess, bounds, fn
       }
     }
 
-
     for (let p = 0; p < popsize; p++) {
-
       for (let a = 0; a < initialGuess.length; a++) {
         const b = Math.random() * cogWeight
         const d = Math.random() * socialWeight
-        const e = Math.pow((Math.random() - 0.5), 3) * 1
+        const e = Math.pow(Math.random() - 0.5, 3) * 1
 
-        const newVel = 0.8 * velocities[p][a] +
+        const newVel =
+          0.8 * velocities[p][a] +
           b * (local_best_position[p][a] - population[p][a]) +
-          d * (global_best_position[a] - population[p][a]) + e
+          d * (global_best_position[a] - population[p][a]) +
+          e
         velocities[p][a] = newVel
         population[p][a] += 1 * newVel
 
         const curBound = bounds[a]
 
         // random movement
-        if (curBound.circular && curBound.max && curBound.min !== undefined && Math.random() > 0.99) {
+        if (
+          curBound.circular &&
+          curBound.max &&
+          curBound.min !== undefined &&
+          Math.random() > 0.99
+        ) {
           population[p][a] += (curBound.max - curBound.min) / 2
         }
 
@@ -99,10 +112,11 @@ export const particleOptimise: optimisationAlgorithm = (initialGuess, bounds, fn
         }
       }
     }
-
   }
   const end = performance.now()
   return {
-    finalVals: global_best_position, fitness: global_best_value, time: end - start
+    finalVals: global_best_position,
+    fitness: global_best_value,
+    time: end - start
   }
 }

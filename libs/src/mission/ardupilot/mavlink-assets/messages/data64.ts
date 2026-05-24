@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 Data packet, size 64.
 */
@@ -7,15 +7,15 @@ Data packet, size 64.
 // len Data length. uint8_t
 // data Raw data. uint8_t
 export class Data64 extends MAVLinkMessage {
-	public type!: number;
-	public len!: number;
-	public data!: number;
-	public _message_id: number = 171;
-	public _message_name: string = 'DATA64';
-	public _crc_extra: number = 181;
-	public _message_fields: [string, string, boolean][] = [
-		['type', 'uint8_t', false],
-		['len', 'uint8_t', false],
-		['data', 'uint8_t', false],
-	];
+  public type!: number
+  public len!: number
+  public data!: number
+  public _message_id: number = 171
+  public _message_name: string = 'DATA64'
+  public _crc_extra: number = 181
+  public _message_fields: [string, string, boolean][] = [
+    ['type', 'uint8_t', false],
+    ['len', 'uint8_t', false],
+    ['data', 'uint8_t', false]
+  ]
 }

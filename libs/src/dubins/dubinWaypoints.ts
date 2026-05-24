@@ -1,28 +1,42 @@
-import { DubinsBetweenDiffRad } from "./dubins";
-import { bound, DubinsPath, dubinsPoint, Path, Segment } from "./types";
-import { MainLine } from "../mission/mission";
-import { XY } from "@libs/math/types";
-import { LatLng } from "@libs/world/latlng";
-import { g2l, l2g } from "@libs/world/conversion";
-import { crossProduct } from "@libs/math/vector";
-import { deg2rad, modf, offset } from "@libs/math/geometry";
-import { Plane } from "@libs/vehicle/types";
-import { DialectCommandDescription, MissionCommand } from "@libs/commands/command";
-import { Dialect } from "@libs/mission/dialect";
-import { getCommandLocation } from "@libs/commands/helpers";
+import { DubinsBetweenDiffRad } from './dubins'
+import { bound, DubinsPath, dubinsPoint, Path, Segment } from './types'
+import { MainLine } from '../mission/mission'
+import { XY } from '@libs/math/types'
+import { LatLng } from '@libs/world/latlng'
+import { g2l, l2g } from '@libs/world/conversion'
+import { crossProduct } from '@libs/math/vector'
+import { deg2rad, modf, offset } from '@libs/math/geometry'
+import { Plane } from '@libs/vehicle/types'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
+import { Dialect } from '@libs/mission/dialect'
+import { getCommandLocation } from '@libs/commands/helpers'
 
 /*
  * find all the sections of a waypoint list which require a dubins path between
  * include pre + post waypoints to connect
  */
-export function splitDubinsRuns(mainLine: MainLine): { start: number, run: { cmd: MissionCommand<DialectCommandDescription>, id: number, other: MissionCommand<DialectCommandDescription>[] }[] }[] {
-  let dubinSections: { start: number, run: { cmd: MissionCommand<DialectCommandDescription>, id: number, other: MissionCommand<DialectCommandDescription>[] }[] }[] = []
+export function splitDubinsRuns(mainLine: MainLine): {
+  start: number
+  run: {
+    cmd: MissionCommand<DialectCommandDescription>
+    id: number
+    other: MissionCommand<DialectCommandDescription>[]
+  }[]
+}[] {
+  const dubinSections: {
+    start: number
+    run: {
+      cmd: MissionCommand<DialectCommandDescription>
+      id: number
+      other: MissionCommand<DialectCommandDescription>[]
+    }[]
+  }[] = []
 
   let curSection: MainLine = []
   let start = 0
   for (let i = 0; i < mainLine.length; i++) {
     const curWaypoint = mainLine[i].cmd
-    if (curWaypoint.type === "RF.DubinsPath") {
+    if (curWaypoint.type === 'RF.DubinsPath') {
       if (curSection.length == 0) {
         start = i
         if (i > 0) {
@@ -49,7 +63,11 @@ export function splitDubinsRuns(mainLine: MainLine): { start: number, run: { cmd
 export function localiseDubinsPath(path: DubinsPath<XY>, reference: LatLng): DubinsPath<LatLng> {
   return {
     turnA: { ...path.turnA, center: l2g(reference, path.turnA.center) },
-    straight: { ...path.straight, start: l2g(reference, path.straight.start), end: l2g(reference, path.straight.end) },
+    straight: {
+      ...path.straight,
+      start: l2g(reference, path.straight.start),
+      end: l2g(reference, path.straight.end)
+    },
     turnB: { ...path.turnB, center: l2g(reference, path.turnB.center) }
   }
 }
@@ -61,21 +79,21 @@ export function localiseDubinsPath(path: DubinsPath<XY>, reference: LatLng): Dub
  * @returns {Path<LatLng>} The path converted to latitude/longitude coordinates
  */
 export function localisePath(path: Path<XY>, reference: LatLng): Path<LatLng> {
-  let newPath: Path<LatLng> = []
-  for (let segment of path) {
+  const newPath: Path<LatLng> = []
+  for (const segment of path) {
     switch (segment.type) {
-      case "Curve": {
-        let { center, ...rest } = segment
-        let newCenter = l2g(reference, { x: center.x, y: center.y })
-        let newSegment: Segment<LatLng> = { ...rest, center: newCenter }
+      case 'Curve': {
+        const { center, ...rest } = segment
+        const newCenter = l2g(reference, { x: center.x, y: center.y })
+        const newSegment: Segment<LatLng> = { ...rest, center: newCenter }
         newPath.push(newSegment)
-        break;
+        break
       }
-      case "Straight": {
-        let { start, end, ...rest } = segment
-        let newStart = l2g(reference, { x: start.x, y: start.y })
-        let newEnd = l2g(reference, { x: end.x, y: end.y })
-        let newSegment: Segment<LatLng> = { ...rest, end: newEnd, start: newStart }
+      case 'Straight': {
+        const { start, end, ...rest } = segment
+        const newStart = l2g(reference, { x: start.x, y: start.y })
+        const newEnd = l2g(reference, { x: end.x, y: end.y })
+        const newSegment: Segment<LatLng> = { ...rest, end: newEnd, start: newStart }
         newPath.push(newSegment)
         break
       }
@@ -90,12 +108,12 @@ export function localisePath(path: Path<XY>, reference: LatLng): Path<LatLng> {
  * @returns {Path<XY>} The Dubins path
  */
 export function dubinsBetweenDubins(wps: dubinsPoint[]): DubinsPath<XY>[] {
-  let path: DubinsPath<XY>[] = []
+  const path: DubinsPath<XY>[] = []
   for (let i = 0; i < wps.length - 1; i++) {
     const a = wps[i]
     const b = wps[i + 1]
 
-    let adir = 0;
+    let adir = 0
     let bdir = 0
 
     //figure out offset direction
@@ -106,9 +124,16 @@ export function dubinsBetweenDubins(wps: dubinsPoint[]): DubinsPath<XY>[] {
       bdir = crossProduct(a.pos, b.pos, wps[i + 2].pos) > 0 ? 1 : -1
     }
 
-    let offsetA = offset(a.pos, a.passbyRadius * adir, deg2rad(a.heading + 90))
-    let offsetB = offset(b.pos, b.passbyRadius * bdir, deg2rad(b.heading + 90))
-    const res = DubinsBetweenDiffRad(offsetA, offsetB, deg2rad(a.heading), deg2rad(b.heading), a.radius, b.radius)
+    const offsetA = offset(a.pos, a.passbyRadius * adir, deg2rad(a.heading + 90))
+    const offsetB = offset(b.pos, b.passbyRadius * bdir, deg2rad(b.heading + 90))
+    const res = DubinsBetweenDiffRad(
+      offsetA,
+      offsetB,
+      deg2rad(a.heading),
+      deg2rad(b.heading),
+      a.radius,
+      b.radius
+    )
     if (res.error) {
       console.error(res.error)
     } else {
@@ -125,7 +150,7 @@ export function dubinsBetweenDubins(wps: dubinsPoint[]): DubinsPath<XY>[] {
  */
 export function getTunableDubinsParameters(wps: dubinsPoint[]): number[] {
   // heading | radius
-  let ret: number[] = []
+  const ret: number[] = []
   for (const waypoint of wps) {
     if (waypoint.tunable) {
       ret.push(waypoint.heading)
@@ -157,7 +182,12 @@ export function getBounds(wps: dubinsPoint[], vehicle: Plane): bound[] {
   for (const waypoint of wps) {
     if (waypoint.tunable) {
       bounds.push({ min: 0, max: 360, circular: true })
-      bounds.push({ min: Math.max(getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed), waypoint.passbyRadius) })
+      bounds.push({
+        min: Math.max(
+          getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed),
+          waypoint.passbyRadius
+        )
+      })
     }
   }
   return bounds
@@ -170,10 +200,10 @@ export function getBounds(wps: dubinsPoint[], vehicle: Plane): bound[] {
  */
 export function applyBounds(params: number[], bounds: bound[]): void {
   for (let i = 0; i < bounds.length; i++) {
-    let bound = bounds[i]
+    const bound = bounds[i]
     if (bound.min != undefined && bound.max != undefined && bound.circular) {
-      let range = bound.max - bound.min
-      let diff = params[i] - bound.min
+      const range = bound.max - bound.min
+      const diff = params[i] - bound.min
       params[i] = bound.min + modf(diff, range)
     } else if (bound.min != undefined && params[i] < bound.min) {
       params[i] = bound.min
@@ -189,12 +219,30 @@ export function applyBounds(params: number[], bounds: bound[]): void {
  * @param {LatLng} reference - The reference point used for coordinate conversion
  * @returns {dubinsPoint} The dubins point
  */
-export function waypointToDubins(cmd: MissionCommand<DialectCommandDescription>, reference: LatLng, dialect: Dialect<DialectCommandDescription>): dubinsPoint {
-  let location = getCommandLocation(cmd, dialect)
-  if (cmd.type === "RF.DubinsPath") {
-    return { pos: g2l(reference, location), bounds: {}, radius: cmd.params.radius, heading: cmd.params.heading, tunable: true, passbyRadius: cmd.params.gap }
+export function waypointToDubins(
+  cmd: MissionCommand<DialectCommandDescription>,
+  reference: LatLng,
+  dialect: Dialect<DialectCommandDescription>
+): dubinsPoint {
+  const location = getCommandLocation(cmd, dialect)
+  if (cmd.type === 'RF.DubinsPath') {
+    return {
+      pos: g2l(reference, location),
+      bounds: {},
+      radius: cmd.params.radius,
+      heading: cmd.params.heading,
+      tunable: true,
+      passbyRadius: cmd.params.gap
+    }
   } else {
-    return { pos: g2l(reference, location), bounds: {}, radius: 0, heading: 0, tunable: false, passbyRadius: 0 }
+    return {
+      pos: g2l(reference, location),
+      bounds: {},
+      radius: 0,
+      heading: 0,
+      tunable: false,
+      passbyRadius: 0
+    }
   }
 }
 
@@ -206,8 +254,8 @@ export function waypointToDubins(cmd: MissionCommand<DialectCommandDescription>,
 export function setTunableParameter(wps: MainLine, params: number[]): void {
   let paramI = 0
   for (let i = 0; i < wps.length; i++) {
-    let cur = wps[i]
-    if (cur.cmd.type === "RF.DubinsPath") {
+    const cur = wps[i]
+    if (cur.cmd.type === 'RF.DubinsPath') {
       // radians
       cur.cmd.params.heading = modf(params[paramI++], 360)
       cur.cmd.params.radius = params[paramI++]
@@ -223,7 +271,7 @@ export function setTunableParameter(wps: MainLine, params: number[]): void {
 export function setTunableDubinsParameter(wps: dubinsPoint[], params: number[]): void {
   let paramI = 0
   for (let i = 0; i < wps.length; i++) {
-    let cur = wps[i]
+    const cur = wps[i]
     if (cur.tunable) {
       // radians
       cur.heading = modf(params[paramI++], 360)

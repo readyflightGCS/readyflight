@@ -26,15 +26,17 @@ export class UDPTransportAdapter implements ITransportAdapter<UDPTransportConfig
 
       socket.on('message', (msg, rinfo) => {
         this.vehicleAddr = { address: rinfo.address, port: rinfo.port }
-        this.dataHandlers.forEach(h => h(new Uint8Array(msg.buffer, msg.byteOffset, msg.byteLength)))
+        this.dataHandlers.forEach((h) =>
+          h(new Uint8Array(msg.buffer, msg.byteOffset, msg.byteLength))
+        )
       })
 
       socket.on('error', (err) => {
-        this.errorHandlers.forEach(h => h(err))
+        this.errorHandlers.forEach((h) => h(err))
       })
 
       socket.on('close', () => {
-        this.closeHandlers.forEach(h => h())
+        this.closeHandlers.forEach((h) => h())
       })
 
       const bindAddr = config.bindAddress ?? '0.0.0.0'
@@ -55,11 +57,14 @@ export class UDPTransportAdapter implements ITransportAdapter<UDPTransportConfig
   }
 
   async stop(): Promise<void> {
-    return new Promise(resolve => {
-      if (!this.socket) { resolve(); return }
+    return new Promise((resolve) => {
+      if (!this.socket) {
+        resolve()
+        return
+      }
       this.socket.close(() => resolve())
       this.socket = null
-      console.log("[udp] Stopped")
+      console.log('[udp] Stopped')
     })
   }
 
@@ -82,11 +87,13 @@ export class UDPTransportAdapter implements ITransportAdapter<UDPTransportConfig
   }
 
   async getAvailable() {
-    let res: UDPTransportConfig[] = [{
-      type: 'udp',
-      host: '0.0.0.0',
-      port: 14550,
-    }]
+    const res: UDPTransportConfig[] = [
+      {
+        type: 'udp',
+        host: '0.0.0.0',
+        port: 14550
+      }
+    ]
     return new Promise<UDPTransportConfig[]>((resolve) => {
       resolve(res)
     })

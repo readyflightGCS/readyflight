@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 Control vehicle LEDs.
 */
@@ -10,21 +10,21 @@ Control vehicle LEDs.
 // custom_len Custom Byte Length. uint8_t
 // custom_bytes Custom Bytes. uint8_t
 export class LedControl extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public instance!: number;
-	public pattern!: number;
-	public custom_len!: number;
-	public custom_bytes!: number;
-	public _message_id: number = 186;
-	public _message_name: string = 'LED_CONTROL';
-	public _crc_extra: number = 72;
-	public _message_fields: [string, string, boolean][] = [
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['instance', 'uint8_t', false],
-		['pattern', 'uint8_t', false],
-		['custom_len', 'uint8_t', false],
-		['custom_bytes', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public instance!: number
+  public pattern!: number
+  public custom_len!: number
+  public custom_bytes!: number
+  public _message_id: number = 186
+  public _message_name: string = 'LED_CONTROL'
+  public _crc_extra: number = 72
+  public _message_fields: [string, string, boolean][] = [
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['instance', 'uint8_t', false],
+    ['pattern', 'uint8_t', false],
+    ['custom_len', 'uint8_t', false],
+    ['custom_bytes', 'uint8_t', false]
+  ]
 }

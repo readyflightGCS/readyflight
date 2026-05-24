@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavModeFlag} from '../enums/mav-mode-flag';
-import {HilActuatorControlsFlags} from '../enums/hil-actuator-controls-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavModeFlag } from '../enums/mav-mode-flag'
+import { HilActuatorControlsFlags } from '../enums/hil-actuator-controls-flags'
 /*
 Sent from autopilot to simulation. Hardware in the loop control outputs. Alternative to HIL_CONTROLS.
 */
@@ -10,17 +10,17 @@ Sent from autopilot to simulation. Hardware in the loop control outputs. Alterna
 // mode System mode. Includes arming state. uint8_t
 // flags Flags bitmask. uint64_t
 export class HilActuatorControls extends MAVLinkMessage {
-	public time_usec!: number;
-	public controls!: number;
-	public mode!: MavModeFlag;
-	public flags!: HilActuatorControlsFlags;
-	public _message_id: number = 93;
-	public _message_name: string = 'HIL_ACTUATOR_CONTROLS';
-	public _crc_extra: number = 47;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['flags', 'uint64_t', false],
-		['controls', 'float', false],
-		['mode', 'uint8_t', false],
-	];
+  public time_usec!: number
+  public controls!: number
+  public mode!: MavModeFlag
+  public flags!: HilActuatorControlsFlags
+  public _message_id: number = 93
+  public _message_name: string = 'HIL_ACTUATOR_CONTROLS'
+  public _crc_extra: number = 47
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['flags', 'uint64_t', false],
+    ['controls', 'float', false],
+    ['mode', 'uint8_t', false]
+  ]
 }

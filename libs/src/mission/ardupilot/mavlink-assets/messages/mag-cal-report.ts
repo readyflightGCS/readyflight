@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MagCalStatus} from '../enums/mag-cal-status';
-import {MavSensorOrientation} from '../enums/mav-sensor-orientation';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MagCalStatus } from '../enums/mag-cal-status'
+import { MavSensorOrientation } from '../enums/mav-sensor-orientation'
 /*
 Reports results of completed compass calibration. Sent until MAG_CAL_ACK received.
 */
@@ -24,45 +24,45 @@ Reports results of completed compass calibration. Sent until MAG_CAL_ACK receive
 // new_orientation orientation after calibration. uint8_t
 // scale_factor field radius correction factor float
 export class MagCalReport extends MAVLinkMessage {
-	public compass_id!: number;
-	public cal_mask!: number;
-	public cal_status!: MagCalStatus;
-	public autosaved!: number;
-	public fitness!: number;
-	public ofs_x!: number;
-	public ofs_y!: number;
-	public ofs_z!: number;
-	public diag_x!: number;
-	public diag_y!: number;
-	public diag_z!: number;
-	public offdiag_x!: number;
-	public offdiag_y!: number;
-	public offdiag_z!: number;
-	public orientation_confidence!: number;
-	public old_orientation!: MavSensorOrientation;
-	public new_orientation!: MavSensorOrientation;
-	public scale_factor!: number;
-	public _message_id: number = 192;
-	public _message_name: string = 'MAG_CAL_REPORT';
-	public _crc_extra: number = 36;
-	public _message_fields: [string, string, boolean][] = [
-		['fitness', 'float', false],
-		['ofs_x', 'float', false],
-		['ofs_y', 'float', false],
-		['ofs_z', 'float', false],
-		['diag_x', 'float', false],
-		['diag_y', 'float', false],
-		['diag_z', 'float', false],
-		['offdiag_x', 'float', false],
-		['offdiag_y', 'float', false],
-		['offdiag_z', 'float', false],
-		['compass_id', 'uint8_t', false],
-		['cal_mask', 'uint8_t', false],
-		['cal_status', 'uint8_t', false],
-		['autosaved', 'uint8_t', false],
-		['orientation_confidence', 'float', true],
-		['old_orientation', 'uint8_t', true],
-		['new_orientation', 'uint8_t', true],
-		['scale_factor', 'float', true],
-	];
+  public compass_id!: number
+  public cal_mask!: number
+  public cal_status!: MagCalStatus
+  public autosaved!: number
+  public fitness!: number
+  public ofs_x!: number
+  public ofs_y!: number
+  public ofs_z!: number
+  public diag_x!: number
+  public diag_y!: number
+  public diag_z!: number
+  public offdiag_x!: number
+  public offdiag_y!: number
+  public offdiag_z!: number
+  public orientation_confidence!: number
+  public old_orientation!: MavSensorOrientation
+  public new_orientation!: MavSensorOrientation
+  public scale_factor!: number
+  public _message_id: number = 192
+  public _message_name: string = 'MAG_CAL_REPORT'
+  public _crc_extra: number = 36
+  public _message_fields: [string, string, boolean][] = [
+    ['fitness', 'float', false],
+    ['ofs_x', 'float', false],
+    ['ofs_y', 'float', false],
+    ['ofs_z', 'float', false],
+    ['diag_x', 'float', false],
+    ['diag_y', 'float', false],
+    ['diag_z', 'float', false],
+    ['offdiag_x', 'float', false],
+    ['offdiag_y', 'float', false],
+    ['offdiag_z', 'float', false],
+    ['compass_id', 'uint8_t', false],
+    ['cal_mask', 'uint8_t', false],
+    ['cal_status', 'uint8_t', false],
+    ['autosaved', 'uint8_t', false],
+    ['orientation_confidence', 'float', true],
+    ['old_orientation', 'uint8_t', true],
+    ['new_orientation', 'uint8_t', true],
+    ['scale_factor', 'float', true]
+  ]
 }

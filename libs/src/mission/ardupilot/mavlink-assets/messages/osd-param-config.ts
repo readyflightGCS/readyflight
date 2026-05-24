@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {OsdParamConfigType} from '../enums/osd-param-config-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { OsdParamConfigType } from '../enums/osd-param-config-type'
 /*
 Configure an OSD parameter slot.
 */
@@ -15,29 +15,29 @@ Configure an OSD parameter slot.
 // max_value OSD parameter maximum value. float
 // increment OSD parameter increment. float
 export class OsdParamConfig extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public request_id!: number;
-	public osd_screen!: number;
-	public osd_index!: number;
-	public param_id!: string;
-	public config_type!: OsdParamConfigType;
-	public min_value!: number;
-	public max_value!: number;
-	public increment!: number;
-	public _message_id: number = 11033;
-	public _message_name: string = 'OSD_PARAM_CONFIG';
-	public _crc_extra: number = 195;
-	public _message_fields: [string, string, boolean][] = [
-		['request_id', 'uint32_t', false],
-		['min_value', 'float', false],
-		['max_value', 'float', false],
-		['increment', 'float', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['osd_screen', 'uint8_t', false],
-		['osd_index', 'uint8_t', false],
-		['param_id', 'char', false],
-		['config_type', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public request_id!: number
+  public osd_screen!: number
+  public osd_index!: number
+  public param_id!: string
+  public config_type!: OsdParamConfigType
+  public min_value!: number
+  public max_value!: number
+  public increment!: number
+  public _message_id: number = 11033
+  public _message_name: string = 'OSD_PARAM_CONFIG'
+  public _crc_extra: number = 195
+  public _message_fields: [string, string, boolean][] = [
+    ['request_id', 'uint32_t', false],
+    ['min_value', 'float', false],
+    ['max_value', 'float', false],
+    ['increment', 'float', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['osd_screen', 'uint8_t', false],
+    ['osd_index', 'uint8_t', false],
+    ['param_id', 'char', false],
+    ['config_type', 'uint8_t', false]
+  ]
 }

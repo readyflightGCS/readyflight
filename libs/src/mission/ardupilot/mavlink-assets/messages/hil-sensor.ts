@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {HilSensorUpdatedFlags} from '../enums/hil-sensor-updated-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { HilSensorUpdatedFlags } from '../enums/hil-sensor-updated-flags'
 /*
 The IMU readings in SI units in NED body frame
 */
@@ -21,41 +21,41 @@ The IMU readings in SI units in NED body frame
 // fields_updated Bitmap for fields that have updated since last message uint32_t
 // id Sensor ID (zero indexed). Used for multiple sensor inputs uint8_t
 export class HilSensor extends MAVLinkMessage {
-	public time_usec!: number;
-	public xacc!: number;
-	public yacc!: number;
-	public zacc!: number;
-	public xgyro!: number;
-	public ygyro!: number;
-	public zgyro!: number;
-	public xmag!: number;
-	public ymag!: number;
-	public zmag!: number;
-	public abs_pressure!: number;
-	public diff_pressure!: number;
-	public pressure_alt!: number;
-	public temperature!: number;
-	public fields_updated!: HilSensorUpdatedFlags;
-	public id!: number;
-	public _message_id: number = 107;
-	public _message_name: string = 'HIL_SENSOR';
-	public _crc_extra: number = 108;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['xacc', 'float', false],
-		['yacc', 'float', false],
-		['zacc', 'float', false],
-		['xgyro', 'float', false],
-		['ygyro', 'float', false],
-		['zgyro', 'float', false],
-		['xmag', 'float', false],
-		['ymag', 'float', false],
-		['zmag', 'float', false],
-		['abs_pressure', 'float', false],
-		['diff_pressure', 'float', false],
-		['pressure_alt', 'float', false],
-		['temperature', 'float', false],
-		['fields_updated', 'uint32_t', false],
-		['id', 'uint8_t', true],
-	];
+  public time_usec!: number
+  public xacc!: number
+  public yacc!: number
+  public zacc!: number
+  public xgyro!: number
+  public ygyro!: number
+  public zgyro!: number
+  public xmag!: number
+  public ymag!: number
+  public zmag!: number
+  public abs_pressure!: number
+  public diff_pressure!: number
+  public pressure_alt!: number
+  public temperature!: number
+  public fields_updated!: HilSensorUpdatedFlags
+  public id!: number
+  public _message_id: number = 107
+  public _message_name: string = 'HIL_SENSOR'
+  public _crc_extra: number = 108
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['xacc', 'float', false],
+    ['yacc', 'float', false],
+    ['zacc', 'float', false],
+    ['xgyro', 'float', false],
+    ['ygyro', 'float', false],
+    ['zgyro', 'float', false],
+    ['xmag', 'float', false],
+    ['ymag', 'float', false],
+    ['zmag', 'float', false],
+    ['abs_pressure', 'float', false],
+    ['diff_pressure', 'float', false],
+    ['pressure_alt', 'float', false],
+    ['temperature', 'float', false],
+    ['fields_updated', 'uint32_t', false],
+    ['id', 'uint8_t', true]
+  ]
 }

@@ -1,6 +1,6 @@
-import { XY } from "@libs/math/types";
-import { deg2rad, rad2deg } from "@libs/math/geometry";
-import { LatLng } from "./latlng";
+import { XY } from '@libs/math/types'
+import { deg2rad, rad2deg } from '@libs/math/geometry'
+import { LatLng } from './latlng'
 
 const worldRadius = 6371000 // meters
 
@@ -11,18 +11,18 @@ const worldRadius = 6371000 // meters
  * @returns {XY} The converted local ENU coordinates
  */
 export function g2l(reference: LatLng, point: LatLng): XY {
-  const { lat: refLat, lng: refLng } = reference;
-  const { lat, lng } = point;
+  const { lat: refLat, lng: refLng } = reference
+  const { lat, lng } = point
 
   // Convert latitude and longitude differences to radians
-  const dLat = deg2rad(lat - refLat);
-  const dLng = deg2rad(lng - refLng);
+  const dLat = deg2rad(lat - refLat)
+  const dLng = deg2rad(lng - refLng)
 
   // Calculate north and east distances
-  const north = dLat * worldRadius;
-  const east = dLng * worldRadius * Math.cos(deg2rad(refLat));
+  const north = dLat * worldRadius
+  const east = dLng * worldRadius * Math.cos(deg2rad(refLat))
 
-  return { y: north, x: east };
+  return { y: north, x: east }
 }
 
 /**
@@ -32,16 +32,16 @@ export function g2l(reference: LatLng, point: LatLng): XY {
  * @returns {LatLng} The converted WGS84 coordinates
  */
 export function l2g(reference: LatLng, point: XY): LatLng {
-  const { lat: refLat, lng: refLng } = reference;
-  const { x: east, y: north } = point;
+  const { lat: refLat, lng: refLng } = reference
+  const { x: east, y: north } = point
 
   // Convert north and east distances to latitude and longitude differences
-  const dLat = north / worldRadius;
-  const dLng = east / (worldRadius * Math.cos(deg2rad(refLat)));
+  const dLat = north / worldRadius
+  const dLng = east / (worldRadius * Math.cos(deg2rad(refLat)))
 
   // Convert differences to degrees
-  const lat = refLat + rad2deg(dLat);
-  const lng = refLng + rad2deg(dLng);
+  const lat = refLat + rad2deg(dLat)
+  const lng = refLng + rad2deg(dLng)
 
-  return { lat, lng };
+  return { lat, lng }
 }

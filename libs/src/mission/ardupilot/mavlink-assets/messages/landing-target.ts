@@ -1,8 +1,8 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFrame} from '../enums/mav-frame';
-import {LandingTargetType} from '../enums/landing-target-type';
-import {MavBool} from '../enums/mav-bool';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavFrame } from '../enums/mav-frame'
+import { LandingTargetType } from '../enums/landing-target-type'
+import { MavBool } from '../enums/mav-bool'
 /*
 The location of a landing target. See: https://mavlink.io/en/services/landing_target.html
 */
@@ -21,37 +21,37 @@ The location of a landing target. See: https://mavlink.io/en/services/landing_ta
 // type Type of landing target uint8_t
 // position_valid Position fields (x, y, z, q, type) contain valid target position information (MAV_BOOL_FALSE: invalid values). Values not equal to 0 or 1 are invalid. uint8_t
 export class LandingTarget extends MAVLinkMessage {
-	public time_usec!: number;
-	public target_num!: number;
-	public frame!: MavFrame;
-	public angle_x!: number;
-	public angle_y!: number;
-	public distance!: number;
-	public size_x!: number;
-	public size_y!: number;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public q!: number;
-	public type!: LandingTargetType;
-	public position_valid!: MavBool;
-	public _message_id: number = 149;
-	public _message_name: string = 'LANDING_TARGET';
-	public _crc_extra: number = 200;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['angle_x', 'float', false],
-		['angle_y', 'float', false],
-		['distance', 'float', false],
-		['size_x', 'float', false],
-		['size_y', 'float', false],
-		['target_num', 'uint8_t', false],
-		['frame', 'uint8_t', false],
-		['x', 'float', true],
-		['y', 'float', true],
-		['z', 'float', true],
-		['q', 'float', true],
-		['type', 'uint8_t', true],
-		['position_valid', 'uint8_t', true],
-	];
+  public time_usec!: number
+  public target_num!: number
+  public frame!: MavFrame
+  public angle_x!: number
+  public angle_y!: number
+  public distance!: number
+  public size_x!: number
+  public size_y!: number
+  public x!: number
+  public y!: number
+  public z!: number
+  public q!: number
+  public type!: LandingTargetType
+  public position_valid!: MavBool
+  public _message_id: number = 149
+  public _message_name: string = 'LANDING_TARGET'
+  public _crc_extra: number = 200
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['angle_x', 'float', false],
+    ['angle_y', 'float', false],
+    ['distance', 'float', false],
+    ['size_x', 'float', false],
+    ['size_y', 'float', false],
+    ['target_num', 'uint8_t', false],
+    ['frame', 'uint8_t', false],
+    ['x', 'float', true],
+    ['y', 'float', true],
+    ['z', 'float', true],
+    ['q', 'float', true],
+    ['type', 'uint8_t', true],
+    ['position_valid', 'uint8_t', true]
+  ]
 }

@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 Bind a RC channel to a parameter. The parameter should change according to the RC channel value.
 */
@@ -13,27 +13,27 @@ Bind a RC channel to a parameter. The parameter should change according to the R
 // param_value_min Minimum param value. The protocol does not define if this overwrites an onboard minimum value. (Depends on implementation) float
 // param_value_max Maximum param value. The protocol does not define if this overwrites an onboard maximum value. (Depends on implementation) float
 export class ParamMapRc extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public param_id!: string;
-	public param_index!: number;
-	public parameter_rc_channel_index!: number;
-	public param_value0!: number;
-	public scale!: number;
-	public param_value_min!: number;
-	public param_value_max!: number;
-	public _message_id: number = 50;
-	public _message_name: string = 'PARAM_MAP_RC';
-	public _crc_extra: number = 78;
-	public _message_fields: [string, string, boolean][] = [
-		['param_value0', 'float', false],
-		['scale', 'float', false],
-		['param_value_min', 'float', false],
-		['param_value_max', 'float', false],
-		['param_index', 'int16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['param_id', 'char', false],
-		['parameter_rc_channel_index', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public param_id!: string
+  public param_index!: number
+  public parameter_rc_channel_index!: number
+  public param_value0!: number
+  public scale!: number
+  public param_value_min!: number
+  public param_value_max!: number
+  public _message_id: number = 50
+  public _message_name: string = 'PARAM_MAP_RC'
+  public _crc_extra: number = 78
+  public _message_fields: [string, string, boolean][] = [
+    ['param_value0', 'float', false],
+    ['scale', 'float', false],
+    ['param_value_min', 'float', false],
+    ['param_value_max', 'float', false],
+    ['param_index', 'int16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['param_id', 'char', false],
+    ['parameter_rc_channel_index', 'uint8_t', false]
+  ]
 }

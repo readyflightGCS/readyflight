@@ -21,8 +21,8 @@ export type MavFrame = {
   sysid: number
   compid: number
   seq: number
-  payloadLen: number   // actual byte count in the wire frame (before zero-padding)
-  payload: Uint8Array  // slice of the original buffer, length === payloadLen
+  payloadLen: number // actual byte count in the wire frame (before zero-padding)
+  payload: Uint8Array // slice of the original buffer, length === payloadLen
 }
 
 /** Parse a MAVLink v1 (0xFE) or v2 (0xFD) frame header from an ArrayBuffer. */
@@ -30,7 +30,8 @@ export function parseFrame(data: ArrayBuffer): MavFrame | null {
   const b = new Uint8Array(data)
   if (b.length < 8) return null
 
-  if (b[0] === 0xfe) { // MAVLink v1: STX | LEN | SEQ | SYS | COMP | MSGID | payload… | CRC(2)
+  if (b[0] === 0xfe) {
+    // MAVLink v1: STX | LEN | SEQ | SYS | COMP | MSGID | payload… | CRC(2)
     const payloadLen = b[1]
     if (b.length < 8 + payloadLen) return null
     return {
@@ -40,11 +41,12 @@ export function parseFrame(data: ArrayBuffer): MavFrame | null {
       sysid: b[3],
       compid: b[4],
       msgid: b[5],
-      payload: b.subarray(6, 6 + payloadLen),
+      payload: b.subarray(6, 6 + payloadLen)
     }
   }
 
-  if (b[0] === 0xfd) { // MAVLink v2: STX | LEN | INCOMPAT | COMPAT | SEQ | SYS | COMP | MSGID(3) | payload… | CRC(2)
+  if (b[0] === 0xfd) {
+    // MAVLink v2: STX | LEN | INCOMPAT | COMPAT | SEQ | SYS | COMP | MSGID(3) | payload… | CRC(2)
     if (b.length < 12) return null
     const payloadLen = b[1]
     if (b.length < 12 + payloadLen) return null
@@ -56,7 +58,7 @@ export function parseFrame(data: ArrayBuffer): MavFrame | null {
       sysid: b[5],
       compid: b[6],
       msgid,
-      payload: b.subarray(10, 10 + payloadLen),
+      payload: b.subarray(10, 10 + payloadLen)
     }
   }
 
@@ -128,7 +130,11 @@ export function deserializePayload<T extends MAVLinkMessage>(instance: T, payloa
 
   let offset = 0
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const [name, type, isExtension] of (instance as any)._message_fields as [string, string, boolean][]) {
+  for (const [name, type, isExtension] of (instance as any)._message_fields as [
+    string,
+    string,
+    boolean
+  ][]) {
     if (isExtension && offset >= actualLen) break
 
     if (type === 'char') {
@@ -140,7 +146,7 @@ export function deserializePayload<T extends MAVLinkMessage>(instance: T, payloa
         str += String.fromCharCode(padded[i])
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ; (instance as any)[name] = str
+      ;(instance as any)[name] = str
       offset = actualLen
       continue
     }
@@ -148,7 +154,7 @@ export function deserializePayload<T extends MAVLinkMessage>(instance: T, payloa
     const [value, size] = readField(view, offset, type)
     if (size > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ; (instance as any)[name] = value
+      ;(instance as any)[name] = value
       offset += size
     }
   }

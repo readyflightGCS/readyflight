@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFrame} from '../enums/mav-frame';
-import {PositionTargetTypemask} from '../enums/position-target-typemask';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavFrame } from '../enums/mav-frame'
+import { PositionTargetTypemask } from '../enums/position-target-typemask'
 /*
 Sets a desired vehicle position, velocity, and/or acceleration in a global coordinate system (WGS84). Used by an external controller to command the vehicle (manual controller or other system).
 */
@@ -22,41 +22,41 @@ Sets a desired vehicle position, velocity, and/or acceleration in a global coord
 // yaw yaw setpoint float
 // yaw_rate yaw rate setpoint float
 export class SetPositionTargetGlobalInt extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public target_system!: number;
-	public target_component!: number;
-	public coordinate_frame!: MavFrame;
-	public type_mask!: PositionTargetTypemask;
-	public lat_int!: number;
-	public lon_int!: number;
-	public alt!: number;
-	public vx!: number;
-	public vy!: number;
-	public vz!: number;
-	public afx!: number;
-	public afy!: number;
-	public afz!: number;
-	public yaw!: number;
-	public yaw_rate!: number;
-	public _message_id: number = 86;
-	public _message_name: string = 'SET_POSITION_TARGET_GLOBAL_INT';
-	public _crc_extra: number = 5;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['lat_int', 'int32_t', false],
-		['lon_int', 'int32_t', false],
-		['alt', 'float', false],
-		['vx', 'float', false],
-		['vy', 'float', false],
-		['vz', 'float', false],
-		['afx', 'float', false],
-		['afy', 'float', false],
-		['afz', 'float', false],
-		['yaw', 'float', false],
-		['yaw_rate', 'float', false],
-		['type_mask', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['coordinate_frame', 'uint8_t', false],
-	];
+  public time_boot_ms!: number
+  public target_system!: number
+  public target_component!: number
+  public coordinate_frame!: MavFrame
+  public type_mask!: PositionTargetTypemask
+  public lat_int!: number
+  public lon_int!: number
+  public alt!: number
+  public vx!: number
+  public vy!: number
+  public vz!: number
+  public afx!: number
+  public afy!: number
+  public afz!: number
+  public yaw!: number
+  public yaw_rate!: number
+  public _message_id: number = 86
+  public _message_name: string = 'SET_POSITION_TARGET_GLOBAL_INT'
+  public _crc_extra: number = 5
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['lat_int', 'int32_t', false],
+    ['lon_int', 'int32_t', false],
+    ['alt', 'float', false],
+    ['vx', 'float', false],
+    ['vy', 'float', false],
+    ['vz', 'float', false],
+    ['afx', 'float', false],
+    ['afy', 'float', false],
+    ['afz', 'float', false],
+    ['yaw', 'float', false],
+    ['yaw_rate', 'float', false],
+    ['type_mask', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['coordinate_frame', 'uint8_t', false]
+  ]
 }

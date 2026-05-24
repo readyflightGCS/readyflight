@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {PidTuningAxis} from '../enums/pid-tuning-axis';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { PidTuningAxis } from '../enums/pid-tuning-axis'
 /*
 Adaptive Controller tuning information.
 */
@@ -18,35 +18,35 @@ Adaptive Controller tuning information.
 // f_dot Projection operator derivative. float
 // u u adaptive controlled output command. float
 export class AdapTuning extends MAVLinkMessage {
-	public axis!: PidTuningAxis;
-	public desired!: number;
-	public achieved!: number;
-	public error!: number;
-	public theta!: number;
-	public omega!: number;
-	public sigma!: number;
-	public theta_dot!: number;
-	public omega_dot!: number;
-	public sigma_dot!: number;
-	public f!: number;
-	public f_dot!: number;
-	public u!: number;
-	public _message_id: number = 11010;
-	public _message_name: string = 'ADAP_TUNING';
-	public _crc_extra: number = 46;
-	public _message_fields: [string, string, boolean][] = [
-		['desired', 'float', false],
-		['achieved', 'float', false],
-		['error', 'float', false],
-		['theta', 'float', false],
-		['omega', 'float', false],
-		['sigma', 'float', false],
-		['theta_dot', 'float', false],
-		['omega_dot', 'float', false],
-		['sigma_dot', 'float', false],
-		['f', 'float', false],
-		['f_dot', 'float', false],
-		['u', 'float', false],
-		['axis', 'uint8_t', false],
-	];
+  public axis!: PidTuningAxis
+  public desired!: number
+  public achieved!: number
+  public error!: number
+  public theta!: number
+  public omega!: number
+  public sigma!: number
+  public theta_dot!: number
+  public omega_dot!: number
+  public sigma_dot!: number
+  public f!: number
+  public f_dot!: number
+  public u!: number
+  public _message_id: number = 11010
+  public _message_name: string = 'ADAP_TUNING'
+  public _crc_extra: number = 46
+  public _message_fields: [string, string, boolean][] = [
+    ['desired', 'float', false],
+    ['achieved', 'float', false],
+    ['error', 'float', false],
+    ['theta', 'float', false],
+    ['omega', 'float', false],
+    ['sigma', 'float', false],
+    ['theta_dot', 'float', false],
+    ['omega_dot', 'float', false],
+    ['sigma_dot', 'float', false],
+    ['f', 'float', false],
+    ['f_dot', 'float', false],
+    ['u', 'float', false],
+    ['axis', 'uint8_t', false]
+  ]
 }

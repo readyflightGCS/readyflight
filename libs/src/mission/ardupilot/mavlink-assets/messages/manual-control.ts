@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 Manual (joystick) control message.
         This message represents movement axes and button using standard joystick axes nomenclature. Unused axes can be disabled and buttons states are transmitted as individual on/off bits of a bitmask. For more information see https://mavlink.io/en/manual_control.html
@@ -21,41 +21,41 @@ Manual (joystick) control message.
 // aux5 Aux continuous input field 5. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 6 of enabled_extensions field is set. 0 if bit 6 is unset. int16_t
 // aux6 Aux continuous input field 6. Normalized in the range [-1000,1000]. Purpose defined by recipient. Valid data if bit 7 of enabled_extensions field is set. 0 if bit 7 is unset. int16_t
 export class ManualControl extends MAVLinkMessage {
-	public target!: number;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public r!: number;
-	public buttons!: number;
-	public buttons2!: number;
-	public enabled_extensions!: number;
-	public s!: number;
-	public t!: number;
-	public aux1!: number;
-	public aux2!: number;
-	public aux3!: number;
-	public aux4!: number;
-	public aux5!: number;
-	public aux6!: number;
-	public _message_id: number = 69;
-	public _message_name: string = 'MANUAL_CONTROL';
-	public _crc_extra: number = 243;
-	public _message_fields: [string, string, boolean][] = [
-		['x', 'int16_t', false],
-		['y', 'int16_t', false],
-		['z', 'int16_t', false],
-		['r', 'int16_t', false],
-		['buttons', 'uint16_t', false],
-		['target', 'uint8_t', false],
-		['buttons2', 'uint16_t', true],
-		['enabled_extensions', 'uint8_t', true],
-		['s', 'int16_t', true],
-		['t', 'int16_t', true],
-		['aux1', 'int16_t', true],
-		['aux2', 'int16_t', true],
-		['aux3', 'int16_t', true],
-		['aux4', 'int16_t', true],
-		['aux5', 'int16_t', true],
-		['aux6', 'int16_t', true],
-	];
+  public target!: number
+  public x!: number
+  public y!: number
+  public z!: number
+  public r!: number
+  public buttons!: number
+  public buttons2!: number
+  public enabled_extensions!: number
+  public s!: number
+  public t!: number
+  public aux1!: number
+  public aux2!: number
+  public aux3!: number
+  public aux4!: number
+  public aux5!: number
+  public aux6!: number
+  public _message_id: number = 69
+  public _message_name: string = 'MANUAL_CONTROL'
+  public _crc_extra: number = 243
+  public _message_fields: [string, string, boolean][] = [
+    ['x', 'int16_t', false],
+    ['y', 'int16_t', false],
+    ['z', 'int16_t', false],
+    ['r', 'int16_t', false],
+    ['buttons', 'uint16_t', false],
+    ['target', 'uint8_t', false],
+    ['buttons2', 'uint16_t', true],
+    ['enabled_extensions', 'uint8_t', true],
+    ['s', 'int16_t', true],
+    ['t', 'int16_t', true],
+    ['aux1', 'int16_t', true],
+    ['aux2', 'int16_t', true],
+    ['aux3', 'int16_t', true],
+    ['aux4', 'int16_t', true],
+    ['aux5', 'int16_t', true],
+    ['aux6', 'int16_t', true]
+  ]
 }

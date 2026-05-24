@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavStandardMode} from '../enums/mav-standard-mode';
-import {MavModeProperty} from '../enums/mav-mode-property';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavStandardMode } from '../enums/mav-standard-mode'
+import { MavModeProperty } from '../enums/mav-mode-property'
 /*
 Information about a flight mode.
 
@@ -19,21 +19,21 @@ Information about a flight mode.
 // properties Mode properties. uint32_t
 // mode_name Name of custom mode, with null termination character. Should be omitted for standard modes. char
 export class AvailableModes extends MAVLinkMessage {
-	public number_modes!: number;
-	public mode_index!: number;
-	public standard_mode!: MavStandardMode;
-	public custom_mode!: number;
-	public properties!: MavModeProperty;
-	public mode_name!: string;
-	public _message_id: number = 435;
-	public _message_name: string = 'AVAILABLE_MODES';
-	public _crc_extra: number = 134;
-	public _message_fields: [string, string, boolean][] = [
-		['custom_mode', 'uint32_t', false],
-		['properties', 'uint32_t', false],
-		['number_modes', 'uint8_t', false],
-		['mode_index', 'uint8_t', false],
-		['standard_mode', 'uint8_t', false],
-		['mode_name', 'char', false],
-	];
+  public number_modes!: number
+  public mode_index!: number
+  public standard_mode!: MavStandardMode
+  public custom_mode!: number
+  public properties!: MavModeProperty
+  public mode_name!: string
+  public _message_id: number = 435
+  public _message_name: string = 'AVAILABLE_MODES'
+  public _crc_extra: number = 134
+  public _message_fields: [string, string, boolean][] = [
+    ['custom_mode', 'uint32_t', false],
+    ['properties', 'uint32_t', false],
+    ['number_modes', 'uint8_t', false],
+    ['mode_index', 'uint8_t', false],
+    ['standard_mode', 'uint8_t', false],
+    ['mode_name', 'char', false]
+  ]
 }

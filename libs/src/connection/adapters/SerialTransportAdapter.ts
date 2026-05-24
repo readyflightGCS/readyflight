@@ -54,7 +54,7 @@ export class SerialTransportAdapter implements ITransportAdapter<SerialTransport
       dataBits: config.dataBits ?? 8,
       stopBits: config.stopBits ?? 1,
       parity: config.parity ?? 'none',
-      autoOpen: false,
+      autoOpen: false
     })
     this.port = sp
 
@@ -68,16 +68,19 @@ export class SerialTransportAdapter implements ITransportAdapter<SerialTransport
     const parser = new FixedChunkParser(30)
     sp.pipe(parser)
     parser.on('data', (packet: Buffer) => {
-      this.dataHandlers.forEach(h => h(new Uint8Array(packet)))
+      this.dataHandlers.forEach((h) => h(new Uint8Array(packet)))
     })
 
     console.log(`[serial] opened ${config.path} @ ${config.baudRate}`)
   }
 
   async stop(): Promise<void> {
-    const sp = this.port as { isOpen: boolean; close: (cb: (err?: Error | null) => void) => void } | null
+    const sp = this.port as {
+      isOpen: boolean
+      close: (cb: (err?: Error | null) => void) => void
+    } | null
     if (!sp?.isOpen) return
-    return new Promise(resolve => sp.close(() => resolve()))
+    return new Promise((resolve) => sp.close(() => resolve()))
   }
 
   send(data: Uint8Array): void {
@@ -100,7 +103,7 @@ export class SerialTransportAdapter implements ITransportAdapter<SerialTransport
     const res: SerialTransportConfig[] = ports.map((port) => ({
       type: 'serial',
       path: port.path as string,
-      baudRate: 115200,
+      baudRate: 115200
     }))
     return res
   }

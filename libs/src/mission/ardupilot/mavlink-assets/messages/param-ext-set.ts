@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavParamExtType} from '../enums/mav-param-ext-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavParamExtType } from '../enums/mav-param-ext-type'
 /*
 Set a parameter value. In order to deal with message loss (and retransmission of PARAM_EXT_SET), when setting a parameter value and the new value is the same as the current value, you will immediately get a PARAM_ACK_ACCEPTED response. If the current state is PARAM_ACK_IN_PROGRESS, you will accordingly receive a PARAM_ACK_IN_PROGRESS in response.
 */
@@ -10,19 +10,19 @@ Set a parameter value. In order to deal with message loss (and retransmission of
 // param_value Parameter value char
 // param_type Parameter type. uint8_t
 export class ParamExtSet extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public param_id!: string;
-	public param_value!: string;
-	public param_type!: MavParamExtType;
-	public _message_id: number = 323;
-	public _message_name: string = 'PARAM_EXT_SET';
-	public _crc_extra: number = 78;
-	public _message_fields: [string, string, boolean][] = [
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['param_id', 'char', false],
-		['param_value', 'char', false],
-		['param_type', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public param_id!: string
+  public param_value!: string
+  public param_type!: MavParamExtType
+  public _message_id: number = 323
+  public _message_name: string = 'PARAM_EXT_SET'
+  public _crc_extra: number = 78
+  public _message_fields: [string, string, boolean][] = [
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['param_id', 'char', false],
+    ['param_value', 'char', false],
+    ['param_type', 'uint8_t', false]
+  ]
 }

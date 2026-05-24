@@ -1,8 +1,8 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {VideoStreamType} from '../enums/video-stream-type';
-import {VideoStreamStatusFlags} from '../enums/video-stream-status-flags';
-import {VideoStreamEncoding} from '../enums/video-stream-encoding';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { VideoStreamType } from '../enums/video-stream-type'
+import { VideoStreamStatusFlags } from '../enums/video-stream-status-flags'
+import { VideoStreamEncoding } from '../enums/video-stream-encoding'
 /*
 Information about video stream. It may be requested using MAV_CMD_REQUEST_MESSAGE, where param2 indicates the video stream id: 0 for all streams, 1 for first, 2 for second, etc.
 */
@@ -21,37 +21,37 @@ Information about video stream. It may be requested using MAV_CMD_REQUEST_MESSAG
 // encoding Encoding of stream. uint8_t
 // camera_device_id Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id). uint8_t
 export class VideoStreamInformation extends MAVLinkMessage {
-	public stream_id!: number;
-	public count!: number;
-	public type!: VideoStreamType;
-	public flags!: VideoStreamStatusFlags;
-	public framerate!: number;
-	public resolution_h!: number;
-	public resolution_v!: number;
-	public bitrate!: number;
-	public rotation!: number;
-	public hfov!: number;
-	public name!: string;
-	public uri!: string;
-	public encoding!: VideoStreamEncoding;
-	public camera_device_id!: number;
-	public _message_id: number = 269;
-	public _message_name: string = 'VIDEO_STREAM_INFORMATION';
-	public _crc_extra: number = 109;
-	public _message_fields: [string, string, boolean][] = [
-		['framerate', 'float', false],
-		['bitrate', 'uint32_t', false],
-		['flags', 'uint16_t', false],
-		['resolution_h', 'uint16_t', false],
-		['resolution_v', 'uint16_t', false],
-		['rotation', 'uint16_t', false],
-		['hfov', 'uint16_t', false],
-		['stream_id', 'uint8_t', false],
-		['count', 'uint8_t', false],
-		['type', 'uint8_t', false],
-		['name', 'char', false],
-		['uri', 'char', false],
-		['encoding', 'uint8_t', true],
-		['camera_device_id', 'uint8_t', true],
-	];
+  public stream_id!: number
+  public count!: number
+  public type!: VideoStreamType
+  public flags!: VideoStreamStatusFlags
+  public framerate!: number
+  public resolution_h!: number
+  public resolution_v!: number
+  public bitrate!: number
+  public rotation!: number
+  public hfov!: number
+  public name!: string
+  public uri!: string
+  public encoding!: VideoStreamEncoding
+  public camera_device_id!: number
+  public _message_id: number = 269
+  public _message_name: string = 'VIDEO_STREAM_INFORMATION'
+  public _crc_extra: number = 109
+  public _message_fields: [string, string, boolean][] = [
+    ['framerate', 'float', false],
+    ['bitrate', 'uint32_t', false],
+    ['flags', 'uint16_t', false],
+    ['resolution_h', 'uint16_t', false],
+    ['resolution_v', 'uint16_t', false],
+    ['rotation', 'uint16_t', false],
+    ['hfov', 'uint16_t', false],
+    ['stream_id', 'uint8_t', false],
+    ['count', 'uint8_t', false],
+    ['type', 'uint8_t', false],
+    ['name', 'char', false],
+    ['uri', 'char', false],
+    ['encoding', 'uint8_t', true],
+    ['camera_device_id', 'uint8_t', true]
+  ]
 }

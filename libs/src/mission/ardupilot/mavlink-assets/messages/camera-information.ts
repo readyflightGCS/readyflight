@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {CameraCapFlags} from '../enums/camera-cap-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { CameraCapFlags } from '../enums/camera-cap-flags'
 /*
 Information about a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE command.
 */
@@ -20,39 +20,39 @@ Information about a camera. Can be requested with a MAV_CMD_REQUEST_MESSAGE comm
 // gimbal_device_id Gimbal id of a gimbal associated with this camera. This is the component id of the gimbal device, or 1-6 for non mavlink gimbals. Use 0 if no gimbal is associated with the camera. uint8_t
 // camera_device_id Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id). uint8_t
 export class CameraInformation extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public vendor_name!: number;
-	public model_name!: number;
-	public firmware_version!: number;
-	public focal_length!: number;
-	public sensor_size_h!: number;
-	public sensor_size_v!: number;
-	public resolution_h!: number;
-	public resolution_v!: number;
-	public lens_id!: number;
-	public flags!: CameraCapFlags;
-	public cam_definition_version!: number;
-	public cam_definition_uri!: string;
-	public gimbal_device_id!: number;
-	public camera_device_id!: number;
-	public _message_id: number = 259;
-	public _message_name: string = 'CAMERA_INFORMATION';
-	public _crc_extra: number = 92;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['firmware_version', 'uint32_t', false],
-		['focal_length', 'float', false],
-		['sensor_size_h', 'float', false],
-		['sensor_size_v', 'float', false],
-		['flags', 'uint32_t', false],
-		['resolution_h', 'uint16_t', false],
-		['resolution_v', 'uint16_t', false],
-		['cam_definition_version', 'uint16_t', false],
-		['vendor_name', 'uint8_t', false],
-		['model_name', 'uint8_t', false],
-		['lens_id', 'uint8_t', false],
-		['cam_definition_uri', 'char', false],
-		['gimbal_device_id', 'uint8_t', true],
-		['camera_device_id', 'uint8_t', true],
-	];
+  public time_boot_ms!: number
+  public vendor_name!: number
+  public model_name!: number
+  public firmware_version!: number
+  public focal_length!: number
+  public sensor_size_h!: number
+  public sensor_size_v!: number
+  public resolution_h!: number
+  public resolution_v!: number
+  public lens_id!: number
+  public flags!: CameraCapFlags
+  public cam_definition_version!: number
+  public cam_definition_uri!: string
+  public gimbal_device_id!: number
+  public camera_device_id!: number
+  public _message_id: number = 259
+  public _message_name: string = 'CAMERA_INFORMATION'
+  public _crc_extra: number = 92
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['firmware_version', 'uint32_t', false],
+    ['focal_length', 'float', false],
+    ['sensor_size_h', 'float', false],
+    ['sensor_size_v', 'float', false],
+    ['flags', 'uint32_t', false],
+    ['resolution_h', 'uint16_t', false],
+    ['resolution_v', 'uint16_t', false],
+    ['cam_definition_version', 'uint16_t', false],
+    ['vendor_name', 'uint8_t', false],
+    ['model_name', 'uint8_t', false],
+    ['lens_id', 'uint8_t', false],
+    ['cam_definition_uri', 'char', false],
+    ['gimbal_device_id', 'uint8_t', true],
+    ['camera_device_id', 'uint8_t', true]
+  ]
 }

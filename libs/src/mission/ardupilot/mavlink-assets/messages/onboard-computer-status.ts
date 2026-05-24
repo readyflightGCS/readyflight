@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {ComputerStatusFlags} from '../enums/computer-status-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { ComputerStatusFlags } from '../enums/computer-status-flags'
 /*
 Hardware status sent by an onboard computer.
 */
@@ -26,51 +26,51 @@ Hardware status sent by an onboard computer.
 // link_rx_max Network capacity to the component system. A value of UINT32_MAX implies the field is unused. uint32_t
 // status_flags Bitmap of status flags. uint16_t
 export class OnboardComputerStatus extends MAVLinkMessage {
-	public time_usec!: number;
-	public uptime!: number;
-	public type!: number;
-	public cpu_cores!: number;
-	public cpu_combined!: number;
-	public gpu_cores!: number;
-	public gpu_combined!: number;
-	public temperature_board!: number;
-	public temperature_core!: number;
-	public fan_speed!: number;
-	public ram_usage!: number;
-	public ram_total!: number;
-	public storage_type!: number;
-	public storage_usage!: number;
-	public storage_total!: number;
-	public link_type!: number;
-	public link_tx_rate!: number;
-	public link_rx_rate!: number;
-	public link_tx_max!: number;
-	public link_rx_max!: number;
-	public status_flags!: ComputerStatusFlags;
-	public _message_id: number = 390;
-	public _message_name: string = 'ONBOARD_COMPUTER_STATUS';
-	public _crc_extra: number = 156;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['uptime', 'uint32_t', false],
-		['ram_usage', 'uint32_t', false],
-		['ram_total', 'uint32_t', false],
-		['storage_type', 'uint32_t', false],
-		['storage_usage', 'uint32_t', false],
-		['storage_total', 'uint32_t', false],
-		['link_type', 'uint32_t', false],
-		['link_tx_rate', 'uint32_t', false],
-		['link_rx_rate', 'uint32_t', false],
-		['link_tx_max', 'uint32_t', false],
-		['link_rx_max', 'uint32_t', false],
-		['fan_speed', 'int16_t', false],
-		['type', 'uint8_t', false],
-		['cpu_cores', 'uint8_t', false],
-		['cpu_combined', 'uint8_t', false],
-		['gpu_cores', 'uint8_t', false],
-		['gpu_combined', 'uint8_t', false],
-		['temperature_board', 'int8_t', false],
-		['temperature_core', 'int8_t', false],
-		['status_flags', 'uint16_t', true],
-	];
+  public time_usec!: number
+  public uptime!: number
+  public type!: number
+  public cpu_cores!: number
+  public cpu_combined!: number
+  public gpu_cores!: number
+  public gpu_combined!: number
+  public temperature_board!: number
+  public temperature_core!: number
+  public fan_speed!: number
+  public ram_usage!: number
+  public ram_total!: number
+  public storage_type!: number
+  public storage_usage!: number
+  public storage_total!: number
+  public link_type!: number
+  public link_tx_rate!: number
+  public link_rx_rate!: number
+  public link_tx_max!: number
+  public link_rx_max!: number
+  public status_flags!: ComputerStatusFlags
+  public _message_id: number = 390
+  public _message_name: string = 'ONBOARD_COMPUTER_STATUS'
+  public _crc_extra: number = 156
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['uptime', 'uint32_t', false],
+    ['ram_usage', 'uint32_t', false],
+    ['ram_total', 'uint32_t', false],
+    ['storage_type', 'uint32_t', false],
+    ['storage_usage', 'uint32_t', false],
+    ['storage_total', 'uint32_t', false],
+    ['link_type', 'uint32_t', false],
+    ['link_tx_rate', 'uint32_t', false],
+    ['link_rx_rate', 'uint32_t', false],
+    ['link_tx_max', 'uint32_t', false],
+    ['link_rx_max', 'uint32_t', false],
+    ['fan_speed', 'int16_t', false],
+    ['type', 'uint8_t', false],
+    ['cpu_cores', 'uint8_t', false],
+    ['cpu_combined', 'uint8_t', false],
+    ['gpu_cores', 'uint8_t', false],
+    ['gpu_combined', 'uint8_t', false],
+    ['temperature_board', 'int8_t', false],
+    ['temperature_core', 'int8_t', false],
+    ['status_flags', 'uint16_t', true]
+  ]
 }

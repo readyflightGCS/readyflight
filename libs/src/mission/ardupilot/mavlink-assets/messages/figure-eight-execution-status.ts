@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFrame} from '../enums/mav-frame';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavFrame } from '../enums/mav-frame'
 /*
 Vehicle status report that is sent out while figure eight execution is in progress (see MAV_CMD_DO_FIGURE_EIGHT).
         This may typically send at low rates: of the order of 2Hz.
@@ -14,25 +14,25 @@ Vehicle status report that is sent out while figure eight execution is in progre
 // y Y coordinate of center point. Coordinate system depends on frame field. int32_t
 // z Altitude of center point. Coordinate system depends on frame field. float
 export class FigureEightExecutionStatus extends MAVLinkMessage {
-	public time_usec!: number;
-	public major_radius!: number;
-	public minor_radius!: number;
-	public orientation!: number;
-	public frame!: MavFrame;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public _message_id: number = 361;
-	public _message_name: string = 'FIGURE_EIGHT_EXECUTION_STATUS';
-	public _crc_extra: number = 93;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['major_radius', 'float', false],
-		['minor_radius', 'float', false],
-		['orientation', 'float', false],
-		['x', 'int32_t', false],
-		['y', 'int32_t', false],
-		['z', 'float', false],
-		['frame', 'uint8_t', false],
-	];
+  public time_usec!: number
+  public major_radius!: number
+  public minor_radius!: number
+  public orientation!: number
+  public frame!: MavFrame
+  public x!: number
+  public y!: number
+  public z!: number
+  public _message_id: number = 361
+  public _message_name: string = 'FIGURE_EIGHT_EXECUTION_STATUS'
+  public _crc_extra: number = 93
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['major_radius', 'float', false],
+    ['minor_radius', 'float', false],
+    ['orientation', 'float', false],
+    ['x', 'int32_t', false],
+    ['y', 'int32_t', false],
+    ['z', 'float', false],
+    ['frame', 'uint8_t', false]
+  ]
 }

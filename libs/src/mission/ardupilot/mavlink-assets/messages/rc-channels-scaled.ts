@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 The scaled values of the RC channels received: (-100%) -10000, (0%) 0, (100%) 10000. Channels that are inactive should be set to INT16_MAX.
 */
@@ -15,31 +15,31 @@ The scaled values of the RC channels received: (-100%) -10000, (0%) 0, (100%) 10
 // chan8_scaled RC channel 8 value scaled. int16_t
 // rssi Receive signal strength indicator in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown. uint8_t
 export class RcChannelsScaled extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public port!: number;
-	public chan1_scaled!: number;
-	public chan2_scaled!: number;
-	public chan3_scaled!: number;
-	public chan4_scaled!: number;
-	public chan5_scaled!: number;
-	public chan6_scaled!: number;
-	public chan7_scaled!: number;
-	public chan8_scaled!: number;
-	public rssi!: number;
-	public _message_id: number = 34;
-	public _message_name: string = 'RC_CHANNELS_SCALED';
-	public _crc_extra: number = 237;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['chan1_scaled', 'int16_t', false],
-		['chan2_scaled', 'int16_t', false],
-		['chan3_scaled', 'int16_t', false],
-		['chan4_scaled', 'int16_t', false],
-		['chan5_scaled', 'int16_t', false],
-		['chan6_scaled', 'int16_t', false],
-		['chan7_scaled', 'int16_t', false],
-		['chan8_scaled', 'int16_t', false],
-		['port', 'uint8_t', false],
-		['rssi', 'uint8_t', false],
-	];
+  public time_boot_ms!: number
+  public port!: number
+  public chan1_scaled!: number
+  public chan2_scaled!: number
+  public chan3_scaled!: number
+  public chan4_scaled!: number
+  public chan5_scaled!: number
+  public chan6_scaled!: number
+  public chan7_scaled!: number
+  public chan8_scaled!: number
+  public rssi!: number
+  public _message_id: number = 34
+  public _message_name: string = 'RC_CHANNELS_SCALED'
+  public _crc_extra: number = 237
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['chan1_scaled', 'int16_t', false],
+    ['chan2_scaled', 'int16_t', false],
+    ['chan3_scaled', 'int16_t', false],
+    ['chan4_scaled', 'int16_t', false],
+    ['chan5_scaled', 'int16_t', false],
+    ['chan6_scaled', 'int16_t', false],
+    ['chan7_scaled', 'int16_t', false],
+    ['chan8_scaled', 'int16_t', false],
+    ['port', 'uint8_t', false],
+    ['rssi', 'uint8_t', false]
+  ]
 }

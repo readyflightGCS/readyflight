@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {GpsFixType} from '../enums/gps-fix-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { GpsFixType } from '../enums/gps-fix-type'
 /*
 Second GPS data.
 */
@@ -23,45 +23,45 @@ Second GPS data.
 // vel_acc Speed uncertainty. uint32_t
 // hdg_acc Heading / track uncertainty uint32_t
 export class Gps2Raw extends MAVLinkMessage {
-	public time_usec!: number;
-	public fix_type!: GpsFixType;
-	public lat!: number;
-	public lon!: number;
-	public alt!: number;
-	public eph!: number;
-	public epv!: number;
-	public vel!: number;
-	public cog!: number;
-	public satellites_visible!: number;
-	public dgps_numch!: number;
-	public dgps_age!: number;
-	public yaw!: number;
-	public alt_ellipsoid!: number;
-	public h_acc!: number;
-	public v_acc!: number;
-	public vel_acc!: number;
-	public hdg_acc!: number;
-	public _message_id: number = 124;
-	public _message_name: string = 'GPS2_RAW';
-	public _crc_extra: number = 87;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['lat', 'int32_t', false],
-		['lon', 'int32_t', false],
-		['alt', 'int32_t', false],
-		['dgps_age', 'uint32_t', false],
-		['eph', 'uint16_t', false],
-		['epv', 'uint16_t', false],
-		['vel', 'uint16_t', false],
-		['cog', 'uint16_t', false],
-		['fix_type', 'uint8_t', false],
-		['satellites_visible', 'uint8_t', false],
-		['dgps_numch', 'uint8_t', false],
-		['yaw', 'uint16_t', true],
-		['alt_ellipsoid', 'int32_t', true],
-		['h_acc', 'uint32_t', true],
-		['v_acc', 'uint32_t', true],
-		['vel_acc', 'uint32_t', true],
-		['hdg_acc', 'uint32_t', true],
-	];
+  public time_usec!: number
+  public fix_type!: GpsFixType
+  public lat!: number
+  public lon!: number
+  public alt!: number
+  public eph!: number
+  public epv!: number
+  public vel!: number
+  public cog!: number
+  public satellites_visible!: number
+  public dgps_numch!: number
+  public dgps_age!: number
+  public yaw!: number
+  public alt_ellipsoid!: number
+  public h_acc!: number
+  public v_acc!: number
+  public vel_acc!: number
+  public hdg_acc!: number
+  public _message_id: number = 124
+  public _message_name: string = 'GPS2_RAW'
+  public _crc_extra: number = 87
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['lat', 'int32_t', false],
+    ['lon', 'int32_t', false],
+    ['alt', 'int32_t', false],
+    ['dgps_age', 'uint32_t', false],
+    ['eph', 'uint16_t', false],
+    ['epv', 'uint16_t', false],
+    ['vel', 'uint16_t', false],
+    ['cog', 'uint16_t', false],
+    ['fix_type', 'uint8_t', false],
+    ['satellites_visible', 'uint8_t', false],
+    ['dgps_numch', 'uint8_t', false],
+    ['yaw', 'uint16_t', true],
+    ['alt_ellipsoid', 'int32_t', true],
+    ['h_acc', 'uint32_t', true],
+    ['v_acc', 'uint32_t', true],
+    ['vel_acc', 'uint32_t', true],
+    ['hdg_acc', 'uint32_t', true]
+  ]
 }

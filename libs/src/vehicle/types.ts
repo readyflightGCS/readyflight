@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 /**
  * A rotary‑wing vehicle with no additional performance parameters.
@@ -8,7 +8,7 @@ import { z } from "zod";
  * It serves as one branch of the {@link Vehicle} discriminated union.
  */
 export const CopterSchema = z.object({
-  type: z.literal("Copter")
+  type: z.literal('Copter')
 })
 
 export type Copter = z.infer<typeof CopterSchema>
@@ -25,7 +25,7 @@ export type Copter = z.infer<typeof CopterSchema>
  * @property energyConstant Scalar used in energy‑based manoeuvre and performance modelling.
  */
 export const PlaneSchema = z.object({
-  type: z.literal("Plane"),
+  type: z.literal('Plane'),
   cruiseAirspeed: z.number().positive(),
   maxBank: z.number().positive().lt(90),
   energyConstant: z.number().positive()
@@ -41,5 +41,3 @@ export type Plane = z.infer<typeof PlaneSchema>
  */
 export const VehicleSchema = z.union([PlaneSchema, CopterSchema])
 export type Vehicle = z.infer<typeof VehicleSchema>
-
-

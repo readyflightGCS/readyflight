@@ -1,35 +1,66 @@
-import { expect, test } from "bun:test";
-import { applyBounds, dubinsBetweenDubins, getBounds, getMinTurnRadius, getTunableDubinsParameters, localisePath, splitDubinsRuns } from "@libs/dubins/dubinWaypoints";
-import { XY } from "@libs/math/types";
-import { dubinsPoint, Path } from "../types";
-import { defaultPlane } from "@libs/vehicle/defaults";
-import { makeCommand } from "@libs/commands/helpers";
-import { MainLine } from "@libs/mission/mission";
-import { ardupilot } from "@libs/mission/ardupilot/ardupilot";
+import { expect, test } from 'bun:test'
+import {
+  applyBounds,
+  dubinsBetweenDubins,
+  getBounds,
+  getMinTurnRadius,
+  getTunableDubinsParameters,
+  localisePath,
+  splitDubinsRuns
+} from '@libs/dubins/dubinWaypoints'
+import { XY } from '@libs/math/types'
+import { dubinsPoint, Path } from '../types'
+import { defaultPlane } from '@libs/vehicle/defaults'
+import { makeCommand } from '@libs/commands/helpers'
+import { MainLine } from '@libs/mission/mission'
+import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
 
-
-test("Split Dubins runs empty", () => {
+test('Split Dubins runs empty', () => {
   const a: MainLine = []
-  let runs = splitDubinsRuns(a)
+  const runs = splitDubinsRuns(a)
   expect(runs.length).toBe(0)
 })
 
-test("Split Dubins runs no runs", () => {
+test('Split Dubins runs no runs', () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
-  let runs = splitDubinsRuns(a)
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 0,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 1,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 2,
+    other: []
+  })
+  const runs = splitDubinsRuns(a)
   expect(runs.length).toBe(0)
 })
 
-test("Split Dubins runs sandwich 1", () => {
+test('Split Dubins runs sandwich 1', () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
-  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 0,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('RF.DubinsPath', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 1,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 2,
+    other: []
+  })
   a[1].cmd.frame = 0
-  let runs = splitDubinsRuns(a)
+  const runs = splitDubinsRuns(a)
 
   expect(runs.length).toBe(1)
   expect(runs[0].start).toBe(1)
@@ -37,14 +68,25 @@ test("Split Dubins runs sandwich 1", () => {
   expect(runs[0].run[1].cmd.frame).toBe(0)
 })
 
-
-test("Split Dubins runs end dubins", () => {
+test('Split Dubins runs end dubins', () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
-  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 0,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 1,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('RF.DubinsPath', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 2,
+    other: []
+  })
   a[2].cmd.frame = 0
-  let runs = splitDubinsRuns(a)
+  const runs = splitDubinsRuns(a)
 
   expect(runs.length).toBe(1)
   expect(runs[0].start).toBe(2)
@@ -52,14 +94,26 @@ test("Split Dubins runs end dubins", () => {
   expect(runs[0].run[1].cmd.frame).toBe(0)
 })
 
-test("Split Dubins runs start + end", () => {
+test('Split Dubins runs start + end', () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
-  a.push({ cmd: makeCommand("D.MAV_CMD_NAV_WAYPOINT", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
-  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
+  a.push({
+    cmd: makeCommand('RF.DubinsPath', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 0,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('D.MAV_CMD_NAV_WAYPOINT', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 1,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('RF.DubinsPath', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 2,
+    other: []
+  })
   a[0].cmd.frame = 0
   a[2].cmd.frame = 10
-  let runs = splitDubinsRuns(a)
+  const runs = splitDubinsRuns(a)
 
   expect(runs.length).toBe(2)
   expect(runs[0].start).toBe(0)
@@ -73,49 +127,60 @@ test("Split Dubins runs start + end", () => {
   expect(runs[1].run[1].cmd.frame).toBe(10)
 })
 
-
-test("Split Dubins runs all dubins", () => {
+test('Split Dubins runs all dubins', () => {
   const a: MainLine = []
-  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 0, other: [] })
-  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 1, other: [] })
-  a.push({ cmd: makeCommand("RF.DubinsPath", { latitude: 0, longitude: 0 }, ardupilot), id: 2, other: [] })
-  let runs = splitDubinsRuns(a)
+  a.push({
+    cmd: makeCommand('RF.DubinsPath', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 0,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('RF.DubinsPath', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 1,
+    other: []
+  })
+  a.push({
+    cmd: makeCommand('RF.DubinsPath', { latitude: 0, longitude: 0 }, ardupilot),
+    id: 2,
+    other: []
+  })
+  const runs = splitDubinsRuns(a)
 
   expect(runs.length).toBe(1)
   expect(runs[0].start).toBe(0)
   expect(runs[0].run.length).toBe(3)
 })
 
-test("get min turn radius", () => {
+test('get min turn radius', () => {
   expect(getMinTurnRadius(30, 0)).toBeCloseTo(0)
   expect(getMinTurnRadius(0, 10)).toBe(Infinity)
   expect(getMinTurnRadius(90, 10)).toBeCloseTo(0)
 })
 
-test("localise Path", () => {
-  let path: Path<XY> = [
-    { type: "Straight", start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } },
-    { type: "Curve", start: 0, center: { x: 0, y: 0 }, theta: Math.PI, radius: 1000 }
+test('localise Path', () => {
+  const path: Path<XY> = [
+    { type: 'Straight', start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } },
+    { type: 'Curve', start: 0, center: { x: 0, y: 0 }, theta: Math.PI, radius: 1000 }
   ]
 
-  let localised = localisePath(path, { lat: 56, lng: -3 })
+  const localised = localisePath(path, { lat: 56, lng: -3 })
   expect(localised.length).toBe(path.length)
 
-  expect(localised[0].type).toBe("Straight")
-  if (localised[0].type != "Straight") return
+  expect(localised[0].type).toBe('Straight')
+  if (localised[0].type != 'Straight') return
   expect(localised[0].start).toEqual({ lat: 56, lng: -3 })
   expect(localised[0].end.lat).toEqual(56)
   expect(localised[0].end.lng).toBeGreaterThan(-3)
 
-  expect(localised[1].type).toBe("Curve")
-  if (localised[1].type != "Curve") return
+  expect(localised[1].type).toBe('Curve')
+  if (localised[1].type != 'Curve') return
   expect(localised[1].start).toBe(0)
   expect(localised[1].theta).toBe(Math.PI)
   expect(localised[1].radius).toBe(1000)
   expect(localised[1].center).toEqual({ lat: 56, lng: -3 })
 })
 
-test("Dubins between dubins", () => {
+test('Dubins between dubins', () => {
   const points: dubinsPoint[] = [
     { tunable: false, pos: { x: 0, y: 0 }, radius: 4, bounds: {}, heading: 0, passbyRadius: 0 },
     { tunable: false, pos: { x: 0, y: 10 }, radius: 4, bounds: {}, heading: 0, passbyRadius: 0 },
@@ -144,8 +209,7 @@ test("Dubins between dubins", () => {
   expect(path[1].turnB.center.y).toBeCloseTo(10)
 })
 
-
-test("get tunable params", () => {
+test('get tunable params', () => {
   const points: dubinsPoint[] = [
     { tunable: true, pos: { x: 0, y: 0 }, radius: 4, bounds: {}, heading: 0, passbyRadius: 0 },
     { tunable: true, pos: { x: 0, y: 10 }, radius: 10, bounds: {}, heading: 180, passbyRadius: 0 },
@@ -159,9 +223,7 @@ test("get tunable params", () => {
   expect(params[3]).toBe(10)
 })
 
-
-
-test("get bounds for dubins", () => {
+test('get bounds for dubins', () => {
   const points: dubinsPoint[] = [
     { tunable: true, pos: { x: 0, y: 0 }, radius: 4, bounds: {}, heading: 0, passbyRadius: 0 },
     { tunable: true, pos: { x: 0, y: 10 }, radius: 10, bounds: {}, heading: 180, passbyRadius: 0 },
@@ -177,14 +239,14 @@ test("get bounds for dubins", () => {
   expect(bounds[3].min).toBeCloseTo(51.0778, 2)
 })
 
-test("apply bounds to dubins", () => {
+test('apply bounds to dubins', () => {
   const points: dubinsPoint[] = [
     { tunable: true, pos: { x: 0, y: 0 }, radius: 4, bounds: {}, heading: 0, passbyRadius: 0 },
     { tunable: true, pos: { x: 0, y: 10 }, radius: 10, bounds: {}, heading: 180, passbyRadius: 0 },
     { tunable: false, pos: { x: 10, y: 10 }, radius: 6, bounds: {}, heading: 270, passbyRadius: 0 }
   ]
-  let params = [1, 58, -90, -1]
-  let bounds = getBounds(points, defaultPlane)
+  const params = [1, 58, -90, -1]
+  const bounds = getBounds(points, defaultPlane)
   applyBounds(params, bounds)
   expect(params[0]).toBe(1)
   expect(params[1]).toBe(58)

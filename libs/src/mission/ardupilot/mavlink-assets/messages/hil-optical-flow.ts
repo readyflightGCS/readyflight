@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 Simulated optical flow from a flow sensor (e.g. PX4FLOW or optical mouse sensor)
 */
@@ -16,33 +16,33 @@ Simulated optical flow from a flow sensor (e.g. PX4FLOW or optical mouse sensor)
 // time_delta_distance_us Time since the distance was sampled. uint32_t
 // distance Distance to the center of the flow field. Positive value (including zero): distance known. Negative value: Unknown distance. float
 export class HilOpticalFlow extends MAVLinkMessage {
-	public time_usec!: number;
-	public sensor_id!: number;
-	public integration_time_us!: number;
-	public integrated_x!: number;
-	public integrated_y!: number;
-	public integrated_xgyro!: number;
-	public integrated_ygyro!: number;
-	public integrated_zgyro!: number;
-	public temperature!: number;
-	public quality!: number;
-	public time_delta_distance_us!: number;
-	public distance!: number;
-	public _message_id: number = 114;
-	public _message_name: string = 'HIL_OPTICAL_FLOW';
-	public _crc_extra: number = 237;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['integration_time_us', 'uint32_t', false],
-		['integrated_x', 'float', false],
-		['integrated_y', 'float', false],
-		['integrated_xgyro', 'float', false],
-		['integrated_ygyro', 'float', false],
-		['integrated_zgyro', 'float', false],
-		['time_delta_distance_us', 'uint32_t', false],
-		['distance', 'float', false],
-		['temperature', 'int16_t', false],
-		['sensor_id', 'uint8_t', false],
-		['quality', 'uint8_t', false],
-	];
+  public time_usec!: number
+  public sensor_id!: number
+  public integration_time_us!: number
+  public integrated_x!: number
+  public integrated_y!: number
+  public integrated_xgyro!: number
+  public integrated_ygyro!: number
+  public integrated_zgyro!: number
+  public temperature!: number
+  public quality!: number
+  public time_delta_distance_us!: number
+  public distance!: number
+  public _message_id: number = 114
+  public _message_name: string = 'HIL_OPTICAL_FLOW'
+  public _crc_extra: number = 237
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['integration_time_us', 'uint32_t', false],
+    ['integrated_x', 'float', false],
+    ['integrated_y', 'float', false],
+    ['integrated_xgyro', 'float', false],
+    ['integrated_ygyro', 'float', false],
+    ['integrated_zgyro', 'float', false],
+    ['time_delta_distance_us', 'uint32_t', false],
+    ['distance', 'float', false],
+    ['temperature', 'int16_t', false],
+    ['sensor_id', 'uint8_t', false],
+    ['quality', 'uint8_t', false]
+  ]
 }

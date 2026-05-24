@@ -1,10 +1,10 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavBatteryFunction} from '../enums/mav-battery-function';
-import {MavBatteryType} from '../enums/mav-battery-type';
-import {MavBatteryChargeState} from '../enums/mav-battery-charge-state';
-import {MavBatteryMode} from '../enums/mav-battery-mode';
-import {MavBatteryFault} from '../enums/mav-battery-fault';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavBatteryFunction } from '../enums/mav-battery-function'
+import { MavBatteryType } from '../enums/mav-battery-type'
+import { MavBatteryChargeState } from '../enums/mav-battery-charge-state'
+import { MavBatteryMode } from '../enums/mav-battery-mode'
+import { MavBatteryFault } from '../enums/mav-battery-fault'
 /*
 Battery information. Updates GCS with flight controller battery status. Smart batteries also use this message, but may additionally send BATTERY_INFO.
 */
@@ -23,37 +23,37 @@ Battery information. Updates GCS with flight controller battery status. Smart ba
 // mode Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode. uint8_t
 // fault_bitmask Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported). uint32_t
 export class BatteryStatus extends MAVLinkMessage {
-	public id!: number;
-	public battery_function!: MavBatteryFunction;
-	public type!: MavBatteryType;
-	public temperature!: number;
-	public voltages!: number;
-	public current_battery!: number;
-	public current_consumed!: number;
-	public energy_consumed!: number;
-	public battery_remaining!: number;
-	public time_remaining!: number;
-	public charge_state!: MavBatteryChargeState;
-	public voltages_ext!: number;
-	public mode!: MavBatteryMode;
-	public fault_bitmask!: MavBatteryFault;
-	public _message_id: number = 147;
-	public _message_name: string = 'BATTERY_STATUS';
-	public _crc_extra: number = 154;
-	public _message_fields: [string, string, boolean][] = [
-		['current_consumed', 'int32_t', false],
-		['energy_consumed', 'int32_t', false],
-		['temperature', 'int16_t', false],
-		['voltages', 'uint16_t', false],
-		['current_battery', 'int16_t', false],
-		['id', 'uint8_t', false],
-		['battery_function', 'uint8_t', false],
-		['type', 'uint8_t', false],
-		['battery_remaining', 'int8_t', false],
-		['time_remaining', 'int32_t', true],
-		['charge_state', 'uint8_t', true],
-		['voltages_ext', 'uint16_t', true],
-		['mode', 'uint8_t', true],
-		['fault_bitmask', 'uint32_t', true],
-	];
+  public id!: number
+  public battery_function!: MavBatteryFunction
+  public type!: MavBatteryType
+  public temperature!: number
+  public voltages!: number
+  public current_battery!: number
+  public current_consumed!: number
+  public energy_consumed!: number
+  public battery_remaining!: number
+  public time_remaining!: number
+  public charge_state!: MavBatteryChargeState
+  public voltages_ext!: number
+  public mode!: MavBatteryMode
+  public fault_bitmask!: MavBatteryFault
+  public _message_id: number = 147
+  public _message_name: string = 'BATTERY_STATUS'
+  public _crc_extra: number = 154
+  public _message_fields: [string, string, boolean][] = [
+    ['current_consumed', 'int32_t', false],
+    ['energy_consumed', 'int32_t', false],
+    ['temperature', 'int16_t', false],
+    ['voltages', 'uint16_t', false],
+    ['current_battery', 'int16_t', false],
+    ['id', 'uint8_t', false],
+    ['battery_function', 'uint8_t', false],
+    ['type', 'uint8_t', false],
+    ['battery_remaining', 'int8_t', false],
+    ['time_remaining', 'int32_t', true],
+    ['charge_state', 'uint8_t', true],
+    ['voltages_ext', 'uint16_t', true],
+    ['mode', 'uint8_t', true],
+    ['fault_bitmask', 'uint32_t', true]
+  ]
 }

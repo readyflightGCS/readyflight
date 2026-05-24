@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFrame} from '../enums/mav-frame';
-import {MavEstimatorType} from '../enums/mav-estimator-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavFrame } from '../enums/mav-frame'
+import { MavEstimatorType } from '../enums/mav-estimator-type'
 /*
 Odometry message to communicate odometry information with an external interface. Fits ROS REP 147 standard for aerial vehicles (http://www.ros.org/reps/rep-0147.html).
 */
@@ -24,45 +24,45 @@ Odometry message to communicate odometry information with an external interface.
 // estimator_type Type of estimator that is providing the odometry. uint8_t
 // quality Optional odometry quality metric as a percentage. -1 = odometry has failed, 0 = unknown/unset quality, 1 = worst quality, 100 = best quality int8_t
 export class Odometry extends MAVLinkMessage {
-	public time_usec!: number;
-	public frame_id!: MavFrame;
-	public child_frame_id!: MavFrame;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public q!: number;
-	public vx!: number;
-	public vy!: number;
-	public vz!: number;
-	public rollspeed!: number;
-	public pitchspeed!: number;
-	public yawspeed!: number;
-	public pose_covariance!: number;
-	public velocity_covariance!: number;
-	public reset_counter!: number;
-	public estimator_type!: MavEstimatorType;
-	public quality!: number;
-	public _message_id: number = 331;
-	public _message_name: string = 'ODOMETRY';
-	public _crc_extra: number = 91;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['x', 'float', false],
-		['y', 'float', false],
-		['z', 'float', false],
-		['q', 'float', false],
-		['vx', 'float', false],
-		['vy', 'float', false],
-		['vz', 'float', false],
-		['rollspeed', 'float', false],
-		['pitchspeed', 'float', false],
-		['yawspeed', 'float', false],
-		['pose_covariance', 'float', false],
-		['velocity_covariance', 'float', false],
-		['frame_id', 'uint8_t', false],
-		['child_frame_id', 'uint8_t', false],
-		['reset_counter', 'uint8_t', true],
-		['estimator_type', 'uint8_t', true],
-		['quality', 'int8_t', true],
-	];
+  public time_usec!: number
+  public frame_id!: MavFrame
+  public child_frame_id!: MavFrame
+  public x!: number
+  public y!: number
+  public z!: number
+  public q!: number
+  public vx!: number
+  public vy!: number
+  public vz!: number
+  public rollspeed!: number
+  public pitchspeed!: number
+  public yawspeed!: number
+  public pose_covariance!: number
+  public velocity_covariance!: number
+  public reset_counter!: number
+  public estimator_type!: MavEstimatorType
+  public quality!: number
+  public _message_id: number = 331
+  public _message_name: string = 'ODOMETRY'
+  public _crc_extra: number = 91
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['x', 'float', false],
+    ['y', 'float', false],
+    ['z', 'float', false],
+    ['q', 'float', false],
+    ['vx', 'float', false],
+    ['vy', 'float', false],
+    ['vz', 'float', false],
+    ['rollspeed', 'float', false],
+    ['pitchspeed', 'float', false],
+    ['yawspeed', 'float', false],
+    ['pose_covariance', 'float', false],
+    ['velocity_covariance', 'float', false],
+    ['frame_id', 'uint8_t', false],
+    ['child_frame_id', 'uint8_t', false],
+    ['reset_counter', 'uint8_t', true],
+    ['estimator_type', 'uint8_t', true],
+    ['quality', 'int8_t', true]
+  ]
 }

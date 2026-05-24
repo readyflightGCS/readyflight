@@ -9,6 +9,6 @@
  * expressed in meters rather than latitude/longitude.
  */
 export type XY = {
-  x: number,
+  x: number
   y: number
 }

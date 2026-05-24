@@ -1,4 +1,4 @@
-import { messageRegistry } from "./mavlink-assets/message-registry"
+import { messageRegistry } from './mavlink-assets/message-registry'
 
 // CRC-16/MCRF4XX — MAVLink's checksum algorithm
 function crc16(data: Uint8Array, start: number, length: number): number {
@@ -61,8 +61,8 @@ export class MavLinkStreamParser {
 
       let frameSize: number
       let msgId: number
-      let crcStart: number  // first byte covered by CRC (always STX+1)
-      let crcEnd: number    // last byte covered by CRC (exclusive), before the CRC bytes
+      let crcStart: number // first byte covered by CRC (always STX+1)
+      let crcEnd: number // last byte covered by CRC (exclusive), before the CRC bytes
 
       if (stx === 0xfe) {
         // v1
@@ -84,9 +84,9 @@ export class MavLinkStreamParser {
       }
 
       // Validate CRC before accepting the frame.
-      let message = messageRegistry.find((msg) => msg[0] === msgId)
+      const message = messageRegistry.find((msg) => msg[0] === msgId)
       if (message !== undefined) {
-        let a = new message[1](0, 0)
+        const a = new message[1](0, 0)
         const crcExtra = a._crc_extra
 
         let crc = crc16(this.buf, crcStart, crcEnd - crcStart)

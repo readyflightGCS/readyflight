@@ -1,8 +1,8 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {CameraTrackingStatusFlags} from '../enums/camera-tracking-status-flags';
-import {CameraTrackingMode} from '../enums/camera-tracking-mode';
-import {CameraTrackingTargetData} from '../enums/camera-tracking-target-data';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { CameraTrackingStatusFlags } from '../enums/camera-tracking-status-flags'
+import { CameraTrackingMode } from '../enums/camera-tracking-mode'
+import { CameraTrackingTargetData } from '../enums/camera-tracking-target-data'
 /*
 Camera tracking status, sent while in active tracking. Use MAV_CMD_SET_MESSAGE_INTERVAL to define message interval.
 */
@@ -18,31 +18,31 @@ Camera tracking status, sent while in active tracking. Use MAV_CMD_SET_MESSAGE_I
 // rec_bottom_y Current tracked rectangle bottom y value if CAMERA_TRACKING_MODE_RECTANGLE (normalized 0..1, 0 is top, 1 is bottom), NAN if unknown float
 // camera_device_id Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id). uint8_t
 export class CameraTrackingImageStatus extends MAVLinkMessage {
-	public tracking_status!: CameraTrackingStatusFlags;
-	public tracking_mode!: CameraTrackingMode;
-	public target_data!: CameraTrackingTargetData;
-	public point_x!: number;
-	public point_y!: number;
-	public radius!: number;
-	public rec_top_x!: number;
-	public rec_top_y!: number;
-	public rec_bottom_x!: number;
-	public rec_bottom_y!: number;
-	public camera_device_id!: number;
-	public _message_id: number = 275;
-	public _message_name: string = 'CAMERA_TRACKING_IMAGE_STATUS';
-	public _crc_extra: number = 126;
-	public _message_fields: [string, string, boolean][] = [
-		['point_x', 'float', false],
-		['point_y', 'float', false],
-		['radius', 'float', false],
-		['rec_top_x', 'float', false],
-		['rec_top_y', 'float', false],
-		['rec_bottom_x', 'float', false],
-		['rec_bottom_y', 'float', false],
-		['tracking_status', 'uint8_t', false],
-		['tracking_mode', 'uint8_t', false],
-		['target_data', 'uint8_t', false],
-		['camera_device_id', 'uint8_t', true],
-	];
+  public tracking_status!: CameraTrackingStatusFlags
+  public tracking_mode!: CameraTrackingMode
+  public target_data!: CameraTrackingTargetData
+  public point_x!: number
+  public point_y!: number
+  public radius!: number
+  public rec_top_x!: number
+  public rec_top_y!: number
+  public rec_bottom_x!: number
+  public rec_bottom_y!: number
+  public camera_device_id!: number
+  public _message_id: number = 275
+  public _message_name: string = 'CAMERA_TRACKING_IMAGE_STATUS'
+  public _crc_extra: number = 126
+  public _message_fields: [string, string, boolean][] = [
+    ['point_x', 'float', false],
+    ['point_y', 'float', false],
+    ['radius', 'float', false],
+    ['rec_top_x', 'float', false],
+    ['rec_top_y', 'float', false],
+    ['rec_bottom_x', 'float', false],
+    ['rec_bottom_y', 'float', false],
+    ['tracking_status', 'uint8_t', false],
+    ['tracking_mode', 'uint8_t', false],
+    ['target_data', 'uint8_t', false],
+    ['camera_device_id', 'uint8_t', true]
+  ]
 }

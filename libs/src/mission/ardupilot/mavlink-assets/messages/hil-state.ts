@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 Sent from simulation to autopilot. This packet is useful for high throughput applications such as hardware in the loop simulations.
 */
@@ -20,41 +20,41 @@ Sent from simulation to autopilot. This packet is useful for high throughput app
 // yacc Y acceleration int16_t
 // zacc Z acceleration int16_t
 export class HilState extends MAVLinkMessage {
-	public time_usec!: number;
-	public roll!: number;
-	public pitch!: number;
-	public yaw!: number;
-	public rollspeed!: number;
-	public pitchspeed!: number;
-	public yawspeed!: number;
-	public lat!: number;
-	public lon!: number;
-	public alt!: number;
-	public vx!: number;
-	public vy!: number;
-	public vz!: number;
-	public xacc!: number;
-	public yacc!: number;
-	public zacc!: number;
-	public _message_id: number = 90;
-	public _message_name: string = 'HIL_STATE';
-	public _crc_extra: number = 183;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['roll', 'float', false],
-		['pitch', 'float', false],
-		['yaw', 'float', false],
-		['rollspeed', 'float', false],
-		['pitchspeed', 'float', false],
-		['yawspeed', 'float', false],
-		['lat', 'int32_t', false],
-		['lon', 'int32_t', false],
-		['alt', 'int32_t', false],
-		['vx', 'int16_t', false],
-		['vy', 'int16_t', false],
-		['vz', 'int16_t', false],
-		['xacc', 'int16_t', false],
-		['yacc', 'int16_t', false],
-		['zacc', 'int16_t', false],
-	];
+  public time_usec!: number
+  public roll!: number
+  public pitch!: number
+  public yaw!: number
+  public rollspeed!: number
+  public pitchspeed!: number
+  public yawspeed!: number
+  public lat!: number
+  public lon!: number
+  public alt!: number
+  public vx!: number
+  public vy!: number
+  public vz!: number
+  public xacc!: number
+  public yacc!: number
+  public zacc!: number
+  public _message_id: number = 90
+  public _message_name: string = 'HIL_STATE'
+  public _crc_extra: number = 183
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['roll', 'float', false],
+    ['pitch', 'float', false],
+    ['yaw', 'float', false],
+    ['rollspeed', 'float', false],
+    ['pitchspeed', 'float', false],
+    ['yawspeed', 'float', false],
+    ['lat', 'int32_t', false],
+    ['lon', 'int32_t', false],
+    ['alt', 'int32_t', false],
+    ['vx', 'int16_t', false],
+    ['vy', 'int16_t', false],
+    ['vz', 'int16_t', false],
+    ['xacc', 'int16_t', false],
+    ['yacc', 'int16_t', false],
+    ['zacc', 'int16_t', false]
+  ]
 }

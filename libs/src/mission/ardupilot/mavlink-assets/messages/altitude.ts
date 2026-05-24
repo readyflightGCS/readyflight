@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 The current system altitude.
 */
@@ -11,23 +11,23 @@ The current system altitude.
 // altitude_terrain This is the altitude above terrain. It might be fed by a terrain database or an altimeter. Values smaller than -1000 should be interpreted as unknown. float
 // bottom_clearance This is not the altitude, but the clear space below the system according to the fused clearance estimate. It generally should max out at the maximum range of e.g. the laser altimeter. It is generally a moving target. A negative value indicates no measurement available. float
 export class Altitude extends MAVLinkMessage {
-	public time_usec!: number;
-	public altitude_monotonic!: number;
-	public altitude_amsl!: number;
-	public altitude_local!: number;
-	public altitude_relative!: number;
-	public altitude_terrain!: number;
-	public bottom_clearance!: number;
-	public _message_id: number = 141;
-	public _message_name: string = 'ALTITUDE';
-	public _crc_extra: number = 47;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['altitude_monotonic', 'float', false],
-		['altitude_amsl', 'float', false],
-		['altitude_local', 'float', false],
-		['altitude_relative', 'float', false],
-		['altitude_terrain', 'float', false],
-		['bottom_clearance', 'float', false],
-	];
+  public time_usec!: number
+  public altitude_monotonic!: number
+  public altitude_amsl!: number
+  public altitude_local!: number
+  public altitude_relative!: number
+  public altitude_terrain!: number
+  public bottom_clearance!: number
+  public _message_id: number = 141
+  public _message_name: string = 'ALTITUDE'
+  public _crc_extra: number = 47
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['altitude_monotonic', 'float', false],
+    ['altitude_amsl', 'float', false],
+    ['altitude_local', 'float', false],
+    ['altitude_relative', 'float', false],
+    ['altitude_terrain', 'float', false],
+    ['bottom_clearance', 'float', false]
+  ]
 }

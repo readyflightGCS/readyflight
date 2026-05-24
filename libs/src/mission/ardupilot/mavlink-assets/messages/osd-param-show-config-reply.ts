@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {OsdParamConfigError} from '../enums/osd-param-config-error';
-import {OsdParamConfigType} from '../enums/osd-param-config-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { OsdParamConfigError } from '../enums/osd-param-config-error'
+import { OsdParamConfigType } from '../enums/osd-param-config-type'
 /*
 Read configured OSD parameter reply.
 */
@@ -13,23 +13,23 @@ Read configured OSD parameter reply.
 // max_value OSD parameter maximum value. float
 // increment OSD parameter increment. float
 export class OsdParamShowConfigReply extends MAVLinkMessage {
-	public request_id!: number;
-	public result!: OsdParamConfigError;
-	public param_id!: string;
-	public config_type!: OsdParamConfigType;
-	public min_value!: number;
-	public max_value!: number;
-	public increment!: number;
-	public _message_id: number = 11036;
-	public _message_name: string = 'OSD_PARAM_SHOW_CONFIG_REPLY';
-	public _crc_extra: number = 177;
-	public _message_fields: [string, string, boolean][] = [
-		['request_id', 'uint32_t', false],
-		['min_value', 'float', false],
-		['max_value', 'float', false],
-		['increment', 'float', false],
-		['result', 'uint8_t', false],
-		['param_id', 'char', false],
-		['config_type', 'uint8_t', false],
-	];
+  public request_id!: number
+  public result!: OsdParamConfigError
+  public param_id!: string
+  public config_type!: OsdParamConfigType
+  public min_value!: number
+  public max_value!: number
+  public increment!: number
+  public _message_id: number = 11036
+  public _message_name: string = 'OSD_PARAM_SHOW_CONFIG_REPLY'
+  public _crc_extra: number = 177
+  public _message_fields: [string, string, boolean][] = [
+    ['request_id', 'uint32_t', false],
+    ['min_value', 'float', false],
+    ['max_value', 'float', false],
+    ['increment', 'float', false],
+    ['result', 'uint8_t', false],
+    ['param_id', 'char', false],
+    ['config_type', 'uint8_t', false]
+  ]
 }

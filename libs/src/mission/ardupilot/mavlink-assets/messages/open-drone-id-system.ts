@@ -1,9 +1,9 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavOdidOperatorLocationType} from '../enums/mav-odid-operator-location-type';
-import {MavOdidClassificationType} from '../enums/mav-odid-classification-type';
-import {MavOdidCategoryEu} from '../enums/mav-odid-category-eu';
-import {MavOdidClassEu} from '../enums/mav-odid-class-eu';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { MavOdidOperatorLocationType } from '../enums/mav-odid-operator-location-type'
+import { MavOdidClassificationType } from '../enums/mav-odid-classification-type'
+import { MavOdidCategoryEu } from '../enums/mav-odid-category-eu'
+import { MavOdidClassEu } from '../enums/mav-odid-class-eu'
 /*
 Data for filling the OpenDroneID System message. The System Message contains general system information including the operator location/altitude and possible aircraft group and/or category/class information.
 */
@@ -23,39 +23,39 @@ Data for filling the OpenDroneID System message. The System Message contains gen
 // operator_altitude_geo Geodetic altitude of the operator relative to WGS84. If unknown: -1000 m. float
 // timestamp 32 bit Unix Timestamp in seconds since 00:00:00 01/01/2019. uint32_t
 export class OpenDroneIdSystem extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public id_or_mac!: number;
-	public operator_location_type!: MavOdidOperatorLocationType;
-	public classification_type!: MavOdidClassificationType;
-	public operator_latitude!: number;
-	public operator_longitude!: number;
-	public area_count!: number;
-	public area_radius!: number;
-	public area_ceiling!: number;
-	public area_floor!: number;
-	public category_eu!: MavOdidCategoryEu;
-	public class_eu!: MavOdidClassEu;
-	public operator_altitude_geo!: number;
-	public timestamp!: number;
-	public _message_id: number = 12904;
-	public _message_name: string = 'OPEN_DRONE_ID_SYSTEM';
-	public _crc_extra: number = 77;
-	public _message_fields: [string, string, boolean][] = [
-		['operator_latitude', 'int32_t', false],
-		['operator_longitude', 'int32_t', false],
-		['area_ceiling', 'float', false],
-		['area_floor', 'float', false],
-		['operator_altitude_geo', 'float', false],
-		['timestamp', 'uint32_t', false],
-		['area_count', 'uint16_t', false],
-		['area_radius', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['id_or_mac', 'uint8_t', false],
-		['operator_location_type', 'uint8_t', false],
-		['classification_type', 'uint8_t', false],
-		['category_eu', 'uint8_t', false],
-		['class_eu', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public id_or_mac!: number
+  public operator_location_type!: MavOdidOperatorLocationType
+  public classification_type!: MavOdidClassificationType
+  public operator_latitude!: number
+  public operator_longitude!: number
+  public area_count!: number
+  public area_radius!: number
+  public area_ceiling!: number
+  public area_floor!: number
+  public category_eu!: MavOdidCategoryEu
+  public class_eu!: MavOdidClassEu
+  public operator_altitude_geo!: number
+  public timestamp!: number
+  public _message_id: number = 12904
+  public _message_name: string = 'OPEN_DRONE_ID_SYSTEM'
+  public _crc_extra: number = 77
+  public _message_fields: [string, string, boolean][] = [
+    ['operator_latitude', 'int32_t', false],
+    ['operator_longitude', 'int32_t', false],
+    ['area_ceiling', 'float', false],
+    ['area_floor', 'float', false],
+    ['operator_altitude_geo', 'float', false],
+    ['timestamp', 'uint32_t', false],
+    ['area_count', 'uint16_t', false],
+    ['area_radius', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['id_or_mac', 'uint8_t', false],
+    ['operator_location_type', 'uint8_t', false],
+    ['classification_type', 'uint8_t', false],
+    ['category_eu', 'uint8_t', false],
+    ['class_eu', 'uint8_t', false]
+  ]
 }

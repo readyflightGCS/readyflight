@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {GimbalDeviceFlags} from '../enums/gimbal-device-flags';
-import {GimbalDeviceErrorFlags} from '../enums/gimbal-device-error-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { GimbalDeviceFlags } from '../enums/gimbal-device-flags'
+import { GimbalDeviceErrorFlags } from '../enums/gimbal-device-error-flags'
 /*
 Message reporting the status of a gimbal device.
 	  This message should be broadcast by a gimbal device component at a low regular rate (e.g. 5 Hz).
@@ -32,33 +32,33 @@ Message reporting the status of a gimbal device.
 // delta_yaw_velocity Yaw angular velocity relating the angular velocities in earth and body frames (see message description). NaN if unknown. float
 // gimbal_device_id This field is to be used if the gimbal manager and the gimbal device are the same component and hence have the same component ID. This field is then set a number between 1-6. If the component ID is separate, this field is not required and must be set to 0. uint8_t
 export class GimbalDeviceAttitudeStatus extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public time_boot_ms!: number;
-	public flags!: GimbalDeviceFlags;
-	public q!: number;
-	public angular_velocity_x!: number;
-	public angular_velocity_y!: number;
-	public angular_velocity_z!: number;
-	public failure_flags!: GimbalDeviceErrorFlags;
-	public delta_yaw!: number;
-	public delta_yaw_velocity!: number;
-	public gimbal_device_id!: number;
-	public _message_id: number = 285;
-	public _message_name: string = 'GIMBAL_DEVICE_ATTITUDE_STATUS';
-	public _crc_extra: number = 137;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['q', 'float', false],
-		['angular_velocity_x', 'float', false],
-		['angular_velocity_y', 'float', false],
-		['angular_velocity_z', 'float', false],
-		['failure_flags', 'uint32_t', false],
-		['flags', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['delta_yaw', 'float', true],
-		['delta_yaw_velocity', 'float', true],
-		['gimbal_device_id', 'uint8_t', true],
-	];
+  public target_system!: number
+  public target_component!: number
+  public time_boot_ms!: number
+  public flags!: GimbalDeviceFlags
+  public q!: number
+  public angular_velocity_x!: number
+  public angular_velocity_y!: number
+  public angular_velocity_z!: number
+  public failure_flags!: GimbalDeviceErrorFlags
+  public delta_yaw!: number
+  public delta_yaw_velocity!: number
+  public gimbal_device_id!: number
+  public _message_id: number = 285
+  public _message_name: string = 'GIMBAL_DEVICE_ATTITUDE_STATUS'
+  public _crc_extra: number = 137
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['q', 'float', false],
+    ['angular_velocity_x', 'float', false],
+    ['angular_velocity_y', 'float', false],
+    ['angular_velocity_z', 'float', false],
+    ['failure_flags', 'uint32_t', false],
+    ['flags', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['delta_yaw', 'float', true],
+    ['delta_yaw_velocity', 'float', true],
+    ['gimbal_device_id', 'uint8_t', true]
+  ]
 }

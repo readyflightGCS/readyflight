@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {EstimatorStatusFlags} from '../enums/estimator-status-flags';
-import {MavLandedState} from '../enums/mav-landed-state';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+import { EstimatorStatusFlags } from '../enums/estimator-status-flags'
+import { MavLandedState } from '../enums/mav-landed-state'
 /*
 Low level message containing autopilot state relevant for a gimbal device. This message is to be sent from the autopilot to the gimbal device component. The data of this message are for the gimbal device's estimator corrections, in particular horizon compensation, as well as indicates autopilot control intentions, e.g. feed forward angular control in the z-axis.
 */
@@ -19,35 +19,35 @@ Low level message containing autopilot state relevant for a gimbal device. This 
 // landed_state The landed state. Is set to MAV_LANDED_STATE_UNDEFINED if landed state is unknown. uint8_t
 // angular_velocity_z Z component of angular velocity in NED (North, East, Down). NaN if unknown. float
 export class AutopilotStateForGimbalDevice extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public time_boot_us!: number;
-	public q!: number;
-	public q_estimated_delay_us!: number;
-	public vx!: number;
-	public vy!: number;
-	public vz!: number;
-	public v_estimated_delay_us!: number;
-	public feed_forward_angular_velocity_z!: number;
-	public estimator_status!: EstimatorStatusFlags;
-	public landed_state!: MavLandedState;
-	public angular_velocity_z!: number;
-	public _message_id: number = 286;
-	public _message_name: string = 'AUTOPILOT_STATE_FOR_GIMBAL_DEVICE';
-	public _crc_extra: number = 210;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_us', 'uint64_t', false],
-		['q', 'float', false],
-		['q_estimated_delay_us', 'uint32_t', false],
-		['vx', 'float', false],
-		['vy', 'float', false],
-		['vz', 'float', false],
-		['v_estimated_delay_us', 'uint32_t', false],
-		['feed_forward_angular_velocity_z', 'float', false],
-		['estimator_status', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['landed_state', 'uint8_t', false],
-		['angular_velocity_z', 'float', true],
-	];
+  public target_system!: number
+  public target_component!: number
+  public time_boot_us!: number
+  public q!: number
+  public q_estimated_delay_us!: number
+  public vx!: number
+  public vy!: number
+  public vz!: number
+  public v_estimated_delay_us!: number
+  public feed_forward_angular_velocity_z!: number
+  public estimator_status!: EstimatorStatusFlags
+  public landed_state!: MavLandedState
+  public angular_velocity_z!: number
+  public _message_id: number = 286
+  public _message_name: string = 'AUTOPILOT_STATE_FOR_GIMBAL_DEVICE'
+  public _crc_extra: number = 210
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_us', 'uint64_t', false],
+    ['q', 'float', false],
+    ['q_estimated_delay_us', 'uint32_t', false],
+    ['vx', 'float', false],
+    ['vy', 'float', false],
+    ['vz', 'float', false],
+    ['v_estimated_delay_us', 'uint32_t', false],
+    ['feed_forward_angular_velocity_z', 'float', false],
+    ['estimator_status', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['landed_state', 'uint8_t', false],
+    ['angular_velocity_z', 'float', true]
+  ]
 }
