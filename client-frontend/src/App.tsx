@@ -2,6 +2,7 @@ import Map from './components/map/map'
 import SideBar from '@/components/navigation/sidebar'
 import SidePanel from './components/navigation/sidePanel/sidePanel'
 import BottomPanel from './components/navigation/bottomPanel/bottomPanel'
+import MapControls from './components/map/mapControls'
 import { useEditor } from '@libs/stores/configurator'
 import ConnectionHandler from './components/telemetry/connectionHandler'
 import { Toaster } from './components/ui/sonner'
@@ -22,6 +23,9 @@ export default function App(): React.JSX.Element {
           <div className="pointer-events-auto">
             <BottomPanel />
           </div>
+        </div>
+        <div className="absolute top-4 right-4 z-20">
+          <MapControls />
         </div>
         <Map />
       </div>

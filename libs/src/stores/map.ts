@@ -12,7 +12,7 @@ export const mapElements = [
 ] as const
 
 type MapContextState = {
-  mapRef: MutableRefObject<Map | null>
+  mapRef: MutableRefObject<Map> | null
   tileProvider: { subdomains: string[]; url: string }
   setTileProvider: (x: { subdomains: string[]; url: string }) => void
   viewable: { [K in (typeof mapElements)[number]]: boolean }
