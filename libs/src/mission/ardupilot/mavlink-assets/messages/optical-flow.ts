@@ -1,5 +1,5 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Optical flow from a flow sensor (e.g. optical mouse sensor)
 */

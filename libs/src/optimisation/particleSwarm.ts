@@ -89,7 +89,7 @@ export const particleOptimise: optimisationAlgorithm = (initialGuess, bounds, fn
         }
 
         // handle edge boundaries
-        if (curBound.max && population[p][a] > curBound.max) {
+        if (curBound.max !== undefined && population[p][a] > curBound.max) {
           if (curBound.circular && curBound.min !== undefined) {
             population[p][a] = population[p][a] - (curBound.max - curBound.min)
           } else {
@@ -97,8 +97,8 @@ export const particleOptimise: optimisationAlgorithm = (initialGuess, bounds, fn
             velocities[p][a] *= -1
           }
         }
-        if (curBound.min && population[p][a] < curBound.min !== undefined) {
-          if (curBound.circular && curBound.max) {
+        if (curBound.min !== undefined && population[p][a] < curBound.min) {
+          if (curBound.circular && curBound.max !== undefined) {
             population[p][a] = population[p][a] + (curBound.max - curBound.min)
           } else {
             population[p][a] = curBound.min

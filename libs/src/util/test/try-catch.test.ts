@@ -8,8 +8,11 @@ test('trycatch success', async () => {
 })
 
 test('trycatch error', async () => {
-  // @ts-ignore
-  const res = await tryCatch(new Promise((resolve) => resolve(sdds as number)))
+  const res = await tryCatch(
+    new Promise(() => {
+      throw new Error('hello')
+    })
+  )
   expect(res.data).toBeNull()
   expect(res.error).not.toBeNull()
 })

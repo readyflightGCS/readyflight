@@ -1,5 +1,4 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 /*
 The raw values of the actuator outputs (e.g. on Pixhawk, from MAIN, AUX ports). This message supersedes SERVO_OUTPUT_RAW.
 */

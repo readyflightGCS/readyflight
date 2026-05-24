@@ -300,13 +300,6 @@ describe('getTerrainElevationAtPoint', () => {
   })
 
   test('should find closest point among many', () => {
-    const manyPoints = [
-      { lat: 0, lng: 0, alt: 100 }, // Distance from (0.05, 0.05) = sqrt(0.05² + 0.05²) ≈ 0.071
-      { lat: 5, lng: 5, alt: 200 }, // Distance from (0.05, 0.05) = sqrt(4.95² + 4.95²) ≈ 7.00
-      { lat: 0.1, lng: 0.1, alt: 150 }, // Distance from (0.05, 0.05) = sqrt(0.05² + 0.05²) ≈ 0.071
-      { lat: 10, lng: 10, alt: 300 } // Distance from (0.05, 0.05) = sqrt(9.95² + 9.95²) ≈ 14.07
-    ]
-
     // Both first and third points have the same distance, but the function returns the first match
     // Let's test with a clear winner
     const testPoints = [

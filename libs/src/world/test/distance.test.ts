@@ -7,7 +7,6 @@ import {
   worldBearing
 } from '@libs/world/distance'
 import { avgLatLng } from '@libs/world/latlng'
-import { openInEditor } from 'bun'
 
 test('world distance better func', () => {
   expect(haversineDistance({ lng: 0, lat: 0 }, { lng: 0, lat: 0 })).toBeCloseTo(0)

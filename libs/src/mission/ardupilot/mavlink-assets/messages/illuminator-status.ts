@@ -1,5 +1,5 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+
 import { IlluminatorMode } from '../enums/illuminator-mode'
 import { IlluminatorErrorFlags } from '../enums/illuminator-error-flags'
 /*

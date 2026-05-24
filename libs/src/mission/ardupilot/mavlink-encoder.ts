@@ -68,7 +68,7 @@ function fieldSize(type: string): number {
 function serializePayload(msg: MAVLinkMessage): Uint8Array {
   // Extension fields (isExtension === true) are a MAVLink 2 concept; omit them
   // when building a v1 frame so the payload length and CRC stay correct.
-  const fields = ((msg as any)._message_fields as [string, string, boolean][]).filter(
+  const fields = (msg._message_fields as [string, string, boolean][]).filter(
     ([, , isExt]) => !isExt
   )
 
@@ -78,7 +78,7 @@ function serializePayload(msg: MAVLinkMessage): Uint8Array {
   let offset = 0
 
   for (const [name, type] of fields) {
-    const value: number = (msg as any)[name] ?? 0
+    const value: number = msg[name] ?? 0
     offset += writeField(view, offset, type, value)
   }
 
@@ -135,8 +135,8 @@ function mavlinkCrc(
 export function encodePacket(msg: MAVLinkMessage): ArrayBuffer {
   const payload = serializePayload(msg)
   const seq = sequence++ & 0xff
-  const msgid: number = (msg as any)._message_id
-  const crcExtra: number = (msg as any)._crc_extra
+  const msgid: number = msg._message_id
+  const crcExtra: number = msg._crc_extra
 
   const crc = mavlinkCrc(payload.length, 0, 0, seq, GCS_SYSID, GCS_COMPID, msgid, payload, crcExtra)
 

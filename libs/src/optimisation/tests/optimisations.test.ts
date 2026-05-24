@@ -31,12 +31,12 @@ const bowl = (x: number[]) => x.reduce((acc, cur) => acc + Math.pow(cur, 2), 0)
 const bowlStarting: number[][] = []
 const bowlDim = 20
 for (let i = 0; i < 10; i++) {
-  bowlStarting.push([...Array(bowlDim)].map((_) => Math.random() * bowlDim))
+  bowlStarting.push([...Array(bowlDim)].map(() => Math.random() * bowlDim))
 }
 test.each(bowlStarting)('particle optimise bowl function', (...starting) => {
   const res = particleOptimise(
     starting,
-    [...Array(bowlDim)].map((_) => ({})),
+    [...Array(bowlDim)].map(() => ({})),
     bowl
   )
   expect(res.finalVals.reduce((a, b) => a + b, 0)).toBeCloseTo(0, -1)
@@ -47,7 +47,7 @@ test.each(bowlStarting)('particle optimise bowl function', (...starting) => {
 test.each(bowlStarting)('genetic optimise bowl function', (...starting) => {
   const res = geneticOptimise(
     starting,
-    [...Array(bowlDim)].map((_) => ({})),
+    [...Array(bowlDim)].map(() => ({})),
     bowl
   )
   expect(res.finalVals.reduce((a, b) => a + b, 0)).toBeCloseTo(0, -1)
@@ -58,7 +58,7 @@ test.each(bowlStarting)('genetic optimise bowl function', (...starting) => {
 test.each(bowlStarting)('gradient optimise bowl function', (...starting) => {
   const res = gradientOptimise(
     starting,
-    [...Array(bowlDim)].map((_) => ({})),
+    [...Array(bowlDim)].map(() => ({})),
     bowl
   )
   expect(res.finalVals.reduce((a, b) => a + b, 0)).toBeCloseTo(0, -1)

@@ -3,8 +3,7 @@ import {
   CommandParameterUnion,
   CommandParams,
   DialectCommandDescription,
-  MissionCommand,
-  RFCommand
+  MissionCommand
 } from './command'
 import { objectKeys } from '@libs/util/types'
 import { LatLng, LatLngAlt } from '@libs/world/latlng'

@@ -17,7 +17,7 @@ test('make command RF.Waypoint', () => {
   expect(a.frame).toBe(0)
   expect(a.params.latitude).toBe(0)
   expect(a.params.longitude).toBe(0)
-  expect(a.params.altitude).toBe(0)
+  expect(a.params.altitude).toBe(100)
 })
 
 test('make command RF.Waypoint', () => {
@@ -26,5 +26,5 @@ test('make command RF.Waypoint', () => {
   expect(a.frame).toBe(0)
   expect(a.params.latitude).toBe(52)
   expect(a.params.longitude).toBe(-3)
-  expect(a.params.altitude).toBe(0)
+  expect(a.params.altitude).toBe(100)
 })

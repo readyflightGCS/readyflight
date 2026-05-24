@@ -1,5 +1,5 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+
 /*
 The MCU status, giving MCU temperature and voltage. The min and max voltages are to allow for detecting power supply instability.
 */

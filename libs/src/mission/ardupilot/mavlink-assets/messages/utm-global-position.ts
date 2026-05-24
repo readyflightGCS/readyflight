@@ -1,5 +1,5 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+
 import { UtmFlightState } from '../enums/utm-flight-state'
 import { UtmDataAvailFlags } from '../enums/utm-data-avail-flags'
 /*

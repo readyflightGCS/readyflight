@@ -1,5 +1,5 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+
 import { StorageStatus } from '../enums/storage-status'
 import { StorageType } from '../enums/storage-type'
 import { StorageUsageFlag } from '../enums/storage-usage-flag'

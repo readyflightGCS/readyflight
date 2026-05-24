@@ -94,9 +94,12 @@ function crossover(a: populi, b: populi): number[] {
 function mutate(a: populi, bounds: bound[]): number[] {
   const newVal = [...a.vals]
   for (let i = 0; i < a.vals.length; i++) {
-    if (Math.random() < 0.2) {
+    const val = Math.random()
+    if (val < 0.2) {
+      // random wander
       newVal[i] += (Math.random() - 0.5) * 10
-    } else if (Math.random() < 0.2) {
+    } else if (val < 0.24) {
+      // flip 180 degrees
       const curBound = bounds[i]
       if (curBound.circular) {
         if (curBound.min != undefined && curBound.max != undefined) {

@@ -1,6 +1,6 @@
 import { RFCommandDescription } from './readyflightCommands'
 
-type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
+export type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
 
 // #########################################
 // #          Command Description          #

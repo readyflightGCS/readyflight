@@ -1,5 +1,5 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
+
 import { AirlinkAuthResponseType } from '../enums/airlink-auth-response-type'
 /*
 Response to the authorization request

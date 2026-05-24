@@ -1,5 +1,4 @@
 import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
-import { readInt64LE, readUInt64LE } from '@ifrunistuttgart/node-mavlink'
 import { PidTuningAxis } from '../enums/pid-tuning-axis'
 /*
 Adaptive Controller tuning information.

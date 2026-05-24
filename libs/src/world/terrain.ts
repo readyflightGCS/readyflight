@@ -32,7 +32,7 @@ const offset = 1 / 10 ** TERRAIN_RES
  * @param store Backing store object or API
  * @returns An array of values corresponding to the requested keys
  */
-function getMany(keys: string[], store: any) {
+function getMany(keys: string[]) {
   const re = []
   for (let i = 0; i < keys.length; i++) {
     re.push(0)
@@ -171,7 +171,7 @@ export async function getTerrainFromStorage(
   if (locs.length === 0) return { locs: [], nf: [] }
 
   const keys = locs.map((loc) => `${loc.lat},${loc.lng}`)
-  const res = await getMany(keys, terStore)
+  const res = await getMany(keys)
 
   const elev: LatLngAlt[] = []
   const nf: LatLng[] = []
