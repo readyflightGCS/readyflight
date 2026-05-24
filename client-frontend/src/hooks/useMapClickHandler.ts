@@ -2,9 +2,9 @@ import type { LeafletMouseEvent } from 'leaflet'
 
 import { useEditor } from '@libs/stores/configurator'
 import { useMission } from '@libs/stores/mission'
-import { DialectCommandDescription, MissionCommand, RFCommand } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { avgLatLng } from '@libs/world/latlng'
-import { filterLatLngCmds, getCommandLocation } from '@libs/commands/helpers'
+import { filterLatLngCmds, getCommandLocation, makeCommand } from '@libs/commands/helpers'
 
 export function useMapClickHandler() {
   const currentTab = useEditor((s) => s.currentTab)
@@ -22,43 +22,16 @@ export function useMapClickHandler() {
   return (e: LeafletMouseEvent) => {
     switch (currentTab) {
       case 'Mission': {
-        let cmd: RFCommand
         switch (tool) {
-          case 'land':
-            cmd = cmd || {
-              type: 'RF.Land',
-              frame: 0,
-              params: {
+          case 'land': {
+            const cmd = makeCommand(
+              'RF.Land',
+              {
                 latitude: e.latlng.lat,
-                longitude: e.latlng.lng,
-                altitude: 100,
-                "land mode": 0,
-                "yaw angle": 0,
-                "abort alt": 0
-              }
-            }
-          case 'takeoff':
-            cmd = cmd || {
-              type: 'RF.Takeoff',
-              frame: 0,
-              params: {
-                latitude: e.latlng.lat,
-                longitude: e.latlng.lng,
-                altitude: 100,
-                pitch: 10,
-                yaw: 0
-              }
-            }
-          case 'waypoint':
-            cmd = cmd || {
-              type: 'RF.Waypoint',
-              frame: 0,
-              params: {
-                latitude: e.latlng.lat,
-                longitude: e.latlng.lng,
-                altitude: 100,
-              }
-            }
+                longitude: e.latlng.lng
+              },
+              dialect
+            )
             const a = mission.clone()
             const newIndex = mission.get(selectedSubMission).length
             a.pushToMission(selectedSubMission, cmd)
@@ -66,38 +39,85 @@ export function useMapClickHandler() {
             setSelectedCommandIDs([newIndex])
             lastSelectedCommandIndex(newIndex)
             break
+          }
+
+          case 'takeoff': {
+            const cmd = makeCommand(
+              'RF.Takeoff',
+              {
+                latitude: e.latlng.lat,
+                longitude: e.latlng.lng
+              },
+              dialect
+            )
+            const a = mission.clone()
+            const newIndex = mission.get(selectedSubMission).length
+            a.pushToMission(selectedSubMission, cmd)
+            setMission(a)
+            setSelectedCommandIDs([newIndex])
+            lastSelectedCommandIndex(newIndex)
+            break
+          }
+          case 'waypoint': {
+            const cmd = makeCommand(
+              'RF.Waypoint',
+              {
+                latitude: e.latlng.lat,
+                longitude: e.latlng.lng
+              },
+              dialect
+            )
+            const a = mission.clone()
+            const newIndex = mission.get(selectedSubMission).length
+            a.pushToMission(selectedSubMission, cmd)
+            setMission(a)
+            setSelectedCommandIDs([newIndex])
+            lastSelectedCommandIndex(newIndex)
+            break
+          }
 
           case 'place': {
-            const subMission = mission.get(selectedSubMission);
+            const subMission = mission.get(selectedSubMission)
 
-            let wps: MissionCommand<DialectCommandDescription>[] = [];
-            let wpsIds: number[] = [];
+            let wps: MissionCommand<DialectCommandDescription>[] = []
+            let wpsIds: number[] = []
             if (selectedCommandIDs.length === 0) {
-              wps = subMission;
-              wpsIds = subMission.map((_, index) => index);
+              wps = subMission
+              wpsIds = subMission.map((_, index) => index)
             } else {
-              wps = subMission.filter((_, id) => selectedCommandIDs.includes(id));
-              wpsIds = selectedCommandIDs;
+              wps = subMission.filter((_, id) => selectedCommandIDs.includes(id))
+              wpsIds = selectedCommandIDs
             }
 
-            const leaves = wps.map((x) => mission.flattenNode(x)).reduce((cur, acc) => (acc.concat(cur)), [])
+            const leaves = wps
+              .map((x) => mission.flattenNode(x))
+              .reduce((cur, acc) => acc.concat(cur), [])
 
-            const avgll = avgLatLng(filterLatLngCmds(leaves, dialect).map((x) => getCommandLocation(x, dialect)))
-            if (avgll == undefined) { return mission }
+            const avgll = avgLatLng(
+              filterLatLngCmds(leaves, dialect).map((x) => getCommandLocation(x, dialect))
+            )
+            if (avgll == undefined) {
+              return mission
+            }
             const { lat, lng } = avgll
-            let waypointsUpdated = mission.clone();
+            const waypointsUpdated = mission.clone()
 
-            waypointsUpdated.changeManyParams(wpsIds, selectedSubMission, (cmd) => {
-              if ("latitude" in cmd.params && "longitude" in cmd.params) {
-                cmd.params.latitude += e.latlng.lat - lat
-                cmd.params.longitude += e.latlng.lng - lng
-              }
-              return cmd;
-            }, true);
+            waypointsUpdated.changeManyParams(
+              wpsIds,
+              selectedSubMission,
+              (cmd) => {
+                if ('latitude' in cmd.params && 'longitude' in cmd.params) {
+                  cmd.params.latitude += e.latlng.lat - lat
+                  cmd.params.longitude += e.latlng.lng - lng
+                }
+                return cmd
+              },
+              true
+            )
             setMission(waypointsUpdated)
           }
         }
-        setTool("waypoint")
+        setTool('waypoint')
         break
       }
 

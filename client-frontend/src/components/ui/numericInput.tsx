@@ -18,7 +18,7 @@ export default function NumericInput({
   className = 'w-40',
   min = -Infinity,
   max = Infinity,
-  step = 1,
+  step = 1
 }: NumericInputProps) {
   const [textValue, setTextValue] = useState<string>(
     externalValue == null ? '' : String(externalValue)
@@ -37,7 +37,9 @@ export default function NumericInput({
   // actively editing or dragging.
   useEffect(() => {
     if (isEditing || isDragging) return
-    setTextValue(externalValue == null ? '' : String(externalValue))
+    const next = externalValue == null ? '' : String(externalValue)
+    /* eslint-disable */
+    setTextValue((prev) => (prev === next ? prev : next))
     lastValueRef.current = externalValue ?? 0
   }, [externalValue, isEditing, isDragging])
 

@@ -14,7 +14,7 @@ export default function CommandList() {
   const dialect = useMission((s) => s.dialect)
   const setMission = useMission((s) => s.setMission)
   const selectedSubMission = useMission((s) => s.selectedSubMission)
-  const setTool = useEditor(s => s.setTool)
+  const setTool = useEditor((s) => s.setTool)
 
   const curMission = mission.get(selectedSubMission)
 
@@ -71,13 +71,13 @@ export default function CommandList() {
 
   const missionWithDubinsGroups: (
     | {
-      type: 'cmd'
-      cmd: MissionCommand<DialectCommandDescription>
-    }
+        type: 'cmd'
+        cmd: MissionCommand<DialectCommandDescription>
+      }
     | {
-      type: 'dubins'
-      cmds: MissionCommand<DialectCommandDescription>[]
-    }
+        type: 'dubins'
+        cmds: MissionCommand<DialectCommandDescription>[]
+      }
   )[] = []
 
   let curDubinsPath = []

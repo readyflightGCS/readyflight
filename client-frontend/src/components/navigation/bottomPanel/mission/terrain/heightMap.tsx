@@ -51,7 +51,9 @@ export default function HeightMap() {
 
   const curMission = mission.get(selectedSubMission)
   const wps = mission.flatten(selectedSubMission)
-  const wpsLocs = wps.map((x) => getCommandLocationAlt(x, dialect)).filter((x) => x !== undefined && x !== null)
+  const wpsLocs = wps
+    .map((x) => getCommandLocationAlt(x, dialect))
+    .filter((x) => x !== undefined && x !== null)
 
   // Get new terrain data throttled
   useEffect(() => {
@@ -132,7 +134,7 @@ export default function HeightMap() {
   const altVal = altAllSame ? altValues[0] : undefined
 
   // update in change if altitude
-  function onChange(event: { target: { name: string; value: number, delta: number } }) {
+  function onChange(event: { target: { name: string; value: number; delta: number } }) {
     const newWps = mission.clone()
     newWps.changeManyParams(
       selectedCommandIDs.length === 0 ? curMission.map((_, i) => i) : selectedCommandIDs,

@@ -50,12 +50,10 @@ export default function ParamEditor() {
     }
 
     // get initial parameter names from the first command selected
-    let a = getCommandDescription(cmdTypes[0], dialect).parameters
     let commonCmdParams = new Set(
       getCommandDescription(cmdTypes[0], dialect)
-        .parameters.filter(paramDesc => paramDesc?.parameterType === "number").map(paramDesc =>
-          paramDesc.label.toLowerCase()
-        )
+        .parameters.filter((paramDesc) => paramDesc?.parameterType === 'number')
+        .map((paramDesc) => paramDesc.label.toLowerCase())
         .filter((x) => x !== undefined)
     )
 
@@ -63,9 +61,8 @@ export default function ParamEditor() {
     for (let i = 1; i < cmdTypes.length; i++) {
       const nextParams = new Set(
         getCommandDescription(cmdTypes[i], dialect)
-          .parameters.filter(paramDesc => paramDesc?.parameterType === "number").map(paramDesc =>
-            paramDesc.label.toLowerCase()
-          )
+          .parameters.filter((paramDesc) => paramDesc?.parameterType === 'number')
+          .map((paramDesc) => paramDesc.label.toLowerCase())
           .filter((x) => x !== undefined)
       )
 
@@ -73,20 +70,21 @@ export default function ParamEditor() {
       commonCmdParams = new Set(Array.from(nextParams).filter((i) => nextParams.has(i)))
     }
 
-
-
     return getCommandDescription(cmdTypes[0], dialect)
-      .parameters.filter(x => x?.parameterType === "number" && commonCmdParams.has(x.label.toLowerCase())).map((x) => ({
+      .parameters.filter(
+        (x) => x?.parameterType === 'number' && commonCmdParams.has(x.label.toLowerCase())
+      )
+      .map((x) => ({
         name: x?.label?.toLowerCase(),
         min: x.minValue,
         max: x.maxValue,
         step: x.increment
-      })
-      )
+      }))
   }
 
   const selectedCommandTypes = new Set(selected.map((x) => x.type))
-  const params: { name: string, min: number | null, max: number | null, step: number | null }[] = findCommonParamsForTypes(selectedCommandTypes)
+  const params: { name: string; min: number | null; max: number | null; step: number | null }[] =
+    findCommonParamsForTypes(selectedCommandTypes)
 
   // as we want to be able to edit the parameters of several commands at once,
   // we need to compare all commands with the same parameter to see if they are
@@ -103,7 +101,9 @@ export default function ParamEditor() {
     parameterValues[param.name] = allSame ? values[0] : null
   }
 
-  function onParameterValueChange(event: { target: { name: string; value: number, delta: number } }) {
+  function onParameterValueChange(event: {
+    target: { name: string; value: number; delta: number }
+  }) {
     const tmp = mission.clone()
     tmp.changeManyParams(
       selectedCommandIDs.length === 0 ? curMission.map((_, i) => i) : selectedCommandIDs,

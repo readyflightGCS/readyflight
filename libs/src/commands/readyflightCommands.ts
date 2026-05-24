@@ -59,7 +59,7 @@ export const RFCommandDescription = [{
     minValue: null,
     maxValue: null,
     increment: null,
-    default: 1000,
+    default: 100,
     options: [],
   }, {
     parameterType: "number",
@@ -143,7 +143,7 @@ export const RFCommandDescription = [{
     minValue: null,
     maxValue: null,
     increment: null,
-    default: null,
+    default: 100,
     options: [],
   }],
 }, {
@@ -181,7 +181,7 @@ export const RFCommandDescription = [{
     minValue: null,
     maxValue: null,
     increment: null,
-    default: null,
+    default: 100,
     options: [],
   }, {
     parameterType: "number",
@@ -191,7 +191,7 @@ export const RFCommandDescription = [{
     minValue: -90,
     maxValue: 90,
     increment: null,
-    default: null,
+    default: 15,
     options: [],
   }, {
     parameterType: "number",
@@ -201,7 +201,7 @@ export const RFCommandDescription = [{
     minValue: 0,
     maxValue: 360,
     increment: null,
-    default: null,
+    default: 0,
     options: [],
   }],
 }, {
@@ -239,7 +239,7 @@ export const RFCommandDescription = [{
     minValue: null,
     maxValue: null,
     increment: null,
-    default: null,
+    default: 0,
     options: [],
   }, {
     parameterType: "number",
@@ -294,10 +294,10 @@ export const RFCommandDescription = [{
     label: "PWM",
     description: "Pulse Width Modulation.",
     units: "us",
-    minValue: 0,
-    maxValue: null,
+    minValue: 1000,
+    maxValue: 2000,
     increment: 1,
-    default: null,
+    default: 1000,
     options: [],
   }],
 }

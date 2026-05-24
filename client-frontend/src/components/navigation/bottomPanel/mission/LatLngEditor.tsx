@@ -1,17 +1,11 @@
 import { useMission } from '@libs/stores/mission'
 import { filterLatLngCmds, getCommandLocation } from '@libs/commands/helpers'
 import { avgLatLng } from '@libs/world/latlng'
-import {
-  LocateFixed,
-  MousePointerClick,
-  RotateCcw,
-  RotateCw
-} from 'lucide-react'
+import { LocateFixed, MousePointerClick, RotateCcw, RotateCw } from 'lucide-react'
 import { useEditor } from '@libs/stores/configurator'
 
 export function LatLngEditor() {
-  const { mission, setMission, selectedSubMission, selectedCommandIDs, dialect } =
-    useMission()
+  const { mission, setMission, selectedSubMission, selectedCommandIDs, dialect } = useMission()
   const { setTool } = useEditor()
 
   const curMission = mission.get(selectedSubMission)
@@ -149,7 +143,10 @@ export function LatLngEditor() {
                 <RotateCcw className="h-5 w-5 inline" />
               </button>
               <span className="w-[2px] bg-input h-full bg-border" />
-              <button onMouseDown={rotate} className="flex-grow text-center text-sm bg-muted cursor-pointer">
+              <button
+                onMouseDown={rotate}
+                className="flex-grow text-center text-sm bg-muted cursor-pointer"
+              >
                 Rotate
               </button>
               <span className="w-[2px] bg-input h-full bg-border" />

@@ -20,7 +20,15 @@ export default function Parameter({
     <div className="p-2">
       <label>
         <span className="block">{capitalise(name)}</span>
-        <NumericInput className="w-40 border-input" name={name} onChange={onChange} value={value} min={min} max={max} step={step} />
+        <NumericInput
+          className="w-40 border-input"
+          name={name}
+          onChange={onChange}
+          value={value}
+          min={min}
+          max={max}
+          step={step}
+        />
       </label>
     </div>
   )
