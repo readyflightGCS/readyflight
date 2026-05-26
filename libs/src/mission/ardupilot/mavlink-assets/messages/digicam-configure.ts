@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Configure on-board Camera Control System.
 */
@@ -15,31 +15,31 @@ Configure on-board Camera Control System.
 // extra_param Extra parameters enumeration (0 means ignore). uint8_t
 // extra_value Correspondent value to given extra_param. float
 export class DigicamConfigure extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public mode!: number;
-	public shutter_speed!: number;
-	public aperture!: number;
-	public iso!: number;
-	public exposure_type!: number;
-	public command_id!: number;
-	public engine_cut_off!: number;
-	public extra_param!: number;
-	public extra_value!: number;
-	public _message_id: number = 154;
-	public _message_name: string = 'DIGICAM_CONFIGURE';
-	public _crc_extra: number = 84;
-	public _message_fields: [string, string, boolean][] = [
-		['extra_value', 'float', false],
-		['shutter_speed', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['mode', 'uint8_t', false],
-		['aperture', 'uint8_t', false],
-		['iso', 'uint8_t', false],
-		['exposure_type', 'uint8_t', false],
-		['command_id', 'uint8_t', false],
-		['engine_cut_off', 'uint8_t', false],
-		['extra_param', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public mode!: number
+  public shutter_speed!: number
+  public aperture!: number
+  public iso!: number
+  public exposure_type!: number
+  public command_id!: number
+  public engine_cut_off!: number
+  public extra_param!: number
+  public extra_value!: number
+  public _message_id: number = 154
+  public _message_name: string = 'DIGICAM_CONFIGURE'
+  public _crc_extra: number = 84
+  public _message_fields: [string, string, boolean][] = [
+    ['extra_value', 'float', false],
+    ['shutter_speed', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['mode', 'uint8_t', false],
+    ['aperture', 'uint8_t', false],
+    ['iso', 'uint8_t', false],
+    ['exposure_type', 'uint8_t', false],
+    ['command_id', 'uint8_t', false],
+    ['engine_cut_off', 'uint8_t', false],
+    ['extra_param', 'uint8_t', false]
+  ]
 }

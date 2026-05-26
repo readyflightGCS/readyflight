@@ -1,5 +1,5 @@
-import { XY } from "@libs/math/types"
-import { LatLng } from "@libs/world/latlng"
+import { XY } from '@libs/math/types'
+import { LatLng } from '@libs/world/latlng'
 
 /**
  * Represents a bound constraint with minimum and maximum values.
@@ -9,8 +9,8 @@ import { LatLng } from "@libs/world/latlng"
  * @property {boolean} [circular] - Indicates whether the bound wraps around circularly (optional).
  */
 export type bound = {
-  min?: number,
-  max?: number,
+  min?: number
+  max?: number
   circular?: boolean
 }
 
@@ -25,10 +25,10 @@ export type bound = {
  * @property {number} passbyRadius - The radius for passing near this point
  */
 export type dubinsPoint = {
-  tunable: boolean,
-  pos: XY,
-  radius: number,
-  bounds: bound,
+  tunable: boolean
+  pos: XY
+  radius: number
+  bounds: bound
   heading: number // degrees
   passbyRadius: number
 }
@@ -43,10 +43,10 @@ export type dubinsPoint = {
  * @property {number} theta - The angular span of the arc in radians.
  */
 export type Curve<S = XY | LatLng> = {
-  type: "Curve"
-  center: S,
-  radius: number,
-  start: number, // Radians
+  type: 'Curve'
+  center: S
+  radius: number
+  start: number // Radians
   theta: number // Radians
 }
 
@@ -58,8 +58,8 @@ export type Curve<S = XY | LatLng> = {
  * @property {S} end - The ending point of the straight line segment.
  */
 export type Straight<S = XY | LatLng> = {
-  type: "Straight"
-  start: S,
+  type: 'Straight'
+  start: S
   end: S
 }
 
@@ -72,9 +72,9 @@ export type Segment<S = XY | LatLng> = Curve<S> | Straight<S>
 /**
  * Represents a Dubins path consisting of two circular turns and a straight line segment.
  * This is a common path type in trajectory planning for vehicles with bounded curvature.
- * 
+ *
  * @template S - The coordinate system type. Defaults to either Cartesian (XY) or geographic (LatLng) coordinates.
- * 
+ *
  * @property {Curve<S>} turnA - The initial circular turn segment.
  * @property {Straight<S>} straight - The straight line segment connecting the two turns.
  * @property {Curve<S>} turnB - The final circular turn segment.

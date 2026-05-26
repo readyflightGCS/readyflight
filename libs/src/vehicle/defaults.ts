@@ -10,7 +10,7 @@
  * @packageDocumentation
  */
 
-import { Copter, Plane } from "./types"
+import { Copter, Plane } from './types'
 
 /**
  * Baseline configuration for a fixed‑wing aircraft.
@@ -23,7 +23,7 @@ import { Copter, Plane } from "./types"
  * @property energyConstant Scalar used in energy‑based manoeuvre calculations.
  */
 export const defaultPlane: Plane = {
-  type: "Plane",
+  type: 'Plane',
   cruiseAirspeed: 17,
   maxBank: 30,
   energyConstant: 17
@@ -37,5 +37,5 @@ export const defaultPlane: Plane = {
  * @property type Identifies the vehicle as a `"Copter"`.
  */
 export const defaultCopter: Copter = {
-  type: "Copter",
+  type: 'Copter'
 }

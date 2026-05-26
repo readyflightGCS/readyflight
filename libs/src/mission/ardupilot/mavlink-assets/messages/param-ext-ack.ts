@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavParamExtType} from '../enums/mav-param-ext-type';
-import {ParamAck} from '../enums/param-ack';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavParamExtType } from '../enums/mav-param-ext-type'
+import { ParamAck } from '../enums/param-ack'
 /*
 Response from a PARAM_EXT_SET message.
 */
@@ -10,17 +10,17 @@ Response from a PARAM_EXT_SET message.
 // param_type Parameter type. uint8_t
 // param_result Result code. uint8_t
 export class ParamExtAck extends MAVLinkMessage {
-	public param_id!: string;
-	public param_value!: string;
-	public param_type!: MavParamExtType;
-	public param_result!: ParamAck;
-	public _message_id: number = 324;
-	public _message_name: string = 'PARAM_EXT_ACK';
-	public _crc_extra: number = 132;
-	public _message_fields: [string, string, boolean][] = [
-		['param_id', 'char', false],
-		['param_value', 'char', false],
-		['param_type', 'uint8_t', false],
-		['param_result', 'uint8_t', false],
-	];
+  public param_id!: string
+  public param_value!: string
+  public param_type!: MavParamExtType
+  public param_result!: ParamAck
+  public _message_id: number = 324
+  public _message_name: string = 'PARAM_EXT_ACK'
+  public _crc_extra: number = 132
+  public _message_fields: [string, string, boolean][] = [
+    ['param_id', 'char', false],
+    ['param_value', 'char', false],
+    ['param_type', 'uint8_t', false],
+    ['param_result', 'uint8_t', false]
+  ]
 }

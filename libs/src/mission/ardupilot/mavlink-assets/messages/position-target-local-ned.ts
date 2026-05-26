@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFrame} from '../enums/mav-frame';
-import {PositionTargetTypemask} from '../enums/position-target-typemask';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavFrame } from '../enums/mav-frame'
+import { PositionTargetTypemask } from '../enums/position-target-typemask'
 /*
 Reports the current commanded vehicle position, velocity, and acceleration as specified by the autopilot. This should match the commands sent in SET_POSITION_TARGET_LOCAL_NED if the vehicle is being controlled this way.
 */
@@ -20,37 +20,37 @@ Reports the current commanded vehicle position, velocity, and acceleration as sp
 // yaw yaw setpoint float
 // yaw_rate yaw rate setpoint float
 export class PositionTargetLocalNed extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public coordinate_frame!: MavFrame;
-	public type_mask!: PositionTargetTypemask;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public vx!: number;
-	public vy!: number;
-	public vz!: number;
-	public afx!: number;
-	public afy!: number;
-	public afz!: number;
-	public yaw!: number;
-	public yaw_rate!: number;
-	public _message_id: number = 85;
-	public _message_name: string = 'POSITION_TARGET_LOCAL_NED';
-	public _crc_extra: number = 140;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['x', 'float', false],
-		['y', 'float', false],
-		['z', 'float', false],
-		['vx', 'float', false],
-		['vy', 'float', false],
-		['vz', 'float', false],
-		['afx', 'float', false],
-		['afy', 'float', false],
-		['afz', 'float', false],
-		['yaw', 'float', false],
-		['yaw_rate', 'float', false],
-		['type_mask', 'uint16_t', false],
-		['coordinate_frame', 'uint8_t', false],
-	];
+  public time_boot_ms!: number
+  public coordinate_frame!: MavFrame
+  public type_mask!: PositionTargetTypemask
+  public x!: number
+  public y!: number
+  public z!: number
+  public vx!: number
+  public vy!: number
+  public vz!: number
+  public afx!: number
+  public afy!: number
+  public afz!: number
+  public yaw!: number
+  public yaw_rate!: number
+  public _message_id: number = 85
+  public _message_name: string = 'POSITION_TARGET_LOCAL_NED'
+  public _crc_extra: number = 140
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['x', 'float', false],
+    ['y', 'float', false],
+    ['z', 'float', false],
+    ['vx', 'float', false],
+    ['vy', 'float', false],
+    ['vz', 'float', false],
+    ['afx', 'float', false],
+    ['afy', 'float', false],
+    ['afz', 'float', false],
+    ['yaw', 'float', false],
+    ['yaw_rate', 'float', false],
+    ['type_mask', 'uint16_t', false],
+    ['coordinate_frame', 'uint8_t', false]
+  ]
 }

@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Wind estimate from vehicle. Note that despite the name, this message does not actually contain any covariances but instead variability and accuracy fields in terms of standard deviation (1-STD).
 */
@@ -13,27 +13,27 @@ Wind estimate from vehicle. Note that despite the name, this message does not ac
 // horiz_accuracy Horizontal speed 1-STD accuracy (0 if unknown) float
 // vert_accuracy Vertical speed 1-STD accuracy (0 if unknown) float
 export class WindCov extends MAVLinkMessage {
-	public time_usec!: number;
-	public wind_x!: number;
-	public wind_y!: number;
-	public wind_z!: number;
-	public var_horiz!: number;
-	public var_vert!: number;
-	public wind_alt!: number;
-	public horiz_accuracy!: number;
-	public vert_accuracy!: number;
-	public _message_id: number = 231;
-	public _message_name: string = 'WIND_COV';
-	public _crc_extra: number = 105;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['wind_x', 'float', false],
-		['wind_y', 'float', false],
-		['wind_z', 'float', false],
-		['var_horiz', 'float', false],
-		['var_vert', 'float', false],
-		['wind_alt', 'float', false],
-		['horiz_accuracy', 'float', false],
-		['vert_accuracy', 'float', false],
-	];
+  public time_usec!: number
+  public wind_x!: number
+  public wind_y!: number
+  public wind_z!: number
+  public var_horiz!: number
+  public var_vert!: number
+  public wind_alt!: number
+  public horiz_accuracy!: number
+  public vert_accuracy!: number
+  public _message_id: number = 231
+  public _message_name: string = 'WIND_COV'
+  public _crc_extra: number = 105
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['wind_x', 'float', false],
+    ['wind_y', 'float', false],
+    ['wind_z', 'float', false],
+    ['var_horiz', 'float', false],
+    ['var_vert', 'float', false],
+    ['wind_alt', 'float', false],
+    ['horiz_accuracy', 'float', false],
+    ['vert_accuracy', 'float', false]
+  ]
 }

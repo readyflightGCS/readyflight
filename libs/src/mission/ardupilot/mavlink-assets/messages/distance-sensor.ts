@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavDistanceSensor} from '../enums/mav-distance-sensor';
-import {MavSensorOrientation} from '../enums/mav-sensor-orientation';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavDistanceSensor } from '../enums/mav-distance-sensor'
+import { MavSensorOrientation } from '../enums/mav-sensor-orientation'
 /*
 Distance sensor information for an onboard rangefinder.
 */
@@ -18,33 +18,33 @@ Distance sensor information for an onboard rangefinder.
 // quaternion Quaternion of the sensor orientation in vehicle body frame (w, x, y, z order, zero-rotation is 1, 0, 0, 0). Zero-rotation is along the vehicle body x-axis. This field is required if the orientation is set to MAV_SENSOR_ROTATION_CUSTOM. Set it to 0 if invalid." float
 // signal_quality Signal quality of the sensor. Specific to each sensor type, representing the relation of the signal strength with the target reflectivity, distance, size or aspect, but normalised as a percentage. 0 = unknown/unset signal quality, 1 = invalid signal, 100 = perfect signal. uint8_t
 export class DistanceSensor extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public min_distance!: number;
-	public max_distance!: number;
-	public current_distance!: number;
-	public type!: MavDistanceSensor;
-	public id!: number;
-	public orientation!: MavSensorOrientation;
-	public covariance!: number;
-	public horizontal_fov!: number;
-	public vertical_fov!: number;
-	public quaternion!: number;
-	public signal_quality!: number;
-	public _message_id: number = 132;
-	public _message_name: string = 'DISTANCE_SENSOR';
-	public _crc_extra: number = 85;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['min_distance', 'uint16_t', false],
-		['max_distance', 'uint16_t', false],
-		['current_distance', 'uint16_t', false],
-		['type', 'uint8_t', false],
-		['id', 'uint8_t', false],
-		['orientation', 'uint8_t', false],
-		['covariance', 'uint8_t', false],
-		['horizontal_fov', 'float', true],
-		['vertical_fov', 'float', true],
-		['quaternion', 'float', true],
-		['signal_quality', 'uint8_t', true],
-	];
+  public time_boot_ms!: number
+  public min_distance!: number
+  public max_distance!: number
+  public current_distance!: number
+  public type!: MavDistanceSensor
+  public id!: number
+  public orientation!: MavSensorOrientation
+  public covariance!: number
+  public horizontal_fov!: number
+  public vertical_fov!: number
+  public quaternion!: number
+  public signal_quality!: number
+  public _message_id: number = 132
+  public _message_name: string = 'DISTANCE_SENSOR'
+  public _crc_extra: number = 85
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['min_distance', 'uint16_t', false],
+    ['max_distance', 'uint16_t', false],
+    ['current_distance', 'uint16_t', false],
+    ['type', 'uint8_t', false],
+    ['id', 'uint8_t', false],
+    ['orientation', 'uint8_t', false],
+    ['covariance', 'uint8_t', false],
+    ['horizontal_fov', 'float', true],
+    ['vertical_fov', 'float', true],
+    ['quaternion', 'float', true],
+    ['signal_quality', 'uint8_t', true]
+  ]
 }

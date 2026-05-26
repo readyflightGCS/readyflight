@@ -30,5 +30,9 @@ export class MAVLinkMessage {
 
 // The generated files import these helpers but never call them in a browser
 // context (our DataView-based decoder handles 64-bit fields directly).
-export function readInt64LE(_buffer: unknown, _offset?: number): number { return 0 }
-export function readUInt64LE(_buffer: unknown, _offset?: number): number { return 0 }
+export function readInt64LE(_buffer: unknown, _offset?: number): number {
+  return 0
+}
+export function readUInt64LE(_buffer: unknown, _offset?: number): number {
+  return 0
+}

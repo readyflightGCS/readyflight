@@ -45,19 +45,32 @@ function writeField(view: DataView, offset: number, type: string, value: number)
 
 function fieldSize(type: string): number {
   switch (type) {
-    case 'uint8_t': case 'int8_t': case 'uint8_t_mavlink_version': return 1
-    case 'uint16_t': case 'int16_t': return 2
-    case 'uint32_t': case 'int32_t': case 'float': return 4
-    case 'double': case 'uint64_t': case 'int64_t': return 8
-    default: return 0
+    case 'uint8_t':
+    case 'int8_t':
+    case 'uint8_t_mavlink_version':
+      return 1
+    case 'uint16_t':
+    case 'int16_t':
+      return 2
+    case 'uint32_t':
+    case 'int32_t':
+    case 'float':
+      return 4
+    case 'double':
+    case 'uint64_t':
+    case 'int64_t':
+      return 8
+    default:
+      return 0
   }
 }
 
 function serializePayload(msg: MAVLinkMessage): Uint8Array {
   // Extension fields (isExtension === true) are a MAVLink 2 concept; omit them
   // when building a v1 frame so the payload length and CRC stay correct.
-  const fields = ((msg as any)._message_fields as [string, string, boolean][])
-    .filter(([, , isExt]) => !isExt)
+  const fields = (msg._message_fields as [string, string, boolean][]).filter(
+    ([, , isExt]) => !isExt
+  )
 
   const size = fields.reduce((acc, [, type]) => acc + fieldSize(type), 0)
   const buf = new ArrayBuffer(size)
@@ -65,7 +78,7 @@ function serializePayload(msg: MAVLinkMessage): Uint8Array {
   let offset = 0
 
   for (const [name, type] of fields) {
-    const value: number = (msg as any)[name] ?? 0
+    const value: number = msg[name] ?? 0
     offset += writeField(view, offset, type, value)
   }
 
@@ -82,9 +95,9 @@ function serializePayload(msg: MAVLinkMessage): Uint8Array {
 
 /** X.25 CRC — same algorithm ArduPilot uses for MAVLink checksums. */
 function crcAccumulate(b: number, crc: number): number {
-  let tmp = (b ^ (crc & 0xFF)) & 0xFF
-  tmp = (tmp ^ (tmp << 4)) & 0xFF
-  return ((crc >> 8) ^ (tmp << 8) ^ (tmp << 3) ^ (tmp >> 4)) & 0xFFFF
+  let tmp = (b ^ (crc & 0xff)) & 0xff
+  tmp = (tmp ^ (tmp << 4)) & 0xff
+  return ((crc >> 8) ^ (tmp << 8) ^ (tmp << 3) ^ (tmp >> 4)) & 0xffff
 }
 
 function mavlinkCrc(
@@ -99,7 +112,7 @@ function mavlinkCrc(
   crcExtra: number
 ): number {
   // CRC covers bytes 1–5 of the header (LEN, SEQ, SYS, COMP, MSGID) + payload + crc_extra.
-  let crc = 0xFFFF
+  let crc = 0xffff
   crc = crcAccumulate(payloadLen, crc)
   crc = crcAccumulate(incFlags, crc)
   crc = crcAccumulate(cmpFlags, crc)
@@ -121,26 +134,26 @@ function mavlinkCrc(
  */
 export function encodePacket(msg: MAVLinkMessage): ArrayBuffer {
   const payload = serializePayload(msg)
-  const seq = sequence++ & 0xFF
-  const msgid: number = (msg as any)._message_id
-  const crcExtra: number = (msg as any)._crc_extra
+  const seq = sequence++ & 0xff
+  const msgid: number = msg._message_id
+  const crcExtra: number = msg._crc_extra
 
   const crc = mavlinkCrc(payload.length, 0, 0, seq, GCS_SYSID, GCS_COMPID, msgid, payload, crcExtra)
 
   const frame = new Uint8Array(10 + payload.length + 2)
-  frame[0] = 0xFD              // STX
-  frame[1] = payload.length    // LEN
-  frame[2] = 0                 // LEN
-  frame[3] = 0                 // LEN
-  frame[4] = seq               // SEQ
-  frame[5] = GCS_SYSID         // SYS
-  frame[6] = GCS_COMPID        // COMP
-  frame[7] = msgid & 0xFF      // MSGID
-  frame[8] = (msgid >> 8) & 0xFF            // MSGID
-  frame[9] = (msgid >> 16) & 0xFF             // MSGID
+  frame[0] = 0xfd // STX
+  frame[1] = payload.length // LEN
+  frame[2] = 0 // LEN
+  frame[3] = 0 // LEN
+  frame[4] = seq // SEQ
+  frame[5] = GCS_SYSID // SYS
+  frame[6] = GCS_COMPID // COMP
+  frame[7] = msgid & 0xff // MSGID
+  frame[8] = (msgid >> 8) & 0xff // MSGID
+  frame[9] = (msgid >> 16) & 0xff // MSGID
   frame.set(payload, 10)
-  frame[10 + payload.length] = crc & 0xFF
-  frame[10 + payload.length + 1] = (crc >> 8) & 0xFF
+  frame[10 + payload.length] = crc & 0xff
+  frame[10 + payload.length + 1] = (crc >> 8) & 0xff
 
   return frame.buffer
 }

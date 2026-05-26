@@ -13,7 +13,6 @@ const isElectron = window.env?.isElectron === true
 
 export default function Settings() {
   const { setTheme } = useThemeStore()
-  console.log(__GIT_VERSION__)
   return (
     <div className="flex flex-col h-full justify-between">
       <div>

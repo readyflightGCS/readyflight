@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 EFI status output
 */
@@ -23,47 +23,47 @@ EFI status output
 // ignition_voltage Supply voltage to EFI sparking system.  Zero in this value means "unknown", so if the supply voltage really is zero volts use 0.0001 instead. float
 // fuel_pressure Fuel pressure. Zero in this value means "unknown", so if the fuel pressure really is zero kPa use 0.0001 instead. float
 export class EfiStatus extends MAVLinkMessage {
-	public health!: number;
-	public ecu_index!: number;
-	public rpm!: number;
-	public fuel_consumed!: number;
-	public fuel_flow!: number;
-	public engine_load!: number;
-	public throttle_position!: number;
-	public spark_dwell_time!: number;
-	public barometric_pressure!: number;
-	public intake_manifold_pressure!: number;
-	public intake_manifold_temperature!: number;
-	public cylinder_head_temperature!: number;
-	public ignition_timing!: number;
-	public injection_time!: number;
-	public exhaust_gas_temperature!: number;
-	public throttle_out!: number;
-	public pt_compensation!: number;
-	public ignition_voltage!: number;
-	public fuel_pressure!: number;
-	public _message_id: number = 225;
-	public _message_name: string = 'EFI_STATUS';
-	public _crc_extra: number = 208;
-	public _message_fields: [string, string, boolean][] = [
-		['ecu_index', 'float', false],
-		['rpm', 'float', false],
-		['fuel_consumed', 'float', false],
-		['fuel_flow', 'float', false],
-		['engine_load', 'float', false],
-		['throttle_position', 'float', false],
-		['spark_dwell_time', 'float', false],
-		['barometric_pressure', 'float', false],
-		['intake_manifold_pressure', 'float', false],
-		['intake_manifold_temperature', 'float', false],
-		['cylinder_head_temperature', 'float', false],
-		['ignition_timing', 'float', false],
-		['injection_time', 'float', false],
-		['exhaust_gas_temperature', 'float', false],
-		['throttle_out', 'float', false],
-		['pt_compensation', 'float', false],
-		['health', 'uint8_t', false],
-		['ignition_voltage', 'float', true],
-		['fuel_pressure', 'float', true],
-	];
+  public health!: number
+  public ecu_index!: number
+  public rpm!: number
+  public fuel_consumed!: number
+  public fuel_flow!: number
+  public engine_load!: number
+  public throttle_position!: number
+  public spark_dwell_time!: number
+  public barometric_pressure!: number
+  public intake_manifold_pressure!: number
+  public intake_manifold_temperature!: number
+  public cylinder_head_temperature!: number
+  public ignition_timing!: number
+  public injection_time!: number
+  public exhaust_gas_temperature!: number
+  public throttle_out!: number
+  public pt_compensation!: number
+  public ignition_voltage!: number
+  public fuel_pressure!: number
+  public _message_id: number = 225
+  public _message_name: string = 'EFI_STATUS'
+  public _crc_extra: number = 208
+  public _message_fields: [string, string, boolean][] = [
+    ['ecu_index', 'float', false],
+    ['rpm', 'float', false],
+    ['fuel_consumed', 'float', false],
+    ['fuel_flow', 'float', false],
+    ['engine_load', 'float', false],
+    ['throttle_position', 'float', false],
+    ['spark_dwell_time', 'float', false],
+    ['barometric_pressure', 'float', false],
+    ['intake_manifold_pressure', 'float', false],
+    ['intake_manifold_temperature', 'float', false],
+    ['cylinder_head_temperature', 'float', false],
+    ['ignition_timing', 'float', false],
+    ['injection_time', 'float', false],
+    ['exhaust_gas_temperature', 'float', false],
+    ['throttle_out', 'float', false],
+    ['pt_compensation', 'float', false],
+    ['health', 'uint8_t', false],
+    ['ignition_voltage', 'float', true],
+    ['fuel_pressure', 'float', true]
+  ]
 }

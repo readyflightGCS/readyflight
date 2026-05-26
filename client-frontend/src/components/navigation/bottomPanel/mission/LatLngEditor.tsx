@@ -1,20 +1,12 @@
 import { useMission } from '@libs/stores/mission'
 import { filterLatLngCmds, getCommandLocation } from '@libs/commands/helpers'
 import { avgLatLng } from '@libs/world/latlng'
-import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  ArrowUp,
-  LocateFixed,
-  MousePointerClick,
-  RotateCcw,
-  RotateCw
-} from 'lucide-react'
+import { LocateFixed, MousePointerClick, RotateCcw, RotateCw } from 'lucide-react'
+import { useEditor } from '@libs/stores/configurator'
 
 export function LatLngEditor() {
-  const { mission, setMission, selectedSubMission, selectedCommandIDs, setTool, dialect } =
-    useMission()
+  const { mission, setMission, selectedSubMission, selectedCommandIDs, dialect } = useMission()
+  const { setTool } = useEditor()
 
   const curMission = mission.get(selectedSubMission)
 
@@ -37,27 +29,6 @@ export function LatLngEditor() {
     return null
   }
   const { lat, lng } = avgll
-
-  function nudge(x: number, y: number) {
-    const temp = mission.clone()
-    temp.changeManyParams(
-      wpsIds,
-      selectedSubMission,
-      (cmd) => {
-        if (
-          'latitude' in cmd.params &&
-          typeof cmd.params.latitude == 'number' &&
-          typeof cmd.params.longitude == 'number'
-        ) {
-          cmd.params.latitude += 0.0001 * y
-          cmd.params.longitude += 0.0001 * x
-        }
-        return cmd
-      },
-      true
-    )
-    setMission(temp)
-  }
 
   function move() {
     const inLat = prompt('Enter latitude')
@@ -132,72 +103,26 @@ export function LatLngEditor() {
   }
 
   function place() {
-    setTool('Place')
+    setTool('place')
   }
 
   return (
     <>
       <div className="p-2">
         <label>
-          <span className="ml-[4px]">Latitude</span>
-          <div className="border-2 border-input rounded-lg w-40 flex overflow-hidden">
-            <button
-              onMouseDown={() => nudge(0, -1)}
-              className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
-            >
-              <ArrowDown className="h-5 w-5 inline" />
-            </button>
-            <span className="w-[2px] bg-input h-[100%] h-[21px]" />
-            <span className="flex-grow text-center">{lat.toFixed(6)}</span>
-            <span className="w-[2px] bg-input h-[100%] h-[21px]" />
-            <button
-              onMouseDown={() => nudge(0, 1)}
-              className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
-            >
-              <ArrowUp className="h-5 w-5 inline" />
-            </button>
-          </div>
-        </label>
-      </div>
-
-      <div className="p-2">
-        <label>
-          <span className="ml-[4px]">Longitude</span>
-          <div className="border-2 border-input rounded-lg w-40 flex overflow-hidden">
-            <button
-              onMouseDown={() => nudge(-1, 0)}
-              className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
-            >
-              <ArrowLeft className="h-5 w-5 inline" />
-            </button>
-            <span className="w-[2px] bg-input h-[100%] h-[21px]" />
-            <span className="flex-grow text-center">{lng.toFixed(6)}</span>
-            <span className="w-[2px] bg-input h-[100%] h-[21px]" />
-            <button
-              onMouseDown={() => nudge(1, 0)}
-              className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
-            >
-              <ArrowRight className="h-5 w-5 inline" />
-            </button>
-          </div>
-        </label>
-      </div>
-
-      <div className="p-2">
-        <label>
-          <span className="ml-[4px]"></span>
-          <div className="border-2 border-input rounded-lg w-40 overflow-hidden flex">
+          <span className="block">Move Commands</span>
+          <div className="border-2 border-input rounded-lg w-40 h-8 overflow-hidden flex text-sm">
             <button
               onMouseDown={move}
-              className="h-[21px] flex-grow bg-muted flex items-center justify-evenly"
+              className="flex-grow bg-muted flex items-center justify-evenly h-full cursor-pointer"
             >
               <LocateFixed className="h-5 w-5 inline" />
               Move
             </button>
-            <span className="w-[2px] bg-input h-[100%] h-[21px]" />
+            <span className="w-[2px] bg-border h-[100%] h-full" />
             <button
               onMouseDown={place}
-              className="h-[21px] flex-grow bg-muted flex items-center justify-evenly"
+              className="flex-grow bg-muted flex items-center justify-evenly h-full cursor-pointer"
             >
               <MousePointerClick className="w-5 h-5 inline" />
               Place
@@ -209,22 +134,25 @@ export function LatLngEditor() {
       {selectedCommandIDs.length == 0 || selectedCommandIDs.length > 1 ? (
         <div className="p-2">
           <label>
-            <span className="ml-[4px]"></span>
-            <div className="border-2 border-input rounded-lg w-40 flex overflow-hidden">
+            <span className="block">Rotate Commands</span>
+            <div className="border-2 border-input rounded-lg w-40 h-8 flex overflow-hidden">
               <button
                 onMouseDown={() => rotateDeg(5)}
-                className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
+                className="h-full aspect-square flex items-center justify-center bg-muted cursor-pointer"
               >
                 <RotateCcw className="h-5 w-5 inline" />
               </button>
-              <span className="w-[2px] bg-input h-[100%] h-[21px]" />
-              <button onMouseDown={rotate} className="flex-grow text-center bg-muted">
+              <span className="w-[2px] bg-input h-full bg-border" />
+              <button
+                onMouseDown={rotate}
+                className="flex-grow text-center text-sm bg-muted cursor-pointer"
+              >
                 Rotate
               </button>
-              <span className="w-[2px] bg-input h-[100%] h-[21px]" />
+              <span className="w-[2px] bg-input h-full bg-border" />
               <button
                 onMouseDown={() => rotateDeg(-5)}
-                className="h-[21px] w-[21px] flex items-center justify-center bg-muted"
+                className="h-full aspect-square flex items-center justify-center bg-muted cursor-pointer"
               >
                 <RotateCw className="h-5 w-5 inline" />
               </button>

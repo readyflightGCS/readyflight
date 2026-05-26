@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Flight information.
         This includes time since boot for arm, takeoff, and land, and a flight number.
@@ -13,19 +13,19 @@ Flight information.
 // flight_uuid Flight number. Note, field is misnamed UUID. uint64_t
 // landing_time Timestamp at landing (in ms since system boot). Set to 0 at boot and on arming. uint32_t
 export class FlightInformation extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public arming_time_utc!: number;
-	public takeoff_time_utc!: number;
-	public flight_uuid!: number;
-	public landing_time!: number;
-	public _message_id: number = 264;
-	public _message_name: string = 'FLIGHT_INFORMATION';
-	public _crc_extra: number = 49;
-	public _message_fields: [string, string, boolean][] = [
-		['arming_time_utc', 'uint64_t', false],
-		['takeoff_time_utc', 'uint64_t', false],
-		['flight_uuid', 'uint64_t', false],
-		['time_boot_ms', 'uint32_t', false],
-		['landing_time', 'uint32_t', true],
-	];
+  public time_boot_ms!: number
+  public arming_time_utc!: number
+  public takeoff_time_utc!: number
+  public flight_uuid!: number
+  public landing_time!: number
+  public _message_id: number = 264
+  public _message_name: string = 'FLIGHT_INFORMATION'
+  public _crc_extra: number = 49
+  public _message_fields: [string, string, boolean][] = [
+    ['arming_time_utc', 'uint64_t', false],
+    ['takeoff_time_utc', 'uint64_t', false],
+    ['flight_uuid', 'uint64_t', false],
+    ['time_boot_ms', 'uint32_t', false],
+    ['landing_time', 'uint32_t', true]
+  ]
 }

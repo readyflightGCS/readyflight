@@ -64,7 +64,6 @@ export default function CommandItem({
   }
 
   function handleClick(id: number, e: React.MouseEvent<HTMLDivElement>) {
-    console.log(id)
     if (e.shiftKey && lastSelectedCommandIndex !== null) {
       const range = [lastSelectedCommandIndex, id].sort((a, b) => a - b)
       const newSelection = []

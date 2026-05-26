@@ -1,11 +1,11 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavOdidStatus} from '../enums/mav-odid-status';
-import {MavOdidHeightRef} from '../enums/mav-odid-height-ref';
-import {MavOdidHorAcc} from '../enums/mav-odid-hor-acc';
-import {MavOdidVerAcc} from '../enums/mav-odid-ver-acc';
-import {MavOdidSpeedAcc} from '../enums/mav-odid-speed-acc';
-import {MavOdidTimeAcc} from '../enums/mav-odid-time-acc';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavOdidStatus } from '../enums/mav-odid-status'
+import { MavOdidHeightRef } from '../enums/mav-odid-height-ref'
+import { MavOdidHorAcc } from '../enums/mav-odid-hor-acc'
+import { MavOdidVerAcc } from '../enums/mav-odid-ver-acc'
+import { MavOdidSpeedAcc } from '../enums/mav-odid-speed-acc'
+import { MavOdidTimeAcc } from '../enums/mav-odid-time-acc'
 /*
 Data for filling the OpenDroneID Location message. The float data types are 32-bit IEEE 754. The Location message provides the location, altitude, direction and speed of the aircraft.
 */
@@ -29,47 +29,47 @@ Data for filling the OpenDroneID Location message. The float data types are 32-b
 // timestamp Seconds after the full hour with reference to UTC time. Typically the GPS outputs a time-of-week value in milliseconds. First convert that to UTC and then convert for this field using ((float) (time_week_ms % (60*60*1000))) / 1000. If unknown: 0xFFFF. float
 // timestamp_accuracy The accuracy of the timestamps. uint8_t
 export class OpenDroneIdLocation extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public id_or_mac!: number;
-	public status!: MavOdidStatus;
-	public direction!: number;
-	public speed_horizontal!: number;
-	public speed_vertical!: number;
-	public latitude!: number;
-	public longitude!: number;
-	public altitude_barometric!: number;
-	public altitude_geodetic!: number;
-	public height_reference!: MavOdidHeightRef;
-	public height!: number;
-	public horizontal_accuracy!: MavOdidHorAcc;
-	public vertical_accuracy!: MavOdidVerAcc;
-	public barometer_accuracy!: MavOdidVerAcc;
-	public speed_accuracy!: MavOdidSpeedAcc;
-	public timestamp!: number;
-	public timestamp_accuracy!: MavOdidTimeAcc;
-	public _message_id: number = 12901;
-	public _message_name: string = 'OPEN_DRONE_ID_LOCATION';
-	public _crc_extra: number = 254;
-	public _message_fields: [string, string, boolean][] = [
-		['latitude', 'int32_t', false],
-		['longitude', 'int32_t', false],
-		['altitude_barometric', 'float', false],
-		['altitude_geodetic', 'float', false],
-		['height', 'float', false],
-		['timestamp', 'float', false],
-		['direction', 'uint16_t', false],
-		['speed_horizontal', 'uint16_t', false],
-		['speed_vertical', 'int16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['id_or_mac', 'uint8_t', false],
-		['status', 'uint8_t', false],
-		['height_reference', 'uint8_t', false],
-		['horizontal_accuracy', 'uint8_t', false],
-		['vertical_accuracy', 'uint8_t', false],
-		['barometer_accuracy', 'uint8_t', false],
-		['speed_accuracy', 'uint8_t', false],
-		['timestamp_accuracy', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public id_or_mac!: number
+  public status!: MavOdidStatus
+  public direction!: number
+  public speed_horizontal!: number
+  public speed_vertical!: number
+  public latitude!: number
+  public longitude!: number
+  public altitude_barometric!: number
+  public altitude_geodetic!: number
+  public height_reference!: MavOdidHeightRef
+  public height!: number
+  public horizontal_accuracy!: MavOdidHorAcc
+  public vertical_accuracy!: MavOdidVerAcc
+  public barometer_accuracy!: MavOdidVerAcc
+  public speed_accuracy!: MavOdidSpeedAcc
+  public timestamp!: number
+  public timestamp_accuracy!: MavOdidTimeAcc
+  public _message_id: number = 12901
+  public _message_name: string = 'OPEN_DRONE_ID_LOCATION'
+  public _crc_extra: number = 254
+  public _message_fields: [string, string, boolean][] = [
+    ['latitude', 'int32_t', false],
+    ['longitude', 'int32_t', false],
+    ['altitude_barometric', 'float', false],
+    ['altitude_geodetic', 'float', false],
+    ['height', 'float', false],
+    ['timestamp', 'float', false],
+    ['direction', 'uint16_t', false],
+    ['speed_horizontal', 'uint16_t', false],
+    ['speed_vertical', 'int16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['id_or_mac', 'uint8_t', false],
+    ['status', 'uint8_t', false],
+    ['height_reference', 'uint8_t', false],
+    ['horizontal_accuracy', 'uint8_t', false],
+    ['vertical_accuracy', 'uint8_t', false],
+    ['barometer_accuracy', 'uint8_t', false],
+    ['speed_accuracy', 'uint8_t', false],
+    ['timestamp_accuracy', 'uint8_t', false]
+  ]
 }

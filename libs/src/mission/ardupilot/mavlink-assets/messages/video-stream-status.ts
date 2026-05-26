@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {VideoStreamStatusFlags} from '../enums/video-stream-status-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { VideoStreamStatusFlags } from '../enums/video-stream-status-flags'
 /*
 Information about the status of a video stream. It may be requested using MAV_CMD_REQUEST_MESSAGE.
 */
@@ -14,27 +14,27 @@ Information about the status of a video stream. It may be requested using MAV_CM
 // hfov Horizontal Field of view uint16_t
 // camera_device_id Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id). uint8_t
 export class VideoStreamStatus extends MAVLinkMessage {
-	public stream_id!: number;
-	public flags!: VideoStreamStatusFlags;
-	public framerate!: number;
-	public resolution_h!: number;
-	public resolution_v!: number;
-	public bitrate!: number;
-	public rotation!: number;
-	public hfov!: number;
-	public camera_device_id!: number;
-	public _message_id: number = 270;
-	public _message_name: string = 'VIDEO_STREAM_STATUS';
-	public _crc_extra: number = 59;
-	public _message_fields: [string, string, boolean][] = [
-		['framerate', 'float', false],
-		['bitrate', 'uint32_t', false],
-		['flags', 'uint16_t', false],
-		['resolution_h', 'uint16_t', false],
-		['resolution_v', 'uint16_t', false],
-		['rotation', 'uint16_t', false],
-		['hfov', 'uint16_t', false],
-		['stream_id', 'uint8_t', false],
-		['camera_device_id', 'uint8_t', true],
-	];
+  public stream_id!: number
+  public flags!: VideoStreamStatusFlags
+  public framerate!: number
+  public resolution_h!: number
+  public resolution_v!: number
+  public bitrate!: number
+  public rotation!: number
+  public hfov!: number
+  public camera_device_id!: number
+  public _message_id: number = 270
+  public _message_name: string = 'VIDEO_STREAM_STATUS'
+  public _crc_extra: number = 59
+  public _message_fields: [string, string, boolean][] = [
+    ['framerate', 'float', false],
+    ['bitrate', 'uint32_t', false],
+    ['flags', 'uint16_t', false],
+    ['resolution_h', 'uint16_t', false],
+    ['resolution_v', 'uint16_t', false],
+    ['rotation', 'uint16_t', false],
+    ['hfov', 'uint16_t', false],
+    ['stream_id', 'uint8_t', false],
+    ['camera_device_id', 'uint8_t', true]
+  ]
 }

@@ -1,4 +1,4 @@
-import { XY } from "./types"
+import { XY } from './types'
 
 /**
  * Converts degrees to radians
@@ -6,7 +6,7 @@ import { XY } from "./types"
  * @returns {number} The angle in radians
  */
 export function deg2rad(deg: number): number {
-  return deg * Math.PI / 180
+  return (deg * Math.PI) / 180
 }
 
 /**
@@ -15,7 +15,7 @@ export function deg2rad(deg: number): number {
  * @returns {number} The angle in degrees
  */
 export function rad2deg(rad: number): number {
-  return rad * 180 / Math.PI
+  return (rad * 180) / Math.PI
 }
 
 /**
@@ -25,7 +25,7 @@ export function rad2deg(rad: number): number {
  * @returns {number} The bearing in radians
  */
 export function bearing(a: XY, b: XY): number {
-  return (Math.atan2((b.x - a.x), (b.y - a.y)) + Math.PI * 2) % (Math.PI * 2)
+  return (Math.atan2(b.x - a.x, b.y - a.y) + Math.PI * 2) % (Math.PI * 2)
 }
 
 /**
@@ -45,7 +45,6 @@ export function modf(a: number, divisor: number): number {
  */
 export function mod2pi(a: number): number {
   return modf(a, Math.PI * 2)
-
 }
 /**
  * Calculate the Euclidean distance between two points
@@ -57,7 +56,6 @@ export function dist(a: XY, b: XY): number {
   // euclidean distance function
   return Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2))
 }
-
 
 /**
  * Calculate the offset of a point by a given distance and angle
@@ -73,7 +71,6 @@ export function offset(a: XY, dist: number, angle: number): XY {
   }
 }
 
-
 /**
  * Determine whether a point lies inside a polygon using the ray‑casting algorithm.
  *
@@ -84,8 +81,8 @@ export function offset(a: XY, dist: number, angle: number): XY {
  * indicates the point is inside; an even number indicates it is outside.
  *
  * The algorithm works for:
- * - convex and concave polygons  
- * - polygons whose first and last vertices are not explicitly repeated  
+ * - convex and concave polygons
+ * - polygons whose first and last vertices are not explicitly repeated
  *
  * It does not handle self‑intersecting polygons or edge‑case ambiguities such as
  * points lying exactly on a vertex or boundary.
@@ -95,34 +92,34 @@ export function offset(a: XY, dist: number, angle: number): XY {
  * @returns `true` if the point lies inside the polygon, otherwise `false`
  */
 export function isPointInPolygon(polygon: XY[], point: XY) {
-  const num_vertices = polygon.length;
-  let inside = false;
+  const num_vertices = polygon.length
+  let inside = false
 
-  let p1 = polygon[0];
-  let p2;
+  let p1 = polygon[0]
+  let p2
 
   for (let i = 1; i <= num_vertices; i++) {
-    p2 = polygon[i % num_vertices];
+    p2 = polygon[i % num_vertices]
 
     if (point.y > Math.min(p1.y, p2.y)) {
       if (point.y <= Math.max(p1.y, p2.y)) {
         if (point.x <= Math.max(p1.x, p2.x)) {
-          const x_intersection = ((point.y - p1.y) * (p2.x - p1.x)) / (p2.y - p1.y) + p1.x;
+          const x_intersection = ((point.y - p1.y) * (p2.x - p1.x)) / (p2.y - p1.y) + p1.x
 
           if (p1.x === p2.x || point.x <= x_intersection) {
-            inside = !inside;
+            inside = !inside
           }
         }
       }
     }
 
-    p1 = p2;
+    p1 = p2
   }
 
-  return inside;
+  return inside
 }
 
-/* 
+/*
  * Linearly interpolate a to b by percentage c
  * c should be between 0 and 1
  */

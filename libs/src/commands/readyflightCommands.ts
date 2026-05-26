@@ -1,8 +1,8 @@
-import { ReadyflightCommandDescription } from "./command"
+import { ReadyflightCommandDescription } from './command'
 
 /**
  * Array of ReadyFlight command descriptions defining the structure and metadata for various mission commands.
- * 
+ *
  * Includes the following command types:
  * - RF.DubinsPath: A smooth dubins path through multiple lat/lng/alt points
  * - RF.Group: Groups commands together under a named sub-mission
@@ -10,7 +10,7 @@ import { ReadyflightCommandDescription } from "./command"
  * - RF.Takeoff: Takeoff from ground or hand with pitch, yaw, and location parameters
  * - RF.Land: Land at a specified location with abort altitude and precision land mode options
  * - RF.SetServo: Set a servo to a desired PWM value
- * 
+ *
  * Each command description includes:
  * - type: Unique command identifier
  * - label: Human-readable command name
@@ -19,286 +19,325 @@ import { ReadyflightCommandDescription } from "./command"
  * - hasLocation: Whether the command includes location parameters
  * - isDestination: Whether the command represents a destination waypoint
  * - parameters: Array of command-specific parameter definitions
- * 
+ *
  * @readonly
  * @const
  * @satisfies {CommandDescription[]}
  */
-export const RFCommandDescription = [{
-  type: "RF.DubinsPath",
-  label: "Dubins Path",
-  value: 0,
-  description: "A smooth dubins path",
-  hasLocation: false,
-  isDestination: false,
-  parameters: [{
-    parameterType: "number",
-    label: "Latitude",
-    description: "Latitude",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Longitude",
-    description: "Longitude",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Altitude",
-    description: "Altitude",
-    units: "m",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: 1000,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Radius",
-    description: "Radius",
-    units: "",
-    minValue: 0,
-    maxValue: null,
-    increment: null,
-    default: 50,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Gap",
-    description: "Longitude",
-    units: "",
-    minValue: 0,
-    maxValue: null,
-    increment: null,
-    default: 0,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Heading",
-    description: "heading",
-    units: "",
-    minValue: 0,
-    maxValue: 360,
-    increment: null,
-    default: 0,
-    options: [],
-  }],
-}, {
-  type: "RF.Group",
-  label: "Group",
-  value: 1,
-  description: "Group commands together",
-  hasLocation: false,
-  isDestination: false,
-  parameters: [{
-    parameterType: "string",
-    label: "Name",
-    description: "the name of the sub mission",
-    default: null,
-    minLen: null,
-    maxLen: null,
-    options: []
-  }]
-}, {
-  type: "RF.Waypoint",
-  label: "Waypoint",
-  value: 2,
-  description: "Go To this Location",
-  hasLocation: true,
-  isDestination: true,
-  parameters: [{
-    parameterType: "number",
-    label: "Latitude",
-    description: "Latitude",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Longitude",
-    description: "Longitude",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Altitude",
-    description: "Altitude",
-    units: "m",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }],
-}, {
-  value: 3,
-  type: "RF.Takeoff",
-  label: "Takeoff",
-  description: "Takeoff from ground / hand. Vehicles that support multiple takeoff modes (e.g. VTOL quadplane) should take off using the currently configured mode.",
-  hasLocation: true,
-  isDestination: true,
-  parameters: [{
-    parameterType: "number",
-    label: "Pitch",
-    description: "Minimum pitch (if airspeed sensor present), desired pitch without sensor",
-    units: "deg",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Yaw",
-    description: "Yaw angle (if magnetometer present), ignored without magnetometer. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
-    units: "deg",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Latitude",
-    description: "Latitude",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Longitude",
-    description: "Longitude",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Altitude",
-    description: "Altitude",
-    units: "m",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }],
-}, {
-  value: 4,
-  type: "RF.Land",
-  label: "Land",
-  description: "Land at location.",
-  hasLocation: true,
-  isDestination: true,
-  parameters: [{
-    parameterType: "number",
-    label: "Abort Alt",
-    description: "Minimum target altitude if landing is aborted (0 = undefined/use system default).",
-    units: "m",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Land Mode",
-    description: "Precision land mode.",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Yaw Angle",
-    description: "Desired yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).",
-    units: "deg",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Latitude",
-    description: "Latitude.",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Longitude",
-    description: "Longitude.",
-    units: "",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "Altitude",
-    description: "Landing altitude (ground level in current frame).",
-    units: "m",
-    minValue: null,
-    maxValue: null,
-    increment: null,
-    default: null,
-    options: [],
-  }],
-}, {
-  value: 5,
-  type: "RF.SetServo",
-  label: "Set Servo",
-  description: "Set a servo to a desired PWM value.",
-  hasLocation: false,
-  isDestination: false,
-  parameters: [{
-    parameterType: "number",
-    label: "Instance",
-    description: "Servo instance number.",
-    units: "",
-    minValue: 0,
-    maxValue: null,
-    increment: 1,
-    default: null,
-    options: [],
-  }, {
-    parameterType: "number",
-    label: "PWM",
-    description: "Pulse Width Modulation.",
-    units: "us",
-    minValue: 0,
-    maxValue: null,
-    increment: 1,
-    default: null,
-    options: [],
-  }],
-}
+export const RFCommandDescription = [
+  {
+    type: 'RF.DubinsPath',
+    label: 'Dubins Path',
+    value: 0,
+    description: 'A smooth dubins path',
+    hasLocation: false,
+    isDestination: false,
+    parameters: [
+      {
+        parameterType: 'number',
+        label: 'Latitude',
+        description: 'Latitude',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Longitude',
+        description: 'Longitude',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Altitude',
+        description: 'Altitude',
+        units: 'm',
+        minValue: null,
+        maxValue: null,
+        increment: null,
+        default: 100,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Radius',
+        description: 'Radius',
+        units: '',
+        minValue: 0,
+        maxValue: null,
+        increment: null,
+        default: 50,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Gap',
+        description: 'The fly by distance',
+        units: '',
+        minValue: 0,
+        maxValue: null,
+        increment: null,
+        default: 0,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Heading',
+        description: 'heading',
+        units: '',
+        minValue: 0,
+        maxValue: 360,
+        increment: null,
+        default: 0,
+        options: []
+      }
+    ]
+  },
+  {
+    type: 'RF.Group',
+    label: 'Group',
+    value: 1,
+    description: 'Group commands together',
+    hasLocation: false,
+    isDestination: false,
+    parameters: [
+      {
+        parameterType: 'string',
+        label: 'Name',
+        description: 'the name of the sub mission',
+        default: null,
+        minLen: null,
+        maxLen: null,
+        options: []
+      }
+    ]
+  },
+  {
+    type: 'RF.Waypoint',
+    label: 'Waypoint',
+    value: 2,
+    description: 'Go To this Location',
+    hasLocation: true,
+    isDestination: true,
+    parameters: [
+      {
+        parameterType: 'number',
+        label: 'Latitude',
+        description: 'Latitude',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Longitude',
+        description: 'Longitude',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Altitude',
+        description: 'Altitude',
+        units: 'm',
+        minValue: null,
+        maxValue: null,
+        increment: null,
+        default: 100,
+        options: []
+      }
+    ]
+  },
+  {
+    value: 3,
+    type: 'RF.Takeoff',
+    label: 'Takeoff',
+    description:
+      'Takeoff from ground / hand. Vehicles that support multiple takeoff modes (e.g. VTOL quadplane) should take off using the currently configured mode.',
+    hasLocation: true,
+    isDestination: true,
+    parameters: [
+      {
+        parameterType: 'number',
+        label: 'Latitude',
+        description: 'Latitude',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Longitude',
+        description: 'Longitude',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Altitude',
+        description: 'Altitude',
+        units: 'm',
+        minValue: null,
+        maxValue: null,
+        increment: null,
+        default: 100,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Pitch',
+        description: 'Minimum pitch (if airspeed sensor present), desired pitch without sensor',
+        units: 'deg',
+        minValue: -90,
+        maxValue: 90,
+        increment: null,
+        default: 15,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Yaw',
+        description:
+          'Yaw angle (if magnetometer present), ignored without magnetometer. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).',
+        units: 'deg',
+        minValue: 0,
+        maxValue: 360,
+        increment: null,
+        default: 0,
+        options: []
+      }
+    ]
+  },
+  {
+    value: 4,
+    type: 'RF.Land',
+    label: 'Land',
+    description: 'Land at location.',
+    hasLocation: true,
+    isDestination: true,
+    parameters: [
+      {
+        parameterType: 'number',
+        label: 'Latitude',
+        description: 'Latitude.',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Longitude',
+        description: 'Longitude.',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: 0.00001,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Altitude',
+        description: 'Landing altitude (ground level in current frame).',
+        units: 'm',
+        minValue: null,
+        maxValue: null,
+        increment: null,
+        default: 0,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Abort Alt',
+        description:
+          'Minimum target altitude if landing is aborted (0 = undefined/use system default).',
+        units: 'm',
+        minValue: null,
+        maxValue: null,
+        increment: null,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Land Mode',
+        description: 'Precision land mode.',
+        units: '',
+        minValue: null,
+        maxValue: null,
+        increment: null,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'Yaw Angle',
+        description:
+          'Desired yaw angle. NaN to use the current system yaw heading mode (e.g. yaw towards next waypoint, yaw to home, etc.).',
+        units: 'deg',
+        minValue: null,
+        maxValue: null,
+        increment: null,
+        default: null,
+        options: []
+      }
+    ]
+  },
+  {
+    value: 5,
+    type: 'RF.SetServo',
+    label: 'Set Servo',
+    description: 'Set a servo to a desired PWM value.',
+    hasLocation: false,
+    isDestination: false,
+    parameters: [
+      {
+        parameterType: 'number',
+        label: 'Instance',
+        description: 'Servo instance number.',
+        units: '',
+        minValue: 0,
+        maxValue: null,
+        increment: 1,
+        default: null,
+        options: []
+      },
+      {
+        parameterType: 'number',
+        label: 'PWM',
+        description: 'Pulse Width Modulation.',
+        units: 'us',
+        minValue: 1000,
+        maxValue: 2000,
+        increment: 1,
+        default: 1000,
+        options: []
+      }
+    ]
+  }
 ] as const satisfies ReadyflightCommandDescription[]

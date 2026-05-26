@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 The global position, as returned by the Global Positioning System (GPS). This is
                  NOT the global position estimate of the system, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.
@@ -20,39 +20,39 @@ The global position, as returned by the Global Positioning System (GPS). This is
 // id GPS ID (zero indexed). Used for multiple GPS inputs uint8_t
 // yaw Yaw of vehicle relative to Earth's North, zero means not available, use 36000 for north uint16_t
 export class HilGps extends MAVLinkMessage {
-	public time_usec!: number;
-	public fix_type!: number;
-	public lat!: number;
-	public lon!: number;
-	public alt!: number;
-	public eph!: number;
-	public epv!: number;
-	public vel!: number;
-	public vn!: number;
-	public ve!: number;
-	public vd!: number;
-	public cog!: number;
-	public satellites_visible!: number;
-	public id!: number;
-	public yaw!: number;
-	public _message_id: number = 113;
-	public _message_name: string = 'HIL_GPS';
-	public _crc_extra: number = 124;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['lat', 'int32_t', false],
-		['lon', 'int32_t', false],
-		['alt', 'int32_t', false],
-		['eph', 'uint16_t', false],
-		['epv', 'uint16_t', false],
-		['vel', 'uint16_t', false],
-		['vn', 'int16_t', false],
-		['ve', 'int16_t', false],
-		['vd', 'int16_t', false],
-		['cog', 'uint16_t', false],
-		['fix_type', 'uint8_t', false],
-		['satellites_visible', 'uint8_t', false],
-		['id', 'uint8_t', true],
-		['yaw', 'uint16_t', true],
-	];
+  public time_usec!: number
+  public fix_type!: number
+  public lat!: number
+  public lon!: number
+  public alt!: number
+  public eph!: number
+  public epv!: number
+  public vel!: number
+  public vn!: number
+  public ve!: number
+  public vd!: number
+  public cog!: number
+  public satellites_visible!: number
+  public id!: number
+  public yaw!: number
+  public _message_id: number = 113
+  public _message_name: string = 'HIL_GPS'
+  public _crc_extra: number = 124
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['lat', 'int32_t', false],
+    ['lon', 'int32_t', false],
+    ['alt', 'int32_t', false],
+    ['eph', 'uint16_t', false],
+    ['epv', 'uint16_t', false],
+    ['vel', 'uint16_t', false],
+    ['vn', 'int16_t', false],
+    ['ve', 'int16_t', false],
+    ['vd', 'int16_t', false],
+    ['cog', 'uint16_t', false],
+    ['fix_type', 'uint8_t', false],
+    ['satellites_visible', 'uint8_t', false],
+    ['id', 'uint8_t', true],
+    ['yaw', 'uint16_t', true]
+  ]
 }

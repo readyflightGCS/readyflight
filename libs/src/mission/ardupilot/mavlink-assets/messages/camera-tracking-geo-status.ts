@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {CameraTrackingStatusFlags} from '../enums/camera-tracking-status-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { CameraTrackingStatusFlags } from '../enums/camera-tracking-status-flags'
 /*
 Camera tracking status, sent while in active tracking. Use MAV_CMD_SET_MESSAGE_INTERVAL to define message interval.
 */
@@ -19,37 +19,37 @@ Camera tracking status, sent while in active tracking. Use MAV_CMD_SET_MESSAGE_I
 // hdg_acc Accuracy of heading, in NED. NAN if unknown float
 // camera_device_id Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id). uint8_t
 export class CameraTrackingGeoStatus extends MAVLinkMessage {
-	public tracking_status!: CameraTrackingStatusFlags;
-	public lat!: number;
-	public lon!: number;
-	public alt!: number;
-	public h_acc!: number;
-	public v_acc!: number;
-	public vel_n!: number;
-	public vel_e!: number;
-	public vel_d!: number;
-	public vel_acc!: number;
-	public dist!: number;
-	public hdg!: number;
-	public hdg_acc!: number;
-	public camera_device_id!: number;
-	public _message_id: number = 276;
-	public _message_name: string = 'CAMERA_TRACKING_GEO_STATUS';
-	public _crc_extra: number = 18;
-	public _message_fields: [string, string, boolean][] = [
-		['lat', 'int32_t', false],
-		['lon', 'int32_t', false],
-		['alt', 'float', false],
-		['h_acc', 'float', false],
-		['v_acc', 'float', false],
-		['vel_n', 'float', false],
-		['vel_e', 'float', false],
-		['vel_d', 'float', false],
-		['vel_acc', 'float', false],
-		['dist', 'float', false],
-		['hdg', 'float', false],
-		['hdg_acc', 'float', false],
-		['tracking_status', 'uint8_t', false],
-		['camera_device_id', 'uint8_t', true],
-	];
+  public tracking_status!: CameraTrackingStatusFlags
+  public lat!: number
+  public lon!: number
+  public alt!: number
+  public h_acc!: number
+  public v_acc!: number
+  public vel_n!: number
+  public vel_e!: number
+  public vel_d!: number
+  public vel_acc!: number
+  public dist!: number
+  public hdg!: number
+  public hdg_acc!: number
+  public camera_device_id!: number
+  public _message_id: number = 276
+  public _message_name: string = 'CAMERA_TRACKING_GEO_STATUS'
+  public _crc_extra: number = 18
+  public _message_fields: [string, string, boolean][] = [
+    ['lat', 'int32_t', false],
+    ['lon', 'int32_t', false],
+    ['alt', 'float', false],
+    ['h_acc', 'float', false],
+    ['v_acc', 'float', false],
+    ['vel_n', 'float', false],
+    ['vel_e', 'float', false],
+    ['vel_d', 'float', false],
+    ['vel_acc', 'float', false],
+    ['dist', 'float', false],
+    ['hdg', 'float', false],
+    ['hdg_acc', 'float', false],
+    ['tracking_status', 'uint8_t', false],
+    ['camera_device_id', 'uint8_t', true]
+  ]
 }

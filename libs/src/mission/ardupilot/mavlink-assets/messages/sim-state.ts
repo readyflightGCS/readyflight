@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Status of simulation environment, if used
 */
@@ -27,55 +27,55 @@ Status of simulation environment, if used
 // lat_int Latitude (higher precision). If 0, recipients should use the lat field value (otherwise this field is preferred). int32_t
 // lon_int Longitude (higher precision). If 0, recipients should use the lon field value (otherwise this field is preferred). int32_t
 export class SimState extends MAVLinkMessage {
-	public q1!: number;
-	public q2!: number;
-	public q3!: number;
-	public q4!: number;
-	public roll!: number;
-	public pitch!: number;
-	public yaw!: number;
-	public xacc!: number;
-	public yacc!: number;
-	public zacc!: number;
-	public xgyro!: number;
-	public ygyro!: number;
-	public zgyro!: number;
-	public lat!: number;
-	public lon!: number;
-	public alt!: number;
-	public std_dev_horz!: number;
-	public std_dev_vert!: number;
-	public vn!: number;
-	public ve!: number;
-	public vd!: number;
-	public lat_int!: number;
-	public lon_int!: number;
-	public _message_id: number = 108;
-	public _message_name: string = 'SIM_STATE';
-	public _crc_extra: number = 32;
-	public _message_fields: [string, string, boolean][] = [
-		['q1', 'float', false],
-		['q2', 'float', false],
-		['q3', 'float', false],
-		['q4', 'float', false],
-		['roll', 'float', false],
-		['pitch', 'float', false],
-		['yaw', 'float', false],
-		['xacc', 'float', false],
-		['yacc', 'float', false],
-		['zacc', 'float', false],
-		['xgyro', 'float', false],
-		['ygyro', 'float', false],
-		['zgyro', 'float', false],
-		['lat', 'float', false],
-		['lon', 'float', false],
-		['alt', 'float', false],
-		['std_dev_horz', 'float', false],
-		['std_dev_vert', 'float', false],
-		['vn', 'float', false],
-		['ve', 'float', false],
-		['vd', 'float', false],
-		['lat_int', 'int32_t', true],
-		['lon_int', 'int32_t', true],
-	];
+  public q1!: number
+  public q2!: number
+  public q3!: number
+  public q4!: number
+  public roll!: number
+  public pitch!: number
+  public yaw!: number
+  public xacc!: number
+  public yacc!: number
+  public zacc!: number
+  public xgyro!: number
+  public ygyro!: number
+  public zgyro!: number
+  public lat!: number
+  public lon!: number
+  public alt!: number
+  public std_dev_horz!: number
+  public std_dev_vert!: number
+  public vn!: number
+  public ve!: number
+  public vd!: number
+  public lat_int!: number
+  public lon_int!: number
+  public _message_id: number = 108
+  public _message_name: string = 'SIM_STATE'
+  public _crc_extra: number = 32
+  public _message_fields: [string, string, boolean][] = [
+    ['q1', 'float', false],
+    ['q2', 'float', false],
+    ['q3', 'float', false],
+    ['q4', 'float', false],
+    ['roll', 'float', false],
+    ['pitch', 'float', false],
+    ['yaw', 'float', false],
+    ['xacc', 'float', false],
+    ['yacc', 'float', false],
+    ['zacc', 'float', false],
+    ['xgyro', 'float', false],
+    ['ygyro', 'float', false],
+    ['zgyro', 'float', false],
+    ['lat', 'float', false],
+    ['lon', 'float', false],
+    ['alt', 'float', false],
+    ['std_dev_horz', 'float', false],
+    ['std_dev_vert', 'float', false],
+    ['vn', 'float', false],
+    ['ve', 'float', false],
+    ['vd', 'float', false],
+    ['lat_int', 'int32_t', true],
+    ['lon_int', 'int32_t', true]
+  ]
 }

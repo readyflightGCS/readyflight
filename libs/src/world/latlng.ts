@@ -1,5 +1,5 @@
-import { z } from "zod"
-import { CommandDescription, MissionCommand } from "@libs/commands/command"
+import { z } from 'zod'
+import { CommandDescription, MissionCommand } from '@libs/commands/command'
 
 /**
  * A geographic coordinate expressed in latitude and longitude.
@@ -24,8 +24,8 @@ export type LatLng = z.infer<typeof LatLngSchema>
  * that require vertical separation.
  */
 export type LatLngAlt = {
-  lat: number,
-  lng: number,
+  lat: number
+  lng: number
   alt: number
 }
 
@@ -54,10 +54,10 @@ export function latLngEqual(pos1: LatLng | LatLngAlt, pos2: LatLng | LatLngAlt):
  * @remarks
  * The returned value depends on the command’s altitude frame:
  *
- * - `0` — altitude is already AMSL  
- * - `2` — non‑destination frame; altitude is undefined  
- * - `3` — altitude is relative to a reference altitude  
- * - `10` — altitude is relative to terrain elevation  
+ * - `0` — altitude is already AMSL
+ * - `2` — non‑destination frame; altitude is undefined
+ * - `3` — altitude is relative to a reference altitude
+ * - `10` — altitude is relative to terrain elevation
  *
  * If the command does not contain an `altitude` parameter, `undefined` is returned.
  *
@@ -67,22 +67,24 @@ export function latLngEqual(pos1: LatLng | LatLngAlt, pos2: LatLng | LatLngAlt):
  * @returns AMSL altitude or `undefined` if not applicable
  */
 
-export function getAltAMSL(cmd: MissionCommand<CommandDescription>, referenceAlt: number, terrainAlt: number): number | undefined {
-  if ("altitude" in cmd.params) {
+export function getAltAMSL(
+  cmd: MissionCommand<CommandDescription>,
+  referenceAlt: number,
+  terrainAlt: number
+): number | undefined {
+  if ('altitude' in cmd.params) {
     switch (cmd.frame) {
       case 0: // MSL
         return cmd.params.altitude as number
       case 2: // non destination
         return undefined
       case 3: // relative to reference
-        return cmd.params.altitude as number + referenceAlt
+        return (cmd.params.altitude as number) + referenceAlt
       case 10: //relative to terrain
-        return cmd.params.altitude as number + terrainAlt
+        return (cmd.params.altitude as number) + terrainAlt
     }
-  }
-  else return undefined
+  } else return undefined
 }
-
 
 /**
  * Convert a mission command’s altitude to a value relative to terrain elevation.
@@ -90,30 +92,33 @@ export function getAltAMSL(cmd: MissionCommand<CommandDescription>, referenceAlt
  * @remarks
  * The returned value depends on the command’s altitude frame:
  *
- * - `0` — AMSL altitude minus terrain elevation  
- * - `2` — non‑destination frame; altitude is undefined  
- * - `3` — reference‑relative altitude adjusted by reference and terrain  
- * - `10` — altitude is already terrain‑relative  
+ * - `0` — AMSL altitude minus terrain elevation
+ * - `2` — non‑destination frame; altitude is undefined
+ * - `3` — reference‑relative altitude adjusted by reference and terrain
+ * - `10` — altitude is already terrain‑relative
  *
  * @param cmd Mission command containing altitude and frame information
  * @param referenceAlt Reference altitude used for frame‑3 conversions
  * @param terrainAlt Terrain elevation used for frame‑0 and frame‑3 conversions
  * @returns Terrain‑relative altitude or `undefined` if not applicable
  */
-export function getAltTer(cmd: MissionCommand<CommandDescription>, referenceAlt: number, terrainAlt: number): number | undefined {
-  if ("altitude" in cmd.params) {
+export function getAltTer(
+  cmd: MissionCommand<CommandDescription>,
+  referenceAlt: number,
+  terrainAlt: number
+): number | undefined {
+  if ('altitude' in cmd.params) {
     switch (cmd.frame) {
       case 0: // MSL
-        return cmd.params.altitude as number - terrainAlt
+        return (cmd.params.altitude as number) - terrainAlt
       case 2: // non destination
         return undefined
       case 3: // relative to reference
-        return cmd.params.altitude as number + referenceAlt - terrainAlt
+        return (cmd.params.altitude as number) + referenceAlt - terrainAlt
       case 10: //relative to terrain
         return cmd.params.altitude as number
     }
-  }
-  else return undefined
+  } else return undefined
 }
 
 /**
@@ -122,32 +127,34 @@ export function getAltTer(cmd: MissionCommand<CommandDescription>, referenceAlt:
  * @remarks
  * The returned value depends on the command’s altitude frame:
  *
- * - `0` — AMSL altitude minus reference altitude  
- * - `2` — non‑destination frame; altitude is undefined  
- * - `3` — altitude is already reference‑relative  
- * - `10` — terrain‑relative altitude adjusted by terrain and reference  
+ * - `0` — AMSL altitude minus reference altitude
+ * - `2` — non‑destination frame; altitude is undefined
+ * - `3` — altitude is already reference‑relative
+ * - `10` — terrain‑relative altitude adjusted by terrain and reference
  *
  * @param cmd Mission command containing altitude and frame information
  * @param referenceAlt Reference altitude used for frame‑0 and frame‑10 conversions
  * @param terrainAlt Terrain elevation used for frame‑10 conversions
  * @returns Reference‑relative altitude or `undefined` if not applicable
  */
-export function getAltRel(cmd: MissionCommand<CommandDescription>, referenceAlt: number, terrainAlt: number): number | undefined {
-  if ("altitude" in cmd.params) {
+export function getAltRel(
+  cmd: MissionCommand<CommandDescription>,
+  referenceAlt: number,
+  terrainAlt: number
+): number | undefined {
+  if ('altitude' in cmd.params) {
     switch (cmd.frame) {
       case 0: // MSL
-        return cmd.params.altitude as number - referenceAlt
+        return (cmd.params.altitude as number) - referenceAlt
       case 2: // non destination
         return undefined
       case 3: // relative to reference
         return cmd.params.altitude as number
       case 10: //relative to terrain
-        return cmd.params.altitude as number + terrainAlt - referenceAlt
+        return (cmd.params.altitude as number) + terrainAlt - referenceAlt
     }
-  }
-  else return undefined
+  } else return undefined
 }
-
 
 /**
  * Compute the average latitude and longitude of a set of positions.
@@ -163,11 +170,11 @@ export function getAltRel(cmd: MissionCommand<CommandDescription>, referenceAlt:
  */
 export const avgLatLng = (locs: LatLng[]): LatLng | undefined => {
   if (locs.length == 0) return undefined
-  let totLat = 0;
-  let totLng = 0;
+  let totLat = 0
+  let totLng = 0
   locs.forEach((loc) => {
-    totLat += loc.lat;
-    totLng += loc.lng;
+    totLat += loc.lat
+    totLng += loc.lng
   })
   return { lat: totLat / locs.length, lng: totLng / locs.length }
 }

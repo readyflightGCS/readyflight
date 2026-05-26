@@ -2,12 +2,13 @@ import { cn } from '@/lib/utils'
 import { useState, useRef, useEffect, useCallback } from 'react'
 
 interface NumericInputProps {
-  value?: number
+  value?: number | null
   name: string
-  onChange?: (event: { target: { name: string; value: number } }) => void
+  onChange?: (event: { target: { name: string; value: number; delta: number } }) => void
   className?: string
   min?: number | null
   max?: number | null
+  step?: number | null
 }
 
 export default function NumericInput({
@@ -16,34 +17,31 @@ export default function NumericInput({
   onChange,
   className = 'w-40',
   min = -Infinity,
-  max = Infinity
+  max = Infinity,
+  step = 1
 }: NumericInputProps) {
   const [textValue, setTextValue] = useState<string>(
-    externalValue === null ? '' : String(externalValue)
+    externalValue == null ? '' : String(externalValue)
   )
-  const [isDragging, setIsDragging] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
-  const [startPos, setStartPos] = useState({ x: 0, y: 0 })
-  const [startValue, setStartValue] = useState(0)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
-  // Keep the editable buffer in sync with the external value when the user
-  // isn't actively editing/dragging. Do it asynchronously to avoid the
-  // "setState-in-effect" lint that warns about cascading renders.
+  // The numeric value most recently emitted (or last synced from the parent).
+  // `delta` on each onChange is computed as newValue - lastValueRef.current,
+  // so callers that apply `cmd.params += delta` always see the incremental change.
+  const lastValueRef = useRef<number>(externalValue ?? 0)
+
+  const dragRef = useRef<{ startX: number; startY: number; startValue: number } | null>(null)
+
+  // Sync the editable buffer to the external value when the user isn't
+  // actively editing or dragging.
   useEffect(() => {
     if (isEditing || isDragging) return
-    const id = window.setTimeout(() => {
-      setTextValue(externalValue === null ? '' : String(externalValue))
-    }, 0)
-    return () => window.clearTimeout(id)
-  }, [externalValue, isDragging, isEditing])
-
-  const handleMouseUp = useCallback(() => {
-    if (isDragging) {
-      setIsDragging(false)
-      document.body.style.cursor = 'default'
-    }
-  }, [isDragging])
+    const next = externalValue == null ? '' : String(externalValue)
+    /* eslint-disable */
+    setTextValue((prev) => (prev === next ? prev : next))
+    lastValueRef.current = externalValue ?? 0
+  }, [externalValue, isEditing, isDragging])
 
   const clamp = useCallback(
     (n: number) => {
@@ -54,33 +52,46 @@ export default function NumericInput({
     [min, max]
   )
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging) return
-
-      const dx = e.clientX - startPos.x
-      const dy = startPos.y - e.clientY
-      const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy
-
-      const currentValue = startValue || 0
-
-      const newValue = clamp(currentValue + Math.round(delta / 2))
-      setTextValue(String(newValue))
-      onChange?.({
-        target: {
-          name: name,
-          value: newValue
-        }
-      })
+  const emit = useCallback(
+    (value: number) => {
+      const delta = value - lastValueRef.current
+      lastValueRef.current = value
+      onChange?.({ target: { name, value, delta } })
     },
-    [isDragging, startPos, startValue, clamp, name, onChange]
+    [name, onChange]
   )
 
+  // ---- Drag-to-scrub -------------------------------------------------------
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      const d = dragRef.current
+      if (!d) return
+
+      const dx = e.clientX - d.startX
+      const dy = d.startY - e.clientY
+      const pixels = Math.abs(dx) > Math.abs(dy) ? dx : dy
+
+      const s = step || 1
+      const next = clamp(d.startValue + Math.round(pixels / 2) * s)
+
+      if (next === lastValueRef.current) return
+      setTextValue(String(next))
+      emit(next)
+    },
+    [clamp, emit, step]
+  )
+
+  const handleMouseUp = useCallback(() => {
+    if (!dragRef.current) return
+    dragRef.current = null
+    setIsDragging(false)
+    document.body.style.cursor = 'default'
+  }, [])
+
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove)
-      window.addEventListener('mouseup', handleMouseUp)
-    }
+    if (!isDragging) return
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
@@ -88,52 +99,47 @@ export default function NumericInput({
   }, [isDragging, handleMouseMove, handleMouseUp])
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true)
-    setStartPos({ x: e.clientX, y: e.clientY })
     const parsed = Number(textValue)
-    setStartValue(Number.isFinite(parsed) ? parsed : 0)
+    const start = Number.isFinite(parsed) ? parsed : 0
+    dragRef.current = { startX: e.clientX, startY: e.clientY, startValue: start }
+    lastValueRef.current = start
+    setIsDragging(true)
     document.body.style.cursor = 'move'
   }
 
+  // ---- Typing --------------------------------------------------------------
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const nextText = e.target.value
-    setTextValue(nextText)
+    const next = e.target.value
+    setTextValue(next)
 
-    // While blank, the internal value should be zero.
-    if (nextText.trim() === '') {
-      onChange?.({ target: { name, value: 0 } })
-      return
-    }
+    if (next.trim() === '') return
 
-    const parsed = Number(nextText)
+    const parsed = Number(next)
     if (!Number.isFinite(parsed)) return
-    onChange?.({ target: { name, value: clamp(parsed) } })
+
+    const clamped = clamp(parsed)
+    if (clamped === lastValueRef.current) return
+    emit(clamped)
   }
 
   const handleBlur = () => {
     setIsEditing(false)
+
+    let final: number
     if (textValue.trim() === '') {
-      setTextValue('0')
-      onChange?.({ target: { name, value: 0 } })
-      return
+      final = 0
+    } else {
+      const parsed = Number(textValue)
+      final = Number.isFinite(parsed) ? clamp(parsed) : 0
     }
 
-    const parsed = Number(textValue)
-    if (!Number.isFinite(parsed)) {
-      setTextValue('0')
-      onChange?.({ target: { name, value: 0 } })
-      return
-    }
-
-    const clamped = clamp(parsed)
-    setTextValue(String(clamped))
-    onChange?.({ target: { name, value: clamped } })
+    setTextValue(String(final))
+    if (final !== lastValueRef.current) emit(final)
   }
 
   return (
     <div className="relative inline-block">
       <input
-        ref={inputRef}
         type="text"
         inputMode="numeric"
         name={name}
@@ -144,7 +150,7 @@ export default function NumericInput({
         onBlur={handleBlur}
         placeholder="--"
         className={cn(
-          `bg-card rounded-lg pl-2 border-2 cursor-move text-foreground text-sm h-8`,
+          'bg-card rounded-lg pl-2 border-2 cursor-move text-foreground text-sm h-8',
           className,
           textValue.trim() === '' ? 'text-center' : ''
         )}

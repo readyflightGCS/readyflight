@@ -1,6 +1,6 @@
-import { dist } from "@libs/math/geometry";
-import { XY } from "@libs/math/types";
-import { Path, Segment } from "./types";
+import { dist } from '@libs/math/geometry'
+import { XY } from '@libs/math/types'
+import { Path, Segment } from './types'
 
 /**
  * Calculates the length of a segment in a Dubins path
@@ -9,9 +9,9 @@ import { Path, Segment } from "./types";
  */
 export function segmentLength(seg: Segment<XY>): number {
   switch (seg.type) {
-    case "Curve":
+    case 'Curve':
       return Math.abs(seg.theta * seg.radius)
-    case "Straight":
+    case 'Straight':
       return dist(seg.start, seg.end)
   }
 }
@@ -27,7 +27,7 @@ export function loadFactor(radius: number, velocity: number): number {
     return 0
   }
   //return (Math.sqrt(radius * radius * 9.81 * 9.81 + Math.pow(velocity, 4))) / (radius * 9.81)
-  return Math.sqrt(1 + (Math.pow(velocity, 4) / (radius * radius * 9.81 * 9.81)))
+  return Math.sqrt(1 + Math.pow(velocity, 4) / (radius * radius * 9.81 * 9.81))
 }
 
 /**
@@ -37,17 +37,21 @@ export function loadFactor(radius: number, velocity: number): number {
  * @param {number} energyConstant - The energy constant to use
  * @returns {number} The total energy requirement for the path
  */
-export function pathEnergyRequirements(path: Path<XY>, velocity: number, energyConstant: number = 1): number {
+export function pathEnergyRequirements(
+  path: Path<XY>,
+  velocity: number,
+  energyConstant: number = 1
+): number {
   let totalEnergy = 0
   for (const seg of path) {
-    let segLength = segmentLength(seg)
+    const segLength = segmentLength(seg)
     switch (seg.type) {
-      case "Curve":
+      case 'Curve':
         totalEnergy += segLength * loadFactor(seg.radius, velocity)
-        continue;
-      case "Straight":
+        continue
+      case 'Straight':
         totalEnergy += segLength
-        continue;
+        continue
     }
   }
   return energyConstant * totalEnergy
@@ -61,4 +65,3 @@ export function pathEnergyRequirements(path: Path<XY>, velocity: number, energyC
 export function pathLength(path: Path<XY>): number {
   return path.map((x: Segment<XY>) => segmentLength(x)).reduce((acc, a) => acc + a, 0)
 }
-

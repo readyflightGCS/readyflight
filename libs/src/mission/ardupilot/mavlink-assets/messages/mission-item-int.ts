@@ -1,8 +1,8 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFrame} from '../enums/mav-frame';
-import {MavCmd} from '../enums/mav-cmd';
-import {MavMissionType} from '../enums/mav-mission-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavFrame } from '../enums/mav-frame'
+import { MavCmd } from '../enums/mav-cmd'
+import { MavMissionType } from '../enums/mav-mission-type'
 /*
 Message encoding a mission item. This message is emitted to announce
                 the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.
@@ -23,39 +23,39 @@ Message encoding a mission item. This message is emitted to announce
 // z PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame. float
 // mission_type Mission type. uint8_t
 export class MissionItemInt extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public seq!: number;
-	public frame!: MavFrame;
-	public command!: MavCmd;
-	public current!: number;
-	public autocontinue!: number;
-	public param1!: number;
-	public param2!: number;
-	public param3!: number;
-	public param4!: number;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public mission_type!: MavMissionType;
-	public _message_id: number = 73;
-	public _message_name: string = 'MISSION_ITEM_INT';
-	public _crc_extra: number = 38;
-	public _message_fields: [string, string, boolean][] = [
-		['param1', 'float', false],
-		['param2', 'float', false],
-		['param3', 'float', false],
-		['param4', 'float', false],
-		['x', 'int32_t', false],
-		['y', 'int32_t', false],
-		['z', 'float', false],
-		['seq', 'uint16_t', false],
-		['command', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['frame', 'uint8_t', false],
-		['current', 'uint8_t', false],
-		['autocontinue', 'uint8_t', false],
-		['mission_type', 'uint8_t', true],
-	];
+  public target_system!: number
+  public target_component!: number
+  public seq!: number
+  public frame!: MavFrame
+  public command!: MavCmd
+  public current!: number
+  public autocontinue!: number
+  public param1!: number
+  public param2!: number
+  public param3!: number
+  public param4!: number
+  public x!: number
+  public y!: number
+  public z!: number
+  public mission_type!: MavMissionType
+  public _message_id: number = 73
+  public _message_name: string = 'MISSION_ITEM_INT'
+  public _crc_extra: number = 38
+  public _message_fields: [string, string, boolean][] = [
+    ['param1', 'float', false],
+    ['param2', 'float', false],
+    ['param3', 'float', false],
+    ['param4', 'float', false],
+    ['x', 'int32_t', false],
+    ['y', 'int32_t', false],
+    ['z', 'float', false],
+    ['seq', 'uint16_t', false],
+    ['command', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['frame', 'uint8_t', false],
+    ['current', 'uint8_t', false],
+    ['autocontinue', 'uint8_t', false],
+    ['mission_type', 'uint8_t', true]
+  ]
 }

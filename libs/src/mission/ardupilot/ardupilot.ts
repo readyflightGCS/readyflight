@@ -1,42 +1,42 @@
-import { convertArdupilot, exportQGCWaypoints, MAV2MAVparam, MavCommand } from "./export"
-import { Dialect } from "../dialect"
-import { mavCmdDescription } from "./commands"
-import { exportRFJSON1 } from "../format/readyflight/json1/export"
-import { importRFJSON1 } from "../format/readyflight/json1/import"
-import { decodePacket } from "./mavlink-decoder"
-import { encodePacket } from "./mavlink-encoder"
-import { Attitude } from "./mavlink-assets/messages/attitude"
-import { GlobalPositionInt } from "./mavlink-assets/messages/global-position-int"
-import { GpsRawInt } from "./mavlink-assets/messages/gps-raw-int"
-import { Statustext } from "./mavlink-assets/messages/statustext"
-import { VfrHud } from "./mavlink-assets/messages/vfr-hud"
-import { rad2deg } from "@libs/math/geometry"
-import { Wind } from "./mavlink-assets/messages/wind"
-import { BatteryStatus } from "./mavlink-assets/messages/battery-status"
-import { AoaSsa } from "./mavlink-assets/messages/aoa-ssa"
-import { MissionCurrent } from "./mavlink-assets/messages/mission-current"
-import { NavControllerOutput } from "./mavlink-assets/messages/nav-controller-output"
-import { EkfStatusReport } from "./mavlink-assets/messages/ekf-status-report"
-import { CommandLong } from "./mavlink-assets/messages/command-long"
-import { SetMode } from "./mavlink-assets/messages/set-mode"
-import { MissionCount } from "./mavlink-assets/messages/mission-count"
-import { MissionItemInt } from "./mavlink-assets/messages/mission-item-int"
-import { MissionRequest } from "./mavlink-assets/messages/mission-request"
-import { MissionRequestInt } from "./mavlink-assets/messages/mission-request-int"
-import { MissionAck } from "./mavlink-assets/messages/mission-ack"
-import { MavCmd } from "./mavlink-assets/enums/mav-cmd"
-import { MavModeFlag } from "./mavlink-assets/enums/mav-mode-flag"
-import { MavMissionType } from "./mavlink-assets/enums/mav-mission-type"
-import { makeCommand } from "@libs/commands/helpers"
-import { Mission } from "../mission"
-import { Heartbeat } from "./mavlink-assets/messages/heartbeat"
-import { useVehicle } from "@libs/stores/vehicle"
-import { RequestDataStream } from "./mavlink-assets/messages/request-data-stream"
-import { MavLinkStreamParser } from "./mavlink-stream-parser"
-import { VehicleState } from "@libs/vehicle/state"
-import { toast } from "sonner"
-import { getSeverityName } from "./mavlink-assets/enums/mav-message-severity"
-import { objectKeys } from "@libs/util/types"
+import { convertArdupilot, exportQGCWaypoints, MAV2MAVparam, MavCommand } from './export'
+import { Dialect } from '../dialect'
+import { mavCmdDescription } from './commands'
+import { exportRFJSON1 } from '../format/readyflight/json1/export'
+import { importRFJSON1 } from '../format/readyflight/json1/import'
+import { decodePacket } from './mavlink-decoder'
+import { encodePacket } from './mavlink-encoder'
+import { Attitude } from './mavlink-assets/messages/attitude'
+import { GlobalPositionInt } from './mavlink-assets/messages/global-position-int'
+import { GpsRawInt } from './mavlink-assets/messages/gps-raw-int'
+import { Statustext } from './mavlink-assets/messages/statustext'
+import { VfrHud } from './mavlink-assets/messages/vfr-hud'
+import { rad2deg } from '@libs/math/geometry'
+import { Wind } from './mavlink-assets/messages/wind'
+import { BatteryStatus } from './mavlink-assets/messages/battery-status'
+import { AoaSsa } from './mavlink-assets/messages/aoa-ssa'
+import { MissionCurrent } from './mavlink-assets/messages/mission-current'
+import { NavControllerOutput } from './mavlink-assets/messages/nav-controller-output'
+import { EkfStatusReport } from './mavlink-assets/messages/ekf-status-report'
+import { CommandLong } from './mavlink-assets/messages/command-long'
+import { SetMode } from './mavlink-assets/messages/set-mode'
+import { MissionCount } from './mavlink-assets/messages/mission-count'
+import { MissionItemInt } from './mavlink-assets/messages/mission-item-int'
+import { MissionRequest } from './mavlink-assets/messages/mission-request'
+import { MissionRequestInt } from './mavlink-assets/messages/mission-request-int'
+import { MissionAck } from './mavlink-assets/messages/mission-ack'
+import { MavCmd } from './mavlink-assets/enums/mav-cmd'
+import { MavModeFlag } from './mavlink-assets/enums/mav-mode-flag'
+import { MavMissionType } from './mavlink-assets/enums/mav-mission-type'
+import { makeCommand } from '@libs/commands/helpers'
+import { Mission } from '../mission'
+import { Heartbeat } from './mavlink-assets/messages/heartbeat'
+import { useVehicle } from '@libs/stores/vehicle'
+import { RequestDataStream } from './mavlink-assets/messages/request-data-stream'
+import { MavLinkStreamParser } from './mavlink-stream-parser'
+import { VehicleState } from '@libs/vehicle/state'
+import { toast } from 'sonner'
+import { getSeverityName } from './mavlink-assets/enums/mav-message-severity'
+import { objectKeys } from '@libs/util/types'
 
 // ---------------------------------------------------------------------------
 // Mission upload state — one active upload at a time.
@@ -76,9 +76,9 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
   msg.param2 = item.param2
   msg.param3 = item.param3
   msg.param4 = item.param4
-  msg.x = Math.round(item.param5 * 1e7)  // lat → int32 (deg * 1e7)
-  msg.y = Math.round(item.param6 * 1e7)  // lon → int32 (deg * 1e7)
-  msg.z = item.param7                     // alt stays as float
+  msg.x = Math.round(item.param5 * 1e7) // lat → int32 (deg * 1e7)
+  msg.y = Math.round(item.param6 * 1e7) // lon → int32 (deg * 1e7)
+  msg.z = item.param7 // alt stays as float
   return msg
 }
 
@@ -97,29 +97,26 @@ function flushPatch() {
   }
   requestAnimationFrame(flushPatch)
 }
-if (typeof requestAnimationFrame !== "undefined") {
+if (typeof requestAnimationFrame !== 'undefined') {
   requestAnimationFrame(flushPatch)
 }
 
-function processFrame(
-  data: ArrayBuffer,
-  sendPacket: (buf: ArrayBuffer) => void
-): void {
+function processFrame(data: ArrayBuffer, sendPacket: (buf: ArrayBuffer) => void): void {
   const msg = decodePacket(data)
   if (!msg) return
 
   if (msg instanceof Heartbeat) {
     if (heartbeatTimeout) {
-      clearTimeout(heartbeatTimeout);
+      clearTimeout(heartbeatTimeout)
     }
     heartbeatTimeout = setTimeout(() => {
-      console.log("No heartbeat, disconecting");
+      console.log('No heartbeat, disconecting')
       Object.assign(pendingPatch, { connected: false })
       clearTimeout(heartbeatTimer)
-    }, 3000);
+    }, 3000)
     const connected = useVehicle.getState().connected
 
-    const isArmed = (msg.base_mode & MavModeFlag.MAV_MODE_FLAG_SAFETY_ARMED) !== 0;
+    const isArmed = (msg.base_mode & MavModeFlag.MAV_MODE_FLAG_SAFETY_ARMED) !== 0
 
     Object.assign(pendingPatch, {
       mode: msg.custom_mode,
@@ -141,8 +138,6 @@ function processFrame(
       cmd2.start_stop = 1
       cmd2.req_message_rate = 32
       sendPacket(encodePacket(cmd2))
-
-
 
       heartbeatTimer = setInterval(() => {
         const cmd = new Heartbeat(0, 0)
@@ -179,7 +174,7 @@ function processFrame(
       batteryVoltage: msg.voltages / 1000,
       batteryCurrent: msg.current_battery,
       batteryRemaining: msg.time_remaining,
-      batteryConsumedmAh: msg.current_consumed,
+      batteryConsumedmAh: msg.current_consumed
     })
   } else if (msg instanceof VfrHud) {
     Object.assign(pendingPatch, {
@@ -258,7 +253,9 @@ function processFrame(
     const seq = msg.seq
     const item = pendingUpload[seq]
     if (!item) {
-      console.warn(`[mavlink] request for unknown seq ${seq} (upload has ${pendingUpload.length} items)`)
+      console.warn(
+        `[mavlink] request for unknown seq ${seq} (upload has ${pendingUpload.length} items)`
+      )
       return
     }
 
@@ -273,34 +270,37 @@ function processFrame(
 
     console.log(`[mavlink] Sending MISSION_ITEM_INT seq=${seq}`)
     sendPacket(encodePacket(buildMissionItemInt(item, seq)))
-
   } else if (msg instanceof MissionAck) {
     if (msg.type === 0 /* MAV_MISSION_ACCEPTED */) {
       console.log('[mavlink] Mission upload accepted')
-      toast.success('Mission Upload Accepted', { description: 'The vehicle has accepted your mission upload' })
+      toast.success('Mission Upload Accepted', {
+        description: 'The vehicle has accepted your mission upload'
+      })
     } else {
       console.error(`[mavlink] Mission upload failed, result=${msg.type}`)
-      toast.error('Mission Upload Failed', { description: `The upload has failed with the following result: ${msg.type}` })
+      toast.error('Mission Upload Failed', {
+        description: `The upload has failed with the following result: ${msg.type}`
+      })
     }
     resetUploadState()
   } else {
   }
 }
 
-export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
-  name: "mavlink-ardupilot",
+export const ardupilot: Dialect<(typeof mavCmdDescription)[number]> = {
+  name: 'mavlink-ardupilot',
   commandDescriptions: mavCmdDescription,
   convert: convertArdupilot,
 
   getCommandLocation: (cmd) => {
-    let a = mavCmdDescription.find(x => x.type == cmd.type)
+    const a = mavCmdDescription.find((x) => x.type == cmd.type)
     if (!a.hasLocation) {
       return null
     }
     //@ts-ignore
-    let b = objectKeys(cmd.params).includes("latitude") ? cmd.params.latitude : null
+    const b = objectKeys(cmd.params).includes('latitude') ? cmd.params.latitude : null
     //@ts-ignore
-    let c = objectKeys(cmd.params).includes("longitude") ? cmd.params.longitude : null
+    const c = objectKeys(cmd.params).includes('longitude') ? cmd.params.longitude : null
     if (b === null || c === null) {
       return null
     }
@@ -308,16 +308,16 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   },
 
   getCommandLocationAlt: (cmd) => {
-    let a = mavCmdDescription.find(x => x.type == cmd.type)
+    const a = mavCmdDescription.find((x) => x.type == cmd.type)
     if (!a.hasLocation) {
       return null
     }
     //@ts-ignore
-    let b = objectKeys(cmd.params).includes("latitude") ? cmd.params.latitude : null
+    const b = objectKeys(cmd.params).includes('latitude') ? cmd.params.latitude : null
     //@ts-ignore
-    let c = objectKeys(cmd.params).includes("longitude") ? cmd.params.longitude : null
+    const c = objectKeys(cmd.params).includes('longitude') ? cmd.params.longitude : null
     //@ts-ignore
-    let d = objectKeys(cmd.params).includes("altitude") ? cmd.params.altitude : null
+    const d = objectKeys(cmd.params).includes('altitude') ? cmd.params.altitude : null
     if (b === null || c === null || d === null) {
       return null
     }
@@ -325,33 +325,33 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   },
 
   getCommandLabel: (cmd) => {
-    let a = mavCmdDescription.find(x => x.type == cmd.type)
+    const a = mavCmdDescription.find((x) => x.type == cmd.type)
     return a.label
   },
 
   fileFormats: [
     {
-      name: "Readyflight JSON",
-      id: "RFJSON1",
+      name: 'Readyflight JSON',
+      id: 'RFJSON1',
       export: (mission, vehicle) => exportRFJSON1(mission, vehicle, ardupilot),
       import: (blob) => importRFJSON1(blob),
-      ext: ".json"
+      ext: '.json'
     },
     {
-      name: ".waypoints",
-      id: "QGCmission",
+      name: '.waypoints',
+      id: 'QGCmission',
       export: (mission, _) => exportQGCWaypoints(mission),
-      ext: ".waypoints"
+      ext: '.waypoints'
     }
   ],
 
   supportedRFCommands: {
-    "RF.DubinsPath": true,
-    "RF.Group": true,
-    "RF.SetServo": true,
-    "RF.Land": true,
-    "RF.Takeoff": true,
-    "RF.Waypoint": true,
+    'RF.DubinsPath': true,
+    'RF.Group': true,
+    'RF.SetServo': true,
+    'RF.Land': true,
+    'RF.Takeoff': true,
+    'RF.Waypoint': true
   },
 
   handleTelemetryMessage: (data, sendPacket) => {
@@ -409,16 +409,22 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
   uploadMission: (mission, sendPacket) => {
     // Convert the RF/dialect mission into flat MAVLink param items.
     // Item 0 is always the home position (reference point, absolute altitude 0).
-    const typedMission = mission as unknown as Mission<typeof mavCmdDescription[number]>
+    const typedMission = mission as unknown as Mission<(typeof mavCmdDescription)[number]>
     const reference = typedMission.getReferencePoint()
 
     //@ts-ignore
-    const homeItem = MAV2MAVparam(makeCommand("D.MAV_CMD_NAV_WAYPOINT", {
-      latitude: reference.lat,
-      longitude: reference.lng,
-      altitude: 0
-    }, ardupilot))
-    homeItem.frame = 0  // MAV_FRAME_GLOBAL — absolute altitude for home
+    const homeItem = MAV2MAVparam(
+      makeCommand(
+        'D.MAV_CMD_NAV_WAYPOINT',
+        {
+          latitude: reference.lat,
+          longitude: reference.lng,
+          altitude: 0
+        },
+        ardupilot
+      )
+    )
+    homeItem.frame = 0 // MAV_FRAME_GLOBAL — absolute altitude for home
 
     const missionItems = convertArdupilot(typedMission).map(MAV2MAVparam)
 
@@ -434,5 +440,5 @@ export const ardupilot: Dialect<typeof mavCmdDescription[number]> = {
     countMsg.count = pendingUpload.length
     countMsg.mission_type = MavMissionType.MAV_MISSION_TYPE_MISSION
     sendPacket(encodePacket(countMsg))
-  },
+  }
 }

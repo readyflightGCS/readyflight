@@ -1,4 +1,4 @@
-import { VehicleCommand } from "./commands"
+import { VehicleCommand } from './commands'
 
 export type VehicleState = {
   connected: boolean
@@ -6,23 +6,23 @@ export type VehicleState = {
   isArmed: boolean | null
   lat: number | null
   lon: number | null
-  alt: number | null         // MSL altitude in metres
+  alt: number | null // MSL altitude in metres
   relativeAlt: number | null // AGL altitude in metres
-  heading: number | null     // degrees 0–360
-  roll: number | null        // degrees
-  rollRate: number | null        // degrees
-  pitch: number | null       // degrees
-  pitchRate: number | null       // degrees
-  yaw: number | null         // degrees
-  yawRate: number | null         // degrees
+  heading: number | null // degrees 0–360
+  roll: number | null // degrees
+  rollRate: number | null // degrees
+  pitch: number | null // degrees
+  pitchRate: number | null // degrees
+  yaw: number | null // degrees
+  yawRate: number | null // degrees
   airspeed: number | null
   throttle: number | null
   climb: number | null
-  batteryVoltage: number | null   // volts
-  batteryCurrent: number | null   // amps (-1 = not available)
+  batteryVoltage: number | null // volts
+  batteryCurrent: number | null // amps (-1 = not available)
   batteryRemaining: number | null // percent 0–100, -1 = not available
   batteryConsumedmAh: number | null // percent 0–100, -1 = not available
-  groundspeed: number | null      // m/s
+  groundspeed: number | null // m/s
   gpsSatellites: number | null
   gpsFixType: number | null
   hdop: number | null

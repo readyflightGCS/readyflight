@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavDistanceSensor} from '../enums/mav-distance-sensor';
-import {MavFrame} from '../enums/mav-frame';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavDistanceSensor } from '../enums/mav-distance-sensor'
+import { MavFrame } from '../enums/mav-frame'
 /*
 Obstacle located as a 3D vector.
 */
@@ -15,27 +15,27 @@ Obstacle located as a 3D vector.
 // min_distance Minimum distance the sensor can measure. float
 // max_distance Maximum distance the sensor can measure. float
 export class ObstacleDistance3d extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public sensor_type!: MavDistanceSensor;
-	public frame!: MavFrame;
-	public obstacle_id!: number;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public min_distance!: number;
-	public max_distance!: number;
-	public _message_id: number = 11037;
-	public _message_name: string = 'OBSTACLE_DISTANCE_3D';
-	public _crc_extra: number = 130;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['x', 'float', false],
-		['y', 'float', false],
-		['z', 'float', false],
-		['min_distance', 'float', false],
-		['max_distance', 'float', false],
-		['obstacle_id', 'uint16_t', false],
-		['sensor_type', 'uint8_t', false],
-		['frame', 'uint8_t', false],
-	];
+  public time_boot_ms!: number
+  public sensor_type!: MavDistanceSensor
+  public frame!: MavFrame
+  public obstacle_id!: number
+  public x!: number
+  public y!: number
+  public z!: number
+  public min_distance!: number
+  public max_distance!: number
+  public _message_id: number = 11037
+  public _message_name: string = 'OBSTACLE_DISTANCE_3D'
+  public _crc_extra: number = 130
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['x', 'float', false],
+    ['y', 'float', false],
+    ['z', 'float', false],
+    ['min_distance', 'float', false],
+    ['max_distance', 'float', false],
+    ['obstacle_id', 'uint16_t', false],
+    ['sensor_type', 'uint8_t', false],
+    ['frame', 'uint8_t', false]
+  ]
 }

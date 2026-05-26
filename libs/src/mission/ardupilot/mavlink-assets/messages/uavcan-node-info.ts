@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 General information describing a particular UAVCAN node. Please refer to the definition of the UAVCAN service "uavcan.protocol.GetNodeInfo" for the background information. This message should be emitted by the system whenever a new node appears online, or an existing node reboots. Additionally, it can be emitted upon request from the other end of the MAVLink channel (see MAV_CMD_UAVCAN_GET_NODE_INFO). It is also not prohibited to emit this message unconditionally at a low frequency. The UAVCAN specification is available at http://uavcan.org.
 */
@@ -13,27 +13,27 @@ General information describing a particular UAVCAN node. Please refer to the def
 // sw_version_minor Software minor version number. uint8_t
 // sw_vcs_commit Version control system (VCS) revision identifier (e.g. git short commit hash). 0 if unknown. uint32_t
 export class UavcanNodeInfo extends MAVLinkMessage {
-	public time_usec!: number;
-	public uptime_sec!: number;
-	public name!: string;
-	public hw_version_major!: number;
-	public hw_version_minor!: number;
-	public hw_unique_id!: number;
-	public sw_version_major!: number;
-	public sw_version_minor!: number;
-	public sw_vcs_commit!: number;
-	public _message_id: number = 311;
-	public _message_name: string = 'UAVCAN_NODE_INFO';
-	public _crc_extra: number = 95;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['uptime_sec', 'uint32_t', false],
-		['sw_vcs_commit', 'uint32_t', false],
-		['name', 'char', false],
-		['hw_version_major', 'uint8_t', false],
-		['hw_version_minor', 'uint8_t', false],
-		['hw_unique_id', 'uint8_t', false],
-		['sw_version_major', 'uint8_t', false],
-		['sw_version_minor', 'uint8_t', false],
-	];
+  public time_usec!: number
+  public uptime_sec!: number
+  public name!: string
+  public hw_version_major!: number
+  public hw_version_minor!: number
+  public hw_unique_id!: number
+  public sw_version_major!: number
+  public sw_version_minor!: number
+  public sw_vcs_commit!: number
+  public _message_id: number = 311
+  public _message_name: string = 'UAVCAN_NODE_INFO'
+  public _crc_extra: number = 95
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['uptime_sec', 'uint32_t', false],
+    ['sw_vcs_commit', 'uint32_t', false],
+    ['name', 'char', false],
+    ['hw_version_major', 'uint8_t', false],
+    ['hw_version_minor', 'uint8_t', false],
+    ['hw_unique_id', 'uint8_t', false],
+    ['sw_version_major', 'uint8_t', false],
+    ['sw_version_minor', 'uint8_t', false]
+  ]
 }

@@ -1,7 +1,6 @@
-import { RFCommandDescription } from "./readyflightCommands"
+import { RFCommandDescription } from './readyflightCommands'
 
-type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
-
+export type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never
 
 // #########################################
 // #          Command Description          #
@@ -14,15 +13,14 @@ export type CommandDescriptionProperties = {
   value: number
   label: string
   description: string
-  hasLocation: boolean,
+  hasLocation: boolean
   isDestination: boolean
   // parameters types that it can accept.
-  parameters: (CommandParameterUnion)[]
+  parameters: CommandParameterUnion[]
 }
 
 export type DialectCommandDescription = { type: `D.${string}` } & CommandDescriptionProperties
 export type ReadyflightCommandDescription = { type: `RF.${string}` } & CommandDescriptionProperties
-
 
 /**
  * Describes a numeric command parameter with validation and configuration options.
@@ -38,7 +36,7 @@ export type ReadyflightCommandDescription = { type: `RF.${string}` } & CommandDe
  * @property {number[]} options - An array of valid numeric options for this parameter.
  */
 export type CommandParameterDescriptionN = {
-  parameterType: "number"
+  parameterType: 'number'
   label: string
   description: string
   units: string | null
@@ -61,7 +59,7 @@ export type CommandParameterDescriptionN = {
  * @property {string[]} options - An array of valid string options for the parameter.
  */
 export type CommandParameterDescriptionS = {
-  parameterType: "string"
+  parameterType: 'string'
   label: string
   description: string
   default: string | null
@@ -70,55 +68,52 @@ export type CommandParameterDescriptionS = {
   options: string[]
 }
 
-
 // remember to add any new types to this union
 export type CommandParameterUnion =
-  CommandParameterDescriptionS |
-  CommandParameterDescriptionN
+  | CommandParameterDescriptionS
+  | CommandParameterDescriptionN
+  | null
 
 // and remember to add it to this thing. TODO maybe derive this somehow
-type ParameterTypeToValueType<T extends CommandParameterUnion> =
-  T extends { parameterType: "number" } ? number :
-  T extends { parameterType: "string" } ? string :
-  never
-
-
+type ParameterTypeToValueType<T extends CommandParameterUnion> = T extends {
+  parameterType: 'number'
+}
+  ? number
+  : T extends { parameterType: 'string' }
+    ? string
+    : never
 
 // #########################################
 // #            Dialect Command            #
 // #########################################
 //
-// This is the shape of the data in memory that we store about commands. 
+// This is the shape of the data in memory that we store about commands.
 
-
-// This is the definition for the parameters, it basically grabs all of the 
-// parameters from the Command definition and puts the lowercase label against 
+// This is the definition for the parameters, it basically grabs all of the
+// parameters from the Command definition and puts the lowercase label against
 // the type of the parameter. For instance {name: string, altitude: number ..}
 export type CommandParams<CD extends CommandDescriptionProperties> = {
-  [K in CD["parameters"][number]as
-  Lowercase<K["label"]> extends string
-  ? Lowercase<K["label"]>
-  : never
-  ]: ParameterTypeToValueType<K>
+  [K in CD['parameters'][number] as Lowercase<K['label']> extends string
+    ? Lowercase<K['label']>
+    : never]: ParameterTypeToValueType<K>
 }
 
 export type DialectCommand<CD extends DialectCommandDescription> = {
-  type: CD["type"]
+  type: CD['type']
   frame: number
   params: CommandParams<CD>
 }
 
-export type RFCommand =
-  { [C in typeof RFCommandDescription[number]as C["type"]]: {
-    type: C["type"]
+export type RFCommand = {
+  [C in (typeof RFCommandDescription)[number] as C['type']]: {
+    type: C['type']
     frame: number
     params: CommandParams<C>
-  } }[typeof RFCommandDescription[number]["type"]]
-
+  }
+}[(typeof RFCommandDescription)[number]['type']]
 
 // Type alias for cleaner code - represents any command that can be in a mission
-export type MissionCommand<CD extends DialectCommandDescription> =
-  RFCommand | DialectCommand<CD>
+export type MissionCommand<CD extends DialectCommandDescription> = RFCommand | DialectCommand<CD>
 
 // Just a sanity check to make sure params type is working correctly
 // let a: MissionCommand<CommandDescription> = { type: "RF.Waypoint", frame: 0, params: {} }
