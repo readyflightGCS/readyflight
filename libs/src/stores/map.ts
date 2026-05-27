@@ -11,12 +11,17 @@ export const mapElements = [
   'imagery'
 ] as const
 
+export type TerrainPreview = { lat: number; lng: number; radiusKm: number }
+
 type MapContextState = {
   mapRef: MutableRefObject<Map> | null
   tileProvider: { subdomains: string[]; url: string }
   setTileProvider: (x: { subdomains: string[]; url: string }) => void
   viewable: { [K in (typeof mapElements)[number]]: boolean }
   setViewable: (x: { [K in (typeof mapElements)[number]]: boolean }) => void
+  /** Circle preview shown on the map while configuring a terrain download. */
+  terrainPreview: TerrainPreview | null
+  setTerrainPreview: (x: TerrainPreview | null) => void
 }
 
 export const useRFMap = create<MapContextState>((set) => ({
@@ -34,5 +39,7 @@ export const useRFMap = create<MapContextState>((set) => ({
     terrain: false,
     imagery: false
   },
-  setViewable: (x) => set({ viewable: x })
+  setViewable: (x) => set({ viewable: x }),
+  terrainPreview: null,
+  setTerrainPreview: (x) => set({ terrainPreview: x }),
 }))

@@ -2,6 +2,7 @@ import type { LeafletMouseEvent } from 'leaflet'
 
 import { useEditor } from '@libs/stores/configurator'
 import { useMission } from '@libs/stores/mission'
+import { useRFMap } from '@libs/stores/map'
 import { RFCommand } from '@libs/commands/command'
 
 export function useMapClickHandler() {
@@ -12,6 +13,8 @@ export function useMapClickHandler() {
   const selectedSubMission = useMission((s) => s.selectedSubMission)
   const setSelectedCommandIDs = useMission((s) => s.setSelectedCommandIDs)
   const lastSelectedCommandIndex = useEditor((s) => s.setLastSelectedCommandIndex)
+
+  const setTerrainPreview = useRFMap((s) => s.setTerrainPreview)
 
   return (e: LeafletMouseEvent) => {
     switch (currentTab) {
@@ -36,8 +39,20 @@ export function useMapClickHandler() {
 
       case 'Telemetry':
         break
-      case 'Settings':
+
+      case 'Settings': {
+        if (terrainPickMode) {
+          // Preserve the current radius — only the centre is being picked.
+          const currentRadius = useRFMap.getState().terrainPreview?.radiusKm ?? 50
+          setTerrainPreview({ lat: e.latlng.lat, lng: e.latlng.lng, radiusKm: currentRadius })
+          setTerrainPickMode(false)
+        }
         break
+      }
+
+      case 'Vehicle':
+        break
+
       default: {
         const _exhaustiveCheck: never = currentTab
         return _exhaustiveCheck

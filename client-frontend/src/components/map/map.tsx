@@ -26,6 +26,15 @@ function MapRefSetter() {
   return null
 }
 
+function TerrainPickCursor() {
+  const pickMode = useRFMap((s) => s.terrainPickMode)
+  const map = useMap()
+  useEffect(() => {
+    map.getContainer().style.cursor = pickMode ? 'crosshair' : ''
+  }, [pickMode, map])
+  return null
+}
+
 function Map(): React.JSX.Element {
   return (
     <MapContainer
@@ -39,6 +48,7 @@ function Map(): React.JSX.Element {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MapRefSetter />
+      <TerrainPickCursor />
       <CreateHandler />
       <MissionLayer />
       <GeofenceLayer />

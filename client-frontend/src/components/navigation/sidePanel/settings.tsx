@@ -8,6 +8,7 @@ import {
 import SidePanelSection from '@/components/ui/sidePanelSection'
 import { useThemeStore } from '@libs/stores/theme'
 import { Moon, Sun } from 'lucide-react'
+import TerrainSettings from './terrainSettings'
 
 const isElectron = window.env?.isElectron === true
 
@@ -16,7 +17,7 @@ export default function Settings() {
   console.log(__GIT_VERSION__)
   return (
     <div className="flex flex-col h-full justify-between">
-      <div>
+      <div className="flex flex-col gap-2 min-h-0 flex-1 overflow-y-auto">
         <h2>Settings</h2>
 
         <SidePanelSection>
@@ -36,6 +37,8 @@ export default function Settings() {
             </DropdownMenuContent>
           </DropdownMenu>
         </SidePanelSection>
+
+        <TerrainSettings />
       </div>
       <div className="text-xs">
         {isElectron ? 'Electron' : 'Browser'} | v{__GIT_VERSION__}

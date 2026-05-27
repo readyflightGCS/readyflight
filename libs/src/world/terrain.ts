@@ -1,4 +1,4 @@
-import { getMany, setMany, createStore } from 'idb-keyval'
+import { getMany, setMany, createStore, entries, clear } from 'idb-keyval'
 import { haversineDistance } from "@libs/world/distance";
 import { LatLng, LatLngAlt } from "@libs/world/latlng";
 import { interpolateLinear } from '@libs/math/geometry';
@@ -26,13 +26,14 @@ function toKey(loc: LatLng): string {
  * Returns the four surrounding 0.01° grid corners for bilinear interpolation.
  */
 function getSurroundingPoints(loc: LatLng): LatLng[] {
-  const latF = Number(loc.lat.toFixed(TERRAIN_RES))
-  const lngF = Number(loc.lng.toFixed(TERRAIN_RES))
+  const places = 10 ** TERRAIN_RES
+  const latF = Math.floor(loc.lat * places) / places
+  const lngF = Math.floor(loc.lng * places) / places
   return [
     { lat: latF, lng: lngF },
-    { lat: latF, lng: Number((loc.lng + offset).toFixed(TERRAIN_RES)) },
-    { lat: Number((loc.lat + offset).toFixed(TERRAIN_RES)), lng: lngF },
-    { lat: Number((loc.lat + offset).toFixed(TERRAIN_RES)), lng: Number((loc.lng + offset).toFixed(TERRAIN_RES)) }
+    { lat: latF, lng: (loc.lng + offset) },
+    { lat: (loc.lat + offset), lng: lngF },
+    { lat: (loc.lat + offset), lng: (loc.lng + offset) }
   ]
 }
 
@@ -120,37 +121,75 @@ export async function getTerrainFromStorage(locs: LatLng[]): Promise<{ locs: Lat
   return { locs: found, nf: notFound }
 }
 
+/** Resolves after `ms` milliseconds, or immediately if `signal` fires first. */
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    const id = setTimeout(resolve, ms)
+    signal?.addEventListener('abort', () => { clearTimeout(id); resolve() }, { once: true })
+  })
+}
+
+const RETRY_BACKOFF_MS = [1_000, 2_000, 4_000] as const
+
 /**
  * Fetches terrain elevations from the open-elevation.com API using POST.
  * POST avoids URL-length limits for large batches.
- * Returns null on network / API error (caller should degrade gracefully).
+ *
+ * Retries up to 3 times with exponential back-off on rate-limit (429) or
+ * transient network errors.  Non-retryable HTTP errors (e.g. 400, 404)
+ * return null immediately.  Returns null if all retries are exhausted.
  */
 export async function fetchTerrain(locs: LatLng[]): Promise<LatLngAlt[] | null> {
   if (locs.length === 0) return []
 
-  return fetch('https://api.open-elevation.com/api/v1/lookup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      locations: locs.map(loc => ({ latitude: loc.lat, longitude: loc.lng }))
-    })
-  })
-    .then(response => {
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      return response.json()
-    })
-    .then((data: { results?: { elevation: number; latitude: number; longitude: number }[] }) => {
-      if (!data.results) throw new Error('No results field in response')
-      return data.results.map(x => ({
-        alt: x.elevation,
-        lat: x.latitude,
-        lng: x.longitude
-      } as LatLngAlt))
-    })
-    .catch(error => {
-      console.warn('[TER] fetchTerrain failed:', error)
+  for (let attempt = 0; attempt <= RETRY_BACKOFF_MS.length; attempt++) {
+    let response: Response
+    try {
+      response = await fetch('https://api.open-elevation.com/api/v1/lookup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          locations: locs.map(loc => ({ latitude: loc.lat, longitude: loc.lng }))
+        })
+      })
+    } catch (networkError) {
+      // Transient network failure — retry with back-off
+      if (attempt < RETRY_BACKOFF_MS.length) {
+        console.warn(`[TER] Network error, retrying in ${RETRY_BACKOFF_MS[attempt]}ms (attempt ${attempt + 1}):`, networkError)
+        await sleep(RETRY_BACKOFF_MS[attempt])
+        continue
+      }
+      console.warn('[TER] fetchTerrain: network error after all retries:', networkError)
       return null
-    })
+    }
+
+    if (response.status === 429) {
+      if (attempt < RETRY_BACKOFF_MS.length) {
+        console.warn(`[TER] Rate limited — retrying in ${RETRY_BACKOFF_MS[attempt]}ms (attempt ${attempt + 1})`)
+        await sleep(RETRY_BACKOFF_MS[attempt])
+        continue
+      }
+      console.warn('[TER] fetchTerrain: rate limit exceeded after all retries')
+      return null
+    }
+
+    if (!response.ok) {
+      console.warn(`[TER] fetchTerrain: HTTP ${response.status}`)
+      return null  // Non-retryable error
+    }
+
+    try {
+      const data: { results?: { elevation: number; latitude: number; longitude: number }[] } =
+        await response.json()
+      if (!data.results) throw new Error('No results field in response')
+      return data.results.map(x => ({ alt: x.elevation, lat: x.latitude, lng: x.longitude }))
+    } catch (parseError) {
+      console.warn('[TER] fetchTerrain: failed to parse response:', parseError)
+      return null
+    }
+  }
+
+  return null
 }
 
 /**
@@ -314,4 +353,110 @@ export function calculateInterpolatedAltitudes(
   }
 
   return { interpolatedAltitudes, totalDistance }
+}
+
+// ─── Cache management ─────────────────────────────────────────────────────────
+
+/**
+ * Returns the number of grid cells currently in the terrain cache and a rough
+ * storage estimate (each entry ≈ 20 bytes: ~12-char key + 8-byte number).
+ */
+export async function getTerrainCacheStats(): Promise<{ count: number; estimatedKb: number }> {
+  const all = await entries(terStore)
+  return {
+    count: all.length,
+    estimatedKb: Math.round(all.length * 20 / 1024)
+  }
+}
+
+/**
+ * Removes all terrain elevation data from the IndexedDB cache.
+ */
+export async function clearTerrainCache(): Promise<void> {
+  await clear(terStore)
+}
+
+/**
+ * Pre-populates the terrain cache for a circular area around `center`.
+ *
+ * Grid points are generated at the same 0.01° resolution used by the rest of the
+ * terrain system, filtered to those within `radiusKm` kilometres.  Points already
+ * in the cache are skipped; the remainder are fetched from the open-elevation API
+ * in batches of 100 and stored.
+ *
+ * @param center     Centre of the download area.
+ * @param radiusKm   Download radius in kilometres.
+ * @param onProgress Called after each batch with (done, total) counts.
+ * @param signal     Optional AbortSignal to cancel mid-download.
+ * @returns          Counts of newly downloaded and already-cached cells.
+ */
+export async function downloadTerrainForArea(
+  center: LatLng,
+  radiusKm: number,
+  onProgress: (done: number, total: number) => void,
+  signal?: AbortSignal
+): Promise<{ downloaded: number; skipped: number }> {
+  const STEP = offset                                                   // 0.01°
+  const latRange = radiusKm / 111.32
+  const lngRange = radiusKm / (111.32 * Math.cos((center.lat * Math.PI) / 180))
+
+  // Generate every 0.01° grid point within the circle.
+  const points: LatLng[] = []
+  for (let dlat = -latRange; dlat <= latRange + STEP / 2; dlat += STEP) {
+    for (let dlng = -lngRange; dlng <= lngRange + STEP / 2; dlng += STEP) {
+      const pt: LatLng = {
+        lat: Number((center.lat + dlat).toFixed(TERRAIN_RES)),
+        lng: Number((center.lng + dlng).toFixed(TERRAIN_RES))
+      }
+      if (haversineDistance(center, pt) <= radiusKm * 1000) {
+        points.push(pt)
+      }
+    }
+  }
+
+  const total = points.length
+  if (total === 0) return { downloaded: 0, skipped: 0 }
+
+  // Partition into already-cached and missing.
+  const keys = points.map(toKey)
+  const cached = await getMany<number>(keys, terStore)
+
+  const missing: LatLng[] = []
+  let done = 0
+
+  for (let i = 0; i < points.length; i++) {
+    if (cached[i] !== undefined) done++
+    else missing.push(points[i])
+  }
+
+  onProgress(done, total)
+
+  const BATCH = 100
+  const BATCH_DELAY_MS = 300  // breathing room between API requests
+  let downloaded = 0
+  const skipped = done
+
+  for (let i = 0; i < missing.length; i += BATCH) {
+    if (signal?.aborted) break
+
+    // Polite inter-batch delay — skipped for the very first batch.
+    if (i > 0) await sleep(BATCH_DELAY_MS, signal)
+    if (signal?.aborted) break
+
+    const batch = missing.slice(i, i + BATCH)
+    const fetched = await fetchTerrain(batch)
+
+    if (fetched && fetched.length > 0) {
+      await setMany(
+        fetched.map(x => [toKey(x), x.alt] as [string, number]),
+        terStore
+      )
+      downloaded += fetched.length
+    }
+
+    done += batch.length
+    onProgress(done, total)
+  }
+
+  return { downloaded, skipped }
 }

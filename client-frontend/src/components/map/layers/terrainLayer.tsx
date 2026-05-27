@@ -8,6 +8,7 @@ const terStore = createStore('readyflight-terrain', 'terrain-cache')
 
 export default function TerrainLayer() {
   const viewable = useRFMap((s) => s.viewable)
+  const terrainPreview = useRFMap((s) => s.terrainPreview)
   const [terrainData, setTerrainData] = useState<LatLngAlt[]>([])
 
   useEffect(() => {
@@ -22,18 +23,35 @@ export default function TerrainLayer() {
     })
   }, [viewable.terrain])
 
-  if (!viewable.terrain) return null
+  // Nothing to render
+  if (!viewable.terrain && !terrainPreview) return null
 
   return (
     <LayerGroup>
-      {terrainData.map((x, i) => (
+      {/* Cached terrain grid cells */}
+      {viewable.terrain &&
+        terrainData.map((x, i) => (
+          <Circle
+            key={i}
+            center={[x.lat, x.lng]}
+            radius={500}
+            pathOptions={{ color: '#228B22', fillOpacity: 0.3, weight: 1 }}
+          />
+        ))}
+
+      {/* Download area preview — always visible when set */}
+      {terrainPreview && (
         <Circle
-          key={i}
-          center={[x.lat, x.lng]}
-          radius={500}
-          pathOptions={{ color: '#228B22', fillOpacity: 0.3, weight: 1 }}
+          center={[terrainPreview.lat, terrainPreview.lng]}
+          radius={terrainPreview.radiusKm * 1000}
+          pathOptions={{
+            color: '#3b82f6',
+            fillOpacity: 0.07,
+            weight: 2,
+            dashArray: '8 5'
+          }}
         />
-      ))}
+      )}
     </LayerGroup>
   )
 }
