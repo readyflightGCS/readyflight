@@ -130,7 +130,7 @@ export function useMapClickHandler() {
       case 'Settings': {
         if (tool === 'selectCache') {
           // Preserve the current radius — only the centre is being picked.
-          const currentRadius = useRFMap.getState().terrainPreview?.radiusKm ?? 50
+          const currentRadius = useRFMap.getState().terrainPreview?.radiusKm ?? 5
           setTerrainPreview({ lat: e.latlng.lat, lng: e.latlng.lng, radiusKm: currentRadius })
           setTool('waypoint')
         }

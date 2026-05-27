@@ -138,7 +138,7 @@ export default function NumericInput({
   }
 
   return (
-    <div className="relative inline-block">
+    <>
       <input
         type="text"
         inputMode="numeric"
@@ -150,12 +150,12 @@ export default function NumericInput({
         onBlur={handleBlur}
         placeholder="--"
         className={cn(
-          'bg-card rounded-lg pl-2 border-2 cursor-move text-foreground text-sm h-8',
+          'relative inline-block bg-card rounded-lg pl-2 border-2 cursor-move text-foreground text-sm h-8',
           className,
           textValue.trim() === '' ? 'text-center' : ''
         )}
       />
       {isDragging && <div className="fixed inset-0 z-50 cursor-move" />}
-    </div>
+    </>
   )
 }

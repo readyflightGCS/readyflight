@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Crosshair } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import SidePanelSection from '@/components/ui/sidePanelSection'
 import { useRFMap } from '@libs/stores/map'
 import {
@@ -9,8 +8,8 @@ import {
   downloadTerrainForArea,
   getTerrainCacheStats
 } from '@libs/world/terrain'
-
-// ─── Types ────────────────────────────────────────────────────────────────────
+import { useEditor } from '@libs/stores/configurator'
+import NumericInput from '@/components/ui/numericInput'
 
 type DownloadPhase =
   | { kind: 'idle' }
@@ -19,22 +18,15 @@ type DownloadPhase =
   | { kind: 'cancelled'; downloaded: number }
   | { kind: 'error' }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function TerrainSettings() {
-  const { mapRef, terrainPickMode, setTerrainPickMode, setTerrainPreview } = useRFMap()
+  const { mapRef, terrainPreview, setTerrainPreview } = useRFMap()
+  const tool = useEditor(s => s.tool)
+  const setTool = useEditor(s => s.setTool)
 
-  const [lat, setLat] = useState('')
-  const [lng, setLng] = useState('')
-  const [radius, setRadius] = useState('50')
   const [stats, setStats] = useState<{ count: number; estimatedKb: number } | null>(null)
   const [phase, setPhase] = useState<DownloadPhase>({ kind: 'idle' })
 
   const abortRef = useRef<AbortController | null>(null)
-  // Tracks whether we entered pick mode so we can sync inputs when it ends.
-  const wasPickingRef = useRef(false)
-
-  // ── Stats ────────────────────────────────────────────────────────────────────
 
   const refreshStats = () => {
     getTerrainCacheStats().then((s) => {
@@ -46,67 +38,24 @@ export default function TerrainSettings() {
     refreshStats()
   }, [])
 
-  // ── Cleanup on unmount ────────────────────────────────────────────────────────
-
-  useEffect(() => {
-    return () => {
-      setTerrainPickMode(false)
-      setTerrainPreview(null)
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ── Keep the store preview in sync with the form ──────────────────────────────
-
-  useEffect(() => {
-    const latN = parseFloat(lat)
-    const lngN = parseFloat(lng)
-    const radN = parseFloat(radius)
-    if (!isNaN(latN) && !isNaN(lngN) && !isNaN(radN) && radN > 0) {
-      setTerrainPreview({ lat: latN, lng: lngN, radiusKm: radN })
-    } else {
-      setTerrainPreview(null)
-    }
-  }, [lat, lng, radius, setTerrainPreview])
-
-  // ── Sync inputs back when a map pick completes ────────────────────────────────
-
-  useEffect(() => {
-    if (terrainPickMode) {
-      wasPickingRef.current = true
-      return
-    }
-    if (wasPickingRef.current) {
-      wasPickingRef.current = false
-      // Pick mode just ended — pull the coordinates the click handler planted.
-      // Defer to avoid the synchronous-setState-in-effect lint rule.
-      const preview = useRFMap.getState().terrainPreview
-      if (preview) {
-        const { lat: pickedLat, lng: pickedLng } = preview
-        setTimeout(() => {
-          setLat(pickedLat.toFixed(5))
-          setLng(pickedLng.toFixed(5))
-        }, 0)
-      }
-    }
-  }, [terrainPickMode])
-
-  // ── Handlers ─────────────────────────────────────────────────────────────────
-
   const handleUseMapCentre = () => {
     const centre = mapRef?.current?.getCenter()
     if (!centre) return
-    setLat(centre.lat.toFixed(5))
-    setLng(centre.lng.toFixed(5))
+    setTerrainPreview({
+      radiusKm: terrainPreview?.radiusKm ?? 5,
+      lat: centre.lat,
+      lng: centre.lng
+    })
   }
 
   const handleTogglePickMode = () => {
-    setTerrainPickMode(!terrainPickMode)
+    setTool(tool === 'selectCache' ? 'waypoint' : 'selectCache')
   }
 
   const handleDownload = async () => {
-    const latN = parseFloat(lat)
-    const lngN = parseFloat(lng)
-    const radN = parseFloat(radius)
+    const latN = terrainPreview?.lat
+    const lngN = terrainPreview?.lng
+    const radN = terrainPreview?.radiusKm
     if (isNaN(latN) || isNaN(lngN) || isNaN(radN) || radN <= 0) return
 
     const ctrl = new AbortController()
@@ -143,11 +92,8 @@ export default function TerrainSettings() {
     refreshStats()
   }
 
-  // ── Derived display values ────────────────────────────────────────────────────
-
   const isDownloading = phase.kind === 'downloading'
-  const canDownload =
-    lat.trim() !== '' && lng.trim() !== '' && radius.trim() !== '' && !isDownloading
+  const canDownload = terrainPreview !== null && !isDownloading
 
   const progressPct =
     phase.kind === 'downloading' && phase.total > 0
@@ -169,8 +115,6 @@ export default function TerrainSettings() {
     }
   })()
 
-  // ── Render ────────────────────────────────────────────────────────────────────
-
   return (
     <>
       {/* ── Cache info ── */}
@@ -190,18 +134,28 @@ export default function TerrainSettings() {
         {/* Location inputs */}
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Location</span>
-          <div className="flex gap-2">
-            <Input
-              placeholder="Lat"
-              value={lat}
-              onChange={(e) => setLat(e.target.value)}
-              disabled={isDownloading}
+          <div className="flex gap-2 w-full">
+            <NumericInput name="lat"
+              className="w-1/2"
+              value={terrainPreview?.lat}
+              step={0.001}
+              onChange={(e) => {
+                setTerrainPreview({
+                  lat: e.target.value, radiusKm: terrainPreview.radiusKm, lng: terrainPreview?.lng
+                })
+              }}
             />
-            <Input
-              placeholder="Lng"
-              value={lng}
-              onChange={(e) => setLng(e.target.value)}
-              disabled={isDownloading}
+            <NumericInput
+              name="lng"
+              className="w-1/2"
+              value={terrainPreview?.lng}
+              step={0.001}
+              onChange={(e) => {
+                setTerrainPreview({
+                  lat: terrainPreview?.lat, radiusKm: terrainPreview.radiusKm, lng: e.target.value
+                })
+              }}
+
             />
           </div>
           <div className="flex gap-2">
@@ -215,12 +169,12 @@ export default function TerrainSettings() {
               Map Centre
             </Button>
             <Button
-              variant={terrainPickMode ? 'active' : 'default'}
+              variant={tool === 'selectCache' ? 'active' : 'default'}
               size="sm"
               onClick={handleTogglePickMode}
               disabled={isDownloading}
               title={
-                terrainPickMode
+                tool === 'selectCache'
                   ? 'Cancel — click map to set location'
                   : 'Click the map to set location'
               }
@@ -228,7 +182,7 @@ export default function TerrainSettings() {
               <Crosshair className="h-4 w-4" />
             </Button>
           </div>
-          {terrainPickMode && (
+          {tool === 'selectCache' && (
             <p className="text-xs text-muted-foreground">
               Click anywhere on the map to set the centre…
             </p>
@@ -238,14 +192,18 @@ export default function TerrainSettings() {
         {/* Radius */}
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Radius (km)</span>
-          <Input
-            type="number"
-            placeholder="50"
-            value={radius}
-            min={1}
-            max={500}
-            onChange={(e) => setRadius(e.target.value)}
-            disabled={isDownloading}
+          <NumericInput
+            name="Radius (km)"
+            value={terrainPreview?.radiusKm}
+            min={0.1}
+            max={30}
+            step={0.1}
+            className="w-full"
+            onChange={(e) => {
+              setTerrainPreview({
+                lat: terrainPreview?.lat, radiusKm: e.target.value, lng: terrainPreview?.lng
+              })
+            }}
           />
         </div>
 
