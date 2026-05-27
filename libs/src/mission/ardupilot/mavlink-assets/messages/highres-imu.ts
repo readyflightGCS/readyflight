@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {HighresImuUpdatedFlags} from '../enums/highres-imu-updated-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { HighresImuUpdatedFlags } from '../enums/highres-imu-updated-flags'
 /*
 The IMU readings in SI units in NED body frame
 */
@@ -21,41 +21,41 @@ The IMU readings in SI units in NED body frame
 // fields_updated Bitmap for fields that have updated since last message uint16_t
 // id Id. Ids are numbered from 0 and map to IMUs numbered from 1 (e.g. IMU1 will have a message with id=0) uint8_t
 export class HighresImu extends MAVLinkMessage {
-	public time_usec!: number;
-	public xacc!: number;
-	public yacc!: number;
-	public zacc!: number;
-	public xgyro!: number;
-	public ygyro!: number;
-	public zgyro!: number;
-	public xmag!: number;
-	public ymag!: number;
-	public zmag!: number;
-	public abs_pressure!: number;
-	public diff_pressure!: number;
-	public pressure_alt!: number;
-	public temperature!: number;
-	public fields_updated!: HighresImuUpdatedFlags;
-	public id!: number;
-	public _message_id: number = 105;
-	public _message_name: string = 'HIGHRES_IMU';
-	public _crc_extra: number = 93;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['xacc', 'float', false],
-		['yacc', 'float', false],
-		['zacc', 'float', false],
-		['xgyro', 'float', false],
-		['ygyro', 'float', false],
-		['zgyro', 'float', false],
-		['xmag', 'float', false],
-		['ymag', 'float', false],
-		['zmag', 'float', false],
-		['abs_pressure', 'float', false],
-		['diff_pressure', 'float', false],
-		['pressure_alt', 'float', false],
-		['temperature', 'float', false],
-		['fields_updated', 'uint16_t', false],
-		['id', 'uint8_t', true],
-	];
+  public time_usec!: number
+  public xacc!: number
+  public yacc!: number
+  public zacc!: number
+  public xgyro!: number
+  public ygyro!: number
+  public zgyro!: number
+  public xmag!: number
+  public ymag!: number
+  public zmag!: number
+  public abs_pressure!: number
+  public diff_pressure!: number
+  public pressure_alt!: number
+  public temperature!: number
+  public fields_updated!: HighresImuUpdatedFlags
+  public id!: number
+  public _message_id: number = 105
+  public _message_name: string = 'HIGHRES_IMU'
+  public _crc_extra: number = 93
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['xacc', 'float', false],
+    ['yacc', 'float', false],
+    ['zacc', 'float', false],
+    ['xgyro', 'float', false],
+    ['ygyro', 'float', false],
+    ['zgyro', 'float', false],
+    ['xmag', 'float', false],
+    ['ymag', 'float', false],
+    ['zmag', 'float', false],
+    ['abs_pressure', 'float', false],
+    ['diff_pressure', 'float', false],
+    ['pressure_alt', 'float', false],
+    ['temperature', 'float', false],
+    ['fields_updated', 'uint16_t', false],
+    ['id', 'uint8_t', true]
+  ]
 }

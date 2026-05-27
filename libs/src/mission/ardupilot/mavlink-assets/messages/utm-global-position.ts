@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {UtmFlightState} from '../enums/utm-flight-state';
-import {UtmDataAvailFlags} from '../enums/utm-data-avail-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { UtmFlightState } from '../enums/utm-flight-state'
+import { UtmDataAvailFlags } from '../enums/utm-data-avail-flags'
 /*
 The global position resulting from GPS and sensor fusion.
 */
@@ -24,45 +24,45 @@ The global position resulting from GPS and sensor fusion.
 // flight_state Flight state uint8_t
 // flags Bitwise OR combination of the data available flags. uint8_t
 export class UtmGlobalPosition extends MAVLinkMessage {
-	public time!: number;
-	public uas_id!: number;
-	public lat!: number;
-	public lon!: number;
-	public alt!: number;
-	public relative_alt!: number;
-	public vx!: number;
-	public vy!: number;
-	public vz!: number;
-	public h_acc!: number;
-	public v_acc!: number;
-	public vel_acc!: number;
-	public next_lat!: number;
-	public next_lon!: number;
-	public next_alt!: number;
-	public update_rate!: number;
-	public flight_state!: UtmFlightState;
-	public flags!: UtmDataAvailFlags;
-	public _message_id: number = 340;
-	public _message_name: string = 'UTM_GLOBAL_POSITION';
-	public _crc_extra: number = 99;
-	public _message_fields: [string, string, boolean][] = [
-		['time', 'uint64_t', false],
-		['lat', 'int32_t', false],
-		['lon', 'int32_t', false],
-		['alt', 'int32_t', false],
-		['relative_alt', 'int32_t', false],
-		['next_lat', 'int32_t', false],
-		['next_lon', 'int32_t', false],
-		['next_alt', 'int32_t', false],
-		['vx', 'int16_t', false],
-		['vy', 'int16_t', false],
-		['vz', 'int16_t', false],
-		['h_acc', 'uint16_t', false],
-		['v_acc', 'uint16_t', false],
-		['vel_acc', 'uint16_t', false],
-		['update_rate', 'uint16_t', false],
-		['uas_id', 'uint8_t', false],
-		['flight_state', 'uint8_t', false],
-		['flags', 'uint8_t', false],
-	];
+  public time!: number
+  public uas_id!: number
+  public lat!: number
+  public lon!: number
+  public alt!: number
+  public relative_alt!: number
+  public vx!: number
+  public vy!: number
+  public vz!: number
+  public h_acc!: number
+  public v_acc!: number
+  public vel_acc!: number
+  public next_lat!: number
+  public next_lon!: number
+  public next_alt!: number
+  public update_rate!: number
+  public flight_state!: UtmFlightState
+  public flags!: UtmDataAvailFlags
+  public _message_id: number = 340
+  public _message_name: string = 'UTM_GLOBAL_POSITION'
+  public _crc_extra: number = 99
+  public _message_fields: [string, string, boolean][] = [
+    ['time', 'uint64_t', false],
+    ['lat', 'int32_t', false],
+    ['lon', 'int32_t', false],
+    ['alt', 'int32_t', false],
+    ['relative_alt', 'int32_t', false],
+    ['next_lat', 'int32_t', false],
+    ['next_lon', 'int32_t', false],
+    ['next_alt', 'int32_t', false],
+    ['vx', 'int16_t', false],
+    ['vy', 'int16_t', false],
+    ['vz', 'int16_t', false],
+    ['h_acc', 'uint16_t', false],
+    ['v_acc', 'uint16_t', false],
+    ['vel_acc', 'uint16_t', false],
+    ['update_rate', 'uint16_t', false],
+    ['uas_id', 'uint8_t', false],
+    ['flight_state', 'uint8_t', false],
+    ['flags', 'uint8_t', false]
+  ]
 }

@@ -24,7 +24,7 @@ export interface ActiveConnection {
 }
 
 export interface ConnectionStats {
-  type: TransportConfig["type"] | null
+  type: TransportConfig['type'] | null
   status: ConnectionStatus
   bytesPerSec: number
   lastReceivedAt: number | null
@@ -50,14 +50,13 @@ export interface IHostAdapter {
   sendMessage(msg: ConnectionMessage): void
 }
 
-
 export type ConnectionCommand =
-  | { type: 'connect', config: TransportConfig }
+  | { type: 'connect'; config: TransportConfig }
   | { type: 'disconnect' }
   | { type: 'list' }
   | { type: 'sendData'; payload: Uint8Array }
 
 export type ConnectionMessage =
-  | { type: 'sendData', payload: Uint8Array }
-  | { type: 'status', stats: ConnectionStats }
-  | { type: 'availableConnections', connections: TransportConfig[][] }
+  | { type: 'sendData'; payload: Uint8Array }
+  | { type: 'status'; stats: ConnectionStats }
+  | { type: 'availableConnections'; connections: TransportConfig[][] }

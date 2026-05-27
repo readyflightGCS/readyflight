@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 The PPM values of the RC channels received. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%.  A value of UINT16_MAX implies the channel is unused. Individual receivers/transmitters might violate this specification.
 */
@@ -25,51 +25,51 @@ The PPM values of the RC channels received. The standard PPM modulation is as fo
 // chan18_raw RC channel 18 value. uint16_t
 // rssi Receive signal strength indicator in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown. uint8_t
 export class RcChannels extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public chancount!: number;
-	public chan1_raw!: number;
-	public chan2_raw!: number;
-	public chan3_raw!: number;
-	public chan4_raw!: number;
-	public chan5_raw!: number;
-	public chan6_raw!: number;
-	public chan7_raw!: number;
-	public chan8_raw!: number;
-	public chan9_raw!: number;
-	public chan10_raw!: number;
-	public chan11_raw!: number;
-	public chan12_raw!: number;
-	public chan13_raw!: number;
-	public chan14_raw!: number;
-	public chan15_raw!: number;
-	public chan16_raw!: number;
-	public chan17_raw!: number;
-	public chan18_raw!: number;
-	public rssi!: number;
-	public _message_id: number = 65;
-	public _message_name: string = 'RC_CHANNELS';
-	public _crc_extra: number = 118;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['chan1_raw', 'uint16_t', false],
-		['chan2_raw', 'uint16_t', false],
-		['chan3_raw', 'uint16_t', false],
-		['chan4_raw', 'uint16_t', false],
-		['chan5_raw', 'uint16_t', false],
-		['chan6_raw', 'uint16_t', false],
-		['chan7_raw', 'uint16_t', false],
-		['chan8_raw', 'uint16_t', false],
-		['chan9_raw', 'uint16_t', false],
-		['chan10_raw', 'uint16_t', false],
-		['chan11_raw', 'uint16_t', false],
-		['chan12_raw', 'uint16_t', false],
-		['chan13_raw', 'uint16_t', false],
-		['chan14_raw', 'uint16_t', false],
-		['chan15_raw', 'uint16_t', false],
-		['chan16_raw', 'uint16_t', false],
-		['chan17_raw', 'uint16_t', false],
-		['chan18_raw', 'uint16_t', false],
-		['chancount', 'uint8_t', false],
-		['rssi', 'uint8_t', false],
-	];
+  public time_boot_ms!: number
+  public chancount!: number
+  public chan1_raw!: number
+  public chan2_raw!: number
+  public chan3_raw!: number
+  public chan4_raw!: number
+  public chan5_raw!: number
+  public chan6_raw!: number
+  public chan7_raw!: number
+  public chan8_raw!: number
+  public chan9_raw!: number
+  public chan10_raw!: number
+  public chan11_raw!: number
+  public chan12_raw!: number
+  public chan13_raw!: number
+  public chan14_raw!: number
+  public chan15_raw!: number
+  public chan16_raw!: number
+  public chan17_raw!: number
+  public chan18_raw!: number
+  public rssi!: number
+  public _message_id: number = 65
+  public _message_name: string = 'RC_CHANNELS'
+  public _crc_extra: number = 118
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['chan1_raw', 'uint16_t', false],
+    ['chan2_raw', 'uint16_t', false],
+    ['chan3_raw', 'uint16_t', false],
+    ['chan4_raw', 'uint16_t', false],
+    ['chan5_raw', 'uint16_t', false],
+    ['chan6_raw', 'uint16_t', false],
+    ['chan7_raw', 'uint16_t', false],
+    ['chan8_raw', 'uint16_t', false],
+    ['chan9_raw', 'uint16_t', false],
+    ['chan10_raw', 'uint16_t', false],
+    ['chan11_raw', 'uint16_t', false],
+    ['chan12_raw', 'uint16_t', false],
+    ['chan13_raw', 'uint16_t', false],
+    ['chan14_raw', 'uint16_t', false],
+    ['chan15_raw', 'uint16_t', false],
+    ['chan16_raw', 'uint16_t', false],
+    ['chan17_raw', 'uint16_t', false],
+    ['chan18_raw', 'uint16_t', false],
+    ['chancount', 'uint8_t', false],
+    ['rssi', 'uint8_t', false]
+  ]
 }

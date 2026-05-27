@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Status generated in each node in the communication chain and injected into MAVLink stream.
 */
@@ -15,31 +15,31 @@ Status generated in each node in the communication chain and injected into MAVLi
 // messages_received Messages received (estimated from counting seq) uint32_t
 // messages_lost Messages lost (estimated from counting seq) uint32_t
 export class LinkNodeStatus extends MAVLinkMessage {
-	public timestamp!: number;
-	public tx_buf!: number;
-	public rx_buf!: number;
-	public tx_rate!: number;
-	public rx_rate!: number;
-	public rx_parse_err!: number;
-	public tx_overflows!: number;
-	public rx_overflows!: number;
-	public messages_sent!: number;
-	public messages_received!: number;
-	public messages_lost!: number;
-	public _message_id: number = 8;
-	public _message_name: string = 'LINK_NODE_STATUS';
-	public _crc_extra: number = 117;
-	public _message_fields: [string, string, boolean][] = [
-		['timestamp', 'uint64_t', false],
-		['tx_rate', 'uint32_t', false],
-		['rx_rate', 'uint32_t', false],
-		['messages_sent', 'uint32_t', false],
-		['messages_received', 'uint32_t', false],
-		['messages_lost', 'uint32_t', false],
-		['rx_parse_err', 'uint16_t', false],
-		['tx_overflows', 'uint16_t', false],
-		['rx_overflows', 'uint16_t', false],
-		['tx_buf', 'uint8_t', false],
-		['rx_buf', 'uint8_t', false],
-	];
+  public timestamp!: number
+  public tx_buf!: number
+  public rx_buf!: number
+  public tx_rate!: number
+  public rx_rate!: number
+  public rx_parse_err!: number
+  public tx_overflows!: number
+  public rx_overflows!: number
+  public messages_sent!: number
+  public messages_received!: number
+  public messages_lost!: number
+  public _message_id: number = 8
+  public _message_name: string = 'LINK_NODE_STATUS'
+  public _crc_extra: number = 117
+  public _message_fields: [string, string, boolean][] = [
+    ['timestamp', 'uint64_t', false],
+    ['tx_rate', 'uint32_t', false],
+    ['rx_rate', 'uint32_t', false],
+    ['messages_sent', 'uint32_t', false],
+    ['messages_received', 'uint32_t', false],
+    ['messages_lost', 'uint32_t', false],
+    ['rx_parse_err', 'uint16_t', false],
+    ['tx_overflows', 'uint16_t', false],
+    ['rx_overflows', 'uint16_t', false],
+    ['tx_buf', 'uint8_t', false],
+    ['rx_buf', 'uint8_t', false]
+  ]
 }

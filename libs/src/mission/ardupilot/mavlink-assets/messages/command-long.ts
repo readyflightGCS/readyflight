@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavCmd} from '../enums/mav-cmd';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavCmd } from '../enums/mav-cmd'
 /*
 Send a command with up to seven parameters to the MAV. COMMAND_INT is generally preferred when sending MAV_CMD commands that include positional information; it offers higher precision and allows the MAV_FRAME to be specified (which may otherwise be ambiguous, particularly for altitude). The command microservice is documented at https://mavlink.io/en/services/command.html
 */
@@ -16,31 +16,31 @@ Send a command with up to seven parameters to the MAV. COMMAND_INT is generally 
 // param6 Parameter 6 (for the specific command). float
 // param7 Parameter 7 (for the specific command). float
 export class CommandLong extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public command!: MavCmd;
-	public confirmation!: number;
-	public param1!: number;
-	public param2!: number;
-	public param3!: number;
-	public param4!: number;
-	public param5!: number;
-	public param6!: number;
-	public param7!: number;
-	public _message_id: number = 76;
-	public _message_name: string = 'COMMAND_LONG';
-	public _crc_extra: number = 152;
-	public _message_fields: [string, string, boolean][] = [
-		['param1', 'float', false],
-		['param2', 'float', false],
-		['param3', 'float', false],
-		['param4', 'float', false],
-		['param5', 'float', false],
-		['param6', 'float', false],
-		['param7', 'float', false],
-		['command', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['confirmation', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public command!: MavCmd
+  public confirmation!: number
+  public param1!: number
+  public param2!: number
+  public param3!: number
+  public param4!: number
+  public param5!: number
+  public param6!: number
+  public param7!: number
+  public _message_id: number = 76
+  public _message_name: string = 'COMMAND_LONG'
+  public _crc_extra: number = 152
+  public _message_fields: [string, string, boolean][] = [
+    ['param1', 'float', false],
+    ['param2', 'float', false],
+    ['param3', 'float', false],
+    ['param4', 'float', false],
+    ['param5', 'float', false],
+    ['param6', 'float', false],
+    ['param7', 'float', false],
+    ['command', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['confirmation', 'uint8_t', false]
+  ]
 }

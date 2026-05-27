@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavBatteryFunction} from '../enums/mav-battery-function';
-import {MavBatteryType} from '../enums/mav-battery-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavBatteryFunction } from '../enums/mav-battery-function'
+import { MavBatteryType } from '../enums/mav-battery-type'
 /*
 Smart Battery information (static/infrequent update). Use for updates from: smart battery to flight stack, flight stack to GCS. Use BATTERY_STATUS for the frequent battery updates.
 */
@@ -23,43 +23,43 @@ Smart Battery information (static/infrequent update). Use for updates from: smar
 // discharge_maximum_burst_current Maximum pack discharge burst current. 0: field not provided. uint32_t
 // manufacture_date Manufacture date (DD/MM/YYYY) in ASCII characters, 0 terminated. All 0: field not provided. char
 export class SmartBatteryInfo extends MAVLinkMessage {
-	public id!: number;
-	public battery_function!: MavBatteryFunction;
-	public type!: MavBatteryType;
-	public capacity_full_specification!: number;
-	public capacity_full!: number;
-	public cycle_count!: number;
-	public serial_number!: string;
-	public device_name!: string;
-	public weight!: number;
-	public discharge_minimum_voltage!: number;
-	public charging_minimum_voltage!: number;
-	public resting_minimum_voltage!: number;
-	public charging_maximum_voltage!: number;
-	public cells_in_series!: number;
-	public discharge_maximum_current!: number;
-	public discharge_maximum_burst_current!: number;
-	public manufacture_date!: string;
-	public _message_id: number = 370;
-	public _message_name: string = 'SMART_BATTERY_INFO';
-	public _crc_extra: number = 75;
-	public _message_fields: [string, string, boolean][] = [
-		['capacity_full_specification', 'int32_t', false],
-		['capacity_full', 'int32_t', false],
-		['cycle_count', 'uint16_t', false],
-		['weight', 'uint16_t', false],
-		['discharge_minimum_voltage', 'uint16_t', false],
-		['charging_minimum_voltage', 'uint16_t', false],
-		['resting_minimum_voltage', 'uint16_t', false],
-		['id', 'uint8_t', false],
-		['battery_function', 'uint8_t', false],
-		['type', 'uint8_t', false],
-		['serial_number', 'char', false],
-		['device_name', 'char', false],
-		['charging_maximum_voltage', 'uint16_t', true],
-		['cells_in_series', 'uint8_t', true],
-		['discharge_maximum_current', 'uint32_t', true],
-		['discharge_maximum_burst_current', 'uint32_t', true],
-		['manufacture_date', 'char', true],
-	];
+  public id!: number
+  public battery_function!: MavBatteryFunction
+  public type!: MavBatteryType
+  public capacity_full_specification!: number
+  public capacity_full!: number
+  public cycle_count!: number
+  public serial_number!: string
+  public device_name!: string
+  public weight!: number
+  public discharge_minimum_voltage!: number
+  public charging_minimum_voltage!: number
+  public resting_minimum_voltage!: number
+  public charging_maximum_voltage!: number
+  public cells_in_series!: number
+  public discharge_maximum_current!: number
+  public discharge_maximum_burst_current!: number
+  public manufacture_date!: string
+  public _message_id: number = 370
+  public _message_name: string = 'SMART_BATTERY_INFO'
+  public _crc_extra: number = 75
+  public _message_fields: [string, string, boolean][] = [
+    ['capacity_full_specification', 'int32_t', false],
+    ['capacity_full', 'int32_t', false],
+    ['cycle_count', 'uint16_t', false],
+    ['weight', 'uint16_t', false],
+    ['discharge_minimum_voltage', 'uint16_t', false],
+    ['charging_minimum_voltage', 'uint16_t', false],
+    ['resting_minimum_voltage', 'uint16_t', false],
+    ['id', 'uint8_t', false],
+    ['battery_function', 'uint8_t', false],
+    ['type', 'uint8_t', false],
+    ['serial_number', 'char', false],
+    ['device_name', 'char', false],
+    ['charging_maximum_voltage', 'uint16_t', true],
+    ['cells_in_series', 'uint8_t', true],
+    ['discharge_maximum_current', 'uint32_t', true],
+    ['discharge_maximum_burst_current', 'uint32_t', true],
+    ['manufacture_date', 'char', true]
+  ]
 }

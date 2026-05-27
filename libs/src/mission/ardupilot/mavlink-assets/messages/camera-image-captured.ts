@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavBool} from '../enums/mav-bool';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavBool } from '../enums/mav-bool'
 /*
 Information about a captured image. This is emitted every time a message is captured.
         MAV_CMD_REQUEST_MESSAGE can be used to (re)request this message for a specific sequence number or range of sequence numbers:
@@ -22,31 +22,31 @@ Information about a captured image. This is emitted every time a message is capt
 // capture_result Image was captured successfully (MAV_BOOL_TRUE). Values not equal to 0 or 1 are invalid. int8_t
 // file_url URL of image taken. Either local storage or http://foo.jpg if camera provides an HTTP interface. char
 export class CameraImageCaptured extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public time_utc!: number;
-	public camera_id!: number;
-	public lat!: number;
-	public lon!: number;
-	public alt!: number;
-	public relative_alt!: number;
-	public q!: number;
-	public image_index!: number;
-	public capture_result!: MavBool;
-	public file_url!: string;
-	public _message_id: number = 263;
-	public _message_name: string = 'CAMERA_IMAGE_CAPTURED';
-	public _crc_extra: number = 133;
-	public _message_fields: [string, string, boolean][] = [
-		['time_utc', 'uint64_t', false],
-		['time_boot_ms', 'uint32_t', false],
-		['lat', 'int32_t', false],
-		['lon', 'int32_t', false],
-		['alt', 'int32_t', false],
-		['relative_alt', 'int32_t', false],
-		['q', 'float', false],
-		['image_index', 'int32_t', false],
-		['camera_id', 'uint8_t', false],
-		['capture_result', 'int8_t', false],
-		['file_url', 'char', false],
-	];
+  public time_boot_ms!: number
+  public time_utc!: number
+  public camera_id!: number
+  public lat!: number
+  public lon!: number
+  public alt!: number
+  public relative_alt!: number
+  public q!: number
+  public image_index!: number
+  public capture_result!: MavBool
+  public file_url!: string
+  public _message_id: number = 263
+  public _message_name: string = 'CAMERA_IMAGE_CAPTURED'
+  public _crc_extra: number = 133
+  public _message_fields: [string, string, boolean][] = [
+    ['time_utc', 'uint64_t', false],
+    ['time_boot_ms', 'uint32_t', false],
+    ['lat', 'int32_t', false],
+    ['lon', 'int32_t', false],
+    ['alt', 'int32_t', false],
+    ['relative_alt', 'int32_t', false],
+    ['q', 'float', false],
+    ['image_index', 'int32_t', false],
+    ['camera_id', 'uint8_t', false],
+    ['capture_result', 'int8_t', false],
+    ['file_url', 'char', false]
+  ]
 }

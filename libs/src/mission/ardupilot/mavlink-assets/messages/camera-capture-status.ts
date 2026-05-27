@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Information about the status of a capture. Can be requested with a MAV_CMD_REQUEST_MESSAGE command.
 */
@@ -12,25 +12,25 @@ Information about the status of a capture. Can be requested with a MAV_CMD_REQUE
 // image_count Total number of images captured ('forever', or until reset using MAV_CMD_STORAGE_FORMAT). int32_t
 // camera_device_id Camera id of a non-MAVLink camera attached to an autopilot (1-6).  0 if the component is a MAVLink camera (with its own component id). uint8_t
 export class CameraCaptureStatus extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public image_status!: number;
-	public video_status!: number;
-	public image_interval!: number;
-	public recording_time_ms!: number;
-	public available_capacity!: number;
-	public image_count!: number;
-	public camera_device_id!: number;
-	public _message_id: number = 262;
-	public _message_name: string = 'CAMERA_CAPTURE_STATUS';
-	public _crc_extra: number = 12;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['image_interval', 'float', false],
-		['recording_time_ms', 'uint32_t', false],
-		['available_capacity', 'float', false],
-		['image_status', 'uint8_t', false],
-		['video_status', 'uint8_t', false],
-		['image_count', 'int32_t', true],
-		['camera_device_id', 'uint8_t', true],
-	];
+  public time_boot_ms!: number
+  public image_status!: number
+  public video_status!: number
+  public image_interval!: number
+  public recording_time_ms!: number
+  public available_capacity!: number
+  public image_count!: number
+  public camera_device_id!: number
+  public _message_id: number = 262
+  public _message_name: string = 'CAMERA_CAPTURE_STATUS'
+  public _crc_extra: number = 12
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['image_interval', 'float', false],
+    ['recording_time_ms', 'uint32_t', false],
+    ['available_capacity', 'float', false],
+    ['image_status', 'uint8_t', false],
+    ['video_status', 'uint8_t', false],
+    ['image_count', 'int32_t', true],
+    ['camera_device_id', 'uint8_t', true]
+  ]
 }

@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {EscConnectionType} from '../enums/esc-connection-type';
-import {EscFailureFlags} from '../enums/esc-failure-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { EscConnectionType } from '../enums/esc-connection-type'
+import { EscFailureFlags } from '../enums/esc-failure-flags'
 /*
 ESC information for lower rate streaming. Recommended streaming rate 1Hz. See ESC_STATUS for higher-rate ESC data.
 */
@@ -15,27 +15,27 @@ ESC information for lower rate streaming. Recommended streaming rate 1Hz. See ES
 // error_count Number of reported errors by each ESC since boot. uint32_t
 // temperature Temperature of each ESC. INT16_MAX: if data not supplied by ESC. int16_t
 export class EscInfo extends MAVLinkMessage {
-	public index!: number;
-	public time_usec!: number;
-	public counter!: number;
-	public count!: number;
-	public connection_type!: EscConnectionType;
-	public info!: number;
-	public failure_flags!: EscFailureFlags;
-	public error_count!: number;
-	public temperature!: number;
-	public _message_id: number = 290;
-	public _message_name: string = 'ESC_INFO';
-	public _crc_extra: number = 251;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['error_count', 'uint32_t', false],
-		['counter', 'uint16_t', false],
-		['failure_flags', 'uint16_t', false],
-		['temperature', 'int16_t', false],
-		['index', 'uint8_t', false],
-		['count', 'uint8_t', false],
-		['connection_type', 'uint8_t', false],
-		['info', 'uint8_t', false],
-	];
+  public index!: number
+  public time_usec!: number
+  public counter!: number
+  public count!: number
+  public connection_type!: EscConnectionType
+  public info!: number
+  public failure_flags!: EscFailureFlags
+  public error_count!: number
+  public temperature!: number
+  public _message_id: number = 290
+  public _message_name: string = 'ESC_INFO'
+  public _crc_extra: number = 251
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['error_count', 'uint32_t', false],
+    ['counter', 'uint16_t', false],
+    ['failure_flags', 'uint16_t', false],
+    ['temperature', 'int16_t', false],
+    ['index', 'uint8_t', false],
+    ['count', 'uint8_t', false],
+    ['connection_type', 'uint8_t', false],
+    ['info', 'uint8_t', false]
+  ]
 }

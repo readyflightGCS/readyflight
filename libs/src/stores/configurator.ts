@@ -5,19 +5,23 @@ export const ConfiguratorTabs = ['Telemetry', 'Mission', 'Settings', 'Vehicle'] 
 export type ConfiguratorTab = (typeof ConfiguratorTabs)[number]
 
 interface State {
-  lastSelectedCommandIndex: number | null,
+  lastSelectedCommandIndex: number | null
   setLastSelectedCommandIndex: (id: number) => void
   currentTab: ConfiguratorTab
   setTab: (tab: ConfiguratorTab) => void
   sidePanelOpen: boolean
   setSidePanelOpen: (state: boolean) => void
+  tool: 'waypoint' | 'land' | 'takeoff' | 'place'
+  setTool: (state: 'waypoint' | 'land' | 'takeoff' | 'place') => void
 }
 
 export const useEditor = create<State>((set) => ({
   lastSelectedCommandIndex: null,
-  setLastSelectedCommandIndex: (id) => set({ lastSelectedCommandIndex: id }),
   sidePanelOpen: true,
   currentTab: 'Telemetry',
-  setTab: (tab: ConfiguratorTab) => set({ currentTab: tab }),
-  setSidePanelOpen: (state: boolean) => set({ sidePanelOpen: state })
+  tool: 'waypoint',
+  setLastSelectedCommandIndex: (lastSelectedCommandIndex) => set({ lastSelectedCommandIndex }),
+  setTab: (currentTab) => set({ currentTab }),
+  setSidePanelOpen: (sidePanelOpen) => set({ sidePanelOpen }),
+  setTool: (tool) => set({ tool })
 }))

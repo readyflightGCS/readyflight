@@ -150,7 +150,7 @@ export default function TerrainChart({
   }
 
   return (
-    <ResponsiveContainer width="100%" height={140}>
+    <ResponsiveContainer width="100%" height={185}>
       <ComposedChart data={chartData} margin={{ top: 30, right: 20, bottom: 20, left: 10 }}>
         <CartesianGrid stroke="#ccc" />
         <XAxis

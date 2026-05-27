@@ -8,29 +8,29 @@ export class ConnectionManager {
   private connection: ActiveConnection
   private readonly transportAdapters = [
     {
-      name: "serial",
-      label: "Serial",
+      name: 'serial',
+      label: 'Serial',
       t: new SerialTransportAdapter()
     },
     {
-      name: "udp",
-      label: "UDP",
+      name: 'udp',
+      label: 'UDP',
       t: new UDPTransportAdapter()
-    },
+    }
   ]
 
   constructor(hostAdapter: IHostAdapter) {
-    console.log("[conn-mng] Starting up")
+    console.log('[conn-mng] Starting up')
     this.hostAdapter = hostAdapter
-    hostAdapter.onCommand(cmd => this.handleCommand(cmd))
+    hostAdapter.onCommand((cmd) => this.handleCommand(cmd))
     this.statsTimer = null
     this.connection = {
       transport: null,
       status: {
         type: null,
-        status: "disconnected",
+        status: 'disconnected',
         bytesPerSec: 0,
-        lastReceivedAt: Date.now(),
+        lastReceivedAt: Date.now()
       }
     }
   }
@@ -41,19 +41,19 @@ export class ConnectionManager {
     }
   }
 
-
   private updateStats(): void {
     if (this.connection === null) {
       return
     }
-    this.hostAdapter.sendMessage({ type: "status", stats: this.connection.status })
+    this.hostAdapter.sendMessage({ type: 'status', stats: this.connection.status })
   }
 
-
   private async listAvailableConnections(): Promise<TransportConfig[][]> {
-    return await Promise.all(this.transportAdapters.map(async (x) => {
-      return await x.t.getAvailable()
-    }))
+    return await Promise.all(
+      this.transportAdapters.map(async (x) => {
+        return await x.t.getAvailable()
+      })
+    )
   }
 
   private handleCommand(cmd: ConnectionCommand): void {
@@ -61,31 +61,31 @@ export class ConnectionManager {
     switch (cmd.type) {
       case 'list':
         this.listAvailableConnections().then((res) => {
-          this.hostAdapter.sendMessage({ type: "availableConnections", connections: res })
+          this.hostAdapter.sendMessage({ type: 'availableConnections', connections: res })
         })
         break
 
       case 'connect':
-        let transportAdapter = this.transportAdapters.find((x) => x.name === cmd.config.type)
+        const transportAdapter = this.transportAdapters.find((x) => x.name === cmd.config.type)
         if (transportAdapter === undefined) return
-        let transport = transportAdapter.t
+        const transport = transportAdapter.t
         this.connection = {
           transport: transport,
           status: {
             type: cmd.config.type,
-            status: "active",
+            status: 'active',
             bytesPerSec: 0,
-            lastReceivedAt: null,
+            lastReceivedAt: null
           }
         }
-        transport.on("data", (a) => this.hostAdapter.sendMessage({ type: "sendData", payload: a }))
+        transport.on('data', (a) => this.hostAdapter.sendMessage({ type: 'sendData', payload: a }))
         transport.start(cmd.config).then(() => {
           this.statsTimer = setInterval(() => this.updateStats(), 1000)
         })
         break
       case 'sendData':
         if (this.connection.transport === null) {
-          console.log("no connection, dropping data")
+          console.log('no connection, dropping data')
           return
         }
         this.connection.transport.send(cmd.payload)
@@ -97,19 +97,19 @@ export class ConnectionManager {
             transport: null,
             status: {
               type: null,
-              status: "disconnected",
+              status: 'disconnected',
               bytesPerSec: 0,
-              lastReceivedAt: Date.now(),
+              lastReceivedAt: Date.now()
             }
           }
-          this.hostAdapter.sendMessage({ type: "status", stats: this.connection.status })
+          this.hostAdapter.sendMessage({ type: 'status', stats: this.connection.status })
         })
         if (this.statsTimer !== null) {
           clearInterval(this.statsTimer)
         }
         break
       default: {
-        let exhaustiveCheck: never = cmd
+        const exhaustiveCheck: never = cmd
         return exhaustiveCheck
       }
     }

@@ -1,9 +1,14 @@
-import { Mission } from "./mission"
-import { LatLng, LatLngAlt } from "@libs/world/latlng"
-import { DialectCommand, DialectCommandDescription, MissionCommand, RFCommand } from "@libs/commands/command"
-import { Result } from "@libs/util/try-catch"
-import { Vehicle } from "@libs/vehicle/types"
-import { VehicleCommand } from "@libs/vehicle/commands"
+import { Mission } from './mission'
+import { LatLng, LatLngAlt } from '@libs/world/latlng'
+import {
+  DialectCommand,
+  DialectCommandDescription,
+  MissionCommand,
+  RFCommand
+} from '@libs/commands/command'
+import { Result } from '@libs/util/try-catch'
+import { Vehicle } from '@libs/vehicle/types'
+import { VehicleCommand } from '@libs/vehicle/commands'
 
 /**
  * Represents a dialect—i.e., a specific command language or format—that can
@@ -21,7 +26,7 @@ export type Dialect<CD extends DialectCommandDescription> = {
 
   /**
    * Convert a mission into a lsit of dialect specific commands.
-   * 
+   *
    * @param mission - The mission to convert
    * @returns An array of dialect commands
    */
@@ -31,7 +36,7 @@ export type Dialect<CD extends DialectCommandDescription> = {
    * A lookup table indicating which RF command types this dialect supports
    * Keys are RFCommand types; values as booleans
    */
-  supportedRFCommands: { [K in RFCommand["type"]]: boolean }
+  supportedRFCommands: { [K in RFCommand['type']]: boolean }
 
   /**
    * The command description definitions supported by this dialect
@@ -41,11 +46,11 @@ export type Dialect<CD extends DialectCommandDescription> = {
   /**
    * Retrieves the geographic location (lat/lng) associated with a command,
    * if the command has one
-   * 
+   *
    * @param command - The dialect command
    * @returns A LatLng or null if the command has no location
    */
-  getCommandLocation: (command: MissionCommand<CD>) => (LatLng | null)
+  getCommandLocation: (command: MissionCommand<CD>) => LatLng | null
 
   /**
    * Retrieves the geographic location including altitude associated with a command,
@@ -54,26 +59,25 @@ export type Dialect<CD extends DialectCommandDescription> = {
    * @param command - The dialect command
    * @returns A LatLngAlt or null if the command has no altitude data
    */
-  getCommandLocationAlt: (command: MissionCommand<CD>) => (LatLngAlt | null)
+  getCommandLocationAlt: (command: MissionCommand<CD>) => LatLngAlt | null
 
   /**
    * Produces a human readable label for a command
-   * 
+   *
    * @param command The dialect command
    * @returns A string label
    */
   getCommandLabel: (command: DialectCommand<CD>) => string
-
 
   /**
    * File formats that this dialect can import and export.
    * Each format defines its own import/export handlers
    */
   fileFormats: {
-    name: string,
-    id: string,
+    name: string
+    id: string
     export?: (mission: Mission<CD>, vehicle: Vehicle) => Result<Blob> //notably this takes a mission as we want to preseve as much info as possible when converting
-    import?: (mission: Blob) => Promise<Result<{ mission: Mission<CD>, vehicle: Vehicle }>>
+    import?: (mission: Blob) => Promise<Result<{ mission: Mission<CD>; vehicle: Vehicle }>>
     ext: string
   }[]
 
@@ -84,7 +88,10 @@ export type Dialect<CD extends DialectCommandDescription> = {
   ) => void
 
   /** Encode and dispatch a single vehicle command. */
-  handleSendTelemetryMessage: (message: VehicleCommand, sendPacket: (buf: ArrayBuffer) => void) => void
+  handleSendTelemetryMessage: (
+    message: VehicleCommand,
+    sendPacket: (buf: ArrayBuffer) => void
+  ) => void
 
   /** Run the MAVLink mission-upload handshake for the given mission. */
   uploadMission: (mission: Mission<CD>, sendPacket: (buf: ArrayBuffer) => void) => void

@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MagCalStatus} from '../enums/mag-cal-status';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MagCalStatus } from '../enums/mag-cal-status'
 /*
 Reports progress of compass calibration.
 */
@@ -14,27 +14,27 @@ Reports progress of compass calibration.
 // direction_y Body frame direction vector for display. float
 // direction_z Body frame direction vector for display. float
 export class MagCalProgress extends MAVLinkMessage {
-	public compass_id!: number;
-	public cal_mask!: number;
-	public cal_status!: MagCalStatus;
-	public attempt!: number;
-	public completion_pct!: number;
-	public completion_mask!: number;
-	public direction_x!: number;
-	public direction_y!: number;
-	public direction_z!: number;
-	public _message_id: number = 191;
-	public _message_name: string = 'MAG_CAL_PROGRESS';
-	public _crc_extra: number = 92;
-	public _message_fields: [string, string, boolean][] = [
-		['direction_x', 'float', false],
-		['direction_y', 'float', false],
-		['direction_z', 'float', false],
-		['compass_id', 'uint8_t', false],
-		['cal_mask', 'uint8_t', false],
-		['cal_status', 'uint8_t', false],
-		['attempt', 'uint8_t', false],
-		['completion_pct', 'uint8_t', false],
-		['completion_mask', 'uint8_t', false],
-	];
+  public compass_id!: number
+  public cal_mask!: number
+  public cal_status!: MagCalStatus
+  public attempt!: number
+  public completion_pct!: number
+  public completion_mask!: number
+  public direction_x!: number
+  public direction_y!: number
+  public direction_z!: number
+  public _message_id: number = 191
+  public _message_name: string = 'MAG_CAL_PROGRESS'
+  public _crc_extra: number = 92
+  public _message_fields: [string, string, boolean][] = [
+    ['direction_x', 'float', false],
+    ['direction_y', 'float', false],
+    ['direction_z', 'float', false],
+    ['compass_id', 'uint8_t', false],
+    ['cal_mask', 'uint8_t', false],
+    ['cal_status', 'uint8_t', false],
+    ['attempt', 'uint8_t', false],
+    ['completion_pct', 'uint8_t', false],
+    ['completion_mask', 'uint8_t', false]
+  ]
 }

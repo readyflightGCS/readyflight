@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFuelType} from '../enums/mav-fuel-type';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavFuelType } from '../enums/mav-fuel-type'
 /*
 Fuel status.
         This message provides "generic" fuel level information for  in a GCS and for triggering failsafes in an autopilot.
@@ -25,25 +25,25 @@ Fuel status.
 // temperature Fuel temperature. NaN: field not provided. float
 // fuel_type Fuel type. Defines units for fuel capacity and consumption fields above. uint32_t
 export class FuelStatus extends MAVLinkMessage {
-	public id!: number;
-	public maximum_fuel!: number;
-	public consumed_fuel!: number;
-	public remaining_fuel!: number;
-	public percent_remaining!: number;
-	public flow_rate!: number;
-	public temperature!: number;
-	public fuel_type!: MavFuelType;
-	public _message_id: number = 371;
-	public _message_name: string = 'FUEL_STATUS';
-	public _crc_extra: number = 10;
-	public _message_fields: [string, string, boolean][] = [
-		['maximum_fuel', 'float', false],
-		['consumed_fuel', 'float', false],
-		['remaining_fuel', 'float', false],
-		['flow_rate', 'float', false],
-		['temperature', 'float', false],
-		['fuel_type', 'uint32_t', false],
-		['id', 'uint8_t', false],
-		['percent_remaining', 'uint8_t', false],
-	];
+  public id!: number
+  public maximum_fuel!: number
+  public consumed_fuel!: number
+  public remaining_fuel!: number
+  public percent_remaining!: number
+  public flow_rate!: number
+  public temperature!: number
+  public fuel_type!: MavFuelType
+  public _message_id: number = 371
+  public _message_name: string = 'FUEL_STATUS'
+  public _crc_extra: number = 10
+  public _message_fields: [string, string, boolean][] = [
+    ['maximum_fuel', 'float', false],
+    ['consumed_fuel', 'float', false],
+    ['remaining_fuel', 'float', false],
+    ['flow_rate', 'float', false],
+    ['temperature', 'float', false],
+    ['fuel_type', 'uint32_t', false],
+    ['id', 'uint8_t', false],
+    ['percent_remaining', 'uint8_t', false]
+  ]
 }

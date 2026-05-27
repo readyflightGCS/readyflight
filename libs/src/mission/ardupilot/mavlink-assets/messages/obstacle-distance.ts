@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavDistanceSensor} from '../enums/mav-distance-sensor';
-import {MavFrame} from '../enums/mav-frame';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavDistanceSensor } from '../enums/mav-distance-sensor'
+import { MavFrame } from '../enums/mav-frame'
 /*
 Obstacle distances in front of the sensor, starting from the left in increment degrees to the right
 */
@@ -15,27 +15,27 @@ Obstacle distances in front of the sensor, starting from the left in increment d
 // angle_offset Relative angle offset of the 0-index element in the distances array. Value of 0 corresponds to forward. Positive is clockwise direction, negative is counter-clockwise. float
 // frame Coordinate frame of reference for the yaw rotation and offset of the sensor data. Defaults to MAV_FRAME_GLOBAL, which is north aligned. For body-mounted sensors use MAV_FRAME_BODY_FRD, which is vehicle front aligned. uint8_t
 export class ObstacleDistance extends MAVLinkMessage {
-	public time_usec!: number;
-	public sensor_type!: MavDistanceSensor;
-	public distances!: number;
-	public increment!: number;
-	public min_distance!: number;
-	public max_distance!: number;
-	public increment_f!: number;
-	public angle_offset!: number;
-	public frame!: MavFrame;
-	public _message_id: number = 330;
-	public _message_name: string = 'OBSTACLE_DISTANCE';
-	public _crc_extra: number = 23;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['distances', 'uint16_t', false],
-		['min_distance', 'uint16_t', false],
-		['max_distance', 'uint16_t', false],
-		['sensor_type', 'uint8_t', false],
-		['increment', 'uint8_t', false],
-		['increment_f', 'float', true],
-		['angle_offset', 'float', true],
-		['frame', 'uint8_t', true],
-	];
+  public time_usec!: number
+  public sensor_type!: MavDistanceSensor
+  public distances!: number
+  public increment!: number
+  public min_distance!: number
+  public max_distance!: number
+  public increment_f!: number
+  public angle_offset!: number
+  public frame!: MavFrame
+  public _message_id: number = 330
+  public _message_name: string = 'OBSTACLE_DISTANCE'
+  public _crc_extra: number = 23
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['distances', 'uint16_t', false],
+    ['min_distance', 'uint16_t', false],
+    ['max_distance', 'uint16_t', false],
+    ['sensor_type', 'uint8_t', false],
+    ['increment', 'uint8_t', false],
+    ['increment_f', 'float', true],
+    ['angle_offset', 'float', true],
+    ['frame', 'uint8_t', true]
+  ]
 }

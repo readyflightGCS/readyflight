@@ -1,7 +1,7 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavFrame} from '../enums/mav-frame';
-import {MavCmd} from '../enums/mav-cmd';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavFrame } from '../enums/mav-frame'
+import { MavCmd } from '../enums/mav-cmd'
 /*
 Send a command with up to seven parameters to the MAV, where params 5 and 6 are integers and the other values are floats. This is preferred over COMMAND_LONG as it allows the MAV_FRAME to be specified for interpreting positional information, such as altitude. COMMAND_INT is also preferred when sending latitude and longitude data in params 5 and 6, as it allows for greater precision. Param 5 and 6 encode positional data as scaled integers, where the scaling depends on the actual command value. NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). The command microservice is documented at https://mavlink.io/en/services/command.html
 */
@@ -19,35 +19,35 @@ Send a command with up to seven parameters to the MAV, where params 5 and 6 are 
 // y PARAM6 / local: y position in meters * 1e4, global: longitude in degrees * 10^7 int32_t
 // z PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame). float
 export class CommandInt extends MAVLinkMessage {
-	public target_system!: number;
-	public target_component!: number;
-	public frame!: MavFrame;
-	public command!: MavCmd;
-	public current!: number;
-	public autocontinue!: number;
-	public param1!: number;
-	public param2!: number;
-	public param3!: number;
-	public param4!: number;
-	public x!: number;
-	public y!: number;
-	public z!: number;
-	public _message_id: number = 75;
-	public _message_name: string = 'COMMAND_INT';
-	public _crc_extra: number = 158;
-	public _message_fields: [string, string, boolean][] = [
-		['param1', 'float', false],
-		['param2', 'float', false],
-		['param3', 'float', false],
-		['param4', 'float', false],
-		['x', 'int32_t', false],
-		['y', 'int32_t', false],
-		['z', 'float', false],
-		['command', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['target_component', 'uint8_t', false],
-		['frame', 'uint8_t', false],
-		['current', 'uint8_t', false],
-		['autocontinue', 'uint8_t', false],
-	];
+  public target_system!: number
+  public target_component!: number
+  public frame!: MavFrame
+  public command!: MavCmd
+  public current!: number
+  public autocontinue!: number
+  public param1!: number
+  public param2!: number
+  public param3!: number
+  public param4!: number
+  public x!: number
+  public y!: number
+  public z!: number
+  public _message_id: number = 75
+  public _message_name: string = 'COMMAND_INT'
+  public _crc_extra: number = 158
+  public _message_fields: [string, string, boolean][] = [
+    ['param1', 'float', false],
+    ['param2', 'float', false],
+    ['param3', 'float', false],
+    ['param4', 'float', false],
+    ['x', 'int32_t', false],
+    ['y', 'int32_t', false],
+    ['z', 'float', false],
+    ['command', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['target_component', 'uint8_t', false],
+    ['frame', 'uint8_t', false],
+    ['current', 'uint8_t', false],
+    ['autocontinue', 'uint8_t', false]
+  ]
 }

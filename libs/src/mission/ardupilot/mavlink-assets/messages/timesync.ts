@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Time synchronization message.
         The message is used for both timesync requests and responses.
@@ -16,17 +16,17 @@ Time synchronization message.
 // target_system Target system id. Request: 0 (broadcast) or id of specific system. Response must contain system id of the requesting component. uint8_t
 // target_component Target component id. Request: 0 (broadcast) or id of specific component. Response must contain component id of the requesting component. uint8_t
 export class Timesync extends MAVLinkMessage {
-	public tc1!: number;
-	public ts1!: number;
-	public target_system!: number;
-	public target_component!: number;
-	public _message_id: number = 111;
-	public _message_name: string = 'TIMESYNC';
-	public _crc_extra: number = 34;
-	public _message_fields: [string, string, boolean][] = [
-		['tc1', 'int64_t', false],
-		['ts1', 'int64_t', false],
-		['target_system', 'uint8_t', true],
-		['target_component', 'uint8_t', true],
-	];
+  public tc1!: number
+  public ts1!: number
+  public target_system!: number
+  public target_component!: number
+  public _message_id: number = 111
+  public _message_name: string = 'TIMESYNC'
+  public _crc_extra: number = 34
+  public _message_fields: [string, string, boolean][] = [
+    ['tc1', 'int64_t', false],
+    ['ts1', 'int64_t', false],
+    ['target_system', 'uint8_t', true],
+    ['target_component', 'uint8_t', true]
+  ]
 }

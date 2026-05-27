@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {MavGeneratorStatusFlag} from '../enums/mav-generator-status-flag';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { MavGeneratorStatusFlag } from '../enums/mav-generator-status-flag'
 /*
 Telemetry of power generation system. Alternator or mechanical generator.
 */
@@ -16,31 +16,31 @@ Telemetry of power generation system. Alternator or mechanical generator.
 // runtime Seconds this generator has run since it was rebooted. UINT32_MAX: field not provided. uint32_t
 // time_until_maintenance Seconds until this generator requires maintenance.  A negative value indicates maintenance is past-due. INT32_MAX: field not provided. int32_t
 export class GeneratorStatus extends MAVLinkMessage {
-	public status!: MavGeneratorStatusFlag;
-	public generator_speed!: number;
-	public battery_current!: number;
-	public load_current!: number;
-	public power_generated!: number;
-	public bus_voltage!: number;
-	public rectifier_temperature!: number;
-	public bat_current_setpoint!: number;
-	public generator_temperature!: number;
-	public runtime!: number;
-	public time_until_maintenance!: number;
-	public _message_id: number = 373;
-	public _message_name: string = 'GENERATOR_STATUS';
-	public _crc_extra: number = 117;
-	public _message_fields: [string, string, boolean][] = [
-		['status', 'uint64_t', false],
-		['battery_current', 'float', false],
-		['load_current', 'float', false],
-		['power_generated', 'float', false],
-		['bus_voltage', 'float', false],
-		['bat_current_setpoint', 'float', false],
-		['runtime', 'uint32_t', false],
-		['time_until_maintenance', 'int32_t', false],
-		['generator_speed', 'uint16_t', false],
-		['rectifier_temperature', 'int16_t', false],
-		['generator_temperature', 'int16_t', false],
-	];
+  public status!: MavGeneratorStatusFlag
+  public generator_speed!: number
+  public battery_current!: number
+  public load_current!: number
+  public power_generated!: number
+  public bus_voltage!: number
+  public rectifier_temperature!: number
+  public bat_current_setpoint!: number
+  public generator_temperature!: number
+  public runtime!: number
+  public time_until_maintenance!: number
+  public _message_id: number = 373
+  public _message_name: string = 'GENERATOR_STATUS'
+  public _crc_extra: number = 117
+  public _message_fields: [string, string, boolean][] = [
+    ['status', 'uint64_t', false],
+    ['battery_current', 'float', false],
+    ['load_current', 'float', false],
+    ['power_generated', 'float', false],
+    ['bus_voltage', 'float', false],
+    ['bat_current_setpoint', 'float', false],
+    ['runtime', 'uint32_t', false],
+    ['time_until_maintenance', 'int32_t', false],
+    ['generator_speed', 'uint16_t', false],
+    ['rectifier_temperature', 'int16_t', false],
+    ['generator_temperature', 'int16_t', false]
+  ]
 }

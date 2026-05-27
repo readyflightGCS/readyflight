@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Component metadata message, which may be requested using MAV_CMD_REQUEST_MESSAGE.
 
@@ -16,15 +16,15 @@ Component metadata message, which may be requested using MAV_CMD_REQUEST_MESSAGE
 // file_crc CRC32 of the general metadata file. uint32_t
 // uri MAVLink FTP URI for the general metadata file (COMP_METADATA_TYPE_GENERAL), which may be compressed with xz. The file contains general component metadata, and may contain URI links for additional metadata (see COMP_METADATA_TYPE). The information is static from boot, and may be generated at compile time. The string needs to be zero terminated. char
 export class ComponentMetadata extends MAVLinkMessage {
-	public time_boot_ms!: number;
-	public file_crc!: number;
-	public uri!: string;
-	public _message_id: number = 397;
-	public _message_name: string = 'COMPONENT_METADATA';
-	public _crc_extra: number = 182;
-	public _message_fields: [string, string, boolean][] = [
-		['time_boot_ms', 'uint32_t', false],
-		['file_crc', 'uint32_t', false],
-		['uri', 'char', false],
-	];
+  public time_boot_ms!: number
+  public file_crc!: number
+  public uri!: string
+  public _message_id: number = 397
+  public _message_name: string = 'COMPONENT_METADATA'
+  public _crc_extra: number = 182
+  public _message_fields: [string, string, boolean][] = [
+    ['time_boot_ms', 'uint32_t', false],
+    ['file_crc', 'uint32_t', false],
+    ['uri', 'char', false]
+  ]
 }

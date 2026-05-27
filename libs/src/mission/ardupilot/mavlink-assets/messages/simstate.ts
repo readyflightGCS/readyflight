@@ -1,5 +1,5 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
 /*
 Status of simulation environment, if used.
 */
@@ -15,31 +15,31 @@ Status of simulation environment, if used.
 // lat Latitude. int32_t
 // lng Longitude. int32_t
 export class Simstate extends MAVLinkMessage {
-	public roll!: number;
-	public pitch!: number;
-	public yaw!: number;
-	public xacc!: number;
-	public yacc!: number;
-	public zacc!: number;
-	public xgyro!: number;
-	public ygyro!: number;
-	public zgyro!: number;
-	public lat!: number;
-	public lng!: number;
-	public _message_id: number = 164;
-	public _message_name: string = 'SIMSTATE';
-	public _crc_extra: number = 154;
-	public _message_fields: [string, string, boolean][] = [
-		['roll', 'float', false],
-		['pitch', 'float', false],
-		['yaw', 'float', false],
-		['xacc', 'float', false],
-		['yacc', 'float', false],
-		['zacc', 'float', false],
-		['xgyro', 'float', false],
-		['ygyro', 'float', false],
-		['zgyro', 'float', false],
-		['lat', 'int32_t', false],
-		['lng', 'int32_t', false],
-	];
+  public roll!: number
+  public pitch!: number
+  public yaw!: number
+  public xacc!: number
+  public yacc!: number
+  public zacc!: number
+  public xgyro!: number
+  public ygyro!: number
+  public zgyro!: number
+  public lat!: number
+  public lng!: number
+  public _message_id: number = 164
+  public _message_name: string = 'SIMSTATE'
+  public _crc_extra: number = 154
+  public _message_fields: [string, string, boolean][] = [
+    ['roll', 'float', false],
+    ['pitch', 'float', false],
+    ['yaw', 'float', false],
+    ['xacc', 'float', false],
+    ['yacc', 'float', false],
+    ['zacc', 'float', false],
+    ['xgyro', 'float', false],
+    ['ygyro', 'float', false],
+    ['zgyro', 'float', false],
+    ['lat', 'int32_t', false],
+    ['lng', 'int32_t', false]
+  ]
 }

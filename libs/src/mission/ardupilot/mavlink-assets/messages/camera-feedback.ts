@@ -1,6 +1,6 @@
-import {MAVLinkMessage} from '@ifrunistuttgart/node-mavlink';
-import {readInt64LE, readUInt64LE} from '@ifrunistuttgart/node-mavlink';
-import {CameraFeedbackFlags} from '../enums/camera-feedback-flags';
+import { MAVLinkMessage } from '@ifrunistuttgart/node-mavlink'
+
+import { CameraFeedbackFlags } from '../enums/camera-feedback-flags'
 /*
 Camera Capture Feedback.
 */
@@ -19,37 +19,37 @@ Camera Capture Feedback.
 // flags Feedback flags. uint8_t
 // completed_captures Completed image captures. uint16_t
 export class CameraFeedback extends MAVLinkMessage {
-	public time_usec!: number;
-	public target_system!: number;
-	public cam_idx!: number;
-	public img_idx!: number;
-	public lat!: number;
-	public lng!: number;
-	public alt_msl!: number;
-	public alt_rel!: number;
-	public roll!: number;
-	public pitch!: number;
-	public yaw!: number;
-	public foc_len!: number;
-	public flags!: CameraFeedbackFlags;
-	public completed_captures!: number;
-	public _message_id: number = 180;
-	public _message_name: string = 'CAMERA_FEEDBACK';
-	public _crc_extra: number = 52;
-	public _message_fields: [string, string, boolean][] = [
-		['time_usec', 'uint64_t', false],
-		['lat', 'int32_t', false],
-		['lng', 'int32_t', false],
-		['alt_msl', 'float', false],
-		['alt_rel', 'float', false],
-		['roll', 'float', false],
-		['pitch', 'float', false],
-		['yaw', 'float', false],
-		['foc_len', 'float', false],
-		['img_idx', 'uint16_t', false],
-		['target_system', 'uint8_t', false],
-		['cam_idx', 'uint8_t', false],
-		['flags', 'uint8_t', false],
-		['completed_captures', 'uint16_t', true],
-	];
+  public time_usec!: number
+  public target_system!: number
+  public cam_idx!: number
+  public img_idx!: number
+  public lat!: number
+  public lng!: number
+  public alt_msl!: number
+  public alt_rel!: number
+  public roll!: number
+  public pitch!: number
+  public yaw!: number
+  public foc_len!: number
+  public flags!: CameraFeedbackFlags
+  public completed_captures!: number
+  public _message_id: number = 180
+  public _message_name: string = 'CAMERA_FEEDBACK'
+  public _crc_extra: number = 52
+  public _message_fields: [string, string, boolean][] = [
+    ['time_usec', 'uint64_t', false],
+    ['lat', 'int32_t', false],
+    ['lng', 'int32_t', false],
+    ['alt_msl', 'float', false],
+    ['alt_rel', 'float', false],
+    ['roll', 'float', false],
+    ['pitch', 'float', false],
+    ['yaw', 'float', false],
+    ['foc_len', 'float', false],
+    ['img_idx', 'uint16_t', false],
+    ['target_system', 'uint8_t', false],
+    ['cam_idx', 'uint8_t', false],
+    ['flags', 'uint8_t', false],
+    ['completed_captures', 'uint16_t', true]
+  ]
 }
