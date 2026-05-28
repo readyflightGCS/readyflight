@@ -1,7 +1,7 @@
 import { getMany, setMany, createStore, entries, clear } from 'idb-keyval'
-import { haversineDistance } from "@libs/world/distance";
-import { LatLng, LatLngAlt } from "@libs/world/latlng";
-import { interpolateLinear } from '@libs/math/geometry';
+import { haversineDistance } from '@libs/world/distance'
+import { LatLng, LatLngAlt } from '@libs/world/latlng'
+import { interpolateLinear } from '@libs/math/geometry'
 
 /**
  * Quantization resolution for terrain grid cells (decimal places).
@@ -13,7 +13,8 @@ const offset = 1 / 10 ** TERRAIN_RES
 
 // One dedicated IDB object store so terrain data doesn't pollute the default store.
 // Safe to call at module level — idb-keyval defers the actual DB open until first use.
-const terStore = createStore('readyflight-terrain', 'terrain-cache')
+// Exported so other modules (e.g. TerrainLayer) can reuse the same store instance.
+export const terStore = createStore('readyflight-terrain', 'terrain-cache')
 
 /**
  * Formats a lat/lng pair as the canonical cache key used throughout this module.
@@ -30,10 +31,10 @@ function getSurroundingPoints(loc: LatLng): LatLng[] {
   const latF = Math.floor(loc.lat * places) / places
   const lngF = Math.floor(loc.lng * places) / places
   return [
-    { lat: latF, lng: lngF },
-    { lat: latF, lng: (loc.lng + offset) },
-    { lat: (loc.lat + offset), lng: lngF },
-    { lat: (loc.lat + offset), lng: (loc.lng + offset) }
+    { lat: latF,          lng: lngF          },
+    { lat: latF,          lng: lngF + offset },
+    { lat: latF + offset, lng: lngF          },
+    { lat: latF + offset, lng: lngF + offset }
   ]
 }
 

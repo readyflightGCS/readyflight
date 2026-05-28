@@ -9,6 +9,7 @@ import MarkerLayer from './layers/markerLayer'
 import DubinsLayer from './layers/dubinsLayer'
 import TerrainLayer from './layers/terrainLayer'
 import { useRFMap } from '@libs/stores/map'
+import { useEditor } from '@libs/stores/configurator'
 
 function CreateHandler() {
   const handleMapClick = useMapClickHandler()
@@ -27,7 +28,7 @@ function MapRefSetter() {
 }
 
 function TerrainPickCursor() {
-  const pickMode = useRFMap((s) => s.terrainPickMode)
+  const pickMode = useEditor((s) => s.tool === 'selectCache')
   const map = useMap()
   useEffect(() => {
     map.getContainer().style.cursor = pickMode ? 'crosshair' : ''

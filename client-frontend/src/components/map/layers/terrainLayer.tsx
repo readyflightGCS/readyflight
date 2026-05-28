@@ -1,10 +1,9 @@
-import { createStore, entries } from 'idb-keyval'
+import { entries } from 'idb-keyval'
 import { useEffect, useState } from 'react'
 import { Circle, LayerGroup } from 'react-leaflet'
 import { useRFMap } from '@libs/stores/map'
 import { LatLngAlt } from '@libs/world/latlng'
-
-const terStore = createStore('readyflight-terrain', 'terrain-cache')
+import { terStore } from '@libs/world/terrain'
 
 export default function TerrainLayer() {
   const viewable = useRFMap((s) => s.viewable)
