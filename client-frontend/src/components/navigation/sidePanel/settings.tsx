@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -5,12 +6,66 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import SidePanelSection from '@/components/ui/sidePanelSection'
 import { useThemeStore } from '@libs/stores/theme'
+import { useRFMap, DEFAULT_TILE_URL } from '@libs/stores/map'
 import { Moon, Sun } from 'lucide-react'
-import TerrainSettings from './terrainSettings'
+import OfflineCacheSettings from './offlineCacheSettings'
 
 const isElectron = window.env?.isElectron === true
+
+function TileProviderSettings() {
+  const { tileProvider, setTileProvider } = useRFMap()
+  const [draft, setDraft] = useState(tileProvider.url)
+
+  function handleApply() {
+    const trimmed = draft.trim()
+    if (!trimmed) return
+    setTileProvider({ url: trimmed, subdomains: ['a', 'b', 'c'] })
+  }
+
+  function handleReset() {
+    setDraft(DEFAULT_TILE_URL)
+    setTileProvider({ url: DEFAULT_TILE_URL, subdomains: ['a', 'b', 'c'] })
+  }
+
+  const isDirty = draft.trim() !== tileProvider.url
+  const isDefault = tileProvider.url === DEFAULT_TILE_URL
+
+  return (
+    <SidePanelSection title="Map Tiles">
+      <span className="text-xs text-muted-foreground">
+        Tile URL template — use {'{z}'}, {'{x}'}, {'{y}'}, {'{s}'} as placeholders
+      </span>
+      <Input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleApply()}
+        placeholder="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        className="text-xs"
+      />
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          className="flex-1"
+          onClick={handleApply}
+          disabled={!isDirty || !draft.trim()}
+        >
+          Apply
+        </Button>
+        <Button
+          size="sm"
+          className="flex-1"
+          onClick={handleReset}
+          disabled={isDefault && !isDirty}
+        >
+          Reset to Default
+        </Button>
+      </div>
+    </SidePanelSection>
+  )
+}
 
 export default function Settings() {
   const { setTheme } = useThemeStore()
@@ -37,7 +92,9 @@ export default function Settings() {
           </DropdownMenu>
         </SidePanelSection>
 
-        <TerrainSettings />
+        <TileProviderSettings />
+
+        <OfflineCacheSettings />
       </div>
       <div className="text-xs">
         {isElectron ? 'Electron' : 'Browser'} | v{__GIT_VERSION__}

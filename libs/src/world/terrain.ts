@@ -50,7 +50,7 @@ function getSurroundingPoints(loc: LatLng): LatLng[] {
  * If the API is unreachable, points that have all four corners in cache are still
  * returned; points with incomplete coverage are silently omitted.
  */
-export async function getTerrain(locs: LatLng[]): Promise<LatLngAlt[] | null> {
+export async function getTerrain(locs: LatLng[]): Promise<LatLngAlt[]> {
   if (locs.length === 0) return []
 
   // Collect all grid corners we need, deduplicated by key.
@@ -64,7 +64,7 @@ export async function getTerrain(locs: LatLng[]): Promise<LatLngAlt[] | null> {
   })
 
   const { locs: cached, nf } = await getTerrainFromStorage(cornerLocs)
-  console.log(`[ter] cached=${cached.length} missing=${nf.length}`)
+  console.debug(`[ter] cached=${cached.length} missing=${nf.length}`)
 
   const elevation: LatLngAlt[] = [...cached]
 

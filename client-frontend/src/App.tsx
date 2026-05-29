@@ -30,8 +30,6 @@ export default function App(): React.JSX.Element {
         <Map />
       </div>
       <ConnectionHandler />
-      {/* <Toaster position="top-right"/> */}
-
       <Toaster
         position="top-right"
         toastOptions={{

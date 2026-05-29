@@ -73,7 +73,7 @@ export default function HeightMap() {
 
     getTerrain(locations).then((data) => {
       if (fetchId !== fetchIdRef.current) return
-      if (data !== null && data.length > 0) {
+      if (data.length > 0) {
         setTerrainData(data)
       }
     })
