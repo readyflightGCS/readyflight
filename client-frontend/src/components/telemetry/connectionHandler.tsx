@@ -3,6 +3,8 @@ import { useVehicle } from '@libs/stores/vehicle'
 import { useConnections } from '@libs/stores/connections'
 import { useEffect, useRef } from 'react'
 import type { ConnectionMessage } from '@libs/connection/types'
+import type { ITelemetrySession } from '@libs/mission/dialect'
+import type { VehicleState } from '@libs/vehicle/state'
 
 const isElectron =
   (window as unknown as { env?: { isElectron?: boolean } }).env?.isElectron === true
@@ -11,11 +13,9 @@ function base64ToUint8Array(b64: string): Uint8Array {
   const binary = atob(b64)
   const len = binary.length
   const bytes = new Uint8Array(len)
-
   for (let i = 0; i < len; i++) {
     bytes[i] = binary.charCodeAt(i)
   }
-
   return bytes
 }
 
@@ -32,8 +32,28 @@ export default function ConnectionHandler() {
 
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeout = useRef<number | null>(null)
+  const sessionRef = useRef<ITelemetrySession | null>(null)
+  const patchRef = useRef<Partial<VehicleState>>({})
+
+  // rAF flush loop — runs for the component's lifetime, drains patchRef into the store.
+  useEffect(() => {
+    let rafId: number
+    function flush() {
+      if (Object.keys(patchRef.current).length > 0) {
+        setVehicleState(patchRef.current)
+        patchRef.current = {}
+      }
+      rafId = requestAnimationFrame(flush)
+    }
+    rafId = requestAnimationFrame(flush)
+    return () => cancelAnimationFrame(rafId)
+  }, [setVehicleState])
 
   useEffect(() => {
+    function applyPatch(patch: Partial<VehicleState>) {
+      Object.assign(patchRef.current, patch)
+    }
+
     if (isElectron) {
       const api = (window as Window & typeof globalThis).api.connection
 
@@ -41,9 +61,13 @@ export default function ConnectionHandler() {
         api.sendCommand({ type: 'sendData', payload: new Uint8Array(buf) })
       }
 
+      const session = dialect.createSession(sendPacket, applyPatch)
+      sessionRef.current = session
+
       setVehicleState({
-        sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
-        sendPacket
+        sendMessage: (m) => session.handleSendTelemetryMessage(m),
+        sendPacket,
+        uploadMission: (m) => session.uploadMission(m)
       })
 
       setCommandSender((cmd) => {
@@ -53,7 +77,7 @@ export default function ConnectionHandler() {
       const offMessage = api.onMessage((msg) => {
         switch (msg.type) {
           case 'sendData': {
-            dialect.handleTelemetryMessage(msg.payload, sendPacket)
+            applyPatch(session.handleTelemetryMessage(msg.payload))
             break
           }
           case 'status': {
@@ -74,9 +98,12 @@ export default function ConnectionHandler() {
       api.sendCommand({ type: 'list' })
 
       return () => {
+        session.destroy()
+        sessionRef.current = null
+        patchRef.current = {}
         offMessage()
         setCommandSender(null)
-        setVehicleState({ sendMessage: null, sendPacket: null })
+        setVehicleState({ sendMessage: null, sendPacket: null, uploadMission: null })
       }
     }
 
@@ -95,11 +122,15 @@ export default function ConnectionHandler() {
         )
       }
 
+      const session = dialect.createSession(sendPacket, applyPatch)
+      sessionRef.current = session
+
       ws.onopen = () => {
         console.log('[ws] connected to backend')
         setVehicleState({
-          sendMessage: (m) => dialect.handleSendTelemetryMessage(m, sendPacket),
-          sendPacket
+          sendMessage: (m) => session.handleSendTelemetryMessage(m),
+          sendPacket,
+          uploadMission: (m) => session.uploadMission(m)
         })
         setCommandSender((cmd) => {
           if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(cmd))
@@ -127,7 +158,7 @@ export default function ConnectionHandler() {
 
         switch (msg.type) {
           case 'sendData': {
-            dialect.handleTelemetryMessage(msg.payload, sendPacket)
+            applyPatch(session.handleTelemetryMessage(msg.payload))
             break
           }
           case 'status': {
@@ -147,19 +178,18 @@ export default function ConnectionHandler() {
 
       ws.onclose = () => {
         console.log('[ws] lost connection to backend; reconnecting …')
-        scheduleReconnect()
+        session.destroy()
+        sessionRef.current = null
+        patchRef.current = {}
         setCommandSender(null)
-        setVehicleState({ sendMessage: null, sendPacket: null })
+        setVehicleState({ sendMessage: null, sendPacket: null, uploadMission: null })
         setAvailableConnections([])
+        scheduleReconnect()
       }
 
       ws.onerror = () => {
         ws.close()
         console.log('[ws] error; reconnecting …')
-        scheduleReconnect()
-        setCommandSender(null)
-        setVehicleState({ sendMessage: null, sendPacket: null })
-        setAvailableConnections([])
       }
     }
 
@@ -174,6 +204,9 @@ export default function ConnectionHandler() {
 
     return () => {
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current)
+      sessionRef.current?.destroy()
+      sessionRef.current = null
+      patchRef.current = {}
       const ws = wsRef.current
       wsRef.current = null
       ws?.close()

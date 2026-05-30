@@ -9,6 +9,20 @@ import {
 import { Result } from '@libs/util/try-catch'
 import { Vehicle } from '@libs/vehicle/types'
 import { VehicleCommand } from '@libs/vehicle/commands'
+import { VehicleState } from '@libs/vehicle/state'
+
+/** Per-connection stateful runtime for a dialect. Owns the stream parser,
+ *  upload handshake, and heartbeat timers for one vehicle connection. */
+export type ITelemetrySession = {
+  /** Process an incoming binary frame. Returns any state fields that changed. */
+  handleTelemetryMessage(data: Uint8Array): Partial<VehicleState>
+  /** Encode and send a vehicle command over the captured sendPacket. */
+  handleSendTelemetryMessage(msg: VehicleCommand): void
+  /** Begin the a mission upload for a given mission. */
+  uploadMission(mission: Mission<DialectCommandDescription>): void
+  /** Cancel all timers and release resources. Call on disconnect. */
+  destroy(): void
+}
 
 /**
  * Represents a dialect—i.e., a specific command language or format—that can
@@ -81,18 +95,11 @@ export type Dialect<CD extends DialectCommandDescription> = {
     ext: string
   }[]
 
-  /** Called for every incoming binary frame. sendPacket may be used to send immediate responses (e.g. during mission upload handshake). */
-  handleTelemetryMessage: (
-    message: Uint8Array<ArrayBufferLike>,
-    sendPacket: (buf: ArrayBuffer) => void
-  ) => void
-
-  /** Encode and dispatch a single vehicle command. */
-  handleSendTelemetryMessage: (
-    message: VehicleCommand,
-    sendPacket: (buf: ArrayBuffer) => void
-  ) => void
-
-  /** Run the MAVLink mission-upload handshake for the given mission. */
-  uploadMission: (mission: Mission<CD>, sendPacket: (buf: ArrayBuffer) => void) => void
+  /** Create a new per-connection session. sendPacket is captured for the
+   *  session's lifetime; onPatch is called for async state changes (e.g.
+   *  heartbeat loss) that cannot be returned from handleTelemetryMessage. */
+  createSession: (
+    sendPacket: (buf: ArrayBuffer) => void,
+    onPatch: (patch: Partial<VehicleState>) => void
+  ) => ITelemetrySession
 }

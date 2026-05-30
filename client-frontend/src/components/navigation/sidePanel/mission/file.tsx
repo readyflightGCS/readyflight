@@ -4,13 +4,11 @@ import { useMission } from '@libs/stores/mission'
 import { useVehicle } from '@libs/stores/vehicle'
 
 export default function MissionFile() {
-  const dialect = useMission((s) => s.dialect)
   const mission = useMission((s) => s.mission)
-  const sendPacket = useVehicle((s) => s.sendPacket)
+  const uploadMission = useVehicle((s) => s.uploadMission)
 
   const handleUpload = () => {
-    if (!sendPacket) return
-    dialect.uploadMission(mission, sendPacket)
+    uploadMission?.(mission)
   }
 
   return (
@@ -21,8 +19,8 @@ export default function MissionFile() {
         </span>
       </div>
       <div className="w-full flex items-center flex-col pt-2">
-        <div>{sendPacket ? 'Mission ready to upload' : 'No vehicle connection'}</div>
-        <Button variant="green" onClick={handleUpload} disabled={!sendPacket}>
+        <div>{uploadMission ? 'Mission ready to upload' : 'No vehicle connection'}</div>
+        <Button variant="green" onClick={handleUpload} disabled={!uploadMission}>
           Upload
         </Button>
       </div>
