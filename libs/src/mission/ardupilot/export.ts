@@ -3,13 +3,15 @@ import { Mission } from '../mission'
 import { mavCmdDescription } from './commands'
 import { dubinsBetweenDubins, localiseDubinsPath } from '@libs/dubins/dubinWaypoints'
 import { g2l } from '@libs/world/conversion'
-import { dubinsPoint } from '@libs/dubins/types'
-import { haversineDistance, worldOffset } from '@libs/world/distance'
+import { dubinsPoint, Curve } from '@libs/dubins/types'
+import { haversineDistance } from '@libs/world/distance'
 import { LatLng } from '@libs/world/latlng'
 import { Result } from '@libs/util/try-catch'
 import { makeCommand } from '@libs/commands/helpers'
 import { ardupilot } from './ardupilot'
-import { Dialect } from '../dialect'
+
+/** Tolerance for comparing lat/lng values (~0.1 m at the equator). */
+const LATLNG_EPS = 1e-6
 
 export function convertArdupilot(
   mission: Mission<(typeof mavCmdDescription)[number]>
@@ -18,14 +20,27 @@ export function convertArdupilot(
   const reference = mission.getReferencePoint()
   const result: DialectCommand<(typeof mavCmdDescription)[number]>[] = []
 
-  for (const cmd of flattened) {
-    if (cmd.type.startsWith('D.')) {
-      // Already a Mavlink command
+  let i = 0
+  while (i < flattened.length) {
+    const cmd = flattened[i]
+
+    if (cmd.type === 'RF.DubinsPath') {
+      // Batch consecutive RF.DubinsPath commands and convert together
+      const dubinsCmds: Extract<RFCommand, { type: 'RF.DubinsPath' }>[] = []
+      while (i < flattened.length && flattened[i].type === 'RF.DubinsPath') {
+        dubinsCmds.push(flattened[i] as Extract<RFCommand, { type: 'RF.DubinsPath' }>)
+        i++
+      }
+      result.push(...dubinsRun2MAV(dubinsCmds, reference))
+    } else if (cmd.type.startsWith('D.')) {
       result.push(cmd as DialectCommand<(typeof mavCmdDescription)[number]>)
+      i++
     } else {
       result.push(...RF2MAV(cmd as RFCommand, reference))
+      i++
     }
   }
+
   return result
 }
 
@@ -34,13 +49,10 @@ function createMavCmd<CMD extends (typeof mavCmdDescription)[number]>(
   type: CMD['type'],
   params: CommandParams<CMD>
 ): DialectCommand<CMD> {
-  // Find the command definition to ensure we are creating a valid command
-  // This is a bit dynamic/loose, ideally would use type guards or specific creators
-  // But for now we trust the type string matches one of mavCmdDescription
   //@ts-ignore
   return {
     type: type,
-    frame: 3, // Global Relative Alt usually
+    frame: 3, // Global Relative Alt
     params: params
   }
 }
@@ -136,10 +148,8 @@ function RF2MAV(
       ]
     }
     case 'RF.Group': {
-      // Groups should be flattened by mission.flatten, so this shouldn't happen usually
-      // But if it does, it's a no-op or error. Safe to ignore/warn.
       console.warn('Encountered unflattened Group command in Ardupilot export')
-      break
+      return []
     }
     case 'RF.SetServo': {
       return [
@@ -150,166 +160,249 @@ function RF2MAV(
       ]
     }
     case 'RF.DubinsPath': {
-      return dubinsPath2MAV(rfCmd, reference)
+      // Should not reach here — DubinsPath runs are batched in convertArdupilot
+      return []
     }
   }
 }
 
-function dubinsPath2MAV(
-  rfCmd: Extract<RFCommand, { type: 'RF.DubinsPath' }>,
+/**
+ * Converts a consecutive run of RF.DubinsPath commands into MAVLink navigation commands.
+ *
+ * Each RF.DubinsPath command is a single point (lat/lng/alt/radius/gap/heading). A run of
+ * N points produces N-1 Dubins segments, each expanded into:
+ *   [optional loiter Turn A] → [waypoint at straight.end] → [optional loiter Turn B] → [waypoint at endpoint]
+ *
+ * Post-processing combines adjacent loiters on the same circle and removes duplicate
+ * adjacent waypoints at the same location.
+ */
+function dubinsRun2MAV(
+  cmds: Extract<RFCommand, { type: 'RF.DubinsPath' }>[],
   reference: LatLng
 ): DialectCommand<(typeof mavCmdDescription)[number]>[] {
-  const result = []
-  const points = rfCmd.params.points
-  if (!points || points.length === 0) return []
+  if (cmds.length === 0) return []
 
-  // Handle single point as a simple waypoint
-  if (points.length === 1) {
-    const p = points[0]
+  if (cmds.length === 1) {
+    const p = cmds[0].params
     return [
       createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
         hold: 0,
         'accept radius': 0,
         'pass radius': 0,
         yaw: NaN,
-        latitude: p.lat,
-        longitude: p.lng,
-        altitude: p.alt
+        latitude: p.latitude,
+        longitude: p.longitude,
+        altitude: p.altitude
       })
     ]
   }
 
-  // Convert to Dubins points using parameters from the points
-  // We assume the points structure in RF.DubinsPath has been updated to include these fields
-
-  const dPoints: dubinsPoint[] = points.map((p: any) => ({
-    pos: g2l(reference, { lat: p.lat, lng: p.lng }),
-    radius: p.radius ?? 50,
-    heading: p.heading ?? 0,
-    tunable: p.tunable ?? true,
-    passbyRadius: p.passbyRadius ?? 0,
+  const dPoints: dubinsPoint[] = cmds.map((cmd) => ({
+    pos: g2l(reference, { lat: cmd.params.latitude, lng: cmd.params.longitude }),
+    radius: cmd.params.radius,
+    heading: cmd.params.heading,
+    tunable: true,
+    passbyRadius: cmd.params.gap,
     bounds: {}
   }))
 
-  // we are deriving directly from a dubins path, there will only
-  // be one path
   const path = dubinsBetweenDubins(dPoints)
   const dubinsPaths = path.map((x) => localiseDubinsPath(x, reference))
 
+  const raw: DialectCommand<(typeof mavCmdDescription)[number]>[] = []
+
+  // Entry waypoint at the first Dubins point (exact user-specified coordinates)
+  raw.push(
+    createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
+      hold: 0,
+      'accept radius': 0,
+      'pass radius': 0,
+      yaw: NaN,
+      latitude: cmds[0].params.latitude,
+      longitude: cmds[0].params.longitude,
+      altitude: cmds[0].params.altitude
+    })
+  )
+
   for (let j = 0; j < dubinsPaths.length; j++) {
     const section = dubinsPaths[j]
+    const startAlt = cmds[j].params.altitude
+    const endAlt = cmds[j + 1].params.altitude
 
-    // Calculate segment lengths
     const turnALen = Math.abs(section.turnA.theta * section.turnA.radius)
     const straightLen = haversineDistance(section.straight.start, section.straight.end)
     const turnBLen = Math.abs(section.turnB.theta * section.turnB.radius)
-    const totalDistance = turnALen + straightLen + turnBLen
+    const totalDist = turnALen + straightLen + turnBLen
 
-    // Get altitude values for interpolation
-    const startAlt = points[j].alt
-    const endAlt = points[j].alt
-
-    if (j === 0) {
-      result.push(
-        createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
-          latitude: points[0].lat,
-          longitude: points[0].lng,
-          altitude: points[0].alt
-        })
-      )
-    }
-
-    // ###### Turn A ######
+    // ── Turn A ──────────────────────────────────────────────────────────────
     const absThetaA = Math.abs(section.turnA.theta / (Math.PI * 2))
-    const dirA = absThetaA !== 0 ? absThetaA / (section.turnA.theta / (Math.PI * 2)) : 1
-
-    // Add turn command if significant
-    if (Math.abs(section.turnA.radius) > 0 && absThetaA > 0.03) {
-      const turnAAlt = calculateInterpolatedAltitude(startAlt, endAlt, turnALen, totalDistance)
-
-      result.push(
+    if (absThetaA > 0.03 && section.turnA.radius > 0) {
+      raw.push(
         createMavCmd('D.MAV_CMD_NAV_LOITER_TURNS', {
           turns: Number(absThetaA.toFixed(4)),
-          '': 1, // Magic exit tangent
-          altitude: turnAAlt,
-          radius: Number((section.turnA.radius * dirA).toFixed(4)),
+          '': 1, // exit tangent
+          altitude: calculateInterpolatedAltitude(startAlt, endAlt, turnALen, totalDist),
+          radius: Number((section.turnA.radius * Math.sign(section.turnA.theta)).toFixed(4)),
           latitude: section.turnA.center.lat,
           longitude: section.turnA.center.lng
         })
       )
     }
 
-    // ###### Straight Section ######
+    // ── Straight section endpoint ────────────────────────────────────────────
+    // Omit when the straight end is at the same location as the Dubins endpoint
+    // (happens when Turn B is zero — the straight already reaches the endpoint)
+    const straightEndLat = section.straight.end.lat
+    const straightEndLng = section.straight.end.lng
+    const endLat = cmds[j + 1].params.latitude
+    const endLng = cmds[j + 1].params.longitude
+    const straightIsAtEndpoint =
+      Math.abs(straightEndLat - endLat) < LATLNG_EPS &&
+      Math.abs(straightEndLng - endLng) < LATLNG_EPS
 
-    const straightAlt = calculateInterpolatedAltitude(
-      startAlt,
-      endAlt,
-      turnALen + straightLen,
-      totalDistance
-    )
+    if (!straightIsAtEndpoint) {
+      raw.push(
+        createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
+          hold: 0,
+          'accept radius': 0,
+          'pass radius': 0,
+          yaw: 0,
+          latitude: straightEndLat,
+          longitude: straightEndLng,
+          altitude: calculateInterpolatedAltitude(startAlt, endAlt, turnALen + straightLen, totalDist)
+        })
+      )
+    }
 
-    result.push(
-      createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
-        yaw: 0,
-        'accept radius': 0,
-        latitude: section.straight.end.lat,
-        longitude: section.straight.end.lng,
-        hold: 0,
-        altitude: straightAlt,
-        'pass radius': 0
-      })
-    )
-
-    // ###### Turn B ######
+    // ── Turn B ──────────────────────────────────────────────────────────────
     const absThetaB = Math.abs(section.turnB.theta / (Math.PI * 2))
-    const dirB = absThetaB !== 0 ? absThetaB / (section.turnB.theta / (Math.PI * 2)) : 1
-
-    // Add turn command if significant
-    if (Math.abs(section.turnB.radius) > 0 && absThetaB > 0.03) {
-      result.push(
+    if (absThetaB > 0.03 && section.turnB.radius > 0) {
+      raw.push(
         createMavCmd('D.MAV_CMD_NAV_LOITER_TURNS', {
           turns: Number(absThetaB.toFixed(4)),
-          '': 1, // Magic exit tangent
+          '': 1, // exit tangent
           altitude: endAlt,
-          radius: Number((section.turnB.radius * dirB).toFixed(4)),
+          radius: Number((section.turnB.radius * Math.sign(section.turnB.theta)).toFixed(4)),
           latitude: section.turnB.center.lat,
           longitude: section.turnB.center.lng
         })
       )
     }
 
-    // add the last waypoint of the curve, can be ommited if next in same direction
-    const next = dubinsPaths[j + 1]
-    if (next === undefined || (next !== undefined && next.turnA.theta * section.turnB.theta < 0)) {
-      const pos = worldOffset(
-        section.turnB.center,
-        section.turnB.radius,
-        section.turnB.start + section.turnB.theta
-      )
-      result.push(
+    // ── Endpoint waypoint ────────────────────────────────────────────────────
+    // Always use exact Dubins point coordinates as the endpoint.
+    // For intermediate segments, skip when the adjacent turns are on the same circle —
+    // those loiters will be combined by simplifyDubinsOutput() and the waypoint between
+    // them would interrupt the combined arc.
+    const isLastSegment = j === dubinsPaths.length - 1
+    const nextSection = isLastSegment ? undefined : dubinsPaths[j + 1]
+    const turnsShareCircle =
+      nextSection !== undefined && areSameCircle(section.turnB, nextSection.turnA)
+
+    if (!turnsShareCircle) {
+      raw.push(
         createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
-          yaw: 0,
-          'accept radius': 0,
-          latitude: pos.lat,
-          longitude: pos.lng,
           hold: 0,
-          altitude: endAlt,
-          'pass radius': 0
+          'accept radius': 0,
+          'pass radius': 0,
+          yaw: 0,
+          latitude: cmds[j + 1].params.latitude,
+          longitude: cmds[j + 1].params.longitude,
+          altitude: cmds[j + 1].params.altitude
         })
       )
     }
   }
-  return result
+
+  return simplifyDubinsOutput(raw)
 }
 
 /**
- * Calculates interpolated altitude along a Dubins path segment
- * @param startAlt Starting altitude
- * @param endAlt Ending altitude
- * @param segmentDistance Distance of current segment
- * @param totalDistance Total distance of the path
- * @returns Interpolated altitude for the segment
+ * Returns true when two Dubins turn arcs lie on the same physical circle:
+ * same centre (within ~0.1 m), same radius, same rotation direction.
  */
+function areSameCircle(
+  c1: Curve<LatLng>,
+  c2: Curve<LatLng>
+): boolean {
+  return (
+    Math.abs(c1.center.lat - c2.center.lat) < LATLNG_EPS &&
+    Math.abs(c1.center.lng - c2.center.lng) < LATLNG_EPS &&
+    Math.abs(c1.radius - c2.radius) < 0.01 &&
+    Math.sign(c1.theta) === Math.sign(c2.theta)
+  )
+}
+
+/**
+ * Post-processes a raw Dubins command list:
+ * 1. Combines adjacent loiters on the same circle into one (summed turns).
+ * 2. Removes duplicate adjacent waypoints at the same location, keeping the
+ *    second occurrence (which carries exact Dubins point coordinates).
+ */
+function simplifyDubinsOutput(
+  cmds: DialectCommand<(typeof mavCmdDescription)[number]>[]
+): DialectCommand<(typeof mavCmdDescription)[number]>[] {
+  const out: DialectCommand<(typeof mavCmdDescription)[number]>[] = []
+  let i = 0
+  while (i < cmds.length) {
+    const cur = cmds[i]
+    const next = cmds[i + 1]
+
+    if (!next) {
+      out.push(cur)
+      break
+    }
+
+    // Combine consecutive loiter turns on the same circle
+    if (
+      cur.type === 'D.MAV_CMD_NAV_LOITER_TURNS' &&
+      next.type === 'D.MAV_CMD_NAV_LOITER_TURNS'
+    ) {
+      const cp = cur.params as any
+      const np = next.params as any
+      if (
+        Math.abs(cp.latitude - np.latitude) < LATLNG_EPS &&
+        Math.abs(cp.longitude - np.longitude) < LATLNG_EPS &&
+        cp.radius === np.radius
+      ) {
+        out.push(
+          createMavCmd('D.MAV_CMD_NAV_LOITER_TURNS', {
+            turns: Number((cp.turns + np.turns).toFixed(4)),
+            '': 1,
+            altitude: np.altitude, // use altitude of the second (exit) loiter
+            radius: cp.radius,
+            latitude: cp.latitude,
+            longitude: cp.longitude
+          })
+        )
+        i += 2
+        continue
+      }
+    }
+
+    // Remove duplicate adjacent waypoints — keep the second (exact endpoint coords)
+    if (
+      cur.type === 'D.MAV_CMD_NAV_WAYPOINT' &&
+      next.type === 'D.MAV_CMD_NAV_WAYPOINT'
+    ) {
+      const cp = cur.params as any
+      const np = next.params as any
+      if (
+        Math.abs(cp.latitude - np.latitude) < LATLNG_EPS &&
+        Math.abs(cp.longitude - np.longitude) < LATLNG_EPS
+      ) {
+        out.push(next) // keep second — it holds exact Dubins endpoint coords
+        i += 2
+        continue
+      }
+    }
+
+    out.push(cur)
+    i++
+  }
+  return out
+}
+
 function calculateInterpolatedAltitude(
   startAlt: number,
   endAlt: number,
