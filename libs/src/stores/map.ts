@@ -2,6 +2,7 @@ import { MutableRefObject } from 'react'
 import { Map } from 'leaflet'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import {LatLng} from '@libs/world/latlng'
 
 export const mapElements = [
   'markers',
@@ -10,10 +11,9 @@ export const mapElements = [
   'accept radius',
   'terrain',
   'tile cache',
-  'imagery'
 ] as const
 
-export type TerrainPreview = { lat: number; lng: number; radiusKm: number }
+export type TerrainPreview = { pos: LatLng; radiusKm: number }
 
 type MapContextState = {
   mapRef: MutableRefObject<Map> | null
@@ -44,7 +44,6 @@ export const useRFMap = create<MapContextState>()(
         'accept radius': false,
         terrain: false,
         'tile cache': false,
-        imagery: false
       },
       setViewable: (x) => set({ viewable: x }),
       terrainPreview: null,

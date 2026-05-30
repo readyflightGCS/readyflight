@@ -41,7 +41,7 @@ export default function TerrainLayer() {
       {/* Download area preview — always visible when set */}
       {terrainPreview && (
         <Circle
-          center={[terrainPreview.lat, terrainPreview.lng]}
+          center={[terrainPreview.pos.lat, terrainPreview.pos.lng]}
           radius={terrainPreview.radiusKm * 1000}
           pathOptions={{
             color: '#3b82f6',

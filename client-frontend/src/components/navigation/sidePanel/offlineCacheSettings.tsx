@@ -68,7 +68,7 @@ export default function OfflineCacheSettings() {
   const tileEstimate = useMemo(
     () =>
       terrainPreview
-        ? estimateTileCount(terrainPreview.lat, terrainPreview.lng, terrainPreview.radiusKm, minZoom, maxZoom)
+        ? estimateTileCount(terrainPreview.pos, terrainPreview.radiusKm, minZoom, maxZoom)
         : null,
     [terrainPreview, minZoom, maxZoom]
   )
@@ -78,8 +78,7 @@ export default function OfflineCacheSettings() {
     if (!centre) return
     setTerrainPreview({
       radiusKm: terrainPreview?.radiusKm ?? 5,
-      lat: centre.lat,
-      lng: centre.lng
+      pos: centre
     })
   }
 
@@ -89,7 +88,7 @@ export default function OfflineCacheSettings() {
 
   const handleDownload = async () => {
     if (!terrainPreview || terrainPreview.radiusKm <= 0) return
-    const { lat, lng, radiusKm } = terrainPreview
+    const { pos, radiusKm } = terrainPreview
 
     const ctrl = new AbortController()
     abortRef.current = ctrl
@@ -116,7 +115,7 @@ export default function OfflineCacheSettings() {
     try {
       const [terrainResult, tilesResult] = await Promise.all([
         downloadTerrainForArea(
-          { lat, lng },
+          pos,
           radiusKm,
           (done, total) => {
             progress.terrain = { done, total }
@@ -125,8 +124,7 @@ export default function OfflineCacheSettings() {
           ctrl.signal
         ),
         downloadTilesForArea(
-          lat,
-          lng,
+          pos,
           radiusKm,
           minZoom,
           maxZoom,
@@ -204,13 +202,15 @@ export default function OfflineCacheSettings() {
           <NumericInput
             name="lat"
             className="w-1/2"
-            value={terrainPreview?.lat}
+            value={terrainPreview?.pos.lat}
             step={0.001}
             disabled={terrainPreview === null || isDownloading}
             onChange={(e) =>
               setTerrainPreview({
-                lat: e.target.value,
-                lng: terrainPreview?.lng ?? 0,
+                pos: {
+                  lat: e.target.value,
+                  lng: terrainPreview?.pos.lng ?? 0
+                },
                 radiusKm: terrainPreview?.radiusKm ?? 5
               })
             }
@@ -218,13 +218,15 @@ export default function OfflineCacheSettings() {
           <NumericInput
             name="lng"
             className="w-1/2"
-            value={terrainPreview?.lng}
+            value={terrainPreview?.pos.lng}
             step={0.001}
             disabled={terrainPreview === null || isDownloading}
             onChange={(e) =>
               setTerrainPreview({
-                lat: terrainPreview?.lat ?? 0,
-                lng: e.target.value,
+                pos:{
+                  lat: terrainPreview?.pos.lat ?? 0,
+                  lng: e.target.value,
+                },
                 radiusKm: terrainPreview?.radiusKm ?? 5
               })
             }
@@ -268,8 +270,10 @@ export default function OfflineCacheSettings() {
           disabled={terrainPreview === null || isDownloading}
           onChange={(e) =>
             setTerrainPreview({
-              lat: terrainPreview?.lat ?? 0,
-              lng: terrainPreview?.lng ?? 0,
+              pos:{
+                lat: terrainPreview?.pos.lat ?? 0,
+                lng: terrainPreview?.pos.lng ?? 0,
+              },
               radiusKm: e.target.value
             })
           }

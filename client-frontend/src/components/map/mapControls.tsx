@@ -8,8 +8,6 @@ import {
 import { mapElements, useRFMap } from '@libs/stores/map'
 import { capitalise } from '@libs/util/text'
 
-const visibleElements = mapElements.filter((e) => e !== 'imagery')
-
 export default function MapControls() {
   const { mapRef, viewable, setViewable } = useRFMap()
 
@@ -36,7 +34,7 @@ export default function MapControls() {
           <Eye className="h-5 w-5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          {visibleElements.map((element, i) => (
+          {mapElements.map((element, i) => (
             <DropdownMenuCheckboxItem
               key={i}
               checked={viewable[element]}

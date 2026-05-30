@@ -1,4 +1,6 @@
 import { get, set, clear, keys, createStore, getMany } from 'idb-keyval'
+import { haversineDistance } from "@libs/world/distance"
+import { LatLng } from "@libs/world/latlng"
 
 export const tileStore = createStore('readyflight-tiles', 'tile-cache')
 
@@ -33,10 +35,10 @@ export async function getAllTileKeys(): Promise<string[]> {
 
 // ─── Tile coordinate helpers ──────────────────────────────────────────────────
 
-function latLngToTile(lat: number, lng: number, z: number): { x: number; y: number } {
+function latLngToTile(pos: LatLng, z: number): { x: number; y: number } {
   const n = 2 ** z
-  const x = Math.floor(((lng + 180) / 360) * n)
-  const latRad = (lat * Math.PI) / 180
+  const x = Math.floor(((pos.lng + 180) / 360) * n)
+  const latRad = (pos.lat * Math.PI) / 180
   const y = Math.floor(
     ((1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2) * n
   )
@@ -48,18 +50,6 @@ function tileCenter(x: number, y: number, z: number): { lat: number; lng: number
   const lng = ((x + 0.5) / n) * 360 - 180
   const latRad = Math.atan(Math.sinh(Math.PI * (1 - (2 * (y + 0.5)) / n)))
   return { lat: (latRad * 180) / Math.PI, lng }
-}
-
-function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
-  const R = 6371
-  const dLat = ((lat2 - lat1) * Math.PI) / 180
-  const dLng = ((lng2 - lng1) * Math.PI) / 180
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLng / 2) ** 2
-  return R * 2 * Math.asin(Math.sqrt(a))
 }
 
 function resolveUrl(
@@ -83,19 +73,18 @@ function resolveUrl(
  * Falls back to a π/4 area approximation for very large grids to stay fast.
  */
 export function estimateTileCount(
-  lat: number,
-  lng: number,
+  pos: LatLng,
   radiusKm: number,
   minZoom: number,
   maxZoom: number
 ): number {
   let total = 0
   const latDelta = radiusKm / 111.32
-  const lngDelta = radiusKm / (111.32 * Math.cos((lat * Math.PI) / 180))
+  const lngDelta = radiusKm / (111.32 * Math.cos((pos.lat * Math.PI) / 180))
 
   for (let z = minZoom; z <= maxZoom; z++) {
-    const nw = latLngToTile(lat + latDelta, lng - lngDelta, z)
-    const se = latLngToTile(lat - latDelta, lng + lngDelta, z)
+    const nw = latLngToTile({lat: pos.lat + latDelta, lng: pos.lng - lngDelta}, z)
+    const se = latLngToTile({lat: pos.lat - latDelta, lng: pos.lng + lngDelta}, z)
     const w = se.x - nw.x + 1
     const h = se.y - nw.y + 1
 
@@ -108,7 +97,7 @@ export function estimateTileCount(
     for (let x = nw.x; x <= se.x; x++) {
       for (let y = nw.y; y <= se.y; y++) {
         const c = tileCenter(x, y, z)
-        if (haversineKm(lat, lng, c.lat, c.lng) <= radiusKm) total++
+        if (haversineDistance(pos, c) <= radiusKm * 1000) total++
       }
     }
   }
@@ -120,8 +109,7 @@ export function estimateTileCount(
  * Tiles already cached are skipped. Downloads run with bounded concurrency.
  */
 export async function downloadTilesForArea(
-  lat: number,
-  lng: number,
+  pos: LatLng,
   radiusKm: number,
   minZoom: number,
   maxZoom: number,
@@ -131,16 +119,16 @@ export async function downloadTilesForArea(
   signal: AbortSignal
 ): Promise<{ downloaded: number; skipped: number }> {
   const latDelta = radiusKm / 111.32
-  const lngDelta = radiusKm / (111.32 * Math.cos((lat * Math.PI) / 180))
+  const lngDelta = radiusKm / (111.32 * Math.cos((pos.lat * Math.PI) / 180))
 
   const tiles: { z: number; x: number; y: number }[] = []
   for (let z = minZoom; z <= maxZoom; z++) {
-    const nw = latLngToTile(lat + latDelta, lng - lngDelta, z)
-    const se = latLngToTile(lat - latDelta, lng + lngDelta, z)
+    const nw = latLngToTile({lat: pos.lat + latDelta, lng: pos.lng - lngDelta}, z)
+    const se = latLngToTile({lat: pos.lat - latDelta, lng: pos.lng + lngDelta}, z)
     for (let x = nw.x; x <= se.x; x++) {
       for (let y = nw.y; y <= se.y; y++) {
         const c = tileCenter(x, y, z)
-        if (haversineKm(lat, lng, c.lat, c.lng) <= radiusKm) tiles.push({ z, x, y })
+        if (haversineDistance(pos, c) <= radiusKm * 1000) tiles.push({ z, x, y })
       }
     }
   }
