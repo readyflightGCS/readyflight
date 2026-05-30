@@ -1,4 +1,5 @@
 import { convertArdupilot, exportQGCWaypoints, MAV2MAVparam, MavCommand } from './export'
+import { importQGCWaypoints } from './import'
 import { Dialect } from '../dialect'
 import { mavCmdDescription } from './commands'
 import { exportRFJSON1 } from '../format/readyflight/json1/export'
@@ -334,6 +335,7 @@ export const ardupilot: Dialect<(typeof mavCmdDescription)[number]> = {
       name: 'Readyflight JSON',
       id: 'RFJSON1',
       export: (mission, vehicle) => exportRFJSON1(mission, vehicle, ardupilot),
+      // @ts-ignore
       import: (blob) => importRFJSON1(blob),
       ext: '.json'
     },
@@ -341,6 +343,7 @@ export const ardupilot: Dialect<(typeof mavCmdDescription)[number]> = {
       name: '.waypoints',
       id: 'QGCmission',
       export: (mission, _) => exportQGCWaypoints(mission),
+      import: (blob) => importQGCWaypoints(blob, ardupilot),
       ext: '.waypoints'
     }
   ],
