@@ -54,12 +54,7 @@ function TileProviderSettings() {
         >
           Apply
         </Button>
-        <Button
-          size="sm"
-          className="flex-1"
-          onClick={handleReset}
-          disabled={isDefault && !isDirty}
-        >
+        <Button size="sm" className="flex-1" onClick={handleReset} disabled={isDefault && !isDirty}>
           Reset to Default
         </Button>
       </div>

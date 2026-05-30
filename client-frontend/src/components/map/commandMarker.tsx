@@ -8,7 +8,7 @@ import NonDestChip from './nonDestChip'
 import { useMission } from '@libs/stores/mission'
 import { getMinTurnRadius } from '@libs/dubins/dubinWaypoints'
 import { useRFMap } from '@libs/stores/map'
-import { MissionCommand, DialectCommandDescription} from '@libs/commands/command'
+import { MissionCommand, DialectCommandDescription } from '@libs/commands/command'
 import { getCommandLabel } from '@libs/commands/helpers'
 
 type props = {

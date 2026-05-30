@@ -19,7 +19,13 @@ import {
 
 type Phase =
   | { kind: 'idle' }
-  | { kind: 'downloading'; terrainDone: number; terrainTotal: number; tilesDone: number; tilesTotal: number }
+  | {
+      kind: 'downloading'
+      terrainDone: number
+      terrainTotal: number
+      tilesDone: number
+      tilesTotal: number
+    }
   | { kind: 'done'; terrainNew: number; tilesNew: number }
   | { kind: 'cancelled' }
   | { kind: 'error' }
@@ -49,7 +55,9 @@ export default function OfflineCacheSettings() {
   const tool = useEditor((s) => s.tool)
   const setTool = useEditor((s) => s.setTool)
 
-  const [terrainStats, setTerrainStats] = useState<{ count: number; estimatedKb: number } | null>(null)
+  const [terrainStats, setTerrainStats] = useState<{ count: number; estimatedKb: number } | null>(
+    null
+  )
   const [tileStats, setTileStats] = useState<{ count: number; estimatedKb: number } | null>(null)
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
   const [minZoom, setMinZoom] = useState(10)
@@ -141,7 +149,11 @@ export default function OfflineCacheSettings() {
       if (ctrl.signal.aborted) {
         setPhase({ kind: 'cancelled' })
       } else {
-        setPhase({ kind: 'done', terrainNew: terrainResult.downloaded, tilesNew: tilesResult.downloaded })
+        setPhase({
+          kind: 'done',
+          terrainNew: terrainResult.downloaded,
+          tilesNew: tilesResult.downloaded
+        })
         refreshStats()
       }
     } catch {
@@ -157,7 +169,6 @@ export default function OfflineCacheSettings() {
     await clearTileCache()
     refreshStats()
   }
-
 
   const isDownloading = phase.kind === 'downloading'
   const canDownload = terrainPreview !== null && !isDownloading
@@ -223,9 +234,9 @@ export default function OfflineCacheSettings() {
             disabled={terrainPreview === null || isDownloading}
             onChange={(e) =>
               setTerrainPreview({
-                pos:{
+                pos: {
                   lat: terrainPreview?.pos.lat ?? 0,
-                  lng: e.target.value,
+                  lng: e.target.value
                 },
                 radiusKm: terrainPreview?.radiusKm ?? 5
               })
@@ -270,9 +281,9 @@ export default function OfflineCacheSettings() {
           disabled={terrainPreview === null || isDownloading}
           onChange={(e) =>
             setTerrainPreview({
-              pos:{
+              pos: {
                 lat: terrainPreview?.pos.lat ?? 0,
-                lng: terrainPreview?.pos.lng ?? 0,
+                lng: terrainPreview?.pos.lng ?? 0
               },
               radiusKm: e.target.value
             })
