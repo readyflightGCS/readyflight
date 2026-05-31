@@ -66,7 +66,11 @@ export default function ImportMission() {
         className="hidden"
         onChange={handleFileChange}
       />
-      <Button className="text-foreground" variant="green" onClick={() => document.getElementById('importFileInput')?.click()}>
+      <Button
+        className="text-foreground"
+        variant="green"
+        onClick={() => document.getElementById('importFileInput')?.click()}
+      >
         {loading ? <LoaderCircle className="animate-spin" /> : <span>Import</span>}
       </Button>
     </div>
