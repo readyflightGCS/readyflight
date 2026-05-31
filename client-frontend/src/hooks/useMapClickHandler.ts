@@ -2,6 +2,7 @@ import type { LeafletMouseEvent } from 'leaflet'
 
 import { useEditor } from '@libs/stores/configurator'
 import { useMission } from '@libs/stores/mission'
+import { useRFMap } from '@libs/stores/map'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { avgLatLng } from '@libs/world/latlng'
 import { filterLatLngCmds, getCommandLocation, makeCommand } from '@libs/commands/helpers'
@@ -18,6 +19,8 @@ export function useMapClickHandler() {
   const dialect = useMission((s) => s.dialect)
   const setSelectedCommandIDs = useMission((s) => s.setSelectedCommandIDs)
   const lastSelectedCommandIndex = useEditor((s) => s.setLastSelectedCommandIndex)
+
+  const setTerrainPreview = useRFMap((s) => s.setTerrainPreview)
 
   return (e: LeafletMouseEvent) => {
     switch (currentTab) {
@@ -123,8 +126,20 @@ export function useMapClickHandler() {
 
       case 'Telemetry':
         break
-      case 'Settings':
+
+      case 'Settings': {
+        if (tool === 'selectCache') {
+          // Preserve the current radius — only the centre is being picked.
+          const currentRadius = useRFMap.getState().terrainPreview?.radiusKm ?? 5
+          setTerrainPreview({ pos: e.latlng, radiusKm: currentRadius })
+          setTool('waypoint')
+        }
         break
+      }
+
+      case 'Vehicle':
+        break
+
       default: {
         const _exhaustiveCheck: never = currentTab
         return _exhaustiveCheck

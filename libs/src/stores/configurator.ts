@@ -11,8 +11,8 @@ interface State {
   setTab: (tab: ConfiguratorTab) => void
   sidePanelOpen: boolean
   setSidePanelOpen: (state: boolean) => void
-  tool: 'waypoint' | 'land' | 'takeoff' | 'place'
-  setTool: (state: 'waypoint' | 'land' | 'takeoff' | 'place') => void
+  tool: 'waypoint' | 'land' | 'takeoff' | 'place' | 'selectCache'
+  setTool: (state: 'waypoint' | 'land' | 'takeoff' | 'place' | 'selectCache') => void
 }
 
 export const useEditor = create<State>((set) => ({

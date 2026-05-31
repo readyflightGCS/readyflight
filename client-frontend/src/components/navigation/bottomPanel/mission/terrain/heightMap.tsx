@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import TerrainChart from './chart'
 import { Button } from '@/components/ui/button'
 import { useMission } from '@libs/stores/mission'
@@ -47,6 +47,7 @@ export default function HeightMap() {
     selectedCommandIDs
   } = useMission()
   const [terrainData, setTerrainData] = useState<LatLngAlt[]>([])
+  const fetchIdRef = useRef(0)
   const throttledValue = useThrottle(mission, 500)
 
   const curMission = mission.get(selectedSubMission)
@@ -68,8 +69,11 @@ export default function HeightMap() {
     const totalDistance = waypointCumulativeDistances[waypointCumulativeDistances.length - 1] ?? 0
     const locations: LatLng[] = generateInterpolatedPath(throttledWpsLocs, totalDistance)
 
+    const fetchId = ++fetchIdRef.current
+
     getTerrain(locations).then((data) => {
-      if (data) {
+      if (fetchId !== fetchIdRef.current) return
+      if (data.length > 0) {
         setTerrainData(data)
       }
     })

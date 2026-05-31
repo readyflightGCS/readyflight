@@ -9,6 +9,7 @@ interface NumericInputProps {
   min?: number | null
   max?: number | null
   step?: number | null
+  disabled?: boolean
 }
 
 export default function NumericInput({
@@ -18,7 +19,8 @@ export default function NumericInput({
   className = 'w-40',
   min = -Infinity,
   max = Infinity,
-  step = 1
+  step = 1,
+  disabled = false
 }: NumericInputProps) {
   const [textValue, setTextValue] = useState<string>(
     externalValue == null ? '' : String(externalValue)
@@ -99,6 +101,7 @@ export default function NumericInput({
   }, [isDragging, handleMouseMove, handleMouseUp])
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    if (disabled) return
     const parsed = Number(textValue)
     const start = Number.isFinite(parsed) ? parsed : 0
     dragRef.current = { startX: e.clientX, startY: e.clientY, startValue: start }
@@ -138,24 +141,26 @@ export default function NumericInput({
   }
 
   return (
-    <div className="relative inline-block">
+    <>
       <input
         type="text"
         inputMode="numeric"
         name={name}
         value={textValue}
+        disabled={disabled}
         onChange={handleInputChange}
         onMouseDown={handleMouseDown}
         onFocus={() => setIsEditing(true)}
         onBlur={handleBlur}
         placeholder="--"
         className={cn(
-          'bg-card rounded-lg pl-2 border-2 cursor-move text-foreground text-sm h-8',
+          'relative inline-block bg-card rounded-lg pl-2 border-2 text-foreground text-sm h-8',
+          disabled ? 'cursor-not-allowed opacity-50' : 'cursor-move',
           className,
           textValue.trim() === '' ? 'text-center' : ''
         )}
       />
       {isDragging && <div className="fixed inset-0 z-50 cursor-move" />}
-    </div>
+    </>
   )
 }

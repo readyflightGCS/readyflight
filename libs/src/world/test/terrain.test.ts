@@ -83,7 +83,7 @@ describe('interpolateAlt function', () => {
 })
 
 describe('getTerrain function', () => {
-  test.skip('should return empty array for empty input', async () => {
+  test('should return empty array for empty input', async () => {
     const result = await getTerrain([])
     expect(result).toEqual([])
   })
@@ -101,7 +101,7 @@ describe('getTerrain function', () => {
 })
 
 describe('getTerrainFromStorage function', () => {
-  test.skip('should return empty arrays for empty input', async () => {
+  test('should return empty arrays for empty input', async () => {
     const result = await getTerrainFromStorage([])
     expect(result.locs).toEqual([])
     expect(result.nf).toEqual([])
@@ -118,9 +118,9 @@ describe('getTerrainFromStorage function', () => {
 })
 
 describe('fetchTerrain function', () => {
-  test.skip('should return null for empty input', async () => {
+  test.skip('should return empty array for empty input', async () => {
     const result = await fetchTerrain([])
-    expect(result).toBe(null)
+    expect(result).toEqual([])
   })
 
   test.skip('should handle successful API response', async () => {

@@ -67,7 +67,7 @@ export default function ExportMission() {
           </Select>
         </label>
 
-        <Button className="text-foreground"onClick={onExport} variant="green">
+        <Button className="text-foreground" onClick={onExport} variant="green">
           Export
         </Button>
       </div>
