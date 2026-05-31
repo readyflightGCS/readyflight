@@ -20,9 +20,9 @@ function tileBounds(x: number, y: number, z: number): [[number, number], [number
 function parseKey(key: string): { z: number; x: number; y: number } | null {
   const parts = key.split('::')
   if (parts.length < 4) return null
-  const y = parseInt(parts.at(-1)!)
-  const x = parseInt(parts.at(-2)!)
-  const z = parseInt(parts.at(-3)!)
+  const y = parseInt(parts[3])
+  const x = parseInt(parts[2])
+  const z = parseInt(parts[1])
   if (isNaN(x) || isNaN(y) || isNaN(z)) return null
   return { z, x, y }
 }
