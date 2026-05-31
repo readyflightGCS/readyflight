@@ -17,7 +17,7 @@
     "lint:backend": "cd client-backend && bun run eslint",
     "lint:frontend": "cd client-frontend && bun run eslint",
     "lint:electron": "cd electron && bun run eslint",
-    "lint:libs": "cd client-frontend && bun run eslint",
+    "lint:libs": "cd libs && bun run eslint",
     "lint": "bun run lint:backend && bun run lint:electron && bun run lint:frontend",
     "typecheck:libs": "cd libs && bun run typecheck",
     "typecheck:backend": "cd client-backend && bun run typecheck",
