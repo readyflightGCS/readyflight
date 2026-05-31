@@ -13,10 +13,9 @@ export default function Arc({
   pathOptions?: PathOptions
 }) {
   const points: LatLngExpression[] = []
-  const steps = Math.round(Math.abs(curve.theta) * 10)
+  const steps = Math.round(Math.abs(curve.theta) * 10) + 1
 
   for (let i = 0; i <= steps; i++) {
-    console.log(i / steps, i, steps)
     points.push(
       worldOffset(
         curve.center,

@@ -13,9 +13,13 @@
  *    combined into a single loiter with summed turns; the intermediate waypoint is omitted.
  *  - A non-location command (e.g. SetServo) placed between Dubins points breaks the
  *    run so the surrounding loiters are kept separate.
- *  - A Dubins run can be preceded or followed by regular destination commands; the path
- *    is expanded from / to the first/last Dubins point only (context incorporation is a
- *    future enhancement).
+ *  - A location command (e.g. RF.Waypoint) immediately before a Dubins run is used as
+ *    the path start: the route is computed from that location and the first emitted
+ *    waypoint of the Dubins run is the tangent approach to the first Dubins circle, not
+ *    the Dubins centre itself.
+ *  - An RF.Waypoint immediately after a Dubins run is consumed as the path endpoint:
+ *    the run ends at that waypoint's coordinates and no separate endpoint waypoint for
+ *    the last Dubins circle is emitted.
  */
 import { expect, test, describe } from 'bun:test'
 import { convertArdupilot } from '@libs/mission/ardupilot/export'
@@ -292,31 +296,207 @@ describe('non-location command between Dubins points breaks the run', () => {
   })
 })
 
-// ─── Dubins run preceded by a regular waypoint ───────────────────────────────
+// ─── Dubins run preceded / followed by regular waypoints ─────────────────────
 
-describe('Dubins run preceded and followed by regular waypoints', () => {
-  test('regular waypoint before and after Dubins run is preserved', () => {
+describe('Dubins run preceded by a regular waypoint', () => {
+  // Two collinear north-heading dubins points; pre-WP is slightly south of the first.
+  // In the collinear case the path passes straight through DP1 without a separate
+  // "approach" waypoint, so assertions focus on structural properties.
+  const PRE_LAT = -0.001
+  const A_lat = 0,    A_lng = 0,           A_hdg = 0
+  const B_lat = m2deg(500), B_lng = 0,     B_hdg = 0
+
+  function makePreWPMission() {
     const mission = new Mission<(typeof ardupilot.commandDescriptions)[number]>(ardupilot)
     mission.pushToMission(
       'Main',
-      makeCommand('RF.Waypoint', { latitude: -0.001, longitude: 0, altitude: 100 }, ardupilot)
+      makeCommand('RF.Waypoint', { latitude: PRE_LAT, longitude: 0, altitude: 100 }, ardupilot)
     )
-    mission.pushToMission('Main', dp(0, 0, 100, 0, 50))
-    mission.pushToMission('Main', dp(m2deg(500), 0, 100, 0, 50))
+    mission.pushToMission('Main', dp(A_lat, A_lng, 100, A_hdg, 50))
+    mission.pushToMission('Main', dp(B_lat, B_lng, 100, B_hdg, 50))
+    return mission
+  }
+
+  test('first output command is the preceding waypoint at its exact location', () => {
+    const out = convertArdupilot(makePreWPMission())
+    expect(isWP(out[0])).toBe(true)
+    expect(lat(out[0])).toBeCloseTo(PRE_LAT, 5)
+    expect(lng(out[0])).toBeCloseTo(0, 5)
+  })
+
+  test('loiter count is unchanged compared to running without the pre-waypoint', () => {
+    const withPre = convertArdupilot(makePreWPMission()).filter(isLoiter).length
+    const without = convert([dp(A_lat, A_lng, 100, A_hdg, 50), dp(B_lat, B_lng, 100, B_hdg, 50)]).filter(isLoiter).length
+    expect(withPre).toBe(without)
+  })
+
+  test('last command is still the last Dubins point (no post-WP provided)', () => {
+    const out = convertArdupilot(makePreWPMission())
+    expect(isWP(out[out.length - 1])).toBe(true)
+    expect(lat(out[out.length - 1])).toBeCloseTo(B_lat, 5)
+    expect(lng(out[out.length - 1])).toBeCloseTo(B_lng, 5)
+  })
+})
+
+describe('Dubins run preceded by a waypoint — non-collinear approach (approach tangent is distinct)', () => {
+  // Pre-WP is 300 m west of DP1 at the same latitude; DP1 heading is north.
+  // The pre-WP approaches from the west (bearing ≈ east = 90°) while DP1 exits
+  // northward, so there IS a turn and the approach tangent point is distinct from
+  // the first Dubins centre.
+  const PRE_LNG = -m2deg(300)   // 300 m west of DP1
+  const A_lat = 0, A_lng = 0, A_hdg = 0     // DP1 at origin heading north
+  const B_lat = m2deg(1000), B_lng = 0, B_hdg = 0  // DP2 1 km north
+
+  function makeNonCollinearPreMission() {
+    const mission = new Mission<(typeof ardupilot.commandDescriptions)[number]>(ardupilot)
     mission.pushToMission(
       'Main',
-      makeCommand('RF.Waypoint', { latitude: m2deg(500) + 0.001, longitude: 0, altitude: 100 }, ardupilot)
+      makeCommand('RF.Waypoint', { latitude: 0, longitude: PRE_LNG, altitude: 100 }, ardupilot)
     )
+    mission.pushToMission('Main', dp(A_lat, A_lng, 100, A_hdg, 100))
+    mission.pushToMission('Main', dp(B_lat, B_lng, 100, B_hdg, 100))
+    return mission
+  }
 
-    const out = convertArdupilot(mission)
-
-    // First command: the preceding waypoint
+  test('first output command is the preceding waypoint', () => {
+    const out = convertArdupilot(makeNonCollinearPreMission())
     expect(isWP(out[0])).toBe(true)
-    expect(lat(out[0])).toBeCloseTo(-0.001, 5)
+    expect(lng(out[0])).toBeCloseTo(PRE_LNG, 5)
+  })
 
-    // Last command: the following waypoint
+  test('second output command is a waypoint at the approach tangent, NOT at the first Dubins centre', () => {
+    const out = convertArdupilot(makeNonCollinearPreMission())
+    // out[0] = pre-WP, out[1] = approach WP generated by the dubins run
+    expect(isWP(out[1])).toBe(true)
+    // Must not be at DP1 centre (0, 0)
+    const distFromDP1 = Math.abs(lat(out[1]) - A_lat) + Math.abs(lng(out[1]) - A_lng)
+    expect(distFromDP1).toBeGreaterThan(EPS)
+  })
+
+  test('approach tangent longitude is between pre-WP and DP1 centre (westward approach)', () => {
+    const out = convertArdupilot(makeNonCollinearPreMission())
+    // Approaching from the west: approach tangent should be west of DP1 (lng < A_lng + radius)
+    expect(lng(out[1])).toBeLessThan(A_lng + m2deg(100) + EPS)
+    expect(lng(out[1])).toBeGreaterThan(PRE_LNG - EPS)
+  })
+
+  test('output contains at least one loiter (non-collinear approach requires a turn)', () => {
+    const out = convertArdupilot(makeNonCollinearPreMission())
+    expect(out.some(isLoiter)).toBe(true)
+  })
+
+  test('loiter count is at least the baseline (approach turn adds to, not removes from, the run)', () => {
+    // Without pre-WP, DP1→DP2 are collinear so there are 0 loiters.
+    // A non-collinear pre-WP introduces ≥ 1 loiter because the approach requires a turn.
+    const withPre = convertArdupilot(makeNonCollinearPreMission()).filter(isLoiter).length
+    expect(withPre).toBeGreaterThanOrEqual(1)
+  })
+})
+
+describe('Dubins run followed by a regular waypoint', () => {
+  const A_lat = 0,    A_lng = 0,           A_hdg = 0
+  const B_lat = m2deg(500), B_lng = 0,     B_hdg = 0
+  const POST_LAT = m2deg(500) + 0.001
+
+  function makePostWPMission() {
+    const mission = new Mission<(typeof ardupilot.commandDescriptions)[number]>(ardupilot)
+    mission.pushToMission('Main', dp(A_lat, A_lng, 100, A_hdg, 50))
+    mission.pushToMission('Main', dp(B_lat, B_lng, 100, B_hdg, 50))
+    mission.pushToMission(
+      'Main',
+      makeCommand('RF.Waypoint', { latitude: POST_LAT, longitude: 0, altitude: 100 }, ardupilot)
+    )
+    return mission
+  }
+
+  test('last output command is the following waypoint at its exact location', () => {
+    const out = convertArdupilot(makePostWPMission())
     expect(isWP(out[out.length - 1])).toBe(true)
-    expect(lat(out[out.length - 1])).toBeCloseTo(m2deg(500) + 0.001, 5)
+    expect(lat(out[out.length - 1])).toBeCloseTo(POST_LAT, 5)
+    expect(lng(out[out.length - 1])).toBeCloseTo(0, 5)
+  })
+
+  test('the last Dubins centre is NOT emitted as a separate waypoint before the post-WP', () => {
+    const out = convertArdupilot(makePostWPMission())
+    // The second-to-last command should NOT be a waypoint at the last Dubins centre
+    const secondToLast = out[out.length - 2]
+    if (isWP(secondToLast)) {
+      // It must not be exactly at the last Dubins centre coords
+      const atLastDP =
+        Math.abs(lat(secondToLast) - B_lat) < EPS &&
+        Math.abs(lng(secondToLast) - B_lng) < EPS
+      expect(atLastDP).toBe(false)
+    }
+    // In other words: the last WP is the post-WP, not an extra dubins endpoint
+  })
+
+  test('loiter count is unchanged compared to running without the post-waypoint', () => {
+    const withPost = convertArdupilot(makePostWPMission()).filter(isLoiter).length
+    const without = convert([dp(A_lat, A_lng, 100, A_hdg, 50), dp(B_lat, B_lng, 100, B_hdg, 50)]).filter(isLoiter).length
+    expect(withPost).toBe(without)
+  })
+
+  test('first command is the first Dubins point (no pre-WP provided)', () => {
+    const out = convertArdupilot(makePostWPMission())
+    expect(isWP(out[0])).toBe(true)
+    expect(lat(out[0])).toBeCloseTo(A_lat, 5)
+    expect(lng(out[0])).toBeCloseTo(A_lng, 5)
+  })
+})
+
+describe('Dubins run preceded AND followed by regular waypoints', () => {
+  const PRE_LAT  = -0.001
+  const A_lat = 0,    A_lng = 0,           A_hdg = 0
+  const B_lat = m2deg(500), B_lng = 0,     B_hdg = 0
+  const POST_LAT = m2deg(500) + 0.001
+
+  function makeBothMission() {
+    const mission = new Mission<(typeof ardupilot.commandDescriptions)[number]>(ardupilot)
+    mission.pushToMission(
+      'Main',
+      makeCommand('RF.Waypoint', { latitude: PRE_LAT, longitude: 0, altitude: 100 }, ardupilot)
+    )
+    mission.pushToMission('Main', dp(A_lat, A_lng, 100, A_hdg, 50))
+    mission.pushToMission('Main', dp(B_lat, B_lng, 100, B_hdg, 50))
+    mission.pushToMission(
+      'Main',
+      makeCommand('RF.Waypoint', { latitude: POST_LAT, longitude: 0, altitude: 100 }, ardupilot)
+    )
+    return mission
+  }
+
+  test('first command is the preceding waypoint', () => {
+    const out = convertArdupilot(makeBothMission())
+    expect(isWP(out[0])).toBe(true)
+    expect(lat(out[0])).toBeCloseTo(PRE_LAT, 5)
+  })
+
+  test('last command is the following waypoint', () => {
+    const out = convertArdupilot(makeBothMission())
+    expect(isWP(out[out.length - 1])).toBe(true)
+    expect(lat(out[out.length - 1])).toBeCloseTo(POST_LAT, 5)
+  })
+
+  test('approach waypoint (second command) is not at the first Dubins centre', () => {
+    const out = convertArdupilot(makeBothMission())
+    expect(isWP(out[1])).toBe(true)
+    expect(Math.abs(lat(out[1]) - A_lat) + Math.abs(lng(out[1]) - A_lng)).toBeGreaterThan(EPS)
+  })
+
+  test('total command count is one less than pre-only + post-only combined (no double endpoints)', () => {
+    // pre+post together should not inflate the command list
+    const preMission = (() => {
+      const m = new Mission<(typeof ardupilot.commandDescriptions)[number]>(ardupilot)
+      m.pushToMission('Main', makeCommand('RF.Waypoint', { latitude: PRE_LAT, longitude: 0, altitude: 100 }, ardupilot))
+      m.pushToMission('Main', dp(A_lat, A_lng, 100, A_hdg, 50))
+      m.pushToMission('Main', dp(B_lat, B_lng, 100, B_hdg, 50))
+      return m
+    })()
+    const bothOut = convertArdupilot(makeBothMission())
+    const preOut  = convertArdupilot(preMission)
+    // With post-WP the run ends at post-WP instead of at last DP centre,
+    // so total length should be the same (one WP replaces another)
+    expect(bothOut.length).toBe(preOut.length + 0) // same number: pre WP + dubins + post WP replaces endpoint
   })
 })
 

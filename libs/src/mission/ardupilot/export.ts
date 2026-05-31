@@ -5,9 +5,10 @@ import { dubinsBetweenDubins, localiseDubinsPath } from '@libs/dubins/dubinWaypo
 import { g2l } from '@libs/world/conversion'
 import { dubinsPoint, Curve } from '@libs/dubins/types'
 import { haversineDistance } from '@libs/world/distance'
-import { LatLng } from '@libs/world/latlng'
+import { LatLng, LatLngAlt } from '@libs/world/latlng'
 import { Result } from '@libs/util/try-catch'
-import { makeCommand } from '@libs/commands/helpers'
+import { getCommandLocationAlt, makeCommand } from '@libs/commands/helpers'
+import { bearing, rad2deg } from '@libs/math/geometry'
 import { ardupilot } from './ardupilot'
 
 /** Tolerance for comparing lat/lng values (~0.1 m at the equator). */
@@ -26,12 +27,31 @@ export function convertArdupilot(
 
     if (cmd.type === 'RF.DubinsPath') {
       // Batch consecutive RF.DubinsPath commands and convert together
+      const startIdx = i
       const dubinsCmds: Extract<RFCommand, { type: 'RF.DubinsPath' }>[] = []
       while (i < flattened.length && flattened[i].type === 'RF.DubinsPath') {
         dubinsCmds.push(flattened[i] as Extract<RFCommand, { type: 'RF.DubinsPath' }>)
         i++
       }
-      result.push(...dubinsRun2MAV(dubinsCmds, reference))
+
+      // If a location command immediately precedes the run, use it as the path start
+      const preCmd = startIdx > 0 ? flattened[startIdx - 1] : undefined
+      const preLocation = preCmd ? getCommandLocationAlt(preCmd, ardupilot) : null
+
+      // If an RF.Waypoint immediately follows the run, consume it as the path endpoint
+      const postCmd = i < flattened.length ? flattened[i] : undefined
+      const postLocation =
+        postCmd?.type === 'RF.Waypoint' ? getCommandLocationAlt(postCmd, ardupilot) : null
+      if (postLocation) i++ // consume the post-waypoint from the main loop
+
+      result.push(
+        ...dubinsRun2MAV(
+          dubinsCmds,
+          reference,
+          preLocation ?? undefined,
+          postLocation ?? undefined
+        )
+      )
     } else if (cmd.type.startsWith('D.')) {
       result.push(cmd as DialectCommand<(typeof mavCmdDescription)[number]>)
       i++
@@ -173,16 +193,27 @@ function RF2MAV(
  * N points produces N-1 Dubins segments, each expanded into:
  *   [optional loiter Turn A] → [waypoint at straight.end] → [optional loiter Turn B] → [waypoint at endpoint]
  *
+ * When preLocation is provided (a location command immediately before the run), it is used
+ * as the starting point for path computation. The generated path departs from that location
+ * and the approach tangent to the first Dubins circle is emitted as the entry waypoint —
+ * the first Dubins point center is not emitted as a separate waypoint in this case.
+ *
+ * When postLocation is provided (an RF.Waypoint immediately after the run), the path ends
+ * exactly at that location instead of at the last Dubins point center.
+ *
  * Post-processing combines adjacent loiters on the same circle and removes duplicate
  * adjacent waypoints at the same location.
  */
 function dubinsRun2MAV(
   cmds: Extract<RFCommand, { type: 'RF.DubinsPath' }>[],
-  reference: LatLng
+  reference: LatLng,
+  preLocation?: LatLngAlt,
+  postLocation?: LatLngAlt
 ): DialectCommand<(typeof mavCmdDescription)[number]>[] {
   if (cmds.length === 0) return []
 
-  if (cmds.length === 1) {
+  // Single Dubins point with no context → just a waypoint at that location
+  if (cmds.length === 1 && !preLocation && !postLocation) {
     const p = cmds[0].params
     return [
       createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
@@ -197,6 +228,10 @@ function dubinsRun2MAV(
     ]
   }
 
+  // ── Build the dubins-point array, optionally bookended by pre/post locations ──
+
+  type AltPoint = { latitude: number; longitude: number; altitude: number }
+
   const dPoints: dubinsPoint[] = cmds.map((cmd) => ({
     pos: g2l(reference, { lat: cmd.params.latitude, lng: cmd.params.longitude }),
     radius: cmd.params.radius,
@@ -206,28 +241,69 @@ function dubinsRun2MAV(
     bounds: {}
   }))
 
+  const altPoints: AltPoint[] = cmds.map((c) => c.params)
+
+  if (preLocation) {
+    // Prepend a zero-radius point at the pre-location.
+    // Heading is computed as the bearing from preLocation toward the first DubinsPath center
+    // so that DubinsBetweenDiffRad generates a straight departure from that location.
+    const prePos = g2l(reference, { lat: preLocation.lat, lng: preLocation.lng })
+    const dp0Pos = dPoints[0].pos
+    const headingDeg = rad2deg(bearing(prePos, dp0Pos))
+    dPoints.unshift({
+      pos: prePos,
+      radius: 0,
+      heading: headingDeg,
+      tunable: false,
+      passbyRadius: 0,
+      bounds: {}
+    })
+    altPoints.unshift({ latitude: preLocation.lat, longitude: preLocation.lng, altitude: preLocation.alt })
+  }
+
+  if (postLocation) {
+    // Append a zero-radius point at the post-location.
+    // Heading is computed as the bearing from the last DubinsPath center toward postLocation.
+    const lastDPPos = dPoints[dPoints.length - 1].pos
+    const postPos = g2l(reference, { lat: postLocation.lat, lng: postLocation.lng })
+    const headingDeg = rad2deg(bearing(lastDPPos, postPos))
+    dPoints.push({
+      pos: postPos,
+      radius: 0,
+      heading: headingDeg,
+      tunable: false,
+      passbyRadius: 0,
+      bounds: {}
+    })
+    altPoints.push({ latitude: postLocation.lat, longitude: postLocation.lng, altitude: postLocation.alt })
+  }
+
   const path = dubinsBetweenDubins(dPoints)
   const dubinsPaths = path.map((x) => localiseDubinsPath(x, reference))
 
   const raw: DialectCommand<(typeof mavCmdDescription)[number]>[] = []
 
-  // Entry waypoint at the first Dubins point (exact user-specified coordinates)
-  raw.push(
-    createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
-      hold: 0,
-      'accept radius': 0,
-      'pass radius': 0,
-      yaw: NaN,
-      latitude: cmds[0].params.latitude,
-      longitude: cmds[0].params.longitude,
-      altitude: cmds[0].params.altitude
-    })
-  )
+  // Entry waypoint: only emitted when there is no pre-location context.
+  // When preLocation is set, segment 0 (preLocation → first DubinsPath) handles the
+  // approach; its straight.end becomes the first emitted waypoint in the loop below.
+  if (!preLocation) {
+    raw.push(
+      createMavCmd('D.MAV_CMD_NAV_WAYPOINT', {
+        hold: 0,
+        'accept radius': 0,
+        'pass radius': 0,
+        yaw: NaN,
+        latitude: altPoints[0].latitude,
+        longitude: altPoints[0].longitude,
+        altitude: altPoints[0].altitude
+      })
+    )
+  }
 
   for (let j = 0; j < dubinsPaths.length; j++) {
     const section = dubinsPaths[j]
-    const startAlt = cmds[j].params.altitude
-    const endAlt = cmds[j + 1].params.altitude
+    const startAlt = altPoints[j].altitude
+    const endAlt = altPoints[j + 1].altitude
 
     const turnALen = Math.abs(section.turnA.theta * section.turnA.radius)
     const straightLen = haversineDistance(section.straight.start, section.straight.end)
@@ -250,12 +326,15 @@ function dubinsRun2MAV(
     }
 
     // ── Straight section endpoint ────────────────────────────────────────────
-    // Omit when the straight end is at the same location as the Dubins endpoint
-    // (happens when Turn B is zero — the straight already reaches the endpoint)
+    // Omit when the straight end is at the same location as the segment endpoint
+    // (happens when Turn B is zero — the straight already reaches the endpoint).
+    // This also handles the postLocation case: when postLocation has radius=0, the
+    // straight ends exactly at postLocation, so the straight WP is skipped and only
+    // the endpoint WP is emitted.
     const straightEndLat = section.straight.end.lat
     const straightEndLng = section.straight.end.lng
-    const endLat = cmds[j + 1].params.latitude
-    const endLng = cmds[j + 1].params.longitude
+    const endLat = altPoints[j + 1].latitude
+    const endLng = altPoints[j + 1].longitude
     const straightIsAtEndpoint =
       Math.abs(straightEndLat - endLat) < LATLNG_EPS &&
       Math.abs(straightEndLng - endLng) < LATLNG_EPS
@@ -290,7 +369,7 @@ function dubinsRun2MAV(
     }
 
     // ── Endpoint waypoint ────────────────────────────────────────────────────
-    // Always use exact Dubins point coordinates as the endpoint.
+    // Always use exact coordinates from altPoints as the endpoint.
     // For intermediate segments, skip when the adjacent turns are on the same circle —
     // those loiters will be combined by simplifyDubinsOutput() and the waypoint between
     // them would interrupt the combined arc.
@@ -306,9 +385,9 @@ function dubinsRun2MAV(
           'accept radius': 0,
           'pass radius': 0,
           yaw: 0,
-          latitude: cmds[j + 1].params.latitude,
-          longitude: cmds[j + 1].params.longitude,
-          altitude: cmds[j + 1].params.altitude
+          latitude: altPoints[j + 1].latitude,
+          longitude: altPoints[j + 1].longitude,
+          altitude: altPoints[j + 1].altitude
         })
       )
     }
