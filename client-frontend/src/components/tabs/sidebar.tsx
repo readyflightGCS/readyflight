@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { useEditor } from '@libs/stores/configurator'
-import { Cog, LucideIcon } from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
 import { tabRegistry } from './tabRegistry'
 
 

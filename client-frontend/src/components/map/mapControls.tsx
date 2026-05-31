@@ -16,7 +16,7 @@ export default function MapControls() {
   }
 
   return (
-    <div className="w-fit rounded-lg shadow-lg bg-card flex p-1 absolute top-4 right-4 z-20">
+    <div className="w-fit rounded-lg shadow-lg bg-card flex p-1 absolute top-4 right-4 z-2">
       <span
         className="cursor-pointer hover:bg-muted rounded-lg p-1"
         onClick={() => mapRef?.current?.zoomIn()}
