@@ -1,14 +1,11 @@
 import { create } from 'zustand'
-
-export const ConfiguratorTabs = ['Telemetry', 'Mission', 'Settings', 'Vehicle'] as const
-
-export type ConfiguratorTab = (typeof ConfiguratorTabs)[number]
+import { tabRegistry } from '@/components/tabs/tabRegistry'
 
 interface State {
   lastSelectedCommandIndex: number | null
   setLastSelectedCommandIndex: (id: number) => void
-  currentTab: ConfiguratorTab
-  setTab: (tab: ConfiguratorTab) => void
+  currentTab: (typeof tabRegistry)[number]["name"]
+  setTab: (tab: (typeof tabRegistry)[number]["name"]) => void
   sidePanelOpen: boolean
   setSidePanelOpen: (state: boolean) => void
   tool: 'waypoint' | 'land' | 'takeoff' | 'place' | 'selectCache'

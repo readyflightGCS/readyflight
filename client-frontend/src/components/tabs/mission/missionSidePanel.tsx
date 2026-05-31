@@ -5,7 +5,7 @@ import SidePanelSection from '@/components/ui/sidePanelSection'
 import SubMissionList from './subMissionList'
 import { useMission } from '@libs/stores/mission'
 
-export default function Mission() {
+export default function MissionSidePanel() {
   const selectedSubMission = useMission((s) => s.selectedSubMission)
 
   return (

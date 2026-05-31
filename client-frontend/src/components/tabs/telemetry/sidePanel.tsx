@@ -4,7 +4,7 @@ import ConnectionsPanel from '@/components/telemetry/ConnectionsPanel'
 import { BicepsFlexed } from 'lucide-react'
 import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 
-export default function Telemetry() {
+export default function TelemetrySidePanel() {
   const [sendMessage] = useVehicle((v) => [v.sendMessage])
   return (
     <div className="flex flex-col gap-3">

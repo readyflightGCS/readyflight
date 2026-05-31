@@ -12,6 +12,7 @@ import TileCacheLayer from './layers/tileCacheLayer'
 import { useRFMap, DEFAULT_TILE_URL } from '@libs/stores/map'
 import { useEditor } from '@libs/stores/configurator'
 import { CachedTileLayer } from './CachedTileLayer'
+import MapControls from './mapControls'
 
 function CreateHandler() {
   const handleMapClick = useMapClickHandler()
@@ -70,23 +71,26 @@ function TileLayerManager() {
 
 function Map(): React.JSX.Element {
   return (
-    <MapContainer
-      className="absolute inset-0 z-10"
-      center={[55.95, -3.183333]}
-      zoom={13}
-      zoomControl={false}
-    >
-      <TileLayerManager />
-      <MapRefSetter />
-      <TerrainPickCursor />
-      <CreateHandler />
-      <MissionLayer />
-      <GeofenceLayer />
-      <MarkerLayer />
-      <DubinsLayer />
-      <TerrainLayer />
-      <TileCacheLayer />
-    </MapContainer>
+    <>
+      <MapControls />
+      <MapContainer
+        className="absolute inset-0 z-1"
+        center={[55.95, -3.183333]}
+        zoom={13}
+        zoomControl={false}
+      >
+        <TileLayerManager />
+        <MapRefSetter />
+        <TerrainPickCursor />
+        <CreateHandler />
+        <MissionLayer />
+        <GeofenceLayer />
+        <MarkerLayer />
+        <DubinsLayer />
+        <TerrainLayer />
+        <TileCacheLayer />
+      </MapContainer>
+    </>
   )
 }
 
