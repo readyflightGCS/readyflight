@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { CommandDescription, MissionCommand } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 
 /**
  * A geographic coordinate expressed in latitude and longitude.
@@ -68,7 +68,7 @@ export function latLngEqual(pos1: LatLng | LatLngAlt, pos2: LatLng | LatLngAlt):
  */
 
 export function getAltAMSL(
-  cmd: MissionCommand<CommandDescription>,
+  cmd: MissionCommand<DialectCommandDescription>,
   referenceAlt: number,
   terrainAlt: number
 ): number | undefined {
@@ -103,7 +103,7 @@ export function getAltAMSL(
  * @returns Terrain‑relative altitude or `undefined` if not applicable
  */
 export function getAltTer(
-  cmd: MissionCommand<CommandDescription>,
+  cmd: MissionCommand<DialectCommandDescription>,
   referenceAlt: number,
   terrainAlt: number
 ): number | undefined {
@@ -138,7 +138,7 @@ export function getAltTer(
  * @returns Reference‑relative altitude or `undefined` if not applicable
  */
 export function getAltRel(
-  cmd: MissionCommand<CommandDescription>,
+  cmd: MissionCommand<DialectCommandDescription>,
   referenceAlt: number,
   terrainAlt: number
 ): number | undefined {

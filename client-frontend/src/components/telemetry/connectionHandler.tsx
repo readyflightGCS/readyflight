@@ -20,7 +20,7 @@ function base64ToUint8Array(b64: string): Uint8Array {
 }
 
 function arrayBufferToBase64(buf: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+  return btoa(String.fromCharCode(...Array.from(new Uint8Array(buf))))
 }
 
 export default function ConnectionHandler() {
@@ -67,7 +67,7 @@ export default function ConnectionHandler() {
       setVehicleState({
         sendMessage: (m) => session.handleSendTelemetryMessage(m),
         sendPacket,
-        uploadMission: (m) => session.uploadMission(m)
+        uploadMission: (m) => session.uploadMission(m as never)
       })
 
       setCommandSender((cmd) => {
@@ -130,7 +130,7 @@ export default function ConnectionHandler() {
         setVehicleState({
           sendMessage: (m) => session.handleSendTelemetryMessage(m),
           sendPacket,
-          uploadMission: (m) => session.uploadMission(m)
+          uploadMission: (m) => session.uploadMission(m as never)
         })
         setCommandSender((cmd) => {
           if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(cmd))

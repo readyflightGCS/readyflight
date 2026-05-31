@@ -107,8 +107,9 @@ export function useMapClickHandler() {
               selectedSubMission,
               (cmd) => {
                 if ('latitude' in cmd.params && 'longitude' in cmd.params) {
-                  cmd.params.latitude += e.latlng.lat - lat
-                  cmd.params.longitude += e.latlng.lng - lng
+                  const p = cmd.params as { latitude: number; longitude: number }
+                  p.latitude += e.latlng.lat - lat
+                  p.longitude += e.latlng.lng - lng
                 }
                 return cmd
               },
@@ -124,6 +125,8 @@ export function useMapClickHandler() {
       case 'Telemetry':
         break
       case 'Settings':
+        break
+      case 'Vehicle':
         break
       default: {
         const _exhaustiveCheck: never = currentTab

@@ -1,6 +1,6 @@
 import { SerialTransportAdapter } from './adapters/SerialTransportAdapter.js'
 import { UDPTransportAdapter } from './adapters/UDPTransportAdapter.js'
-import type { IHostAdapter, ConnectionCommand, ActiveConnection, TransportConfig } from './types.js'
+import type { IHostAdapter, ITransportAdapter, ConnectionCommand, ActiveConnection, TransportConfig } from './types.js'
 
 export class ConnectionManager {
   private hostAdapter: IHostAdapter
@@ -68,7 +68,7 @@ export class ConnectionManager {
       case 'connect':
         const transportAdapter = this.transportAdapters.find((x) => x.name === cmd.config.type)
         if (transportAdapter === undefined) return
-        const transport = transportAdapter.t
+        const transport = transportAdapter.t as ITransportAdapter<TransportConfig>
         this.connection = {
           transport: transport,
           status: {

@@ -22,11 +22,11 @@ interface CommandPositionForChart extends LatLngAlt {
 
 // Custom Tooltip Content
 const CustomTooltipContent = ({
-  active,
-  payload
+  active = false,
+  payload = []
 }: {
-  active: boolean
-  payload: { value?: string | null }[]
+  active?: boolean
+  payload?: { value?: string | null }[]
 }) => {
   if (active && payload && payload.length) {
     const commandEntry = payload.find(

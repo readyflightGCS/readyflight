@@ -81,25 +81,25 @@ export function MAV2MAVparam(
     frame: command.frame,
     autocontinue: 1,
     param1: cmdDesc?.parameters[0]
-      ? command.params[cmdDesc.parameters[0].label.toLowerCase() as keyof typeof command.params]
+      ? command.params[cmdDesc.parameters[0].label.toLowerCase() as keyof typeof command.params] as number
       : 0,
     param2: cmdDesc?.parameters[1]
-      ? command.params[cmdDesc.parameters[1].label.toLowerCase() as keyof typeof command.params]
+      ? command.params[cmdDesc.parameters[1].label.toLowerCase() as keyof typeof command.params] as number
       : 0,
     param3: cmdDesc?.parameters[2]
-      ? command.params[cmdDesc.parameters[2].label.toLowerCase() as keyof typeof command.params]
+      ? command.params[cmdDesc.parameters[2].label.toLowerCase() as keyof typeof command.params] as number
       : 0,
     param4: cmdDesc?.parameters[3]
-      ? command.params[cmdDesc.parameters[3].label.toLowerCase() as keyof typeof command.params]
+      ? command.params[cmdDesc.parameters[3].label.toLowerCase() as keyof typeof command.params] as number
       : 0,
     param5: cmdDesc?.parameters[4]
-      ? command.params[cmdDesc.parameters[4].label.toLowerCase() as keyof typeof command.params]
+      ? command.params[cmdDesc.parameters[4].label.toLowerCase() as keyof typeof command.params] as number
       : 0,
     param6: cmdDesc?.parameters[5]
-      ? command.params[cmdDesc.parameters[5].label.toLowerCase() as keyof typeof command.params]
+      ? command.params[cmdDesc.parameters[5].label.toLowerCase() as keyof typeof command.params] as number
       : 0,
     param7: cmdDesc?.parameters[6]
-      ? command.params[cmdDesc.parameters[6].label.toLowerCase() as keyof typeof command.params]
+      ? command.params[cmdDesc.parameters[6].label.toLowerCase() as keyof typeof command.params] as number
       : 0
   }
 }
@@ -422,10 +422,10 @@ export function exportQGCWaypoints(
   const mavCommands = convertArdupilot(mission)
 
   // QGC format expects the first point to be the reference point as a waypoint command
-  // @ts-ignore REMOVE ONCE MAKECOMMAND DOES BETTER TYPE LIMITING
   returnString += waypointString(
     0,
     MAV2MAVparam(
+      // @ts-ignore REMOVE ONCE MAKECOMMAND DOES BETTER TYPE LIMITING
       makeCommand(
         'D.MAV_CMD_NAV_WAYPOINT',
         { latitude: reference.lat, longitude: reference.lng },

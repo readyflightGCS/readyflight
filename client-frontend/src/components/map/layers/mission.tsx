@@ -70,7 +70,7 @@ export default function ActiveLayer() {
   if (noshow.includes(selectedSubMission)) return null
 
   // store each destination in an array, with non destinations in other (to be stacked as they act in the same location)
-  const mainLine = mission.mainLine(dialect, selectedSubMission)
+  const mainLine = mission.mainLine(selectedSubMission)
 
   // handle insert at specific id
   function handleInsert(id: number, lat: number, lng: number) {

@@ -27,6 +27,7 @@ import { MissionRequestInt } from './mavlink-assets/messages/mission-request-int
 import { MissionAck } from './mavlink-assets/messages/mission-ack'
 import { MavCmd } from './mavlink-assets/enums/mav-cmd'
 import { MavModeFlag } from './mavlink-assets/enums/mav-mode-flag'
+import { MavMode } from './mavlink-assets/enums/mav-mode'
 import { MavMissionType } from './mavlink-assets/enums/mav-mission-type'
 import { makeCommand } from '@libs/commands/helpers'
 import { Mission } from '../mission'
@@ -123,7 +124,7 @@ class ArduPilotSession implements ITelemetrySession {
     if (msg.type === 'setMode') {
       const cmd = new SetMode(0, 0)
       cmd.target_system = 1
-      cmd.base_mode = MavModeFlag.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED
+      cmd.base_mode = MavModeFlag.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED as unknown as MavMode
       cmd.custom_mode = msg.mode
       this.sendPacket(encodePacket(cmd))
       return
@@ -136,8 +137,8 @@ class ArduPilotSession implements ITelemetrySession {
     const typedMission = mission as Mission<(typeof mavCmdDescription)[number]>
     const reference = typedMission.getReferencePoint()
 
-    //@ts-ignore
     const homeItem = MAV2MAVparam(
+      //@ts-ignore
       makeCommand(
         'D.MAV_CMD_NAV_WAYPOINT',
         {

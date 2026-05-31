@@ -8,15 +8,15 @@ import NonDestChip from './nonDestChip'
 import { useMission } from '@libs/stores/mission'
 import { getMinTurnRadius } from '@libs/dubins/dubinWaypoints'
 import { useRFMap } from '@libs/stores/map'
-import { CommandDescription, MissionCommand } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { getCommandLabel } from '@libs/commands/helpers'
 
 type props = {
   basePosition: LatLng
   command: {
-    cmd: MissionCommand<CommandDescription>
+    cmd: MissionCommand<DialectCommandDescription>
     id: number
-    other: MissionCommand<CommandDescription>[]
+    other: MissionCommand<DialectCommandDescription>[]
   }
   onMove: (lat: number, lng: number, id: number) => void
   onClick: (id: number) => void
@@ -43,12 +43,12 @@ export default function CommandMarker({
   // Add loiter radius
   if (
     viewable['loiter radius'] &&
-    (command.cmd.type === 'D_MAV_CMD_NAV_LOITER_UNLIM' ||
-      command.cmd.type === 'D_MAV_CMD_NAV_LOITER_TURNS' ||
-      command.cmd.type === 'D_MAV_CMD_NAV_LOITER_TIME')
+    (command.cmd.type === 'D.MAV_CMD_NAV_LOITER_UNLIM' ||
+      command.cmd.type === 'D.MAV_CMD_NAV_LOITER_TURNS' ||
+      command.cmd.type === 'D.MAV_CMD_NAV_LOITER_TIME')
   ) {
     // make sure the right radius is used, default to plane specific, otherwise use command param
-    let radius = command.cmd.params.radius as number
+    let radius = (command.cmd.params as { radius: number }).radius as number
     if (radius === 0 && vehicle.type === 'Plane') {
       radius = getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed)
     }

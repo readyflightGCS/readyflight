@@ -478,9 +478,9 @@ export class Mission<CD extends DialectCommandDescription> {
    *          - id: The original index of the command in the flattened mission
    *          - other: Array of non-destination commands that should be executed at this location
    */
-  mainLine(dialect: Dialect<CD>, mission?: string) {
+  mainLine(mission?: string) {
     const commands = this.flatten(mission ?? 'Main')
-    return convertToMainLine(commands, dialect)
+    return convertToMainLine(commands, this.dialect)
   }
 }
 

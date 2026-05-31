@@ -13,7 +13,8 @@
     "build:unpack": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --dir",
     "build:win": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --win",
     "build:mac": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --mac",
-    "build:linux": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --linux"
+    "build:linux": "bun run build && bun run rebuild:native && electron-builder --config electron-builder.yml --linux",
+    "typecheck": "tsc --noEmit -p tsconfig.json --composite false"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",

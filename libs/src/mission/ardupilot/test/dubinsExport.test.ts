@@ -22,7 +22,7 @@ import { convertArdupilot } from '@libs/mission/ardupilot/export'
 import { Mission } from '@libs/mission/mission'
 import { ardupilot } from '../ardupilot'
 import { makeCommand } from '@libs/commands/helpers'
-import { DialectCommand } from '@libs/commands/command'
+import { DialectCommand, MissionCommand } from '@libs/commands/command'
 import { mavCmdDescription } from '../commands'
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -46,7 +46,7 @@ function dp(
 }
 
 /** Build a mission from an array of commands and run convertArdupilot. */
-function convert(cmds: ReturnType<typeof makeCommand>[]) {
+function convert(cmds: MissionCommand<(typeof ardupilot.commandDescriptions)[number]>[]) {
   const mission = new Mission<(typeof ardupilot.commandDescriptions)[number]>(ardupilot)
   cmds.forEach((c) => mission.pushToMission('Main', c))
   return convertArdupilot(mission)

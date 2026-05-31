@@ -40,6 +40,11 @@ function getMany(keys: string[]) {
   return re
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function setMany(_entries: [string, number][], _store: string) {
+  // TODO: implement persistent terrain cache storage
+}
+
 //const terStore = createStore('terStore', 'terStore')
 
 /**

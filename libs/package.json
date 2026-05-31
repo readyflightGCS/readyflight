@@ -6,7 +6,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "bunx tsc -p tsconfig.json"
+    "build": "bunx tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@ifrunistuttgart/node-mavlink": "^0.1.2",

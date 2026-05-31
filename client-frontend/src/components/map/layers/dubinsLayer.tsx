@@ -23,10 +23,10 @@ export default function DubinsLayer() {
   if (noshow.includes(selectedSubMission)) return null
 
   // get reference waypoint
-  const reference = mission.getReferencePoint(dialect)
+  const reference = mission.getReferencePoint()
 
   const activeWPs = mission.flatten(selectedSubMission)
-  const mainLine = mission.mainLine(dialect, selectedSubMission)
+  const mainLine = mission.mainLine(selectedSubMission)
 
   // we need at least two commands for dubins path
   if (activeWPs.length < 2) {
