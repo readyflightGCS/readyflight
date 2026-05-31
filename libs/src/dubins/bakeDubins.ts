@@ -44,9 +44,9 @@ export function staticEvaluate(
   optimisationFunction: (path: Path<XY>) => number,
   vehicle: Plane
 ) {
-  const activeWaypoints = waypoints.mainLine(dialect, activeMission)
+  const activeWaypoints = waypoints.mainLine(activeMission)
 
-  const reference = waypoints.getReferencePoint(dialect)
+  const reference = waypoints.getReferencePoint()
 
   const dubinSections = splitDubinsRuns(activeWaypoints)
   let fitness = 0
@@ -80,12 +80,12 @@ export function bakeDubins(
   optimisationFunction: (path: Path<XY>) => number,
   vehicle: Plane
 ) {
-  const mainLine = waypoints.mainLine(dialect, activeMission)
+  const mainLine = waypoints.mainLine(activeMission)
 
   const startTime = performance.now()
 
   // get reference waypoint
-  const reference = waypoints.getReferencePoint(dialect)
+  const reference = waypoints.getReferencePoint()
 
   const dubinSections = splitDubinsRuns(mainLine)
   let endingFitness = 0

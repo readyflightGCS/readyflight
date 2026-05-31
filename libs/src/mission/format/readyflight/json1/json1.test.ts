@@ -10,7 +10,7 @@ import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
 
 test('readyflight json1 export matches schema', async () => {
   const vehicle: Vehicle = { type: 'Copter' }
-  const mission = new Mission<(typeof mavCmdDescription)[number]>()
+  const mission = new Mission<(typeof mavCmdDescription)[number]>(ardupilot)
   mission.pushToMission(
     'Main',
     makeCommand('RF.Waypoint', { latitude: 51.501, longitude: -0.121, altitude: 42 }, ardupilot)

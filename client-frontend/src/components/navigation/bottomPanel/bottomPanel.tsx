@@ -23,7 +23,8 @@ export default function BottomPanel() {
               case 'Telemetry': {
                 return <TelemetryActionBump />
               }
-              case 'Settings': {
+              case 'Settings':
+              case 'Vehicle': {
                 return null
               }
               default: {
@@ -48,6 +49,9 @@ export default function BottomPanel() {
             }
             case 'Settings': {
               return <Settings />
+            }
+            case 'Vehicle': {
+              return null
             }
             default: {
               const _exhaustiveCheck: never = currentTab

@@ -29,15 +29,15 @@ type State = {
 }
 
 export const useMission = create<State & Actions>((set, get) => ({
-  mission: new Mission<(typeof mavCmdDescription)[number]>(),
   dialect: ardupilot,
+  mission: new Mission<(typeof mavCmdDescription)[number]>(ardupilot),
 
   selectedSubMission: 'Main',
   selectedCommandIDs: [],
   vehicle: defaultPlane,
 
   switchDialect: (dialect) => {
-    set({ dialect: dialect, mission: new Mission() })
+    set({ dialect: dialect, mission: new Mission(dialect) })
   },
 
   addCommand: (cmd) => {

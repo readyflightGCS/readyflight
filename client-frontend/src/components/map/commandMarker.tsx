@@ -8,7 +8,7 @@ import NonDestChip from './nonDestChip'
 import { useMission } from '@libs/stores/mission'
 import { getMinTurnRadius } from '@libs/dubins/dubinWaypoints'
 import { useRFMap } from '@libs/stores/map'
-import { MissionCommand, DialectCommandDescription } from '@libs/commands/command'
+import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { getCommandLabel } from '@libs/commands/helpers'
 
 type props = {
@@ -48,7 +48,7 @@ export default function CommandMarker({
       command.cmd.type === 'D.MAV_CMD_NAV_LOITER_TIME')
   ) {
     // make sure the right radius is used, default to plane specific, otherwise use command param
-    let radius = command.cmd.params.radius as number
+    let radius = (command.cmd.params as { radius: number }).radius as number
     if (radius === 0 && vehicle.type === 'Plane') {
       radius = getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed)
     }

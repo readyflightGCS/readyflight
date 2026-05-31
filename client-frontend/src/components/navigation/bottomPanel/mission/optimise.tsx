@@ -62,7 +62,7 @@ export function Optimise() {
     vehicle as Plane
   )
 
-  const dubinSections = splitDubinsRuns(mission.mainLine(dialect, selectedSubMission))
+  const dubinSections = splitDubinsRuns(mission.mainLine(selectedSubMission))
   if (dubinSections.length == 0) {
     return (
       <div className="h-full w-full text-center content-center">

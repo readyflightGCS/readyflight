@@ -9,12 +9,13 @@
       "@libs/*": ["../libs/src/*.js"],
       "@/electron/*": ["./main/*.js"],
     },
+    "skipLibCheck": true,
   },
   "references": [{ "path": "../libs" }],
   "include": [
     "main/**/*",
     "preload/**/*",
-    "vite.config.*", 
+    "vite.config.*",
     "../client-frontend/vite.config.mts",
     "../libs/src"
    ]

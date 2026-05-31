@@ -1,5 +1,5 @@
 import { useMission } from '@libs/stores/mission'
-import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
+import { CommandParameterDescriptionN, DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { getCommandDescription } from '@libs/commands/helpers'
 import { LatLngEditor } from './LatLngEditor'
 import Parameter from './parameter'
@@ -74,12 +74,15 @@ export default function ParamEditor() {
       .parameters.filter(
         (x) => x?.parameterType === 'number' && commonCmdParams.has(x.label.toLowerCase())
       )
-      .map((x) => ({
-        name: x?.label?.toLowerCase(),
-        min: x.minValue,
-        max: x.maxValue,
-        step: x.increment
-      }))
+      .map((x) => {
+        const n = x as CommandParameterDescriptionN
+        return {
+          name: n.label?.toLowerCase(),
+          min: n.minValue,
+          max: n.maxValue,
+          step: n.increment
+        }
+      })
   }
 
   const selectedCommandTypes = new Set(selected.map((x) => x.type))

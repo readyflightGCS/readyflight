@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Marker } from 'react-leaflet'
-import L from 'leaflet'
+import * as L from 'leaflet'
 import { LatLng } from '@libs/world/latlng'
 
 type ArrowHeadProps = {

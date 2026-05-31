@@ -51,4 +51,5 @@ export type VehicleState = {
   missionTotal: number | null
   sendMessage: ((msg: VehicleCommand) => void) | null
   sendPacket: ((buf: ArrayBuffer) => void) | null
+  uploadMission: ((mission: unknown) => void) | null
 }

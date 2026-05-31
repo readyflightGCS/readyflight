@@ -125,7 +125,7 @@ describe('fetchTerrain function', () => {
 
   test.skip('should handle successful API response', async () => {
     const originalFetch = global.fetch
-    global.fetch = async () =>
+    global.fetch = (async () =>
       ({
         ok: true,
         json: async () => ({
@@ -134,7 +134,7 @@ describe('fetchTerrain function', () => {
             { elevation: 200, latitude: 1, longitude: 1 }
           ]
         })
-      }) as Response
+      }) as Response) as unknown as typeof fetch
 
     try {
       const result = await fetchTerrain([
@@ -152,11 +152,11 @@ describe('fetchTerrain function', () => {
 
   test.skip('should handle HTTP error responses', async () => {
     const originalFetch = global.fetch
-    global.fetch = async () =>
+    global.fetch = (async () =>
       ({
         ok: false,
         status: 404
-      }) as Response
+      }) as Response) as unknown as typeof fetch
 
     try {
       const result = await fetchTerrain([{ lat: 0, lng: 0 }])
@@ -168,14 +168,14 @@ describe('fetchTerrain function', () => {
 
   test.skip('should handle malformed API response', async () => {
     const originalFetch = global.fetch
-    global.fetch = async () =>
+    global.fetch = (async () =>
       ({
         ok: true,
         json: async () => ({
           // Missing 'results' field
           data: []
         })
-      }) as Response
+      }) as Response) as unknown as typeof fetch
 
     try {
       const result = await fetchTerrain([{ lat: 0, lng: 0 }])
@@ -187,9 +187,9 @@ describe('fetchTerrain function', () => {
 
   test.skip('should handle network errors', async () => {
     const originalFetch = global.fetch
-    global.fetch = async () => {
+    global.fetch = (async () => {
       throw new Error('Network error')
-    }
+    }) as unknown as typeof fetch
 
     try {
       const result = await fetchTerrain([{ lat: 0, lng: 0 }])
@@ -203,13 +203,13 @@ describe('fetchTerrain function', () => {
     const originalFetch = global.fetch
     let capturedUrl = ''
 
-    global.fetch = async (input: RequestInfo | URL) => {
+    global.fetch = (async (input: RequestInfo | URL) => {
       capturedUrl = input.toString()
       return {
         ok: true,
         json: async () => ({ results: [] })
       } as Response
-    }
+    }) as unknown as typeof fetch
 
     try {
       await fetchTerrain([

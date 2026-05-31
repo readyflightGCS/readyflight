@@ -42,6 +42,18 @@ export function HeadingLine({ position, heading, lengthPx = 25 }: Props) {
   return <Polyline positions={line} pathOptions={{ color: 'red' }} />
 }
 
+function VehicleMarker() {
+  const lat = useVehicle((s) => s.lat)
+  const lon = useVehicle((s) => s.lon)
+  const heading = useVehicle((s) => s.heading)
+  return (
+    <>
+      <DraggableMarker position={{ lat, lng: lon }} active={false} />
+      <HeadingLine position={[lat || 0, lon || 0]} heading={heading} />
+    </>
+  )
+}
+
 export default function ActiveLayer() {
   const {
     setSelectedSubMission,
@@ -52,14 +64,13 @@ export default function ActiveLayer() {
     setMission,
     selectedCommandIDs
   } = useMission()
-  const v = useVehicle()
   const setLastSelectedCommandIndex = useEditor((s) => s.setLastSelectedCommandIndex)
 
   let a = 0
   if (noshow.includes(selectedSubMission)) return null
 
   // store each destination in an array, with non destinations in other (to be stacked as they act in the same location)
-  const mainLine = mission.mainLine(dialect, selectedSubMission)
+  const mainLine = mission.mainLine(selectedSubMission)
 
   // handle insert at specific id
   function handleInsert(id: number, lat: number, lng: number) {
@@ -152,8 +163,7 @@ export default function ActiveLayer() {
         )
       })}
 
-      <DraggableMarker position={{ lat: v.lat, lng: v.lon }} active={false} />
-      <HeadingLine position={[v.lat || 0, v.lon || 0]} heading={v.heading} />
+      <VehicleMarker />
 
       {insertBtns}
       {lineSegments}
