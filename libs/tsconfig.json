@@ -15,5 +15,8 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
   },
-  "include": ["./src/**/*"]
+  "include": [
+    "./src/**/*",     
+    "../client-frontend/src"
+]
 }

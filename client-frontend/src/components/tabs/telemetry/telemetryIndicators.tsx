@@ -24,29 +24,36 @@ export default function TelemetryIndicators() {
   return (
     <div className="grid grid-cols-3 gap-2 w-full h-full">
       <ResponsiveIndicator>
-        {(size) => <Airspeed speed={airspeed || 0} size={size} showBox={false} />}
+        {(size) => <Airspeed speed={airspeed || 0} size={String(size)} showBox={false} />}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
-        {(size) => <HeadingIndicator heading={heading || 0} size={size} showBox={false} />}
+        {(size) => <HeadingIndicator heading={heading || 0} size={String(size)} showBox={false} />}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
         {(size) => (
-          <AttitudeIndicator pitch={pitch || 0} roll={roll || 0} size={size} showBox={false} />
+          <AttitudeIndicator
+            pitch={pitch || 0}
+            roll={roll || 0}
+            size={String(size)}
+            showBox={false}
+          />
         )}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
-        {(size) => <Altimeter altitude={relativeAltitude * 10 || 0} size={size} showBox={false} />}
+        {(size) => (
+          <Altimeter altitude={relativeAltitude * 10 || 0} size={String(size)} showBox={false} />
+        )}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
-        {(size) => <Variometer vario={climb * 40 || 0} size={size} showBox={false} />}
+        {(size) => <Variometer vario={climb * 40 || 0} size={String(size)} showBox={false} />}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
-        {(size) => <TurnCoordinator turn={ssa || 0} size={size} showBox={false} />}
+        {(size) => <TurnCoordinator turn={ssa || 0} size={String(size)} showBox={false} />}
       </ResponsiveIndicator>
     </div>
   )
