@@ -1,8 +1,14 @@
 import { cn } from '@/lib/utils'
 import { useEditor } from '@libs/stores/configurator'
 import { ReactNode } from 'react'
-export default function BottomPanel({ children, actionBump }: { children?: ReactNode, actionBump?: ReactNode }) {
-  const sidePanelOpen = useEditor(s => s.sidePanelOpen)
+export default function BottomPanel({
+  children,
+  actionBump
+}: {
+  children?: ReactNode
+  actionBump?: ReactNode
+}) {
+  const sidePanelOpen = useEditor((s) => s.sidePanelOpen)
 
   return (
     <div className="absolute bottom-0 left-0 w-full z-20 flex justify-center mb-4 pointer-events-none">
@@ -24,6 +30,6 @@ export default function BottomPanel({ children, actionBump }: { children?: React
           {children}
         </div>
       </div>
-    </div >
+    </div>
   )
 }

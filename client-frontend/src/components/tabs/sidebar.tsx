@@ -4,7 +4,6 @@ import { LucideIcon } from 'lucide-react'
 import { Fragment } from 'react'
 import { tabRegistry } from './tabRegistry'
 
-
 export default function SideBar() {
   const currentTab = useEditor((state) => state.currentTab)
   const setTab = useEditor((state) => state.setTab)
@@ -15,8 +14,7 @@ export default function SideBar() {
         <Fragment key={tab.name}>
           {
             // Make some space above settings to put it at the bottom
-            tab.name === 'Settings' ?
-              <div className="flex-grow" /> : null
+            tab.name === 'Settings' ? <div className="flex-grow" /> : null
           }
           <Item
             name={tab.name}

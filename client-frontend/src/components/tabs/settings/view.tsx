@@ -1,5 +1,5 @@
-import SidePanel from "@/components/layout/sidePanel";
-import Settings from "./settings";
+import SidePanel from '@/components/layout/sidePanel'
+import Settings from './settings'
 
 export default function SettingsTabView() {
   return (

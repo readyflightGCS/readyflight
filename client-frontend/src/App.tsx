@@ -4,7 +4,6 @@ import { Toaster } from './components/ui/sonner'
 import TabView from './components/layout/tabView'
 
 export default function App(): React.JSX.Element {
-
   return (
     <div className="flex flex-cols-2 h-full w-full bg-gray-200 text-foreground">
       <SideBar />
