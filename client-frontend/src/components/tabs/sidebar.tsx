@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import { useEditor } from '@libs/stores/configurator'
 import { LucideIcon } from 'lucide-react'
+import { Fragment } from 'react'
 import { tabRegistry } from './tabRegistry'
 
 
@@ -10,21 +11,20 @@ export default function SideBar() {
 
   return (
     <div className="flex flex-col h-full bg-sidebar shrink-0 w-20">
-      {tabRegistry.map((tab, i) => (
-        <>
+      {tabRegistry.map((tab) => (
+        <Fragment key={tab.name}>
           {
             // Make some space above settings to put it at the bottom
             tab.name === 'Settings' ?
               <div className="flex-grow" /> : null
           }
-          < Item
-            key={i}
+          <Item
             name={tab.name}
             Icon={tab.Icon}
             active={tab.name == currentTab}
             onClick={() => setTab(tab.name)}
           />
-        </>
+        </Fragment>
       ))}
     </div>
   )

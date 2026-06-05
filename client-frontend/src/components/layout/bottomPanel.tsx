@@ -5,14 +5,14 @@ export default function BottomPanel({ children, actionBump }: { children?: React
   const sidePanelOpen = useEditor(s => s.sidePanelOpen)
 
   return (
-    <div className={cn(`absolute bottom-0 left-0 w-full z-20 flex justify-center mb-4`)}>
+    <div className="absolute bottom-0 left-0 w-full z-20 flex justify-center mb-4 pointer-events-none">
       <div className={cn(`pb-2 w-fit transition-all duration-300`, sidePanelOpen ? 'pl-60' : '')}>
         {actionBump !== undefined ? (
           <div className="flex justify-center">
             <svg height="32" width="43">
               <path d=" M 43 0 C 27 0, 16 32, 0 32 L 43 32 Z " fill="var(--background)" />
             </svg>
-            <div className="h-[32px] bg-background px-2 flex items-center">
+            <div className="h-[32px] bg-background px-2 flex items-center pointer-events-auto">
               {actionBump}
             </div>
             <svg height="32" width="43">
@@ -20,7 +20,7 @@ export default function BottomPanel({ children, actionBump }: { children?: React
             </svg>
           </div>
         ) : null}
-        <div className="h-60 w-fit p-2 bg-background rounded-lg">
+        <div className="h-60 w-fit p-2 bg-background rounded-lg pointer-events-auto">
           {children}
         </div>
       </div>
