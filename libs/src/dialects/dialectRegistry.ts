@@ -7,7 +7,7 @@ import { ardupilotCopter, ardupilotPlane } from './ardupilot/ardupilot'
  * To add a new dialect, import it and append it to this array.
  * The first entry with id matching DEFAULT_DIALECT_ID is used as the default.
  */
-export const dialects: Dialect<DialectCommandDescription>[] = [
+export const dialectRegistry: Dialect<DialectCommandDescription>[] = [
   ardupilotPlane,
   ardupilotCopter
 ]

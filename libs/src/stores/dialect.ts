@@ -1,7 +1,7 @@
 import { createWithEqualityFn as create } from 'zustand/traditional'
-import { Dialect } from '@libs/mission/dialect'
+import { Dialect } from '@libs/dialects/dialect'
 import { DialectCommandDescription } from '@libs/commands/command'
-import { dialects, DEFAULT_DIALECT_ID } from '@libs/mission/dialects'
+import { dialectRegistry, DEFAULT_DIALECT_ID } from '@libs/dialects/dialectRegistry'
 
 type State = {
   activeDialect: Dialect<DialectCommandDescription>
@@ -18,14 +18,14 @@ type Actions = {
 }
 
 const defaultDialect =
-  dialects.find((d) => d.id === DEFAULT_DIALECT_ID) ?? dialects[0]
+  dialectRegistry.find((d) => d.id === DEFAULT_DIALECT_ID) ?? dialectRegistry[0]
 
 export const useDialect = create<State & Actions>((set) => ({
   activeDialect: defaultDialect,
   activeDialectId: defaultDialect.id,
 
   setDialect: (id) => {
-    const dialect = dialects.find((d) => d.id === id)
+    const dialect = dialectRegistry.find((d) => d.id === id)
     if (!dialect) {
       console.warn(`[useDialect] Unknown dialect id: "${id}"`)
       return

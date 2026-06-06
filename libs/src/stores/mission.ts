@@ -4,8 +4,8 @@ import { Mission } from '@libs/mission/mission'
 import { Vehicle } from '@libs/vehicle/types'
 import { defaultPlane } from '@libs/vehicle/defaults'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
-import { Dialect } from '@libs/mission/dialect'
-import { dialects, DEFAULT_DIALECT_ID } from '@libs/mission/dialects'
+import { Dialect } from '@libs/dialects/dialect'
+import { dialectRegistry, DEFAULT_DIALECT_ID } from '@libs/dialects/dialectRegistry'
 
 type Actions = {
   switchDialect: (dialect: Dialect<DialectCommandDescription>) => void
@@ -27,7 +27,7 @@ type State = {
   selectedCommandIDs: number[]
 }
 
-const defaultDialect = dialects.find((d) => d.id === DEFAULT_DIALECT_ID) ?? dialects[0]
+const defaultDialect = dialectRegistry.find((d) => d.id === DEFAULT_DIALECT_ID) ?? dialectRegistry[0]
 
 export const useMission = create<State & Actions>((set, get) => ({
   dialect: defaultDialect,

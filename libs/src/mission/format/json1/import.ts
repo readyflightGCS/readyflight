@@ -3,7 +3,7 @@ import { Mission } from '@libs/mission/mission'
 import { Result, tryCatch } from '@libs/util/try-catch'
 import { Vehicle } from '@libs/vehicle/types'
 import { RFJSON1Schema } from './schema'
-import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
+import { ardupilot } from '@libs/dialects/ardupilot/ardupilot'
 
 export async function importRFJSON1(
   blob: Blob

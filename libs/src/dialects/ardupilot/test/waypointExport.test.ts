@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test'
-import { exportQGCWaypoints } from '@libs/mission/ardupilot/export'
+import { exportQGCWaypoints } from '@libs/dialects/ardupilot/export'
 import { Mission } from '@libs/mission/mission'
 import { ardupilot } from '../ardupilot'
 import { makeCommand } from '@libs/commands/helpers'

@@ -8,7 +8,7 @@ import { crossProduct } from '@libs/math/vector'
 import { deg2rad, modf, offset } from '@libs/math/geometry'
 import { Plane } from '@libs/vehicle/types'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
-import { Dialect } from '@libs/mission/dialect'
+import { Dialect } from '@libs/dialects/dialect'
 import { getCommandLocation } from '@libs/commands/helpers'
 
 /*

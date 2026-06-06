@@ -22,7 +22,7 @@
  *    the last Dubins circle is emitted.
  */
 import { expect, test, describe } from 'bun:test'
-import { convertArdupilot } from '@libs/mission/ardupilot/export'
+import { convertArdupilot } from '@libs/dialects/ardupilot/export'
 import { Mission } from '@libs/mission/mission'
 import { ardupilot } from '../ardupilot'
 import { makeCommand } from '@libs/commands/helpers'
@@ -303,8 +303,8 @@ describe('Dubins run preceded by a regular waypoint', () => {
   // In the collinear case the path passes straight through DP1 without a separate
   // "approach" waypoint, so assertions focus on structural properties.
   const PRE_LAT = -0.001
-  const A_lat = 0,    A_lng = 0,           A_hdg = 0
-  const B_lat = m2deg(500), B_lng = 0,     B_hdg = 0
+  const A_lat = 0, A_lng = 0, A_hdg = 0
+  const B_lat = m2deg(500), B_lng = 0, B_hdg = 0
 
   function makePreWPMission() {
     const mission = new Mission<(typeof ardupilot.commandDescriptions)[number]>(ardupilot)
@@ -394,8 +394,8 @@ describe('Dubins run preceded by a waypoint — non-collinear approach (approach
 })
 
 describe('Dubins run followed by a regular waypoint', () => {
-  const A_lat = 0,    A_lng = 0,           A_hdg = 0
-  const B_lat = m2deg(500), B_lng = 0,     B_hdg = 0
+  const A_lat = 0, A_lng = 0, A_hdg = 0
+  const B_lat = m2deg(500), B_lng = 0, B_hdg = 0
   const POST_LAT = m2deg(500) + 0.001
 
   function makePostWPMission() {
@@ -445,9 +445,9 @@ describe('Dubins run followed by a regular waypoint', () => {
 })
 
 describe('Dubins run preceded AND followed by regular waypoints', () => {
-  const PRE_LAT  = -0.001
-  const A_lat = 0,    A_lng = 0,           A_hdg = 0
-  const B_lat = m2deg(500), B_lng = 0,     B_hdg = 0
+  const PRE_LAT = -0.001
+  const A_lat = 0, A_lng = 0, A_hdg = 0
+  const B_lat = m2deg(500), B_lng = 0, B_hdg = 0
   const POST_LAT = m2deg(500) + 0.001
 
   function makeBothMission() {
@@ -493,7 +493,7 @@ describe('Dubins run preceded AND followed by regular waypoints', () => {
       return m
     })()
     const bothOut = convertArdupilot(makeBothMission())
-    const preOut  = convertArdupilot(preMission)
+    const preOut = convertArdupilot(preMission)
     // With post-WP the run ends at post-WP instead of at last DP centre,
     // so total length should be the same (one WP replaces another)
     expect(bothOut.length).toBe(preOut.length + 0) // same number: pre WP + dubins + post WP replaces endpoint

@@ -15,7 +15,7 @@
  */
 import { DialectCommandDescription, MissionCommand, RFCommand } from '@libs/commands/command'
 import { LatLng } from '@libs/world/latlng'
-import { Dialect } from './dialect'
+import { Dialect } from '@libs/dialects/dialect'
 import { getCommandLocation } from '@libs/commands/helpers'
 
 /**

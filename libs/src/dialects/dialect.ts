@@ -1,4 +1,4 @@
-import { Mission } from './mission'
+import { Mission } from '@libs/mission/mission'
 import { LatLng, LatLngAlt } from '@libs/world/latlng'
 import {
   DialectCommand,

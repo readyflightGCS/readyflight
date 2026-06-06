@@ -14,7 +14,7 @@ import {
 import { Mission } from '@libs/mission/mission'
 import { DialectCommandDescription } from '@libs/commands/command'
 import { Plane } from '@libs/vehicle/types'
-import { Dialect } from '@libs/mission/dialect'
+import { Dialect } from '@libs/dialects/dialect'
 import { res } from '@libs/optimisation/types'
 
 // This function is a closure that takes in the waypoints and returns a function that takes in the tunable parameters and returns the total length of the path

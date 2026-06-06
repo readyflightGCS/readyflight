@@ -13,7 +13,7 @@ import { dubinsPoint, Path } from '../types'
 import { defaultPlane } from '@libs/vehicle/defaults'
 import { makeCommand } from '@libs/commands/helpers'
 import { MainLine } from '@libs/mission/mission'
-import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
+import { ardupilot } from '@libs/dialects/ardupilot/ardupilot'
 
 test('Split Dubins runs empty', () => {
   const a: MainLine = []

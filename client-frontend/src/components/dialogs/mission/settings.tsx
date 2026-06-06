@@ -1,6 +1,6 @@
 import { useMission } from '@libs/stores/mission'
 import { useDialect } from '@libs/stores/dialect'
-import { dialects } from '@libs/mission/dialects'
+import { dialectRegistry } from '@libs/dialects/dialectRegistry'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -36,7 +36,7 @@ export default function MissionDialog() {
       'Switching dialect will clear your current mission and disconnect any active vehicle connection. Continue?'
     )
     if (!confirmed) return
-    const newDialect = dialects.find((d) => d.id === id)
+    const newDialect = dialectRegistry.find((d) => d.id === id)
     if (!newDialect) return
     setDialect(id)
     switchMissionDialect(newDialect)
@@ -59,7 +59,7 @@ export default function MissionDialog() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {dialects.map((d) => (
+              {dialectRegistry.map((d) => (
                 <SelectItem key={d.id} value={d.id}>
                   {d.name}
                 </SelectItem>

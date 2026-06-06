@@ -3,7 +3,7 @@ import { useVehicle } from '@libs/stores/vehicle'
 import { useConnections } from '@libs/stores/connections'
 import { useEffect, useRef } from 'react'
 import type { ConnectionMessage } from '@libs/connection/types'
-import type { ITelemetrySession } from '@libs/mission/dialect'
+import type { ITelemetrySession } from '@libs/dialects/dialect'
 import type { VehicleState } from '@libs/vehicle/state'
 
 const isElectron =

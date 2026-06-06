@@ -3,10 +3,10 @@ import { Mission } from '@libs/mission/mission'
 import { exportRFJSON1 } from './export'
 import { importRFJSON1 } from './import'
 import { RFJSON1Schema } from './schema'
-import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
+import { ardupilot } from '@libs/dialects/ardupilot/ardupilot'
 import type { Vehicle } from '@libs/vehicle/types'
 import { makeCommand } from '@libs/commands/helpers'
-import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
+import { mavCmdDescription } from '@libs/dialects/ardupilot/commands'
 
 test('readyflight json1 export matches schema', async () => {
   const vehicle: Vehicle = { type: 'Copter' }
