@@ -1,12 +1,11 @@
 import { createWithEqualityFn as create } from 'zustand/traditional'
 
-import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
 import { Mission } from '@libs/mission/mission'
 import { Vehicle } from '@libs/vehicle/types'
 import { defaultPlane } from '@libs/vehicle/defaults'
 import { DialectCommandDescription, MissionCommand } from '@libs/commands/command'
 import { Dialect } from '@libs/mission/dialect'
-import { mavCmdDescription } from '@libs/mission/ardupilot/commands'
+import { dialects, DEFAULT_DIALECT_ID } from '@libs/mission/dialects'
 
 type Actions = {
   switchDialect: (dialect: Dialect<DialectCommandDescription>) => void
@@ -28,9 +27,11 @@ type State = {
   selectedCommandIDs: number[]
 }
 
+const defaultDialect = dialects.find((d) => d.id === DEFAULT_DIALECT_ID) ?? dialects[0]
+
 export const useMission = create<State & Actions>((set, get) => ({
-  dialect: ardupilot,
-  mission: new Mission<(typeof mavCmdDescription)[number]>(ardupilot),
+  dialect: defaultDialect,
+  mission: new Mission(defaultDialect),
 
   selectedSubMission: 'Main',
   selectedCommandIDs: [],

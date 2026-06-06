@@ -1,4 +1,4 @@
-import { useMission } from '@libs/stores/mission'
+import { useDialect } from '@libs/stores/dialect'
 import { useVehicle } from '@libs/stores/vehicle'
 import { useConnections } from '@libs/stores/connections'
 import { useEffect, useRef } from 'react'
@@ -24,7 +24,7 @@ function arrayBufferToBase64(buf: ArrayBuffer): string {
 }
 
 export default function ConnectionHandler() {
-  const dialect = useMission((s) => s.dialect)
+  const dialect = useDialect((s) => s.activeDialect)
   const setVehicleState = useVehicle((s) => s.setVehicleState)
   const setConnection = useConnections((s) => s.setConnection)
   const setAvailableConnections = useConnections((s) => s.setAvailableConnections)
@@ -66,7 +66,6 @@ export default function ConnectionHandler() {
 
       setVehicleState({
         sendMessage: (m) => session.handleSendTelemetryMessage(m),
-        sendPacket,
         uploadMission: (m) => session.uploadMission(m as never)
       })
 
@@ -103,7 +102,7 @@ export default function ConnectionHandler() {
         patchRef.current = {}
         offMessage()
         setCommandSender(null)
-        setVehicleState({ sendMessage: null, sendPacket: null, uploadMission: null })
+        setVehicleState({ sendMessage: null, uploadMission: null })
       }
     }
 
@@ -129,7 +128,6 @@ export default function ConnectionHandler() {
         console.log('[ws] connected to backend')
         setVehicleState({
           sendMessage: (m) => session.handleSendTelemetryMessage(m),
-          sendPacket,
           uploadMission: (m) => session.uploadMission(m as never)
         })
         setCommandSender((cmd) => {
@@ -182,7 +180,7 @@ export default function ConnectionHandler() {
         sessionRef.current = null
         patchRef.current = {}
         setCommandSender(null)
-        setVehicleState({ sendMessage: null, sendPacket: null, uploadMission: null })
+        setVehicleState({ sendMessage: null, uploadMission: null })
         setAvailableConnections([])
         scheduleReconnect()
       }

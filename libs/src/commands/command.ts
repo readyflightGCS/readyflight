@@ -17,6 +17,12 @@ export type CommandDescriptionProperties = {
   isDestination: boolean
   // parameters types that it can accept.
   parameters: CommandParameterUnion[]
+  /**
+   * If present, the map should render a radius circle for this command.
+   * The value is the lowercase parameter label whose numeric value is the radius in metres.
+   * Example: `drawRadius: 'radius'` reads `command.params.radius` as the circle radius.
+   */
+  drawRadius?: string
 }
 
 export type DialectCommandDescription = { type: `D.${string}` } & CommandDescriptionProperties

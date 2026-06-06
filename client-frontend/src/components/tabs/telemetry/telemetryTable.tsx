@@ -1,8 +1,7 @@
 import { cn } from '@/lib/utils'
 import { useVehicle } from '@libs/stores/vehicle'
-import { GpsFixType } from '@libs/mission/ardupilot/mavlink-assets/enums/gps-fix-type'
+import { gpsFixLabel, gpsFixQuality } from '@libs/vehicle/gps'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
-import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
 
 export default function TelemetryTable() {
   return (
@@ -170,21 +169,20 @@ function Throttle() {
 
 function GpsFix() {
   const gpsFixType = useVehicle((v) => v.gpsFixType)
+  const quality = gpsFixType !== null ? gpsFixQuality(gpsFixType) : 'none'
 
   return (
     <td
       className={cn(
         'p-1',
-        gpsFixType !== null
-          ? gpsFixType <= 1
-            ? 'text-red-400'
-            : gpsFixType <= 3
-              ? 'text-orange-400'
-              : 'text-green-400'
-          : 'text-red-400'
+        quality === 'none'
+          ? 'text-red-400'
+          : quality === 'poor'
+            ? 'text-orange-400'
+            : 'text-green-400'
       )}
     >
-      {gpsFixType !== null ? GpsFixType[gpsFixType].replace(/GPS_FIX_TYPE_/, '') : 'Unknown'}
+      {gpsFixType !== null ? gpsFixLabel(gpsFixType) : 'Unknown'}
     </td>
   )
 }
@@ -207,7 +205,7 @@ function GpsHdop() {
 function VehicleMode() {
   const mode = useVehicle((v) => v.mode)
 
-  return <td className="p-1">{mode !== null ? CopterMode[mode].replace(/^.*?_MODE_/, '') : ''}</td>
+  return <td className="p-1">{mode ?? ''}</td>
 }
 
 function ArmedStatus() {

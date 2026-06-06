@@ -40,11 +40,156 @@ import { getSeverityName } from './mavlink-assets/enums/mav-message-severity'
 import { objectKeys } from '@libs/util/types'
 import { ITelemetrySession } from '../dialect'
 import { VehicleCommand } from '@libs/vehicle/commands'
+import { CopterMode } from './mavlink-assets/enums/copter-mode'
+import { PlaneMode } from './mavlink-assets/enums/plane-mode'
+import { GpsFixType } from '@libs/vehicle/gps'
+import { DialectMode } from '../dialect'
 
 // Deduplication window for React StrictMode / brief double-connection: the
 // backend broadcasts one MISSION_REQUEST to all WebSocket subscribers, so two
 // clients can both respond. Suppress the same seq within this window.
 const DEDUP_MS = 100
+
+// ---------------------------------------------------------------------------
+// MAVLink GPS fix type → ReadyFlight GpsFixType
+// ---------------------------------------------------------------------------
+const mavGpsFixMap: Record<number, GpsFixType> = {
+  0: 'no_gps',
+  1: 'no_fix',
+  2: '2d_fix',
+  3: '3d_fix',
+  4: 'dgps',
+  5: 'rtk_float',
+  6: 'rtk_fixed',
+  7: 'static',
+  8: 'ppp'
+}
+
+// ---------------------------------------------------------------------------
+// Mode maps: MAVLink custom_mode integer → string id used in VehicleState
+// ---------------------------------------------------------------------------
+const copterModeMap: Record<number, string> = {
+  [CopterMode.COPTER_MODE_STABILIZE]: 'stabilize',
+  [CopterMode.COPTER_MODE_ACRO]: 'acro',
+  [CopterMode.COPTER_MODE_ALT_HOLD]: 'alt_hold',
+  [CopterMode.COPTER_MODE_AUTO]: 'auto',
+  [CopterMode.COPTER_MODE_GUIDED]: 'guided',
+  [CopterMode.COPTER_MODE_LOITER]: 'loiter',
+  [CopterMode.COPTER_MODE_RTL]: 'rtl',
+  [CopterMode.COPTER_MODE_CIRCLE]: 'circle',
+  [CopterMode.COPTER_MODE_LAND]: 'land',
+  [CopterMode.COPTER_MODE_DRIFT]: 'drift',
+  [CopterMode.COPTER_MODE_SPORT]: 'sport',
+  [CopterMode.COPTER_MODE_FLIP]: 'flip',
+  [CopterMode.COPTER_MODE_AUTOTUNE]: 'autotune',
+  [CopterMode.COPTER_MODE_POSHOLD]: 'poshold',
+  [CopterMode.COPTER_MODE_BRAKE]: 'brake',
+  [CopterMode.COPTER_MODE_THROW]: 'throw',
+  [CopterMode.COPTER_MODE_AVOID_ADSB]: 'avoid_adsb',
+  [CopterMode.COPTER_MODE_GUIDED_NOGPS]: 'guided_nogps',
+  [CopterMode.COPTER_MODE_SMART_RTL]: 'smart_rtl',
+  [CopterMode.COPTER_MODE_FLOWHOLD]: 'flowhold',
+  [CopterMode.COPTER_MODE_FOLLOW]: 'follow',
+  [CopterMode.COPTER_MODE_ZIGZAG]: 'zigzag',
+  [CopterMode.COPTER_MODE_SYSTEMID]: 'systemid',
+  [CopterMode.COPTER_MODE_AUTOROTATE]: 'autorotate',
+  [CopterMode.COPTER_MODE_AUTO_RTL]: 'auto_rtl',
+  [CopterMode.COPTER_MODE_TURTLE]: 'turtle',
+  [CopterMode.COPTER_MODE_RATE_ACRO]: 'rate_acro'
+}
+
+const planeModeMap: Record<number, string> = {
+  [PlaneMode.PLANE_MODE_MANUAL]: 'manual',
+  [PlaneMode.PLANE_MODE_CIRCLE]: 'circle',
+  [PlaneMode.PLANE_MODE_STABILIZE]: 'stabilize',
+  [PlaneMode.PLANE_MODE_TRAINING]: 'training',
+  [PlaneMode.PLANE_MODE_ACRO]: 'acro',
+  [PlaneMode.PLANE_MODE_FLY_BY_WIRE_A]: 'fbwa',
+  [PlaneMode.PLANE_MODE_FLY_BY_WIRE_B]: 'fbwb',
+  [PlaneMode.PLANE_MODE_CRUISE]: 'cruise',
+  [PlaneMode.PLANE_MODE_AUTOTUNE]: 'autotune',
+  [PlaneMode.PLANE_MODE_AUTO]: 'auto',
+  [PlaneMode.PLANE_MODE_RTL]: 'rtl',
+  [PlaneMode.PLANE_MODE_LOITER]: 'loiter',
+  [PlaneMode.PLANE_MODE_TAKEOFF]: 'takeoff',
+  [PlaneMode.PLANE_MODE_AVOID_ADSB]: 'avoid_adsb',
+  [PlaneMode.PLANE_MODE_GUIDED]: 'guided',
+  [PlaneMode.PLANE_MODE_INITIALIZING]: 'initializing',
+  [PlaneMode.PLANE_MODE_QSTABILIZE]: 'qstabilize',
+  [PlaneMode.PLANE_MODE_QHOVER]: 'qhover',
+  [PlaneMode.PLANE_MODE_QLOITER]: 'qloiter',
+  [PlaneMode.PLANE_MODE_QLAND]: 'qland',
+  [PlaneMode.PLANE_MODE_QRTL]: 'qrtl',
+  [PlaneMode.PLANE_MODE_QAUTOTUNE]: 'qautotune',
+  [PlaneMode.PLANE_MODE_QACRO]: 'qacro',
+  [PlaneMode.PLANE_MODE_THERMAL]: 'thermal',
+  [PlaneMode.PLANE_MODE_LOITER_ALT_QLAND]: 'loiter_alt_qland',
+  [PlaneMode.PLANE_MODE_AUTOLAND]: 'autoland'
+}
+
+// ---------------------------------------------------------------------------
+// Available modes shown in the UI
+// ---------------------------------------------------------------------------
+const copterAvailableModes: DialectMode[] = [
+  { id: 'stabilize', label: 'Stabilize', icon: 'CircleSlash2', common: true },
+  { id: 'auto', label: 'Auto', icon: 'Bot', common: true },
+  { id: 'guided', label: 'Guided', icon: 'MousePointerClick', common: true },
+  { id: 'land', label: 'Land', icon: 'ArrowDownToLine', common: true },
+  { id: 'rtl', label: 'RTL', icon: 'Home', common: true },
+  { id: 'acro', label: 'Acro', icon: 'Zap', common: false },
+  { id: 'alt_hold', label: 'Alt Hold', icon: 'FoldVertical', common: false },
+  { id: 'loiter', label: 'Loiter', icon: 'Circle', common: false },
+  { id: 'poshold', label: 'PosHold', icon: 'FoldHorizontal', common: false },
+  { id: 'follow', label: 'Follow', icon: 'Milestone', common: false },
+  { id: 'circle', label: 'Circle', icon: 'RefreshCw', common: false },
+  { id: 'drift', label: 'Drift', common: false },
+  { id: 'sport', label: 'Sport', common: false },
+  { id: 'flip', label: 'Flip', common: false },
+  { id: 'autotune', label: 'Autotune', common: false },
+  { id: 'brake', label: 'Brake', common: false },
+  { id: 'throw', label: 'Throw', common: false },
+  { id: 'avoid_adsb', label: 'Avoid ADSB', common: false },
+  { id: 'guided_nogps', label: 'Guided NoGPS', common: false },
+  { id: 'smart_rtl', label: 'Smart RTL', common: false },
+  { id: 'flowhold', label: 'FlowHold', common: false },
+  { id: 'zigzag', label: 'ZigZag', common: false },
+  { id: 'auto_rtl', label: 'Auto RTL', common: false },
+  { id: 'turtle', label: 'Turtle', common: false }
+]
+
+const planeAvailableModes: DialectMode[] = [
+  { id: 'manual', label: 'Manual', icon: 'Joystick', common: true },
+  { id: 'auto', label: 'Auto', icon: 'Bot', common: true },
+  { id: 'guided', label: 'Guided', icon: 'MousePointerClick', common: true },
+  { id: 'loiter', label: 'Loiter', icon: 'Circle', common: true },
+  { id: 'rtl', label: 'RTL', icon: 'Home', common: true },
+  { id: 'stabilize', label: 'Stabilize', icon: 'CircleSlash2', common: false },
+  { id: 'acro', label: 'Acro', icon: 'Zap', common: false },
+  { id: 'fbwa', label: 'FBWA', common: false },
+  { id: 'fbwb', label: 'FBWB', common: false },
+  { id: 'cruise', label: 'Cruise', icon: 'Wind', common: false },
+  { id: 'autotune', label: 'Autotune', common: false },
+  { id: 'takeoff', label: 'Takeoff', common: false },
+  { id: 'circle', label: 'Circle', icon: 'RefreshCw', common: false },
+  { id: 'avoid_adsb', label: 'Avoid ADSB', common: false },
+  { id: 'training', label: 'Training', common: false },
+  { id: 'qstabilize', label: 'QStabilize', common: false },
+  { id: 'qhover', label: 'QHover', common: false },
+  { id: 'qloiter', label: 'QLoiter', common: false },
+  { id: 'qland', label: 'QLand', common: false },
+  { id: 'qrtl', label: 'QRTL', common: false },
+  { id: 'qautotune', label: 'QAutotune', common: false },
+  { id: 'qacro', label: 'QAcro', common: false },
+  { id: 'thermal', label: 'Thermal', icon: 'Thermometer', common: false },
+  { id: 'autoland', label: 'Autoland', common: false }
+]
+
+// ---------------------------------------------------------------------------
+// Helper: invert a mode map for string → number lookup (wire encoding)
+// ---------------------------------------------------------------------------
+function invertModeMap(map: Record<number, string>): Record<string, number> {
+  return Object.fromEntries(Object.entries(map).map(([k, v]) => [v, parseInt(k)]))
+}
 
 function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
   const msg = new MissionItemInt(0, 0)
@@ -65,6 +210,9 @@ function buildMissionItemInt(item: MavCommand, seq: number): MissionItemInt {
   return msg
 }
 
+// ---------------------------------------------------------------------------
+// Per-connection session (shared between Copter and Plane)
+// ---------------------------------------------------------------------------
 class ArduPilotSession implements ITelemetrySession {
   private streamParser = new MavLinkStreamParser()
   private pendingUpload: MavCommand[] | null = null
@@ -76,7 +224,10 @@ class ArduPilotSession implements ITelemetrySession {
 
   constructor(
     private readonly sendPacket: (buf: ArrayBuffer) => void,
-    private readonly onPatch: (patch: Partial<VehicleState>) => void
+    private readonly onPatch: (patch: Partial<VehicleState>) => void,
+    private readonly dialect: Dialect<(typeof mavCmdDescription)[number]>,
+    private readonly modeMap: Record<number, string>,
+    private readonly reverseModeMap: Record<string, number>
   ) { }
 
   handleTelemetryMessage(data: Uint8Array): Partial<VehicleState> {
@@ -122,10 +273,11 @@ class ArduPilotSession implements ITelemetrySession {
     }
 
     if (msg.type === 'setMode') {
+      const modeNum = this.reverseModeMap[msg.mode] ?? 0
       const cmd = new SetMode(0, 0)
       cmd.target_system = 1
       cmd.base_mode = MavModeFlag.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED as unknown as MavMode
-      cmd.custom_mode = msg.mode
+      cmd.custom_mode = modeNum
       this.sendPacket(encodePacket(cmd))
       return
     }
@@ -146,7 +298,7 @@ class ArduPilotSession implements ITelemetrySession {
           longitude: reference.lng,
           altitude: 0
         },
-        ardupilot
+        this.dialect
       )
     )
     homeItem.frame = 0 // MAV_FRAME_GLOBAL — absolute altitude for home
@@ -194,7 +346,8 @@ class ArduPilotSession implements ITelemetrySession {
       }, 3000)
 
       const isArmed = (msg.base_mode & MavModeFlag.MAV_MODE_FLAG_SAFETY_ARMED) !== 0
-      const patch: Partial<VehicleState> = { mode: msg.custom_mode, isArmed }
+      const mode = this.modeMap[msg.custom_mode] ?? String(msg.custom_mode)
+      const patch: Partial<VehicleState> = { mode, isArmed }
 
       if (!this.connected) {
         this.connected = true
@@ -248,7 +401,7 @@ class ArduPilotSession implements ITelemetrySession {
     if (msg instanceof GpsRawInt) {
       return {
         gpsSatellites: msg.satellites_visible,
-        gpsFixType: msg.fix_type,
+        gpsFixType: mavGpsFixMap[msg.fix_type] ?? null,
         groundspeed: msg.vel !== 65535 ? msg.vel / 100 : null,
         hdop: msg.eph
       }
@@ -385,74 +538,98 @@ class ArduPilotSession implements ITelemetrySession {
   }
 }
 
-export const ardupilot: Dialect<(typeof mavCmdDescription)[number]> = {
-  name: 'mavlink-ardupilot',
-  commandDescriptions: mavCmdDescription,
-  convert: convertArdupilot,
+// ---------------------------------------------------------------------------
+// Factory: creates an ArduPilot dialect for a specific vehicle type
+// ---------------------------------------------------------------------------
+type VehicleVariant = 'copter' | 'plane'
 
-  getCommandLocation: (cmd) => {
-    const a = mavCmdDescription.find((x) => x.type == cmd.type)
-    if (!a.hasLocation) {
-      return null
-    }
-    //@ts-ignore
-    const b = objectKeys(cmd.params).includes('latitude') ? cmd.params.latitude : null
-    //@ts-ignore
-    const c = objectKeys(cmd.params).includes('longitude') ? cmd.params.longitude : null
-    if (b === null || c === null) {
-      return null
-    }
-    return { lat: b, lng: c }
-  },
+function createArdupilotDialect(variant: VehicleVariant): Dialect<(typeof mavCmdDescription)[number]> {
+  const modeMap = variant === 'copter' ? copterModeMap : planeModeMap
+  const reverseModeMap = invertModeMap(modeMap)
+  const availableModes = variant === 'copter' ? copterAvailableModes : planeAvailableModes
 
-  getCommandLocationAlt: (cmd) => {
-    const a = mavCmdDescription.find((x) => x.type == cmd.type)
-    if (!a.hasLocation) {
-      return null
-    }
-    //@ts-ignore
-    const b = objectKeys(cmd.params).includes('latitude') ? cmd.params.latitude : null
-    //@ts-ignore
-    const c = objectKeys(cmd.params).includes('longitude') ? cmd.params.longitude : null
-    //@ts-ignore
-    const d = objectKeys(cmd.params).includes('altitude') ? cmd.params.altitude : null
-    if (b === null || c === null || d === null) {
-      return null
-    }
-    return { lat: b, lng: c, alt: d }
-  },
+  let dialect: Dialect<(typeof mavCmdDescription)[number]>
 
-  getCommandLabel: (cmd) => {
-    const a = mavCmdDescription.find((x) => x.type == cmd.type)
-    return a.label
-  },
+  dialect = {
+    id: variant === 'copter' ? 'ardupilot-copter' : 'ardupilot-plane',
+    name: variant === 'copter' ? 'ArduCopter' : 'ArduPlane',
+    availableModes,
+    commandDescriptions: mavCmdDescription,
+    convert: convertArdupilot,
 
-  fileFormats: [
-    {
-      name: 'Readyflight JSON',
-      id: 'RFJSON1',
-      export: (mission, vehicle) => exportRFJSON1(mission, vehicle, ardupilot),
-      // @ts-ignore
-      import: (blob) => importRFJSON1(blob),
-      ext: '.json'
+    getCommandLocation: (cmd) => {
+      const a = mavCmdDescription.find((x) => x.type == cmd.type)
+      if (!a.hasLocation) {
+        return null
+      }
+      //@ts-ignore
+      const b = objectKeys(cmd.params).includes('latitude') ? cmd.params.latitude : null
+      //@ts-ignore
+      const c = objectKeys(cmd.params).includes('longitude') ? cmd.params.longitude : null
+      if (b === null || c === null) {
+        return null
+      }
+      return { lat: b, lng: c }
     },
-    {
-      name: '.waypoints',
-      id: 'QGCmission',
-      export: (mission, _) => exportQGCWaypoints(mission),
-      import: (blob) => importQGCWaypoints(blob, ardupilot),
-      ext: '.waypoints'
-    }
-  ],
 
-  supportedRFCommands: {
-    'RF.DubinsPath': true,
-    'RF.Group': true,
-    'RF.SetServo': true,
-    'RF.Land': true,
-    'RF.Takeoff': true,
-    'RF.Waypoint': true
-  },
+    getCommandLocationAlt: (cmd) => {
+      const a = mavCmdDescription.find((x) => x.type == cmd.type)
+      if (!a.hasLocation) {
+        return null
+      }
+      //@ts-ignore
+      const b = objectKeys(cmd.params).includes('latitude') ? cmd.params.latitude : null
+      //@ts-ignore
+      const c = objectKeys(cmd.params).includes('longitude') ? cmd.params.longitude : null
+      //@ts-ignore
+      const d = objectKeys(cmd.params).includes('altitude') ? cmd.params.altitude : null
+      if (b === null || c === null || d === null) {
+        return null
+      }
+      return { lat: b, lng: c, alt: d }
+    },
 
-  createSession: (sendPacket, onPatch) => new ArduPilotSession(sendPacket, onPatch)
+    getCommandLabel: (cmd) => {
+      const a = mavCmdDescription.find((x) => x.type == cmd.type)
+      return a.label
+    },
+
+    fileFormats: [
+      {
+        name: 'Readyflight JSON',
+        id: 'RFJSON1',
+        export: (mission, vehicle) => exportRFJSON1(mission, vehicle, dialect),
+        // @ts-ignore
+        import: (blob) => importRFJSON1(blob),
+        ext: '.json'
+      },
+      {
+        name: '.waypoints',
+        id: 'QGCmission',
+        export: (mission, _) => exportQGCWaypoints(mission),
+        import: (blob) => importQGCWaypoints(blob, dialect),
+        ext: '.waypoints'
+      }
+    ],
+
+    supportedRFCommands: {
+      'RF.DubinsPath': true,
+      'RF.Group': true,
+      'RF.SetServo': true,
+      'RF.Land': true,
+      'RF.Takeoff': true,
+      'RF.Waypoint': true
+    },
+
+    createSession: (sendPacket, onPatch) =>
+      new ArduPilotSession(sendPacket, onPatch, dialect, modeMap, reverseModeMap)
+  }
+
+  return dialect
 }
+
+export const ardupilotCopter = createArdupilotDialect('copter')
+export const ardupilotPlane = createArdupilotDialect('plane')
+
+/** @deprecated Use ardupilotPlane or ardupilotCopter instead */
+export const ardupilot = ardupilotPlane
