@@ -1,3 +1,17 @@
 /// <reference types="vite/client" />
 
-declare const __GIT_VERSION__: string
+import type { ConnectionMessage, ConnectionCommand } from '@libs/connection/types'
+
+declare global {
+  var __GIT_VERSION__: string
+
+  interface Window {
+    api?: {
+      connection: {
+        sendCommand: (msg: ConnectionCommand) => void
+        onMessage: (handler: (msg: ConnectionMessage) => void) => () => void
+      }
+    }
+    env?: { isElectron?: boolean }
+  }
+}

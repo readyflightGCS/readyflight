@@ -155,7 +155,7 @@ function AirspeedTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => <Airspeed speed={airspeed} size={size} showBox={false} />}
+      {(size) => <Airspeed speed={airspeed} size={String(size)} showBox={false} />}
     </ResponsiveIndicator>
   )
 }
@@ -165,7 +165,7 @@ function HeadingTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => <HeadingIndicator heading={heading} size={size} showBox={false} />}
+      {(size) => <HeadingIndicator heading={heading} size={String(size)} showBox={false} />}
     </ResponsiveIndicator>
   )
 }
@@ -175,7 +175,9 @@ function AttitudeTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => <AttitudeIndicator pitch={pitch} roll={roll} size={size} showBox={false} />}
+      {(size) => (
+        <AttitudeIndicator pitch={pitch} roll={roll} size={String(size)} showBox={false} />
+      )}
     </ResponsiveIndicator>
   )
 }
@@ -185,7 +187,7 @@ function AltitudeTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => <Altimeter altitude={altitude * 10} size={size} showBox={false} />}
+      {(size) => <Altimeter altitude={altitude * 10} size={String(size)} showBox={false} />}
     </ResponsiveIndicator>
   )
 }

@@ -55,7 +55,7 @@ export default function ConnectionHandler() {
     }
 
     if (isElectron) {
-      const api = (window as Window & typeof globalThis).api.connection
+      const api = window.api!.connection
 
       const sendPacket = (buf: ArrayBuffer) => {
         api.sendCommand({ type: 'sendData', payload: new Uint8Array(buf) })

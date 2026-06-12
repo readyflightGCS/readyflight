@@ -1,5 +1,9 @@
 import { useMission } from '@libs/stores/mission'
-import { CommandParameterDescriptionN, DialectCommandDescription, MissionCommand } from '@libs/commands/command'
+import {
+  CommandParameterDescriptionN,
+  DialectCommandDescription,
+  MissionCommand
+} from '@libs/commands/command'
 import { getCommandDescription } from '@libs/commands/helpers'
 import { LatLngEditor } from './LatLngEditor'
 import Parameter from './parameter'

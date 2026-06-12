@@ -1,9 +1,9 @@
-import ParamEditor from './mission/paramEdit'
+import ParamEditor from './paramEdit'
 import { ReactNode } from 'react'
 import { Separator } from '@/components/ui/separator'
-import HeightMap from './mission/terrain/heightMap'
+import HeightMap from './terrain/heightMap'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Optimise } from './mission/optimise'
+import { Optimise } from './optimise'
 
 const tabs = [
   { name: 'Parameter', component: <ParamEditor /> },
@@ -12,7 +12,7 @@ const tabs = [
   { name: 'Mission Check', component: <div /> }
 ] as const satisfies { name: string; component: ReactNode }[]
 
-export default function mission() {
+export default function MissionBottomPanel() {
   return (
     <div className="w-200">
       <Tabs defaultValue={tabs[0].name} className="flex-row">

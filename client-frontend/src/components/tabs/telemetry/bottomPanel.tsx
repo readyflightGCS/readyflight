@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
-import TelemetryTable from './telemetry/telemetryTable'
-import TelemetryIndicators from './telemetry/telemetryIndicators'
-import TelemetryMixed from './telemetry/telemetryMixed'
+import TelemetryTable from './telemetryTable'
+import TelemetryIndicators from './telemetryIndicators'
+import TelemetryMixed from './telemetryMixed'
 
 const tabs = [
   { name: 'Table', component: <TelemetryTable /> },
