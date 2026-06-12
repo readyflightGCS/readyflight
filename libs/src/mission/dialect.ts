@@ -18,7 +18,7 @@ export type ITelemetrySession = {
   handleTelemetryMessage(data: Uint8Array): Partial<VehicleState>
   /** Encode and send a vehicle command over the captured sendPacket. */
   handleSendTelemetryMessage(msg: VehicleCommand): void
-  /** Begin the a mission upload for a given mission. */
+  /** Begin the mission upload for a given mission. */
   uploadMission(mission: Mission<DialectCommandDescription>): void
   /** Cancel all timers and release resources. Call on disconnect. */
   destroy(): void
