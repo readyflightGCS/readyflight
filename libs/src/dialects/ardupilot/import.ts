@@ -1,5 +1,5 @@
 import { DialectCommand } from '@libs/commands/command'
-import { Mission } from '../mission'
+import { Mission } from '@libs/mission/mission'
 import { mavCmdDescription } from './commands'
 import { Result } from '@libs/util/try-catch'
 import { Vehicle } from '@libs/vehicle/types'

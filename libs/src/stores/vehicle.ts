@@ -58,7 +58,6 @@ const initialState: VehicleState = {
   missionSeq: null,
   missionTotal: null,
   sendMessage: null, // All readyflight commands will be passed through this
-  sendPacket: null, // For when your dialect requires access outside of sendMessage.
   uploadMission: null
 }
 

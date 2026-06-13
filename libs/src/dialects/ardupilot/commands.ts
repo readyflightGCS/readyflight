@@ -167,6 +167,7 @@ export const mavCmdDescription = [
     description: 'Loiter around this waypoint an unlimited amount of time',
     hasLocation: true,
     isDestination: true,
+    drawRadius: 'radius',
     parameters: [
       null,
       null,
@@ -236,6 +237,7 @@ export const mavCmdDescription = [
     description: 'Loiter around this waypoint for X turns',
     hasLocation: true,
     isDestination: true,
+    drawRadius: 'radius',
     parameters: [
       {
         parameterType: 'number',
@@ -314,6 +316,7 @@ export const mavCmdDescription = [
     description: 'Loiter around this waypoint for X seconds',
     hasLocation: true,
     isDestination: true,
+    drawRadius: 'radius',
     parameters: [
       {
         parameterType: 'number',
@@ -590,6 +593,7 @@ export const mavCmdDescription = [
       "Begin loiter at the specified Latitude and Longitude.  If Lat=Lon=0, then loiter at the current position.  Don't consider the navigation command complete (don't leave loiter) until the altitude has been reached. Additionally, if the Heading Required parameter is non-zero the aircraft will not leave the loiter until heading toward the next waypoint.",
     hasLocation: true,
     isDestination: true,
+    drawRadius: 'radius',
     parameters: [
       {
         parameterType: 'number',

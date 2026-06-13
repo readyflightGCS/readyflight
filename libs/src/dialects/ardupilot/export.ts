@@ -1,5 +1,5 @@
 import { CommandParams, DialectCommand, RFCommand } from '@libs/commands/command'
-import { Mission } from '../mission'
+import { Mission } from '@libs/mission/mission'
 import { mavCmdDescription } from './commands'
 import { dubinsBetweenDubins, localiseDubinsPath } from '@libs/dubins/dubinWaypoints'
 import { g2l } from '@libs/world/conversion'
