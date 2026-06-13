@@ -1,6 +1,4 @@
 import { useMission } from '@libs/stores/mission'
-import { useDialect } from '@libs/stores/dialect'
-import { dialectRegistry } from '@libs/dialects/dialectRegistry'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -13,34 +11,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import NumericInput from '@/components/ui/numericInput'
 import { getMinTurnRadius } from '@libs/dubins/dubinWaypoints'
 import { defaultCopter, defaultPlane } from '@libs/vehicle/defaults'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import ExportMission from './export'
 import ImportMission from './import'
 
 export default function MissionDialog() {
   const [vehicle, setVehicle] = useMission((s) => [s.vehicle, s.setVehicle])
-  const activeDialectId = useDialect((s) => s.activeDialectId)
-  const setDialect = useDialect((s) => s.setDialect)
-  const switchMissionDialect = useMission((s) => s.switchDialect)
-
-  function handleDialectChange(id: string) {
-    if (id === activeDialectId) return
-    const confirmed = window.confirm(
-      'Switching dialect will clear your current mission and disconnect any active vehicle connection. Continue?'
-    )
-    if (!confirmed) return
-    const newDialect = dialectRegistry.find((d) => d.id === id)
-    if (!newDialect) return
-    setDialect(id)
-    switchMissionDialect(newDialect)
-  }
 
   return (
     <Dialog>
@@ -51,24 +26,6 @@ export default function MissionDialog() {
         <DialogHeader>
           <DialogTitle className="text-foreground">Mission Settings</DialogTitle>
         </DialogHeader>
-
-        <div>
-          <h2 className="text-foreground">Mission Dialect</h2>
-          <Select value={activeDialectId} onValueChange={handleDialectChange}>
-            <SelectTrigger className="text-foreground">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {dialectRegistry.map((d) => (
-                <SelectItem key={d.id} value={d.id}>
-                  {d.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Separator />
 
         <div>
           <h2 className="text-foreground">Mission Vehicle</h2>
