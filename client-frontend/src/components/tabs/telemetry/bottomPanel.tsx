@@ -12,8 +12,8 @@ const tabs = [
 
 export default function Telemetry() {
   return (
-    <div className="w-200">
-      <Tabs defaultValue={tabs[0].name} className="flex-row">
+    <div className="w-200 h-full">
+      <Tabs defaultValue={tabs[0].name} className="flex-row h-full">
         <TabsList className="flex flex-col h-fit w-40">
           {tabs.map((tab) => (
             <TabsTrigger key={tab.name} value={tab.name} className="w-[100%] justify-start">
