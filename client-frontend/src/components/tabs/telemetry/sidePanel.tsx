@@ -70,7 +70,11 @@ function ArmDisarmSection() {
           </DialogContent>
         </Dialog>
 
-        <Button disabled={isArmed !== true} className="flex-1" onClick={() => sendMessage?.({ type: 'disarm' })}>
+        <Button
+          disabled={isArmed !== true}
+          className="flex-1"
+          onClick={() => sendMessage?.({ type: 'disarm' })}
+        >
           Disarm
         </Button>
       </div>
@@ -117,7 +121,6 @@ function FlightModesSection() {
           </SelectContent>
         </Select>
       )}
-
     </SidePanelSection>
   )
 }

@@ -64,76 +64,76 @@ export default function SubMissionList() {
         onConfirm={handleConfirm}
         onCancel={() => setPending(null)}
       />
-    <div className="flex flex-col">
-      {subMissionInfo.map((subMission, id) => {
-        const canAdd = !noAddNames.includes(subMission.name)
+      <div className="flex flex-col">
+        {subMissionInfo.map((subMission, id) => {
+          const canAdd = !noAddNames.includes(subMission.name)
 
-        return (
-          <ListItem
-            name={`${subMission.name} (${subMission.cmdCount})`}
-            icon={
-              subMission.name == 'Geofence' ? (
-                <span>
-                  <Fence />
-                </span>
-              ) : subMission.name == 'Markers' ? (
-                <span>
-                  <MapPin />
-                </span>
-              ) : subMission.name == 'Landing' ? (
-                <span>
-                  <PlaneLanding />
-                </span>
-              ) : subMission.name == 'Takeoff' ? (
-                <span>
-                  <PlaneTakeoff />
-                </span>
-              ) : (
-                <span>
-                  <Route />
-                </span>
-              )
-            }
-            className="justify-start"
-            key={id}
-            onClick={() => setSelectedSubMission(subMission.name)}
-            selected={selectedSubMission == subMission.name}
-            menuItems={
-              <>
-                {canAdd ? (
-                  <DropdownMenuItem
-                    onClick={() => addSub(subMission.name)}
-                    className="gap-2"
-                    disabled={selectedSubMission === subMission.name}
-                  >
-                    <CornerLeftUp className="h-4 w-4" />
-                    <span>Add to Mission</span>
-                  </DropdownMenuItem>
-                ) : null}
-
-                {['Main', 'Geofence', 'Markers'].includes(selectedSubMission) ? (
-                  <DropdownMenuItem
-                    onClick={() => setPending({ type: 'clear', missionName: subMission.name })}
-                    className="gap-2 text-red-500 hover:text-red-500"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span>Clear</span>
-                  </DropdownMenuItem>
+          return (
+            <ListItem
+              name={`${subMission.name} (${subMission.cmdCount})`}
+              icon={
+                subMission.name == 'Geofence' ? (
+                  <span>
+                    <Fence />
+                  </span>
+                ) : subMission.name == 'Markers' ? (
+                  <span>
+                    <MapPin />
+                  </span>
+                ) : subMission.name == 'Landing' ? (
+                  <span>
+                    <PlaneLanding />
+                  </span>
+                ) : subMission.name == 'Takeoff' ? (
+                  <span>
+                    <PlaneTakeoff />
+                  </span>
                 ) : (
-                  <DropdownMenuItem
-                    onClick={() => setPending({ type: 'delete', missionName: subMission.name })}
-                    className="gap-2 text-red-500 hover:text-red-500"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
-                  </DropdownMenuItem>
-                )}
-              </>
-            }
-          />
-        )
-      })}
-    </div>
+                  <span>
+                    <Route />
+                  </span>
+                )
+              }
+              className="justify-start"
+              key={id}
+              onClick={() => setSelectedSubMission(subMission.name)}
+              selected={selectedSubMission == subMission.name}
+              menuItems={
+                <>
+                  {canAdd ? (
+                    <DropdownMenuItem
+                      onClick={() => addSub(subMission.name)}
+                      className="gap-2"
+                      disabled={selectedSubMission === subMission.name}
+                    >
+                      <CornerLeftUp className="h-4 w-4" />
+                      <span>Add to Mission</span>
+                    </DropdownMenuItem>
+                  ) : null}
+
+                  {['Main', 'Geofence', 'Markers'].includes(selectedSubMission) ? (
+                    <DropdownMenuItem
+                      onClick={() => setPending({ type: 'clear', missionName: subMission.name })}
+                      className="gap-2 text-red-500 hover:text-red-500"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span>Clear</span>
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={() => setPending({ type: 'delete', missionName: subMission.name })}
+                      className="gap-2 text-red-500 hover:text-red-500"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      <span>Delete</span>
+                    </DropdownMenuItem>
+                  )}
+                </>
+              }
+            />
+          )
+        })}
+      </div>
     </>
   )
 }

@@ -137,8 +137,6 @@ export function useMapClickHandler() {
         }
         break
       }
-      case 'Vehicle':
-        break
       default: {
         const _exhaustiveCheck: never = currentTab
         return _exhaustiveCheck

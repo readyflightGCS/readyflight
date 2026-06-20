@@ -19,7 +19,7 @@ import type {
   ConnectionStats,
   ConnectionStatus
 } from '@libs/connection/types'
-import { Wifi, Usb, X, Circle, RefreshCw, Lock } from 'lucide-react'
+import { Wifi, Usb, X, Circle, RefreshCw } from 'lucide-react'
 import SidePanelSection from '../ui/sidePanelSection'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { useVehicle } from '@libs/stores/vehicle'
@@ -115,7 +115,7 @@ function ActiveConnection({ conn }: { conn: ConnectionStats }) {
   return (
     <SidePanelSection>
       <div className="flex items-center gap-2">
-        <StatusDot status={conn.bytesPerSec > 0 ? "active" : "connecting"} />
+        <StatusDot status={conn.bytesPerSec > 0 ? 'active' : 'connecting'} />
         <span className="flex-1 truncate font-medium">{conn.type}</span>
         <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground flex items-center gap-1">
           {conn.type === 'udp' ? (
@@ -145,10 +145,7 @@ function ActiveConnection({ conn }: { conn: ConnectionStats }) {
           </>
         )}
       </div>
-      <div className="w-full text-center">
-
-        {connected ? 'UAV Connected' : 'UAV Not Connected'}
-      </div>
+      <div className="w-full text-center">{connected ? 'UAV Connected' : 'UAV Not Connected'}</div>
     </SidePanelSection>
   )
 }
