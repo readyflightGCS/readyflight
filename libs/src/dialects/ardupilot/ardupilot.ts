@@ -40,7 +40,8 @@ import { VehicleCommand } from '@libs/vehicle/commands'
 import { CopterMode } from './mavlink-assets/enums/copter-mode'
 import { PlaneMode } from './mavlink-assets/enums/plane-mode'
 import { GpsFixType } from '@libs/vehicle/gps'
-import { DialectMode } from '../dialect'
+import { DialectMode, VehicleAction } from '../dialect'
+import { MissionSetCurrent } from './mavlink-assets/messages/mission-set-current'
 import { Mission } from '@libs/mission/mission'
 import { exportRFJSON1 } from '@libs/mission/format/json1/export'
 
@@ -538,6 +539,41 @@ class ArduPilotSession implements ITelemetrySession {
 }
 
 // ---------------------------------------------------------------------------
+// Actions: one-shot vehicle commands exposed in the Actions panel
+// ---------------------------------------------------------------------------
+const ardupilotActions: VehicleAction[] = [
+  { id: 'takeoff', label: 'Takeoff', icon: 'ArrowUpFromLine' },
+  { id: 'restartMission', label: 'Restart Mission', icon: 'RotateCcw' }
+]
+
+function handleArdupilotAction(id: string, sendPacket: (buf: ArrayBuffer) => void): void {
+  if (id === 'takeoff') {
+    const cmd = new CommandLong(0, 0)
+    cmd.target_system = 1
+    cmd.target_component = 1
+    cmd.command = MavCmd.MAV_CMD_NAV_TAKEOFF
+    cmd.param1 = 0
+    cmd.param2 = 0
+    cmd.param3 = 0
+    cmd.param4 = 0
+    cmd.param5 = 0
+    cmd.param6 = 0
+    cmd.param7 = 10
+    sendPacket(encodePacket(cmd))
+    return
+  }
+  if (id === 'restartMission') {
+    const msg = new MissionSetCurrent(0, 0)
+    msg.target_system = 1
+    msg.target_component = 1
+    msg.seq = 0
+    sendPacket(encodePacket(msg))
+    return
+  }
+  console.warn(`[ardupilot] Unknown action: ${id}`)
+}
+
+// ---------------------------------------------------------------------------
 // Factory: creates an ArduPilot dialect for a specific vehicle type
 // ---------------------------------------------------------------------------
 type VehicleVariant = 'copter' | 'plane'
@@ -553,6 +589,8 @@ function createArdupilotDialect(variant: VehicleVariant): Dialect<(typeof mavCmd
     id: variant === 'copter' ? 'ardupilot-copter' : 'ardupilot-plane',
     name: variant === 'copter' ? 'ArduCopter' : 'ArduPlane',
     availableModes,
+    actions: ardupilotActions,
+    handleVehicleAction: handleArdupilotAction,
     commandDescriptions: mavCmdDescription,
     convert: convertArdupilot,
 

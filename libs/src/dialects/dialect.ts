@@ -33,6 +33,16 @@ export type ITelemetrySession = {
  * @template CD - The command description type supported by this dialect.
  */
 
+/** A one-shot action the vehicle can perform, as declared by the dialect. */
+export type VehicleAction = {
+  /** Stable machine-readable id passed to handleVehicleAction */
+  id: string
+  /** Human-readable label shown in the UI */
+  label: string
+  /** Optional icon from the ReadyFlight icon set */
+  icon?: RFIcon
+}
+
 /** A mode the vehicle can be switched into, as declared by the dialect. */
 export type DialectMode = {
   /** Stable machine-readable id sent via SetModeCommand and stored in VehicleState.mode */
@@ -59,6 +69,19 @@ export type Dialect<CD extends DialectCommandDescription> = {
    * Modes with common=true get top-level buttons; others go in the dropdown.
    */
   availableModes: DialectMode[]
+
+  /**
+   * One-shot actions this dialect exposes (e.g. Takeoff, Restart Mission).
+   * Rendered as buttons in the Actions panel.
+   */
+  actions: VehicleAction[]
+
+  /**
+   * Execute an action by id. sendPacket is the raw transport write for this
+   * connection — the implementation encodes and sends the appropriate wire
+   * command(s) directly.
+   */
+  handleVehicleAction(id: string, sendPacket: (buf: ArrayBuffer) => void): void
 
   /**
    * Convert a mission into a lsit of dialect specific commands.

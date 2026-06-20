@@ -14,38 +14,28 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 
 export default function TelemetrySidePanel() {
-  const [sendMessage] = useVehicle((v) => [v.sendMessage])
-  const availableModes = useDialect((d) => d.activeDialect.availableModes)
-
-  const commonModes = availableModes.filter((m) => m.common)
-
   return (
     <div className="flex flex-col gap-3">
       <ConnectionsPanel />
-
-      <div className="flex flex-col gap-1">
-        <ArmDisarmSection />
-
-        {commonModes.map((mode) => {
-          const IconComponent = mode.icon ? rfIconMap[mode.icon] : null
-          return (
-            <Button key={mode.id} onClick={() => sendMessage?.({ type: 'setMode', mode: mode.id })}>
-              {IconComponent && <IconComponent />}
-              {mode.label}
-            </Button>
-          )
-        })}
-
-        <Button onClick={() => sendMessage?.({ type: 'launch', height: 10 })}>Takeoff</Button>
-      </div>
+      <ArmDisarmSection />
+      <FlightModesSection />
+      <ActionsSection />
     </div>
   )
 }
 
 function ArmDisarmSection() {
-  const [isArmed, sendMessage] = useVehicle((v) => [v.isArmed, v.sendMessage])
+  const isArmed = useVehicle((v) => v.isArmed)
+  const sendMessage = useVehicle((v) => v.sendMessage)
 
   return (
     <SidePanelSection title="Arm / Disarm">
@@ -83,6 +73,73 @@ function ArmDisarmSection() {
         <Button disabled={isArmed !== true} className="flex-1" onClick={() => sendMessage?.({ type: 'disarm' })}>
           Disarm
         </Button>
+      </div>
+    </SidePanelSection>
+  )
+}
+
+function FlightModesSection() {
+  const sendMessage = useVehicle((v) => v.sendMessage)
+  const availableModes = useDialect((d) => d.activeDialect.availableModes)
+
+  const primaryModes = availableModes.filter((m) => m.common)
+  const secondaryModes = availableModes.filter((m) => !m.common)
+
+  function setMode(modeId: string) {
+    sendMessage?.({ type: 'setMode', mode: modeId })
+  }
+
+  return (
+    <SidePanelSection title="Flight Modes">
+      <div className="grid grid-cols-2">
+        {primaryModes.map((mode) => {
+          const IconComponent = mode.icon ? rfIconMap[mode.icon] : null
+          return (
+            <Button className="w-full" key={mode.id} onClick={() => setMode(mode.id)}>
+              {IconComponent && <IconComponent />}
+              {mode.label}
+            </Button>
+          )
+        })}
+      </div>
+
+      {secondaryModes.length > 0 && (
+        <Select value="" onValueChange={(id) => setMode(id)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="More modes..." />
+          </SelectTrigger>
+          <SelectContent>
+            {secondaryModes.map((mode) => (
+              <SelectItem key={mode.id} value={mode.id}>
+                {mode.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+    </SidePanelSection>
+  )
+}
+
+function ActionsSection() {
+  const triggerAction = useVehicle((v) => v.triggerAction)
+  const actions = useDialect((d) => d.activeDialect.actions)
+
+  if (actions.length === 0) return null
+
+  return (
+    <SidePanelSection title="Actions">
+      <div className="flex flex-col gap-1">
+        {actions.map((action) => {
+          const IconComponent = action.icon ? rfIconMap[action.icon] : null
+          return (
+            <Button className="w-full" key={action.id} onClick={() => triggerAction?.(action.id)}>
+              {IconComponent && <IconComponent />}
+              {action.label}
+            </Button>
+          )
+        })}
       </div>
     </SidePanelSection>
   )
