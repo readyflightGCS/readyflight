@@ -1,4 +1,4 @@
-import { Dialect } from '@libs/mission/dialect'
+import { Dialect } from '@libs/dialects/dialect'
 import {
   CommandParameterUnion,
   CommandParams,

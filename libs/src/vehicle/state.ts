@@ -1,8 +1,10 @@
 import { VehicleCommand } from './commands'
+import { GpsFixType } from './gps'
 
 export type VehicleState = {
   connected: boolean
-  mode: number | null
+  /** Human-readable mode string provided by the dialect (e.g. "guided", "auto"). */
+  mode: string | null
   isArmed: boolean | null
   lat: number | null
   lon: number | null
@@ -24,7 +26,7 @@ export type VehicleState = {
   batteryConsumedmAh: number | null // percent 0–100, -1 = not available
   groundspeed: number | null // m/s
   gpsSatellites: number | null
-  gpsFixType: number | null
+  gpsFixType: GpsFixType | null
   hdop: number | null
   windDirection: number | null
   windHSpeed: number | null
@@ -50,6 +52,5 @@ export type VehicleState = {
   missionSeq: number | null
   missionTotal: number | null
   sendMessage: ((msg: VehicleCommand) => void) | null
-  sendPacket: ((buf: ArrayBuffer) => void) | null
   uploadMission: ((mission: unknown) => void) | null
 }

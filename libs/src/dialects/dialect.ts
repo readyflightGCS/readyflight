@@ -1,4 +1,4 @@
-import { Mission } from './mission'
+import { Mission } from '@libs/mission/mission'
 import { LatLng, LatLngAlt } from '@libs/world/latlng'
 import {
   DialectCommand,
@@ -10,6 +10,7 @@ import { Result } from '@libs/util/try-catch'
 import { Vehicle } from '@libs/vehicle/types'
 import { VehicleCommand } from '@libs/vehicle/commands'
 import { VehicleState } from '@libs/vehicle/state'
+import { RFIcon } from '@libs/ui/icons'
 
 /** Per-connection stateful runtime for a dialect. Owns the stream parser,
  *  upload handshake, and heartbeat timers for one vehicle connection. */
@@ -32,11 +33,32 @@ export type ITelemetrySession = {
  * @template CD - The command description type supported by this dialect.
  */
 
+/** A mode the vehicle can be switched into, as declared by the dialect. */
+export type DialectMode = {
+  /** Stable machine-readable id sent via SetModeCommand and stored in VehicleState.mode */
+  id: string
+  /** Human-readable label shown in the UI */
+  label: string
+  /** Optional icon from the ReadyFlight icon set */
+  icon?: RFIcon
+  /** If true the mode gets a top-level button; if false it goes in the overflow dropdown */
+  common: boolean
+}
+
 export type Dialect<CD extends DialectCommandDescription> = {
+  /** Stable machine-readable identifier, e.g. "ardupilot-plane" */
+  id: string
+
   /**
    * Human readable name of the dialect
    */
   name: string
+
+  /**
+   * List of modes this dialect supports, used to render mode-switch controls.
+   * Modes with common=true get top-level buttons; others go in the dropdown.
+   */
+  availableModes: DialectMode[]
 
   /**
    * Convert a mission into a lsit of dialect specific commands.

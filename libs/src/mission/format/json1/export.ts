@@ -1,7 +1,7 @@
 import { Mission } from '@libs/mission/mission'
 import { Vehicle } from '@libs/vehicle/types'
 import { RFJSON1 } from './schema'
-import { Dialect } from '@libs/mission/dialect'
+import { Dialect } from '@libs/dialects/dialect'
 import { Result } from '@libs/util/try-catch'
 import { DialectCommandDescription } from '@libs/commands/command'
 

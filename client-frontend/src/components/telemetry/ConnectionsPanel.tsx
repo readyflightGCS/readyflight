@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { useConnections } from '@libs/stores/connections'
+import { useDialect } from '@libs/stores/dialect'
+import { useMission } from '@libs/stores/mission'
+import { dialectRegistry } from '@libs/dialects/dialectRegistry'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -15,11 +18,49 @@ import type {
   ConnectionStats,
   ConnectionStatus
 } from '@libs/connection/types'
-import { Wifi, Usb, X, Circle, RefreshCw } from 'lucide-react'
+import { Wifi, Usb, X, Circle, RefreshCw, Lock } from 'lucide-react'
 import SidePanelSection from '../ui/sidePanelSection'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
+
+function DialectSelector() {
+  const activeDialectId = useDialect((s) => s.activeDialectId)
+  const setDialect = useDialect((s) => s.setDialect)
+  const switchMissionDialect = useMission((s) => s.switchDialect)
+  const isConnected = useConnections((s) => s.connectionStats.type !== null)
+
+  function handleDialectChange(id: string) {
+    if (id === activeDialectId) return
+    const confirmed = window.confirm('Switching dialect will clear your current mission. Continue?')
+    if (!confirmed) return
+    const newDialect = dialectRegistry.find((d) => d.id === id)
+    if (!newDialect) return
+    setDialect(id)
+    switchMissionDialect(newDialect)
+  }
+
+  return (
+    <SidePanelSection>
+      <div className="flex items-center justify-between">
+        <label className="text-xs text-muted-foreground">Dialect</label>
+        {isConnected && <Lock className="size-3 text-muted-foreground" />}
+      </div>
+      <Select value={activeDialectId} onValueChange={handleDialectChange} disabled={isConnected}>
+        <SelectTrigger className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {dialectRegistry.map((d) => (
+            <SelectItem key={d.id} value={d.id}>
+              {d.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </SidePanelSection>
+  )
+}
 
 interface FormErrors {
   host?: string
@@ -238,16 +279,22 @@ export default function ConnectionsPanel() {
 
   if (availableConnections.length === 0) {
     return (
-      <SidePanelSection>
-        <div className="h-full text-center font-medium">No Available Connections</div>
-        <div className="h-full text-center text-xs">Backend not connected, retrying...</div>
-      </SidePanelSection>
+      <>
+        <DialectSelector />
+        <SidePanelSection>
+          <div className="h-full text-center font-medium">No Available Connections</div>
+          <div className="h-full text-center text-xs">Backend not connected, retrying...</div>
+        </SidePanelSection>
+      </>
     )
   }
 
   return (
-    <SidePanelSection>
-      {connection.type === null ? <AddConnectionForm /> : <ActiveConnection conn={connection} />}
-    </SidePanelSection>
+    <>
+      <DialectSelector />
+      <SidePanelSection>
+        {connection.type === null ? <AddConnectionForm /> : <ActiveConnection conn={connection} />}
+      </SidePanelSection>
+    </>
   )
 }

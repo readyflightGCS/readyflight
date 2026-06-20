@@ -11,14 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import NumericInput from '@/components/ui/numericInput'
 import { getMinTurnRadius } from '@libs/dubins/dubinWaypoints'
 import { defaultCopter, defaultPlane } from '@libs/vehicle/defaults'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import ExportMission from './export'
 import ImportMission from './import'
 
@@ -34,20 +26,6 @@ export default function MissionDialog() {
         <DialogHeader>
           <DialogTitle className="text-foreground">Mission Settings</DialogTitle>
         </DialogHeader>
-
-        <div>
-          <h2 className="text-foreground">Mission Dialect</h2>
-          <Select value="Mavlink">
-            <SelectTrigger className="text-foreground">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Mavlink">Mavlink</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Separator />
 
         <div>
           <h2 className="text-foreground">Mission Vehicle</h2>

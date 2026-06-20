@@ -1,6 +1,6 @@
 import { expect, test } from 'bun:test'
 import { makeCommand } from '../helpers'
-import { ardupilot } from '@libs/mission/ardupilot/ardupilot'
+import { ardupilot } from '@libs/dialects/ardupilot/ardupilot'
 
 test('make command waypoint', () => {
   const a = makeCommand('D.MAV_CMD_NAV_WAYPOINT', {}, ardupilot)

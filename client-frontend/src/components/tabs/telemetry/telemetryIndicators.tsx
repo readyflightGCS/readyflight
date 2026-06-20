@@ -24,36 +24,35 @@ export default function TelemetryIndicators() {
   return (
     <div className="grid grid-cols-3 gap-2 w-full h-full">
       <ResponsiveIndicator>
-        {(size) => <Airspeed speed={airspeed || 0} size={String(size)} showBox={false} />}
+        {/* @ts-ignore size is a number, but accepts string */}
+        {(size) => <Airspeed speed={airspeed || 0} size={size} showBox={false} />}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
-        {(size) => <HeadingIndicator heading={heading || 0} size={String(size)} showBox={false} />}
-      </ResponsiveIndicator>
-
-      <ResponsiveIndicator>
-        {(size) => (
-          <AttitudeIndicator
-            pitch={pitch || 0}
-            roll={roll || 0}
-            size={String(size)}
-            showBox={false}
-          />
-        )}
+        {/* @ts-ignore size is a number, but accepts string */}
+        {(size) => <HeadingIndicator heading={heading || 0} size={size} showBox={false} />}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
         {(size) => (
-          <Altimeter altitude={relativeAltitude * 10 || 0} size={String(size)} showBox={false} />
+          /* @ts-ignore size is a number, but accepts string */
+          <AttitudeIndicator pitch={pitch || 0} roll={roll || 0} size={size} showBox={false} />
         )}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
-        {(size) => <Variometer vario={climb * 40 || 0} size={String(size)} showBox={false} />}
+        {/* @ts-ignore size is a number, but accepts string */}
+        {(size) => <Altimeter altitude={relativeAltitude * 10 || 0} size={size} showBox={false} />}
       </ResponsiveIndicator>
 
       <ResponsiveIndicator>
-        {(size) => <TurnCoordinator turn={ssa || 0} size={String(size)} showBox={false} />}
+        {/* @ts-ignore size is a number, but accepts string */}
+        {(size) => <Variometer vario={climb * 40 || 0} size={size} showBox={false} />}
+      </ResponsiveIndicator>
+
+      <ResponsiveIndicator>
+        {/* @ts-ignore size is a number, but accepts string */}
+        {(size) => <TurnCoordinator turn={ssa || 0} size={size} showBox={false} />}
       </ResponsiveIndicator>
     </div>
   )

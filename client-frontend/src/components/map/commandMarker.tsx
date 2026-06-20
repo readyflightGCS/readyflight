@@ -40,15 +40,13 @@ export default function CommandMarker({
 
   let a = 0
 
-  // Add loiter radius
-  if (
-    viewable['loiter radius'] &&
-    (command.cmd.type === 'D.MAV_CMD_NAV_LOITER_UNLIM' ||
-      command.cmd.type === 'D.MAV_CMD_NAV_LOITER_TURNS' ||
-      command.cmd.type === 'D.MAV_CMD_NAV_LOITER_TIME')
-  ) {
+  // Add loiter radius — driven by drawRadius on the command description
+  const cmdDesc = dialect.commandDescriptions.find((d) => d.type === command.cmd.type)
+  const drawRadiusParam = cmdDesc?.drawRadius
+
+  if (viewable['loiter radius'] && drawRadiusParam) {
     // make sure the right radius is used, default to plane specific, otherwise use command param
-    let radius = (command.cmd.params as { radius: number }).radius as number
+    let radius = (command.cmd.params as Record<string, number>)[drawRadiusParam] as number
     if (radius === 0 && vehicle.type === 'Plane') {
       radius = getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed)
     }

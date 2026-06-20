@@ -1,15 +1,6 @@
 import { useVehicle } from '@libs/stores/vehicle'
-import { ReactNode } from 'react'
-import {
-  ArrowDownToLine,
-  Bot,
-  CircleSlash2,
-  FoldHorizontal,
-  FoldVertical,
-  Milestone,
-  MousePointerClick
-} from 'lucide-react'
-import { CopterMode } from '@libs/mission/ardupilot/mavlink-assets/enums/copter-mode'
+import { useDialect } from '@libs/stores/dialect'
+import { rfIconMap } from '@/lib/rfIcons'
 
 export default function TelemetryActionBump() {
   return (
@@ -37,59 +28,16 @@ function VehicleArmedStatusIndicator() {
 
 function VehicleModeIndicators() {
   const vehicleMode = useVehicle((v) => v.mode)
+  const availableModes = useDialect((d) => d.activeDialect.availableModes)
 
-  let vehicleModeIcon: ReactNode
+  const modeEntry = vehicleMode !== null ? availableModes.find((m) => m.id === vehicleMode) : null
 
-  if (vehicleMode !== null) {
-    const vehicleModeName = CopterMode[vehicleMode].replace(/^.*?_MODE_/, '').toLowerCase()
-
-    switch (vehicleModeName) {
-      case 'guided': {
-        vehicleModeIcon = <MousePointerClick className="inline align-middle w-4 h-4" />
-        break
-      }
-
-      case 'auto': {
-        vehicleModeIcon = <Bot className="inline align-middle w-4 h-4" />
-        break
-      }
-
-      case 'land': {
-        vehicleModeIcon = <ArrowDownToLine className="inline align-middle w-4 h-4" />
-        break
-      }
-
-      case 'follow': {
-        vehicleModeIcon = <Milestone className="inline align-middle w-4 h-4" />
-        break
-      }
-
-      case 'alt_hold': {
-        vehicleModeIcon = <FoldVertical className="inline align-middle w-4 h-4" />
-        break
-      }
-
-      case 'poshold': {
-        vehicleModeIcon = <FoldHorizontal className="inline align-middle w-4 h-4" />
-        break
-      }
-
-      case 'stabilize': {
-        vehicleModeIcon = <CircleSlash2 className="inline rotate-45 align-middle w-4 h-4" />
-        break
-      }
-
-      default: {
-        vehicleModeIcon = null
-        break
-      }
-    }
-  }
+  const label = modeEntry?.label ?? vehicleMode ?? '-'
+  const IconComponent = modeEntry?.icon ? rfIconMap[modeEntry.icon] : null
 
   return (
     <>
-      {vehicleMode !== null ? CopterMode[vehicleMode].replace(/^.*?_MODE_/, '').toLowerCase() : '-'}{' '}
-      {vehicleModeIcon}
+      {label} {IconComponent && <IconComponent className="inline align-middle w-4 h-4" />}
     </>
   )
 }

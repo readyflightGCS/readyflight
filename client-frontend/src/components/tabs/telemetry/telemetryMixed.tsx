@@ -43,9 +43,7 @@ export default function TelemetryMixed() {
               </td>
 
               <td>Climb : </td>
-              <td>
-                <ClimbText />
-              </td>
+              <ClimbText />
             </tr>
 
             <tr>
@@ -67,7 +65,7 @@ function AirspeedText() {
   if (airspeed !== null) {
     return <>{Math.round(airspeed)}m</>
   } else {
-    ;<>Unknown</>
+    ; <>Unknown</>
   }
 }
 
@@ -78,7 +76,7 @@ function RelativeAltText() {
   if (weightedRelative !== null) {
     return <>{Math.round(weightedRelative)}m</>
   } else {
-    ;<>Unknown</>
+    ; <>Unknown</>
   }
 }
 
@@ -101,7 +99,7 @@ function HeadingText() {
       </>
     )
   } else {
-    ;<>Unknown</>
+    ; <>Unknown</>
   }
 }
 
@@ -155,7 +153,8 @@ function AirspeedTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => <Airspeed speed={airspeed} size={String(size)} showBox={false} />}
+      {/* @ts-ignore size is a number, but accepts string */}
+      {(size) => <Airspeed speed={airspeed} size={size} showBox={false} />}
     </ResponsiveIndicator>
   )
 }
@@ -165,7 +164,8 @@ function HeadingTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => <HeadingIndicator heading={heading} size={String(size)} showBox={false} />}
+      {/* @ts-ignore size is a number, but accepts string */}
+      {(size) => <HeadingIndicator heading={heading} size={size} showBox={false} />}
     </ResponsiveIndicator>
   )
 }
@@ -175,9 +175,8 @@ function AttitudeTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => (
-        <AttitudeIndicator pitch={pitch} roll={roll} size={String(size)} showBox={false} />
-      )}
+      {/* @ts-ignore size is a number, but accepts string */}
+      {(size) => <AttitudeIndicator pitch={pitch} roll={roll} size={size} showBox={false} />}
     </ResponsiveIndicator>
   )
 }
@@ -187,7 +186,8 @@ function AltitudeTelemetryIndicator() {
 
   return (
     <ResponsiveIndicator>
-      {(size) => <Altimeter altitude={altitude * 10} size={String(size)} showBox={false} />}
+      {/* @ts-ignore size is a number, but accepts string */}
+      {(size) => <Altimeter altitude={altitude * 10} size={size} showBox={false} />}
     </ResponsiveIndicator>
   )
 }
