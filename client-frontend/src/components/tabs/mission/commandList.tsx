@@ -21,7 +21,7 @@ export default function CommandList() {
   const missions = Array.from(mission.getMissions())
 
   const hasLanding = missions.includes('Landing')
-  const hasTakeoff = missions.includes('Takeoff')
+  const hasTakeoff = mission.flatten(selectedSubMission).map(x => x.type).includes('RF.Takeoff')
 
   function handleGroup() {
     // get name for mission
@@ -71,13 +71,13 @@ export default function CommandList() {
 
   const missionWithDubinsGroups: (
     | {
-        type: 'cmd'
-        cmd: MissionCommand<DialectCommandDescription>
-      }
+      type: 'cmd'
+      cmd: MissionCommand<DialectCommandDescription>
+    }
     | {
-        type: 'dubins'
-        cmds: MissionCommand<DialectCommandDescription>[]
-      }
+      type: 'dubins'
+      cmds: MissionCommand<DialectCommandDescription>[]
+    }
   )[] = []
 
   let curDubinsPath = []

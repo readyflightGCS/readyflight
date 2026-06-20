@@ -15,11 +15,11 @@ export const tabRegistry = [
     Icon: MapPin,
     view: <MissionTabView />
   },
-  {
+  /*{
     name: 'Vehicle',
     Icon: Plane,
     view: <VehicleTabView />
-  },
+  },*/
   {
     name: 'Settings',
     Icon: Cog,

@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import ConfirmDialog from '@/components/ui/confirmDialog'
 import type {
   UDPTransportConfig,
   SerialTransportConfig,
@@ -30,36 +31,48 @@ function DialectSelector() {
   const setDialect = useDialect((s) => s.setDialect)
   const switchMissionDialect = useMission((s) => s.switchDialect)
   const isConnected = useConnections((s) => s.connectionStats.type !== null)
+  const [pendingDialectId, setPendingDialectId] = useState<string | null>(null)
 
   function handleDialectChange(id: string) {
     if (id === activeDialectId) return
-    const confirmed = window.confirm('Switching dialect will clear your current mission. Continue?')
-    if (!confirmed) return
-    const newDialect = dialectRegistry.find((d) => d.id === id)
-    if (!newDialect) return
-    setDialect(id)
-    switchMissionDialect(newDialect)
+    setPendingDialectId(id)
+  }
+
+  function confirmDialectSwitch() {
+    if (!pendingDialectId) return
+    const newDialect = dialectRegistry.find((d) => d.id === pendingDialectId)
+    if (newDialect) {
+      setDialect(pendingDialectId)
+      switchMissionDialect(newDialect)
+    }
+    setPendingDialectId(null)
   }
 
   return (
-    <SidePanelSection>
-      <div className="flex items-center justify-between">
-        <label className="text-xs text-muted-foreground">Dialect</label>
-        {isConnected && <Lock className="size-3 text-muted-foreground" />}
-      </div>
-      <Select value={activeDialectId} onValueChange={handleDialectChange} disabled={isConnected}>
-        <SelectTrigger className="w-full">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {dialectRegistry.map((d) => (
-            <SelectItem key={d.id} value={d.id}>
-              {d.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </SidePanelSection>
+    <>
+      <ConfirmDialog
+        open={pendingDialectId !== null}
+        title="Switch dialect?"
+        description="Switching dialect will clear your current mission."
+        confirmLabel="Switch"
+        onConfirm={confirmDialectSwitch}
+        onCancel={() => setPendingDialectId(null)}
+      />
+      <SidePanelSection title="Dialect">
+        <Select value={activeDialectId} onValueChange={handleDialectChange} disabled={isConnected}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {dialectRegistry.map((d) => (
+              <SelectItem key={d.id} value={d.id}>
+                {d.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </SidePanelSection>
+    </>
   )
 }
 
