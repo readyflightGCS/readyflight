@@ -6,6 +6,7 @@ export class ConnectionManager {
   private hostAdapter: IHostAdapter
   private statsTimer: ReturnType<typeof setInterval> | null
   private connection: ActiveConnection
+  private bytesAccumulator: number = 0
   private readonly transportAdapters = [
     {
       name: 'serial',
@@ -45,6 +46,8 @@ export class ConnectionManager {
     if (this.connection === null) {
       return
     }
+    this.connection.status.bytesPerSec = this.bytesAccumulator
+    this.bytesAccumulator = 0
     this.hostAdapter.sendMessage({ type: 'status', stats: this.connection.status })
   }
 
@@ -78,7 +81,11 @@ export class ConnectionManager {
             lastReceivedAt: null
           }
         }
-        transport.on('data', (a) => this.hostAdapter.sendMessage({ type: 'sendData', payload: a }))
+        transport.on('data', (a) => {
+          this.bytesAccumulator += a.byteLength
+          this.connection.status.lastReceivedAt = Date.now()
+          this.hostAdapter.sendMessage({ type: 'sendData', payload: a })
+        })
         transport.start(cmd.config).then(() => {
           this.statsTimer = setInterval(() => this.updateStats(), 1000)
         })
@@ -107,6 +114,7 @@ export class ConnectionManager {
         if (this.statsTimer !== null) {
           clearInterval(this.statsTimer)
         }
+        this.bytesAccumulator = 0
         break
       default: {
         const exhaustiveCheck: never = cmd
