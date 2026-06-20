@@ -5,9 +5,9 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-background',
+        default: 'bg-background text-foreground',
         active: 'bg-muted',
-        destructive: 'bg-white dark:bg-card text-red-500 hover:bg-red-100 hover:border-red-200',
+        destructive: 'bg-background border-muted-background text-red-500 hover:border-red-200',
         red: 'bg-red-200 border-red-300 dark:bg-red-800 dark:border-red-700',
         amber: 'bg-amber-200 border-amber-300 dark:bg-amber-700 dark:border-amber-600',
         green: 'bg-green-200 border-green-300 dark:bg-green-700 dark:border-green-600'

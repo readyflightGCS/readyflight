@@ -2,8 +2,18 @@ import { Button } from '@/components/ui/button'
 import { useVehicle } from '@libs/stores/vehicle'
 import { useDialect } from '@libs/stores/dialect'
 import ConnectionsPanel from '@/components/telemetry/ConnectionsPanel'
-import { BicepsFlexed } from 'lucide-react'
 import { rfIconMap } from '@/lib/rfIcons'
+import SidePanelSection from '@/components/ui/sidePanelSection'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
 
 export default function TelemetrySidePanel() {
   const [sendMessage] = useVehicle((v) => [v.sendMessage])
@@ -16,12 +26,7 @@ export default function TelemetrySidePanel() {
       <ConnectionsPanel />
 
       <div className="flex flex-col gap-1">
-        <UavConnectedIndicator />
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <ArmButton />
-        <DisarmButton />
+        <ArmDisarmSection />
 
         {commonModes.map((mode) => {
           const IconComponent = mode.icon ? rfIconMap[mode.icon] : null
@@ -39,40 +44,46 @@ export default function TelemetrySidePanel() {
   )
 }
 
-function UavConnectedIndicator() {
-  const connected = useVehicle((v) => v.connected)
-
-  return <div>{connected ? 'UAV Connected' : 'UAV Not Connected'}</div>
-}
-
-function ArmButton() {
+function ArmDisarmSection() {
   const [isArmed, sendMessage] = useVehicle((v) => [v.isArmed, v.sendMessage])
 
   return (
-    <>
-      <Button
-        disabled={isArmed !== null ? (isArmed ? true : false) : false}
-        className={isArmed !== null ? (isArmed ? 'text-red-400' : '') : ''}
-        onClick={() => sendMessage?.({ type: 'arm' })}
-      >
-        <BicepsFlexed /> Arm
-      </Button>
-    </>
-  )
-}
+    <SidePanelSection title="Arm / Disarm">
+      <p className="text-muted-foreground text-xs">
+        Arming enables the motors. Ensure the area around the vehicle is clear before proceeding.
+      </p>
+      <div className="flex gap-2">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="destructive" disabled={isArmed === true} className="flex-1">
+              Arm
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Arm the vehicle?</DialogTitle>
+              <DialogDescription>
+                This will enable the motors immediately. Keep well clear of the propellers and
+                confirm the area around the vehicle is safe before proceeding.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="default">Cancel</Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button variant="destructive" onClick={() => sendMessage?.({ type: 'arm' })}>
+                  Arm vehicle
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-function DisarmButton() {
-  const [isArmed, sendMessage] = useVehicle((v) => [v.isArmed, v.sendMessage])
-
-  return (
-    <>
-      <Button
-        disabled={isArmed !== null ? (isArmed ? false : true) : false}
-        className={isArmed !== null ? (isArmed ? '' : 'text-green-400') : ''}
-        onClick={() => sendMessage?.({ type: 'disarm' })}
-      >
-        Disarm
-      </Button>
-    </>
+        <Button disabled={isArmed !== true} className="flex-1" onClick={() => sendMessage?.({ type: 'disarm' })}>
+          Disarm
+        </Button>
+      </div>
+    </SidePanelSection>
   )
 }

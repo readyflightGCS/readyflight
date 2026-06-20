@@ -21,6 +21,7 @@ import type {
 import { Wifi, Usb, X, Circle, RefreshCw, Lock } from 'lucide-react'
 import SidePanelSection from '../ui/sidePanelSection'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import { useVehicle } from '@libs/stores/vehicle'
 
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 
@@ -95,12 +96,13 @@ function formatAge(ts: number | null): string {
 function ActiveConnection({ conn }: { conn: ConnectionStats }) {
   const commandSender = useConnections((s) => s.commandSender)
 
+  const connected = useVehicle((v) => v.connected)
   const remove = () => commandSender?.({ type: 'disconnect' })
 
   return (
     <SidePanelSection>
       <div className="flex items-center gap-2">
-        <StatusDot status={conn.status} />
+        <StatusDot status={conn.bytesPerSec > 0 ? "active" : "connecting"} />
         <span className="flex-1 truncate font-medium">{conn.type}</span>
         <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground flex items-center gap-1">
           {conn.type === 'udp' ? (
@@ -129,6 +131,10 @@ function ActiveConnection({ conn }: { conn: ConnectionStats }) {
             <span>{formatAge(conn.lastReceivedAt)}</span>
           </>
         )}
+      </div>
+      <div className="w-full text-center">
+
+        {connected ? 'UAV Connected' : 'UAV Not Connected'}
       </div>
     </SidePanelSection>
   )
