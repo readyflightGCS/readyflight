@@ -27,7 +27,7 @@ type Props = {
 export function HeadingLine({ position, heading, lengthPx = 25, offsetPx = 0 }: Props) {
   const map = useMap()
 
-  let start = map.latLngToLayerPoint(position)
+  const start = map.latLngToLayerPoint(position)
 
   const rad = (heading * Math.PI) / 180
 
@@ -36,7 +36,6 @@ export function HeadingLine({ position, heading, lengthPx = 25, offsetPx = 0 }: 
 
   const startDx = offsetPx * Math.sin(rad)
   const startDy = -offsetPx * Math.cos(rad)
-
 
   const endPoint = {
     x: start.x + endDx,

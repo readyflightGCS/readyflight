@@ -11,7 +11,11 @@ export default function MissionFile() {
   const uploadMission = useVehicle((s) => s.uploadMission)
   const connected = useVehicle((s) => s.connected)
   const mission = useMission((s) => s.mission)
-  const [setVehicle, dialect, setMission] = useMission((s) => [s.setVehicle, s.dialect, s.setMission])
+  const [setVehicle, dialect, setMission] = useMission((s) => [
+    s.setVehicle,
+    s.dialect,
+    s.setMission
+  ])
   const [importing, setImporting] = useState(false)
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,11 +50,7 @@ export default function MissionFile() {
           className="w-full"
           onClick={() => document.getElementById('missionImportInput')?.click()}
         >
-          {importing ? (
-            <LoaderCircle className="animate-spin" />
-          ) : (
-            <FolderOpen />
-          )}
+          {importing ? <LoaderCircle className="animate-spin" /> : <FolderOpen />}
           Import
         </Button>
         <input

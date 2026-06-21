@@ -49,5 +49,5 @@ export const rfIconMap: Record<RFIcon, LucideIcon> = {
   ArrowUpFromLine,
   RotateCcw,
   Helicopter,
-  Drone,
+  Drone
 }
