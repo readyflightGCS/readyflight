@@ -1,12 +1,15 @@
 import { useMission } from '@libs/stores/mission'
 import { avgLatLng } from '@libs/world/latlng'
-import { LayerGroup, Polyline } from 'react-leaflet'
+import { LayerGroup, Marker, Polyline } from 'react-leaflet'
 import InsertBtn from '../insertButton'
 import CommandMarker from '../commandMarker'
 import { getCommandLocation, getCommandLocationAlt } from '@libs/commands/helpers'
 import { useVehicle } from '@libs/stores/vehicle'
-import DraggableMarker from '../draggableMarker'
 import { useEditor } from '@libs/stores/configurator'
+import { useMemo, createElement } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import * as L from 'leaflet'
+import { rfIconMap } from '@/lib/rfIcons'
 
 const limeOptions = { color: 'lime' }
 const noshow = ['Markers', 'Geofence']
@@ -18,26 +21,34 @@ type Props = {
   position: LatLngExpression
   heading: number
   lengthPx?: number
+  offsetPx?: number
 }
 
-export function HeadingLine({ position, heading, lengthPx = 25 }: Props) {
+export function HeadingLine({ position, heading, lengthPx = 25, offsetPx = 0 }: Props) {
   const map = useMap()
 
-  const start = map.latLngToLayerPoint(position)
+  let start = map.latLngToLayerPoint(position)
 
   const rad = (heading * Math.PI) / 180
 
-  const dx = lengthPx * Math.sin(rad)
-  const dy = -lengthPx * Math.cos(rad)
+  const endDx = lengthPx * Math.sin(rad)
+  const endDy = -lengthPx * Math.cos(rad)
+
+  const startDx = offsetPx * Math.sin(rad)
+  const startDy = -offsetPx * Math.cos(rad)
+
 
   const endPoint = {
-    x: start.x + dx,
-    y: start.y + dy
+    x: start.x + endDx,
+    y: start.y + endDy
   }
 
+  const startPoint = { x: start.x + startDx, y: start.y + startDy }
+
+  const startLatLng = map.layerPointToLatLng([startPoint.x, startPoint.y])
   const endLatLng = map.layerPointToLatLng([endPoint.x, endPoint.y])
 
-  const line = [position, endLatLng] as LatLngExpression[]
+  const line = [startLatLng, endLatLng] as LatLngExpression[]
 
   return <Polyline positions={line} pathOptions={{ color: 'red' }} />
 }
@@ -46,10 +57,27 @@ function VehicleMarker() {
   const lat = useVehicle((s) => s.lat)
   const lon = useVehicle((s) => s.lon)
   const heading = useVehicle((s) => s.heading)
+  const vehicleIcon = useMission((s) => s.dialect.vehicleIcon)
+
+  const icon = useMemo(() => {
+    const IconComponent = rfIconMap[vehicleIcon]
+    const svg = renderToStaticMarkup(
+      createElement(IconComponent, { color: '#ffffff', size: 30, strokeWidth: 1.5 })
+    )
+    return L.divIcon({
+      className: '',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+      html: `<div style="transform:rotate(${(heading ?? 0) - 45}deg);width:30px;height:30px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.7))">${svg}</div>`
+    })
+  }, [vehicleIcon, heading])
+
+  if (lat === null || lon === null) return null
+
   return (
     <>
-      <DraggableMarker position={{ lat, lng: lon }} active={false} />
-      <HeadingLine position={[lat || 0, lon || 0]} heading={heading} />
+      <Marker position={[lat, lon]} icon={icon} interactive={false} />
+      <HeadingLine position={[lat, lon]} heading={heading ?? 0} lengthPx={70} offsetPx={20} />
     </>
   )
 }

@@ -588,6 +588,7 @@ function createArdupilotDialect(variant: VehicleVariant): Dialect<(typeof mavCmd
   dialect = {
     id: variant === 'copter' ? 'ardupilot-copter' : 'ardupilot-plane',
     name: variant === 'copter' ? 'ArduCopter' : 'ArduPlane',
+    vehicleIcon: variant === 'copter' ? 'Drone' : 'Plane',
     availableModes,
     actions: ardupilotActions,
     handleVehicleAction: handleArdupilotAction,

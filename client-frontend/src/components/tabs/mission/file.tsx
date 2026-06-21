@@ -9,6 +9,7 @@ import ExportMission from '@/components/dialogs/mission/export'
 
 export default function MissionFile() {
   const uploadMission = useVehicle((s) => s.uploadMission)
+  const connected = useVehicle((s) => s.connected)
   const mission = useMission((s) => s.mission)
   const [setVehicle, dialect, setMission] = useMission((s) => [s.setVehicle, s.dialect, s.setMission])
   const [importing, setImporting] = useState(false)
@@ -33,8 +34,6 @@ export default function MissionFile() {
       })
     setImporting(true)
   }
-
-  const connected = !!uploadMission
 
   return (
     <div className="flex flex-col gap-2">

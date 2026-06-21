@@ -65,6 +65,12 @@ export type Dialect<CD extends DialectCommandDescription> = {
   name: string
 
   /**
+   * Icon representing the vehicle type associated with this dialect.
+   * Sourced from the RFIcon registry so the frontend can resolve it to a component.
+   */
+  vehicleIcon: RFIcon
+
+  /**
    * List of modes this dialect supports, used to render mode-switch controls.
    * Modes with common=true get top-level buttons; others go in the dropdown.
    */
