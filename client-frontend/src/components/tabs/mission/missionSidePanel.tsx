@@ -1,6 +1,5 @@
 import CommandList from './commandList'
 import MissionFile from './file'
-import MissionDialog from '@/components/dialogs/mission/settings'
 import SidePanelSection from '@/components/ui/sidePanelSection'
 import SubMissionList from './subMissionList'
 import { useMission } from '@libs/stores/mission'
@@ -11,7 +10,6 @@ export default function MissionSidePanel() {
   return (
     <div className="h-full flex flex-col gap-2 h-full">
       <SidePanelSection title="File">
-        <MissionDialog />
         <MissionFile />
       </SidePanelSection>
 

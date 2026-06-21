@@ -11,24 +11,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import NumericInput from '@/components/ui/numericInput'
 import { getMinTurnRadius } from '@libs/dubins/dubinWaypoints'
 import { defaultCopter, defaultPlane } from '@libs/vehicle/defaults'
-import ExportMission from './export'
-import ImportMission from './import'
+import { Settings } from 'lucide-react'
 
-export default function MissionDialog() {
+export default function VehicleSettingsDialog() {
   const [vehicle, setVehicle] = useMission((s) => [s.vehicle, s.setVehicle])
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Settings</Button>
+        <Button variant="default" size="sm" className="w-full">
+          <Settings />
+          Mission Settings
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-foreground">Mission Settings</DialogTitle>
         </DialogHeader>
 
-        <div>
-          <h2 className="text-foreground">Mission Vehicle</h2>
+        <div className="flex flex-col gap-3">
+          <h3 className="text-foreground text-sm font-medium">Vehicle Type</h3>
           <Tabs value={vehicle.type}>
             <TabsList>
               <TabsTrigger value="Plane" onClick={() => setVehicle(defaultPlane)}>
@@ -40,15 +42,15 @@ export default function MissionDialog() {
             </TabsList>
 
             <TabsContent value="Plane">
-              {vehicle.type == 'Plane' ? (
-                <>
-                  <div className="grid grid-cols-2 justify-middle py-4">
-                    <label className="flex-col flex w-40 justify-self-center">
-                      <span className="text-foreground">Cruise Airspeed</span>
+              {vehicle.type === 'Plane' ? (
+                <div className="flex flex-col gap-4 pt-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <label className="flex flex-col gap-1">
+                      <span className="text-foreground text-sm">Cruise Airspeed (m/s)</span>
                       <NumericInput
                         name="Airspeed"
                         value={vehicle.cruiseAirspeed}
-                        className="w-40 text-foreground"
+                        className="w-full text-foreground"
                         onChange={(x) =>
                           setVehicle(
                             vehicle.type !== 'Plane'
@@ -58,31 +60,31 @@ export default function MissionDialog() {
                         }
                       />
                     </label>
-                    <label className="flex-col flex w-40 justify-self-center">
-                      <span className="text-foreground">Max Bank Angle</span>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-foreground text-sm">Max Bank Angle (°)</span>
                       <NumericInput
                         name="Max Bank"
                         value={vehicle.maxBank}
-                        className="w-40 text-foreground"
+                        className="w-full text-foreground"
                         onChange={(x) =>
                           setVehicle(
-                            vehicle.type != 'Plane'
+                            vehicle.type !== 'Plane'
                               ? vehicle
                               : { ...vehicle, maxBank: Number(x.target.value) }
                           )
                         }
                       />
                     </label>
-                    <label className="flex-col flex w-40 justify-self-center">
-                      <span className="text-foreground">Energy Constant (wh/km)</span>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-foreground text-sm">Energy Constant (wh/km)</span>
                       <NumericInput
                         name="Energy Constant"
                         min={0}
                         value={vehicle.energyConstant}
-                        className="w-40 text-foreground"
+                        className="w-full text-foreground"
                         onChange={(x) =>
                           setVehicle(
-                            vehicle.type != 'Plane'
+                            vehicle.type !== 'Plane'
                               ? vehicle
                               : { ...vehicle, energyConstant: Number(x.target.value) }
                           )
@@ -90,25 +92,19 @@ export default function MissionDialog() {
                       />
                     </label>
                   </div>
-                  <div>
-                    <span className="text-foreground">
-                      Minimum turning radius:{' '}
-                      {getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed).toFixed(1)}m
-                    </span>
-                  </div>
-                </>
+                  <p className="text-xs text-muted-foreground">
+                    Min. turn radius:{' '}
+                    {getMinTurnRadius(vehicle.maxBank, vehicle.cruiseAirspeed).toFixed(1)} m
+                  </p>
+                </div>
               ) : null}
             </TabsContent>
 
             <TabsContent value="Copter">
-              <div className="text-foreground">Coming Soon</div>
+              <p className="text-sm text-muted-foreground pt-3">Coming soon</p>
             </TabsContent>
           </Tabs>
         </div>
-
-        <ExportMission />
-
-        <ImportMission />
       </DialogContent>
     </Dialog>
   )
