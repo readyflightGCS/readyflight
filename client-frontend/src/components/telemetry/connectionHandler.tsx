@@ -66,7 +66,8 @@ export default function ConnectionHandler() {
 
       setVehicleState({
         sendMessage: (m) => session.handleSendTelemetryMessage(m),
-        uploadMission: (m) => session.uploadMission(m as never)
+        uploadMission: (m) => session.uploadMission(m as never),
+        triggerAction: (id) => dialect.handleVehicleAction(id, sendPacket)
       })
 
       setCommandSender((cmd) => {
@@ -102,7 +103,7 @@ export default function ConnectionHandler() {
         patchRef.current = {}
         offMessage()
         setCommandSender(null)
-        setVehicleState({ sendMessage: null, uploadMission: null })
+        setVehicleState({ sendMessage: null, uploadMission: null, triggerAction: null })
       }
     }
 
@@ -128,7 +129,8 @@ export default function ConnectionHandler() {
         console.log('[ws] connected to backend')
         setVehicleState({
           sendMessage: (m) => session.handleSendTelemetryMessage(m),
-          uploadMission: (m) => session.uploadMission(m as never)
+          uploadMission: (m) => session.uploadMission(m as never),
+          triggerAction: (id) => dialect.handleVehicleAction(id, sendPacket)
         })
         setCommandSender((cmd) => {
           if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(cmd))
@@ -180,7 +182,7 @@ export default function ConnectionHandler() {
         sessionRef.current = null
         patchRef.current = {}
         setCommandSender(null)
-        setVehicleState({ sendMessage: null, uploadMission: null })
+        setVehicleState({ sendMessage: null, uploadMission: null, triggerAction: null })
         setAvailableConnections([])
         scheduleReconnect()
       }

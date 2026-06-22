@@ -22,10 +22,10 @@ export default function SidePanel({
       ) : null}
 
       <button
-        className="h-14 w-8 bg-background rounded-r-lg pointer-events-auto"
+        className="h-12 w-6 bg-background rounded-r-md pointer-events-auto flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150 shadow-sm"
         onClick={() => setSidePanelOpen(!sidePanelOpen)}
       >
-        {sidePanelOpen ? <ArrowLeft /> : <ArrowRight />}
+        {sidePanelOpen ? <ArrowLeft className="size-3.5" /> : <ArrowRight className="size-3.5" />}
       </button>
     </div>
   )

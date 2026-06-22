@@ -65,7 +65,7 @@ function AirspeedText() {
   if (airspeed !== null) {
     return <>{Math.round(airspeed)}m</>
   } else {
-    ; <>Unknown</>
+    ;<>Unknown</>
   }
 }
 
@@ -76,7 +76,7 @@ function RelativeAltText() {
   if (weightedRelative !== null) {
     return <>{Math.round(weightedRelative)}m</>
   } else {
-    ; <>Unknown</>
+    ;<>Unknown</>
   }
 }
 
@@ -99,7 +99,7 @@ function HeadingText() {
       </>
     )
   } else {
-    ; <>Unknown</>
+    ;<>Unknown</>
   }
 }
 

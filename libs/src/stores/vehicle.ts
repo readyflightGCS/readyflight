@@ -58,7 +58,8 @@ const initialState: VehicleState = {
   missionSeq: null,
   missionTotal: null,
   sendMessage: null, // All readyflight commands will be passed through this
-  uploadMission: null
+  uploadMission: null,
+  triggerAction: null
 }
 
 export const useVehicle = create<VehicleState & Actions>((set) => ({

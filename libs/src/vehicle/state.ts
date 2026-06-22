@@ -53,4 +53,5 @@ export type VehicleState = {
   missionTotal: number | null
   sendMessage: ((msg: VehicleCommand) => void) | null
   uploadMission: ((mission: unknown) => void) | null
+  triggerAction: ((id: string) => void) | null
 }

@@ -16,6 +16,10 @@ import {
   Crosshair,
   Thermometer,
   Wind,
+  ArrowUpFromLine,
+  RotateCcw,
+  Helicopter,
+  Drone,
   type LucideIcon
 } from 'lucide-react'
 import type { RFIcon } from '@libs/ui/icons'
@@ -41,5 +45,9 @@ export const rfIconMap: Record<RFIcon, LucideIcon> = {
   Plane,
   Crosshair,
   Thermometer,
-  Wind
+  Wind,
+  ArrowUpFromLine,
+  RotateCcw,
+  Helicopter,
+  Drone
 }

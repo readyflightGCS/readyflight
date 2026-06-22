@@ -12,15 +12,17 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import ConfirmDialog from '@/components/ui/confirmDialog'
 import type {
   UDPTransportConfig,
   SerialTransportConfig,
   ConnectionStats,
   ConnectionStatus
 } from '@libs/connection/types'
-import { Wifi, Usb, X, Circle, RefreshCw, Lock } from 'lucide-react'
+import { Wifi, Usb, X, Circle, RefreshCw } from 'lucide-react'
 import SidePanelSection from '../ui/sidePanelSection'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import { useVehicle } from '@libs/stores/vehicle'
 
 const BAUD_PRESETS = [9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600]
 
@@ -29,36 +31,48 @@ function DialectSelector() {
   const setDialect = useDialect((s) => s.setDialect)
   const switchMissionDialect = useMission((s) => s.switchDialect)
   const isConnected = useConnections((s) => s.connectionStats.type !== null)
+  const [pendingDialectId, setPendingDialectId] = useState<string | null>(null)
 
   function handleDialectChange(id: string) {
     if (id === activeDialectId) return
-    const confirmed = window.confirm('Switching dialect will clear your current mission. Continue?')
-    if (!confirmed) return
-    const newDialect = dialectRegistry.find((d) => d.id === id)
-    if (!newDialect) return
-    setDialect(id)
-    switchMissionDialect(newDialect)
+    setPendingDialectId(id)
+  }
+
+  function confirmDialectSwitch() {
+    if (!pendingDialectId) return
+    const newDialect = dialectRegistry.find((d) => d.id === pendingDialectId)
+    if (newDialect) {
+      setDialect(pendingDialectId)
+      switchMissionDialect(newDialect)
+    }
+    setPendingDialectId(null)
   }
 
   return (
-    <SidePanelSection>
-      <div className="flex items-center justify-between">
-        <label className="text-xs text-muted-foreground">Dialect</label>
-        {isConnected && <Lock className="size-3 text-muted-foreground" />}
-      </div>
-      <Select value={activeDialectId} onValueChange={handleDialectChange} disabled={isConnected}>
-        <SelectTrigger className="w-full">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {dialectRegistry.map((d) => (
-            <SelectItem key={d.id} value={d.id}>
-              {d.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </SidePanelSection>
+    <>
+      <ConfirmDialog
+        open={pendingDialectId !== null}
+        title="Switch dialect?"
+        description="Switching dialect will clear your current mission."
+        confirmLabel="Switch"
+        onConfirm={confirmDialectSwitch}
+        onCancel={() => setPendingDialectId(null)}
+      />
+      <SidePanelSection title="Dialect">
+        <Select value={activeDialectId} onValueChange={handleDialectChange} disabled={isConnected}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {dialectRegistry.map((d) => (
+              <SelectItem key={d.id} value={d.id}>
+                {d.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </SidePanelSection>
+    </>
   )
 }
 
@@ -95,12 +109,13 @@ function formatAge(ts: number | null): string {
 function ActiveConnection({ conn }: { conn: ConnectionStats }) {
   const commandSender = useConnections((s) => s.commandSender)
 
+  const connected = useVehicle((v) => v.connected)
   const remove = () => commandSender?.({ type: 'disconnect' })
 
   return (
     <SidePanelSection>
       <div className="flex items-center gap-2">
-        <StatusDot status={conn.status} />
+        <StatusDot status={conn.bytesPerSec > 0 ? 'active' : 'connecting'} />
         <span className="flex-1 truncate font-medium">{conn.type}</span>
         <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground flex items-center gap-1">
           {conn.type === 'udp' ? (
@@ -130,6 +145,7 @@ function ActiveConnection({ conn }: { conn: ConnectionStats }) {
           </>
         )}
       </div>
+      <div className="w-full text-center">{connected ? 'UAV Connected' : 'UAV Not Connected'}</div>
     </SidePanelSection>
   )
 }

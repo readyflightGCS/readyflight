@@ -9,13 +9,10 @@ export default function SideBar() {
   const setTab = useEditor((state) => state.setTab)
 
   return (
-    <div className="flex flex-col h-full bg-sidebar shrink-0 w-20">
+    <div className="flex flex-col h-full bg-muted shrink-0 w-14 py-2 gap-1">
       {tabRegistry.map((tab) => (
         <Fragment key={tab.name}>
-          {
-            // Make some space above settings to put it at the bottom
-            tab.name === 'Settings' ? <div className="flex-grow" /> : null
-          }
+          {tab.name === 'Settings' ? <div className="flex-grow" /> : null}
           <Item
             name={tab.name}
             Icon={tab.Icon}
@@ -28,7 +25,7 @@ export default function SideBar() {
   )
 }
 
-export function Item({
+function Item({
   name,
   Icon,
   onClick,
@@ -40,10 +37,17 @@ export function Item({
   active: boolean
 }) {
   return (
-    <button name={name} className="p-2" onMouseDown={onClick}>
-      <div className={cn('rounded-lg', active ? 'bg-foreground' : 'bg-background')}>
-        <Icon className={cn('w-full h-full p-2', active ? 'text-accent' : 'text-foreground')} />
-      </div>
+    <button
+      name={name}
+      onMouseDown={onClick}
+      className={cn(
+        'flex items-center justify-center w-full aspect-square rounded-lg transition-colors duration-150',
+        active
+          ? 'bg-background text-foreground shadow-sm'
+          : 'text-muted-foreground hover:text-foreground hover:bg-background/60'
+      )}
+    >
+      <Icon className="size-8" />
     </button>
   )
 }

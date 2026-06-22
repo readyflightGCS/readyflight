@@ -21,3 +21,7 @@ export type RFIcon =
   | 'Crosshair' // acro / precision
   | 'Thermometer' // thermal
   | 'Wind' // cruise / glide
+  | 'ArrowUpFromLine' // takeoff
+  | 'RotateCcw' // restart / reset
+  | 'Helicopter' // rotary-wing vehicle
+  | 'Drone' // multicopter vehicle
