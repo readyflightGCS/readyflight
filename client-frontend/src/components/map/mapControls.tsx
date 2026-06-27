@@ -11,11 +11,12 @@ import { useVehicle } from '@libs/stores/vehicle'
 
 export default function MapControls() {
   const { mapRef, viewable, setViewable } = useRFMap()
-  const { connected, lat, lon } = useVehicle()
+  const connected = useVehicle(v=>v.connected)
 
   const centerOnVehicle = () => {
-    if (lat != null && lon != null) {
-      mapRef?.current?.setView([lat, lon])
+    const vState = useVehicle.getState()
+    if (vState.lat != null && vState.lon != null) {
+      mapRef?.current?.setView([vState.lat, vState.lon])
     }
   }
 
@@ -38,7 +39,7 @@ export default function MapControls() {
         <Minus className="h-5 w-5" />
       </span>
       <span
-        className={`rounded-lg p-1 ${connected && lat != null ? 'cursor-pointer hover:bg-muted' : 'opacity-30 cursor-not-allowed'}`}
+        className={`rounded-lg p-1 ${connected ? 'cursor-pointer hover:bg-muted' : 'opacity-30 cursor-not-allowed'}`}
         onClick={centerOnVehicle}
         title="Center on UAV"
       >

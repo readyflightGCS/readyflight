@@ -18,7 +18,7 @@ export default function CommandList() {
 
   const curMission = mission.get(selectedSubMission)
 
-  const missions = Array.from(mission.getMissions())
+  const missions = mission.getMissions()
 
   const hasLanding = missions.includes('Landing')
   const hasTakeoff = mission
