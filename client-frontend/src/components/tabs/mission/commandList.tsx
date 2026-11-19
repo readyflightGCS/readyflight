@@ -5,6 +5,9 @@ import { DialectCommandDescription, MissionCommand } from '@libs/commands/comman
 import CommandItem from './commandItem'
 import { getCommandLocation } from '@libs/commands/helpers'
 import { useEditor } from '@libs/stores/configurator'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { useState } from 'react'
 
 export default function CommandList() {
   const setSelectedSubMission = useMission((s) => s.setSelectedSubMission)
@@ -16,6 +19,8 @@ export default function CommandList() {
   const selectedSubMission = useMission((s) => s.selectedSubMission)
   const setTool = useEditor((s) => s.setTool)
 
+  const [groupName, setGroupName] = useState("")
+
   const curMission = mission.get(selectedSubMission)
 
   const missions = Array.from(mission.getMissions())
@@ -26,11 +31,9 @@ export default function CommandList() {
     .map((x) => x.type)
     .includes('RF.Takeoff')
 
-  function handleGroup() {
+  function handleGroup(name: string) {
     // get name for mission
-    let name: string | null = null
-    name = prompt('enter name')
-    if (name == null) return
+    if (name == "") return
 
     // remove all selected
     const newCmds = curMission.filter((_, id) => selectedCommandIDs.includes(id))
@@ -55,6 +58,7 @@ export default function CommandList() {
     temp.set(selectedSubMission, subMissionCmds)
     temp.set(name, newCmds)
     setMission(temp)
+    setGroupName("")
   }
 
   function createTakeoff() {
@@ -74,13 +78,13 @@ export default function CommandList() {
 
   const missionWithDubinsGroups: (
     | {
-        type: 'cmd'
-        cmd: MissionCommand<DialectCommandDescription>
-      }
+      type: 'cmd'
+      cmd: MissionCommand<DialectCommandDescription>
+    }
     | {
-        type: 'dubins'
-        cmds: MissionCommand<DialectCommandDescription>[]
-      }
+      type: 'dubins'
+      cmds: MissionCommand<DialectCommandDescription>[]
+    }
   )[] = []
 
   let curDubinsPath = []
@@ -146,9 +150,30 @@ export default function CommandList() {
         })}
         {selectedCommandIDs.length > 1 ? (
           <div className="w-full flex justify-center">
-            <Button variant="active" onMouseDown={handleGroup} className="text-center p-1 m-1 w-44">
-              Group {selectedCommandIDs.length} waypoints
-            </Button>
+            <Dialog onOpenChange={(open) => { if (!open) setGroupName("") }}>
+              <DialogTrigger>
+                <Button variant="active" className="text-center p-1 m-1 w-44">
+                  Group {selectedCommandIDs.length} waypoints
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Enter Group Name</DialogTitle>
+                </DialogHeader>
+                <form
+                  className="flex flex-col gap-4"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    handleGroup(groupName)
+                  }}
+                >
+                  <Input autoFocus value={groupName} onChange={(e) => setGroupName(e.target.value)} />
+                  <DialogFooter>
+                    <Button type="submit">Create Group</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         ) : null}
 
